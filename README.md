@@ -3,7 +3,7 @@
 - 🔥更简单的处理Android系统文件操作
 - 🔥适用于 Android 4.4 及以上系统 , 兼容AndroidQ新的存储策略
 
-<a href='https://bintray.com/javakam/maven/FileOperator?source=watch' alt='Get automatic notifications about new "FileOperator" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a><a href='https://bintray.com/javakam/maven/FileOperator?source=watch' alt='Get automatic notifications about new "FileOperator" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a>
+<a href='https://bintray.com/javakam/maven/FileOperator?source=watch' alt='Get automatic notifications about new "FileOperator" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_bw.png'></a>
 
 <a href='https://bintray.com/javakam/maven/FileOperator/_latestVersion'><img src='https://api.bintray.com/packages/javakam/maven/FileOperator/images/download.svg'></a>
 
