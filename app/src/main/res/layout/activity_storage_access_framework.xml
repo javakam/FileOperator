@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/safSelectSingleFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="选择单个文件" />
+
+    <ImageView
+        android:id="@+id/showIv"
+        android:visibility="gone"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/color_divider_gray" />
+
+    <Button
+        android:id="@+id/createFileBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="创建文档" />
+
+    <TextView
+        android:id="@+id/createFileUriTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textColor="#333"
+        android:textSize="12sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/deleteFileBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="删除文档" />
+
+    <Button
+        android:id="@+id/renameFileBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="重命名" />
+
+    <Button
+        android:id="@+id/editDocumentBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="编辑文档" />
+
+    <Button
+        android:id="@+id/getDocumentTreeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="选择目录" />
+
+    <TextView
+        android:id="@+id/tvDocumentTreeFiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textColor="#333"
+        android:textSize="12sp"
+        android:visibility="visible"
+        tools:visibility="visible" />
+
+</LinearLayout>

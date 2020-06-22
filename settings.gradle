@@ -1,0 +1,4 @@
+rootProject.name='FileOperator'
+include ':app'
+include ':library_file_core'
+include ':library_file_downloader'

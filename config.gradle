@@ -1,0 +1,141 @@
+ext {
+
+    android = [
+            applicationId    : "com.ando.file.sample",
+            compileSdkVersion: 29,
+            buildToolsVersion: '29.0.2',
+            minSdkVersion    : 21,
+            targetSdkVersion : 29,
+            versionCode      : 1,
+            versionName      : "1.0.0"
+    ]
+    version = [
+            support             : "29.0.0",
+            //JetPack
+            room                : "2.1.0-alpha06",
+            //androidx
+            x_support           : "1.1.0",
+            x_recyclerview      : '1.1.0',
+            x_cardview          : "1.0.0",
+            x_constraintlayout  : "2.0.0-beta4",
+            x_swiperefreshlayout: "1.0.0",
+            x_design            : '1.1.0',
+            x_appcompat         : "1.1.0",
+            x_core_ktx          : "1.0.0",
+            x_fragment          : "1.2.0-alpha02",
+            x_lifecycle_version : "2.2.0-alpha03",
+            x_multidex          : "2.0.1",
+
+            okhttp              : '4.5.0',
+            retrofit            : '2.8.1',
+            eventbus            : '3.2.0',
+            glide               : "4.11.0",
+            greendao            : "3.2.2",
+            smartrefresh        : "2.0.0-alpha-1",
+            immersionbar        : "3.0.0",
+            dkplayer            : "3.2.6"
+
+    ]
+
+    dependencies = [
+            //base AndroidX & Jetpack
+
+            //support
+            "x_design"                       : "com.google.android.material:material:${version.x_design}",
+            "x_appcompat"                    : "androidx.appcompat:appcompat:${version.x_appcompat}",
+            "x_annotations"                  : "androidx.annotation:annotation:${version.x_support}",
+            "x_recyclerview"                 : "androidx.recyclerview:recyclerview:${version.x_recyclerview}",
+            "x_cardview"                     : "androidx.cardview:cardview:${version.x_cardview}",
+            "x_core_utils"                   : "androidx.legacy:legacy-support-core-utils:${version.x_support}",
+            "x_core_ktx"                     : "androidx.core:core-ktx:${version.x_core_ktx}",
+            "x_fragment_runtime"             : "androidx.fragment:fragment:${version.x_fragment}",
+            "x_fragment_runtime_ktx"         : "androidx.fragment:fragment-ktx:${version.x_fragment}",
+            "x_fragment_testing"             : "androidx.fragment:fragment-testing:${version.x_fragment}",
+            //Lifecycle -> All Dep https://developer.android.google.cn/jetpack/androidx/releases/lifecycle
+            //ViewModel and LiveData
+            "x_lifecycle_extensions"         : "androidx.lifecycle:lifecycle-extensions:${version.x_lifecycle_version}",
+            "x_multidex"                     : "androidx.multidex:multidex:${version.x_multidex}",
+            "x_constraintlayout"             : "androidx.constraintlayout:constraintlayout:${version.x_constraintlayout}",
+            "x_swiperefreshlayout"           : "androidx.swiperefreshlayout:swiperefreshlayout:${version.x_swiperefreshlayout}",
+
+            //room
+            "room_runtime"                   : "androidx.room:room-runtime:${version.room}",
+            "room_compiler"                  : "androidx.room:room-compiler:${version.room}",
+            "room_rxjava2"                   : "androidx.room:room-rxjava2:${version.room}",
+            "room_testing"                   : "androidx.room:room-testing:${version.room}",
+
+
+            //base test
+            "junit"                          : "junit:junit:4.12",
+            "test_runner"                    : "com.android.support.test:runner:1.0.2",
+            "test_espresso_core"             : "com.android.support.test.espresso:espresso-core:3.0.2",
+
+            //permission
+            "permissionsdispatcher"          : "org.permissionsdispatcher:permissionsdispatcher:4.5.0",
+            "permissionsdispatcher_processor": "org.permissionsdispatcher:permissionsdispatcher-processor:4.5.0",
+
+            //network
+            "gson"                           : "com.google.code.gson:gson:2.8.4",
+            "rxjava2"                        : "io.reactivex.rxjava2:rxjava:2.2.2",
+            "rxandroid"                      : "io.reactivex.rxjava2:rxandroid:2.1.0",
+            "rxbinding2"                     : "com.jakewharton.rxbinding2:rxbinding:2.1.1",
+            "retrofit"                       : "com.squareup.retrofit2:retrofit:${version.retrofit}",
+            "retrofit_converter_gson"        : "com.squareup.retrofit2:converter-gson:${version.retrofit}",
+            "retrofit_converter_scalars"     : "com.squareup.retrofit2:converter-scalars:2.1.0",
+
+            "retrofit_adapter_rxjava2"       : "com.squareup.retrofit2:adapter-rxjava2:${version.retrofit}",
+            "okhttp"                         : "com.squareup.okhttp3:okhttp:${version.okhttp}",
+            "okhttp_logging_interceptor"     : "com.squareup.okhttp3:logging-interceptor:${version.okhttp}",
+
+            "glide"                          : "com.github.bumptech.glide:glide:${version.glide}",
+            "glide_compiler"                 : "com.github.bumptech.glide:compiler:${version.glide}",
+            "glide_integration_ok3"          : "com.github.bumptech.glide:okhttp3-integration:${version.glide}",
+            "glide_transformations"          : "jp.wasabeef:glide-transformations:2.0.2",
+            "arouter"                        : "com.alibaba:arouter-api:1.3.1",
+            "arouter_compiler"               : "com.alibaba:arouter-compiler:1.1.4",
+            "eventbus"                       : "org.greenrobot:eventbus:${version.eventbus}",
+            "eventbus_annotation_processor"  : "org.greenrobot:eventbus-annotation-processor:${version.eventbus}",
+            "flexbox"                        : "com.google.android:flexbox:1.0.0",
+            "smarttable"                     : "com.github.huangyanbin:SmartTable:2.2.0",
+            // 加密库依赖（可选项）
+            // This is only needed if you want to use encrypted databases
+            "greendao"                       : "org.greenrobot:greendao:${version.greendao}",
+
+            // 必选，内部默认使用系统 MediaPlayer 进行解码
+            "dkplayer_java"                  : "com.github.dueeeke.dkplayer:dkplayer-java:${version.dkplayer}",
+            // 可选，包含 StandardVideoController 的实现
+            "dkplayer_ui"                    : "com.github.dueeeke.dkplayer:dkplayer-ui:${version.dkplayer}",
+            // 可选，使用 exoplayer 进行解码（推荐）
+            "dkplayer_exo"                   : "com.github.dueeeke.dkplayer:player-exo:${version.dkplayer}",
+            // 可选，使用 ijkplayer 进行解码
+            "dkplayer_ijk"                   : "com.github.dueeeke.dkplayer:player-ijk:${version.dkplayer}",
+            // 可选，如需要缓存或者抖音预加载功能请引入此库
+            "dkplayer_videocache"            : "com.github.dueeeke.dkplayer:videocache:${version.dkplayer}",
+
+            //UI
+            "smart_refresh_kernel"           : "com.scwang.smart:refresh-layout-kernel:${version.smartrefresh}",   //核心必须依赖
+            "smart_refresh_header_classics"  : "com.scwang.smart:refresh-header-classics:${version.smartrefresh}", //经典刷新头
+            "smart_refresh_header_material"  : "com.scwang.smart:refresh-header-material:${version.smartrefresh}", //谷歌刷新头
+            "smart_refresh_footer_classics"  : "com.scwang.smart:refresh-footer-classics:${version.smartrefresh}", //经典加载
+            "immersionbar"                   : "com.gyf.immersionbar:immersionbar:${version.immersionbar}",
+            // fragment快速实现（可选）
+            "immersionbar_components"        : "com.gyf.immersionbar:immersionbar-components:${version.immersionbar}",
+            // kotlin扩展（可选）
+            "immersionbar_ktx"               : "com.gyf.immersionbar:immersionbar-ktx:${version.immersionbar}",
+
+            //
+            "bvhelper"                       : "com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.50",
+            "videoplayer"                    : "fm.jiecao:jiecaovideoplayer:5.7",
+            //"lottie"                         : "com.airbnb.android:lottie:2.1.0"
+
+
+            //移除Zzoa , Misdk
+            //如何让别人在gradle中直接compile你的开源库   http://www.jianshu.com/p/9db20aaf932c
+            //方式一 https://jitpack.io/
+            //compile 'com.github.javakam:misdk:1.0'
+            //方式二 https://bintray.com/javakam/maven     jcenter : https://jcenter.bintray.com/com/javakam/
+            //compile 'com.javakam:milier:1.0.0'
+
+    ]
+
+}

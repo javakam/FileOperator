@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+
+    <ImageView
+        android:id="@+id/iv_detail_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_other"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/progressbar_down"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <TextView
+        android:id="@+id/tv_down_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:textColor="@color/font_file_585858"
+        android:textSize="@dimen/font_file_11"
+        app:layout_constraintBottom_toTopOf="@id/progressbar_down"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintLeft_toLeftOf="@id/progressbar_down"
+        app:layout_constraintRight_toRightOf="@id/progressbar_down"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        tools:text="证券日报网.pdf" />
+
+    <!--  仅在DEBUG下显示,方便测试 1下载状态 OKDownloader  -->
+    <TextView
+        android:id="@+id/tv_down_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_file_5"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="@color/font_file_blue"
+        android:textSize="@dimen/font_file_13"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tv_down_name"
+        app:layout_constraintLeft_toRightOf="@id/tv_down_name"
+        app:layout_constraintTop_toTopOf="@id/tv_down_name"
+        tools:text="status" />
+
+    <ProgressBar
+        android:id="@+id/progressbar_down"
+        style="@style/progressBarDownLoad"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:minWidth="@dimen/dp_file_140"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintLeft_toRightOf="@id/iv_detail_icon"
+        app:layout_constraintRight_toLeftOf="@id/fl_down_delete"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <FrameLayout
+        android:id="@+id/fl_down_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/dp_file_8"
+        android:paddingTop="@dimen/dp_file_8"
+        android:paddingBottom="@dimen/dp_file_8"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintLeft_toRightOf="@id/progressbar_down"
+        app:layout_constraintRight_toLeftOf="@id/bt_down_action"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5">
+
+        <ImageView
+            android:layout_width="@dimen/dp_file_9"
+            android:layout_height="@dimen/dp_file_9"
+            android:layout_gravity="center"
+            android:src="@mipmap/ic_file_download_delete" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_down_written_total"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_file_5"
+        android:singleLine="true"
+        android:textColor="@color/font_file_585858"
+        android:textSize="@dimen/font_file_11"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintLeft_toLeftOf="@id/progressbar_down"
+        app:layout_constraintRight_toLeftOf="@id/tv_down_status_text"
+        app:layout_constraintTop_toBottomOf="@id/progressbar_down"
+        tools:text="0 KB/0 KB" />
+
+    <TextView
+        android:id="@+id/tv_down_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="已暂停"
+        android:textColor="@color/font_file_585858"
+        android:textSize="@dimen/font_file_11"
+        app:layout_constraintBottom_toBottomOf="@id/tv_down_written_total"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintRight_toRightOf="@id/progressbar_down"
+        app:layout_constraintTop_toTopOf="@id/tv_down_written_total" />
+
+    <!--  仅在DEBUG下显示,方便测试 2下载速度  -->
+    <TextView
+        android:id="@+id/tv_down_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_file_5"
+        android:singleLine="true"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="@dimen/font_file_11"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tv_down_written_total"
+        app:layout_constraintLeft_toRightOf="@id/tv_down_written_total"
+        app:layout_constraintTop_toTopOf="@id/tv_down_written_total"
+        tools:text="下载速度" />
+
+    <!--  仅在DEBUG下显示,方便测试 3下载百分比  -->
+    <TextView
+        android:id="@+id/tv_down_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_file_5"
+        android:singleLine="true"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="@dimen/font_file_11"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tv_down_written_total"
+        app:layout_constraintLeft_toRightOf="@id/tv_down_speed"
+        app:layout_constraintTop_toTopOf="@id/tv_down_written_total"
+        tools:text="下载速度" />
+
+    <Button
+        android:id="@+id/bt_down_action"
+        android:layout_width="@dimen/dp_file_45"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/dp_file_20"
+        android:background="@drawable/rectangle_file_download_continue"
+        android:gravity="center"
+        android:text="下载"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/font_file_11"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="2:1"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintLeft_toRightOf="@id/fl_down_delete"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

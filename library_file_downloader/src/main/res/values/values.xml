@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 下载 -->
+    <string name="start">开始</string>
+    <string name="cancel">取消</string>
+    <string name="completed">完成</string>
+    <string name="delete">删除</string>
+    <string name="goon">继续</string>
+    <string name="down_paused">已暂停</string>
+    <string name="retry">重试</string><!-- 暂停,删除,下载 -->
+    <string name="parallel">并行</string>
+    <string name="serial">串行</string>
+    <string name="priority">优先级(%1$d)</string>
+    <string name="state_idle">空闲</string>
+    <string name="state_pending">准备中</string>
+    <string name="state_unknown">未知</string>
+    <string name="state_running">下载中</string>
+
+    <color name="font_file_blue">#3368AE</color>
+    <color name="font_file_585858">#585858</color>
+    <color name="font_file_B3C2D9">#B3C2D9</color>
+
+    <dimen name="font_file_11">11sp</dimen>
+    <dimen name="font_file_13">13sp</dimen>
+    <dimen name="dp_file_5">5dp</dimen>
+    <dimen name="dp_file_8">8dp</dimen>
+    <dimen name="dp_file_9">9dp</dimen>
+    <dimen name="dp_file_20">20dp</dimen>
+    <dimen name="dp_file_45">45dp</dimen>
+    <dimen name="dp_file_140">11sp</dimen>
+
+
+    <!--  style="?android:attr/progressBarStyleHorizontal"  -->
+    <style name="progressBarDownLoad" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:maxHeight">2dp</item>
+        <item name="android:minHeight">1dp</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">
+            @android:drawable/progress_indeterminate_horizontal
+        </item>
+        <item name="android:progressDrawable">@drawable/rectangle_progressbar_download</item>
+    </style>
+
+</resources>

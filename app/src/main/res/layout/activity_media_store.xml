@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvMediaStoreTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/insertBitmapToPictures"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="存储Bitmap👉Pictures/img"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/queryFileByDisplayName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="查询图片👉DisplayName"
+        android:textAllCaps="false" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="显示该图片"
+        android:textAllCaps="false" />
+
+    <ImageView
+        android:id="@+id/imageIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="loadThumbnail👉加载该图片的缩略图"
+        android:textAllCaps="false" />
+
+    <ImageView
+        android:id="@+id/imageIv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/updateFileByMediaStoreBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="修改该文件"
+        android:textAllCaps="false" />
+
+    <ImageView
+        android:id="@+id/imageIv2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/deleteFileByUri"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="删除该文件👉Uri/DisplayName"
+        android:textAllCaps="false" />
+
+
+    <Button
+        android:id="@+id/deleteFileAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="删除全部文件👉Pictures/img"
+        android:textAllCaps="false" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/color_divider_gray" />
+
+    <Button
+        android:id="@+id/queryFileByAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="查询图片👉条件查询"
+        android:textAllCaps="false"
+        android:textSize="12sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textStyle="bold"
+        android:text="⭐ 点击图片做删除,可以更直观的看出修改/删除当前应用的图片并不会触发 RecoverableSecurityException"
+        android:textSize="12sp" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMediaImages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="ifContentScrolls"
+        android:scrollbars="vertical" />
+
+
+</LinearLayout>

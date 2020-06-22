@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvAppSpecificTip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/createDocumentsDirs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="创建目录 \n Environment.DIRECTORY_MUSIC \n Environment.DIRECTORY_PODCASTS \n ..."
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/getDocuments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="文件列表👉getExternalFilesDirs(null)"
+        android:textAllCaps="false" />
+
+    <TextView
+        android:id="@+id/tvDocumentsFilesInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textSize="10sp" />
+
+    <Button
+        android:id="@+id/createFileInDocuments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="Documents下新建文件👉getExternalFilesDirs(Environment.DIRECTORY_DOCUMENTS)"
+        android:textAllCaps="false" />
+
+
+    <TextView
+        android:id="@+id/tvAppSpecific"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
+
+
+    <Button
+        android:id="@+id/shareFileInDocuments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:text="分享该文件"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/deleteFileInDocuments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|center_vertical"
+        android:text="删除刚刚新建的文件"
+        android:textAllCaps="false" />
+
+</LinearLayout>

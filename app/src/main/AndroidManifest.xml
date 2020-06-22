@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.ando.file.sample">
+
+    <!-- Apps on devices running Android 4.4 (API level 19) or higher cannot
+              access external storage outside their own "sandboxed" directory, so
+              the READ_EXTERNAL_STORAGE (and WRITE_EXTERNAL_STORAGE) permissions
+              aren't necessary. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <!--  照片的位置信息  -->
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+
+    <application
+        android:name=".App"
+        android:allowBackup="true"
+        android:hasFragileUserData="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="LockedOrientationActivity">
+        <activity
+            android:name=".ui.MainActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.storage.AppSpecificActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.storage.MediaStoreActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.storage.StorageAccessFrameworkActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.selector.FileSelectSingleImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.selector.FileSelectMultiImageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.selector.FileSelectMultiFilesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.FileClearCacheActivity"
+            android:screenOrientation="portrait" />
+
+        <!--    对外提供数据  注意: minSdkVersion="19"  -->
+        <!--    https://developer.android.com/guide/topics/providers/create-document-provider   -->
+        <!--        <provider-->
+        <!--            android:name=".MyCloudProvider"-->
+        <!--            android:authorities="${applicationId}.fileProvider"-->
+        <!--            android:exported="true"-->
+        <!--            android:grantUriPermissions="true"-->
+        <!--            android:permission="android.permission.MANAGE_DOCUMENTS">-->
+        <!--            <intent-filter>-->
+        <!--                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />-->
+        <!--            </intent-filter>-->
+        <!--        </provider>-->
+
+    </application>
+
+</manifest>
