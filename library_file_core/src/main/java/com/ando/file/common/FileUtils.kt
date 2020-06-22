@@ -21,14 +21,6 @@ import java.util.*
  */
 object FileUtils {
 
-    //检验是否为本地URI
-    //----------------------------------------------------------------
-
-    /**
-     * @return Whether the URI is a local one.
-     */
-    fun isLocal(url: String?): Boolean = url != null && url.isNotBlank() && !url.startsWith("http://") && !url.startsWith("https://")
-
     //File Extension
     //----------------------------------------------------------------
 
@@ -57,12 +49,6 @@ object FileUtils {
 
     fun getExtensionFull(file: File?): String = if (file != null) getExtensionFull(file.name) else ""
 
-    /**
-     * Using contentResolver to get a file's extension by the uri
-     *
-     * @param uri Whose name we want to get
-     * @return The file's extension "png"
-     */
     fun getExtensionFromUri(uri: Uri?): String {
         FileOperator.getContext().contentResolver.query(uri ?: return "", null, null, null, null)
             .use { cursor ->
@@ -290,6 +276,16 @@ object FileUtils {
             closeIO(output)
         }
     }
+
+    //File isLocal
+    //----------------------------------------------------------------
+
+    /**
+     * 检验是否为本地URI
+     *
+     * @return Whether the URI is a local one.
+     */
+    fun isLocal(url: String?): Boolean = url != null && url.isNotBlank() && !url.startsWith("http://") && !url.startsWith("https://")
 
     //File Gif
     //----------------------------------------------------------------

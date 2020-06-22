@@ -1,12 +1,10 @@
 # FileOperator
 
+<a href='https://bintray.com/javakam/maven/FileOperator/_latestVersion'><img src='https://api.bintray.com/packages/javakam/maven/FileOperator/images/download.svg'></a>
+
 - 🔥更简单的处理Android系统文件操作
 - 🔥适用于 Android 4.4 及以上系统 , 兼容AndroidQ新的存储策略
 - 🔥图片压缩模块修改自 [Luban](https://github.com/Curzibn/Luban)
-
-<a href='https://bintray.com/javakam/maven/FileOperator?source=watch' alt='Get automatic notifications about new "FileOperator" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_bw.png'></a>
-
-<a href='https://bintray.com/javakam/maven/FileOperator/_latestVersion'><img src='https://api.bintray.com/packages/javakam/maven/FileOperator/images/download.svg'></a>
 
 ## Gradle:
 
@@ -16,15 +14,13 @@ implementation 'com.ando.file:FileOperator:0.8.0'
 
 ## Usage:
 
-> 选择文件不满足预设条件时,有两种策略 : 
-
-1.当设置总文件大小限制时,有两种策略 OVER_SIZE_LIMIT_ALL_DONT 只要有一个文件超出直接返回 onError  
-
-2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART 去掉超过限制大小的溢出部分的文件
+### 初始化 `Application.onCreated`
+```
+FileOperator.init(this,BuildConfig.DEBUG)
+```
 
 ### 1. 单选图片
 ```
-//FileOptions T 为 String.filePath / Uri / File
 val optionsImage = FileSelectOptions()
 optionsImage.fileType = FileType.IMAGE
   options.mMinCount = 0
@@ -80,7 +76,6 @@ mFileSelector = FileSelector
 
 ### 2. 多选图片
 ```
-//FileOptions T 为 String.filePath / Uri / File
 val optionsImage = FileSelectOptions()
 optionsImage.fileType = FileType.IMAGE
   options.mMinCount = 0
@@ -214,7 +209,7 @@ mFileSelector = FileSelector
     })
     .choose()
 ```
-### 4.压缩图片
+### 4.压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/compress/ImageCompressor.kt)
 ```
 //T 为 String.filePath / Uri / File
 fun <T> compressImage(photos: List<T>) {
@@ -275,27 +270,115 @@ fun <T> compressImage(photos: List<T>) {
 }
 ```
 
-> 注意:  `onActivityResult` 中要把选择文件的结果交给`FileSelector`处理`mFileSelector?.obtainResult(requestCode, resultCode, data)`
+## 直接使用静态方法
 
+### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileMimeType.kt)
+
+### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileSizeUtils.kt)
+
+### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileOpener.kt)
+
+### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileUri.kt)
+
+- 从File路径中获取 Uri
+
+```
+fun getUriByPath(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path))
+
+fun getUriByFile(file: File?): Uri? {
+    if (file == null) return null
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        val authority = FileOperator.getContext().packageName + PATH_SUFFIX
+        FileProvider.getUriForFile(FileOperator.getContext(), authority, file)
+    } else {
+        Uri.fromFile(file)
+    }
+}
+```
+
+- 获取Uri对应的文件路径,兼容API 26
+
+```
+fun getFilePathByUri(context: Context?, uri: Uri?): String? {
+    if (context == null || uri == null) return null
+    val scheme = uri.scheme
+    // 以 file:// 开头的
+    if (ContentResolver.SCHEME_FILE.equals(scheme, ignoreCase = true)) {//使用第三方应用打开
+        uri.path
+    }
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //4.4以后
+        getPath(context, uri)
+    } else { //4.4以下
+        getPathKitkat(context, uri)
+    }
+}
+```
+
+### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileUtils.kt)
+- getExtension 获取文件后缀 `jpg`
+- getExtensionFull 获取文件后缀 `.jpg`
+- getExtensionFromUri(uri: Uri?) 获取文件后缀 
+- deleteFile 删除文件或目录
+- deleteFilesButDir(file: File?, vararg excludeDirs: String?) 删除文件或目录 , excludeDirs 跳过指定名称的一些`目录/文件`
+- deleteFileDir 只删除文件，不删除文件夹
+- readFileText 读取文本文件中的内容 `String`
+- readFileBytes 读取文本文件中的内容 `ByteArray`
+- copyFile 根据文件路径拷贝文件 java.nio
+
+```
+eg :boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i, getExternalFilesDir(null).getPath());
+File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
+```
+- write2File(bitmap: Bitmap, fileName: String?)
+- write2File(input: InputStream?, filePath: String?)
+- isLocal 检验是否为本地URI
+- isGif 检验是否为 gif
+
+## 注意的点
+
+1. `onActivityResult` 中要把选择文件的结果交给`FileSelector`处理`mFileSelector?.obtainResult(requestCode, resultCode, data)` 
+
+2. 选择文件不满足预设条件时,有两种策略 : 
+
+    - 1.当设置总文件大小限制时,有两种策略 OVER_SIZE_LIMIT_ALL_DONT 只要有一个文件超出直接返回 onError  
+
+    - 2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART 去掉超过限制大小的溢出部分的文件
+
+3. 选择文件数据:单选 Intent.getData ; 多选  Intent.getClipData
+
+
+4. Android 系统问题 : Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+开启多选条件下只选择一个文件时,需要安装单选逻辑走... Σ( ° △ °|||)︴
+
+5. 回调处理
+
+多选模式下,建议使用统一的 CallBack 回调;<br>
+单选模式下,如果配置了自定义的 CallBack , 则优先使用该回调;否则使用统一的 CallBack
+
+## 未来任务
+```
+1.做一个自定义UI的文件管理器
+2.增加Fragment使用案例 , 视频压缩-郭笑醒 , 清除缓存功能  , 外置存储适配
+3.整理更详细的文档 配合 com.liulishuo.okdownload 做文件下载 👉 library_file_downloader
+4.
+```
 ---
 
-### 参考
+## 参考
 
 - Google
 
-> 推荐👉
+1. [Storage Samples Repository](https://github.com/android/storage-samples)
 
-1.[Storage Samples Repository](https://github.com/android/storage-samples)
+2. [SAF 使用存储访问框架打开文件](https://developer.android.google.cn/guide/topics/providers/document-provider)
 
-2.[SAF 使用存储访问框架打开文件](https://developer.android.google.cn/guide/topics/providers/document-provider
-    - [SAF API UseCase](https://developer.android.google.cn/training/data-storage/shared/documents-files)
+3. [SAF API UseCase](https://developer.android.google.cn/training/data-storage/shared/documents-files)
 
 
 [管理分区外部存储访问](https://developer.android.google.cn/training/data-storage/files/external-scoped)
 [管理分区外部存储访问 - 如何从原生代码访问媒体文件 & MediaStore增删该查API](https://developer.android.google.cn/training/data-storage/shared/media)
 
 [处理外部存储中的媒体文件](https://developer.android.google.cn/training/data-storage/files/media)
-
 
 [Android 11 中的隐私权](https://developer.android.google.cn/preview/privacy)
 
@@ -323,7 +406,7 @@ fun <T> compressImage(photos: List<T>) {
 
 [cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
 
-### library_file_downloader
+## library_file_downloader
 
 > 项目基于 [OkDownload](https://github.com/lingochamp/okdownload) 实现
 
@@ -338,36 +421,3 @@ fun <T> compressImage(photos: List<T>) {
 - AndroidFilePicker <https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md>
 
 - FilePicker <https://github.com/chsmy/FilePicker>
-
-
----
-### 任务 -> todo
-```
-
-### 优先级 自定义FileSelectOptions > 统一的 CallBack
-
-###
-1.当设置总文件大小限制时,有两种策略 
-    OVER_SIZE_LIMIT_ALL_DONT 只要有一个文件超出直接返回 onErroe null ;  OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART 去掉超过限制大小后面相同类型文件
-2.图片/音频/视频 同时选择
-3.简单的ui模板
-4.Fragment使用案例 , 视频压缩-郭笑醒 , 清除缓存功能  , 外置存储适配
-5.整理文档
-
-## 注意的点
-1.单选 Intent.getData ; 多选  Intent.getClipData
-2.Android 系统问题 : Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-开启多选条件下只选择一个文件时,需要安装单选逻辑走... Σ( ° △ °|||)︴
-
-## 回调处理
-多选模式下,建议使用 统一的 CallBack ,如果配置了自定义的 CallBack , 则会根据文件类型分开回调 , 并且统一的 CallBack 也会回调;
-单选模式下,如果配置了自定义的 CallBack , 则优先使用该回调;否则使用统一的 CallBack
-
-```
-
-```
-Fixed BUGS:
-     Caused by: java.lang.IllegalArgumentException: Unknown URI: content://downloads/public_downloads/1
-     Cursor cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,null);
-Fixed : https://github.com/flutter/flutter/issues/21863
-```
