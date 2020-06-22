@@ -54,10 +54,10 @@ dependencies {
 publish {
     repoName = 'maven'
     userOrg = 'javakam'
-    groupId = 'com.ando.file"'
+    groupId = 'com.ando.file'
     artifactId = 'FileOperator'
     uploadName = 'FileOperator'
-    publishVersion = '1.0.0'
+    publishVersion = '0.8.0'
     desc = 'Ando File Helper.'
     website = "https://github.com/javakam/${rootProject.name}"
 }

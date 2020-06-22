@@ -129,7 +129,7 @@ object FileUtils {
         if (children.isNullOrEmpty()) return true
 
         val len = children.size
-        var child: File? = null
+        var child: File?
         for (i in 0 until len) {
             child = File(dir, children[i])
             val success: Boolean = if (child.isDirectory) {
@@ -278,7 +278,7 @@ object FileUtils {
 
             output = FileOutputStream(file)
             val b = ByteArray(1024)
-            var length = 0
+            var length: Int
             while (input?.read(b).also { length = it ?: 0 } != -1) {
                 output.write(b, 0, length)
             }

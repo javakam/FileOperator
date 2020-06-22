@@ -188,10 +188,6 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
             return this
         }
 
-        fun putGear(gear: Int): Builder {
-            return this
-        }
-
         fun setRenameListener(listenerImage: OnImageRenameListener?): Builder {
             mImageRenameListener = listenerImage
             return this

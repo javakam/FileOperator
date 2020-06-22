@@ -82,7 +82,7 @@ data class QuerySelectionStatement(
  * <p>
  * 根据文件描述符选择对应的打开方式。"r"表示读，"w"表示写
  */
-internal fun openFileDescriptor(
+fun openFileDescriptor(
     uri: Uri?,
     @FileOpenMode mode: String = MODE_READ_ONLY,
     cancellationSignal: CancellationSignal? = null
@@ -141,7 +141,7 @@ internal fun startActivityForResult(context: Any, intent: Intent, requestCode: I
 //dump
 //------------------------------------------------------------------------------------------------
 
-internal fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) {
+fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) {
     if (pfd != null) {
         //读取成功 : 91  1519
         FileLogger.d("读取成功 : ${pfd.fd}  大小:${pfd.statSize}B")

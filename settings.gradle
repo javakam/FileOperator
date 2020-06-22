@@ -1,4 +1,6 @@
 rootProject.name='FileOperator'
 include ':app'
 include ':library_file_core'
-include ':library_file_downloader'
+
+// 配合 com.liulishuo.okdownload 做文件下载
+//include ':library_file_downloader'

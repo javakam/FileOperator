@@ -495,7 +495,7 @@ fun queryMediaStoreImages(
     val imageList = mutableListOf<MediaStoreImage>()
     val external = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
-    var cursor: Cursor? = null
+    val cursor: Cursor?
     try {
         cursor = getMediaCursor(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,

@@ -1,4 +1,17 @@
-"# FileOperator" 
+# FileOperator
+
+- 🔥更简单的处理Android系统文件操作
+- 🔥适用于 Android 4.4 及以上系统 , 兼容AndroidQ新的存储策略
+
+<a href='https://bintray.com/javakam/maven/FileOperator?source=watch' alt='Get automatic notifications about new "FileOperator" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a><a href='https://bintray.com/javakam/maven/FileOperator?source=watch' alt='Get automatic notifications about new "FileOperator" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_color.png'></a>
+
+<a href='https://bintray.com/javakam/maven/FileOperator/_latestVersion'><img src='https://api.bintray.com/packages/javakam/maven/FileOperator/images/download.svg'></a>
+
+- Gradle:
+
+```
+implementation 'com.ando.file:FileOperator:0.8.0'
+```
 
 ## 选择文件功能
 ## 打开文件功能
@@ -11,6 +24,7 @@
 - Google
 
 > 推荐👉
+
 1.[Storage Samples Repository](https://github.com/android/storage-samples)
 
 2.[SAF 使用存储访问框架打开文件](https://developer.android.google.cn/guide/topics/providers/document-provider
@@ -39,7 +53,6 @@
 
 [huawei Google Q版本应用兼容性整改指导](https://developer.huawei.com/consumer/cn/doc/50127)
 
-
 - 参考项目
 
 [MaterialFiles](https://github.com/zhanghai/MaterialFiles)
@@ -49,7 +62,6 @@
 [FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
 
 [cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
-
 
 ### library_file_downloader
 

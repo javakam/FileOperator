@@ -164,12 +164,12 @@ object ImageChecker {
 
     private fun pack(
         bytes: ByteArray,
-        offset: Int,
-        length: Int,
+        off: Int,
+        len: Int,
         littleEndian: Boolean
     ): Int {
-        var offset = offset
-        var length = length
+        var offset = off
+        var length = len
         var step = 1
         if (littleEndian) {
             offset += length - 1
