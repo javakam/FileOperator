@@ -2,22 +2,282 @@
 
 - 🔥更简单的处理Android系统文件操作
 - 🔥适用于 Android 4.4 及以上系统 , 兼容AndroidQ新的存储策略
+- 🔥图片压缩模块修改自 [Luban](https://github.com/Curzibn/Luban)
 
 <a href='https://bintray.com/javakam/maven/FileOperator?source=watch' alt='Get automatic notifications about new "FileOperator" versions'><img src='https://www.bintray.com/docs/images/bintray_badge_bw.png'></a>
 
 <a href='https://bintray.com/javakam/maven/FileOperator/_latestVersion'><img src='https://api.bintray.com/packages/javakam/maven/FileOperator/images/download.svg'></a>
 
-- Gradle:
+## Gradle:
 
 ```
 implementation 'com.ando.file:FileOperator:0.8.0'
 ```
 
-## 选择文件功能
-## 打开文件功能
-## SAF API 封装
-## MediaStore 封装
-## ...
+## Usage:
+
+> 选择文件不满足预设条件时,有两种策略 : 
+
+1.当设置总文件大小限制时,有两种策略 OVER_SIZE_LIMIT_ALL_DONT 只要有一个文件超出直接返回 onError  
+
+2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART 去掉超过限制大小的溢出部分的文件
+
+### 1. 单选图片
+```
+//FileOptions T 为 String.filePath / Uri / File
+val optionsImage = FileSelectOptions()
+optionsImage.fileType = FileType.IMAGE
+  options.mMinCount = 0
+  options.mMaxCount = 10
+optionsImage.mSingleFileMaxSize = 2097152  // 20M = 20971520 B
+optionsImage.mSingleFileMaxSizeTip = "图片最大不超过2M！"
+optionsImage.mAllFilesMaxSize = 5242880  //5M 5242880 ; 20M = 20971520 B
+optionsImage.mAllFilesMaxSizeTip = "总图片大小不超过5M！"
+optionsImage.mFileCondition = object : FileSelectCondition {
+    override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+    }
+}
+mFileSelector = FileSelector
+    .with(this)
+    .setRequestCode(REQUEST_CHOOSE_FILE)
+    .setSelectMode(false)
+    .setMinCount(1, "至少选一个文件!")
+    .setMaxCount(10, "最多选十个文件!")
+    .setSingleFileMaxSize(5242880, "大小不能超过5M！") //5M 5242880 ; 100M = 104857600 KB
+    .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//
+    .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同 arrayOf("video/*","audio/*","image/*") 系统提供的选择UI不一样
+    .applyOptions(optionsImage)
+    //优先使用 FileOptions 中设置的 FileSelectCondition
+    .filter(object : FileSelectCondition {
+        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+            when (fileType) {
+                FileType.IMAGE -> {
+                    return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                }
+                FileType.VIDEO -> true
+                FileType.AUDIO -> true
+                else -> true
+            }
+            return true
+        }
+    })
+    .callback(object : FileSelectCallBack {
+        override fun onSuccess(results: List<FileSelectResult>?) {
+            FileLogger.w("回调 onSuccess ${results?.size}")
+            mTvResult.text = ""
+            if (results.isNullOrEmpty()) return
+            shortToast("正在压缩图片...")
+            showSelectResult(results)
+        }
+        override fun onError(e: Throwable?) {
+            FileLogger.e("回调 onError ${e?.message}")
+            mTvResultError.text = mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
+        }
+    })
+    .choose()
+```
+
+### 2. 多选图片
+```
+//FileOptions T 为 String.filePath / Uri / File
+val optionsImage = FileSelectOptions()
+optionsImage.fileType = FileType.IMAGE
+  options.mMinCount = 0
+  options.mMaxCount = 10
+optionsImage.mSingleFileMaxSize = 3145728  // 20M = 20971520 B
+optionsImage.mSingleFileMaxSizeTip = "单张图片最大不超过3M！"
+optionsImage.mAllFilesMaxSize = 5242880  //3M 3145728 ; 5M 5242880 ; 10M 10485760 ; 20M = 20971520 B
+optionsImage.mAllFilesMaxSizeTip = "图片总大小不超过5M！"
+optionsImage.mFileCondition = object : FileSelectCondition {
+    override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+    }
+}
+mFileSelector = FileSelector
+    .with(this)
+    .setRequestCode(REQUEST_CHOOSE_FILE)
+    .setSelectMode(true)
+    .setMinCount(1, "至少选一个文件!")
+    .setMaxCount(10, "最多选十个文件!")
+    //优先以自定义的 optionsImage.mSingleFileMaxSize 为准5M 5242880 ; 100M = 104857600 KB
+    .setSingleFileMaxSize(2097152, "大小不能超过2M！")
+    .setAllFilesMaxSize(20971520, "总文件大小不能超过20M！")
+    //1.OVER_SIZE_LIMIT_ALL_DONT  超过限制大小全部不返回  ;2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  超过限制大小去掉后面相同类型文件
+    .setOverSizeLimitStrategy(this.mOverSizeStrategy)
+    .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同 arrayOf("video/*","audio/*","image/*") 系统提供的选择UI不一样
+    .applyOptions(optionsImage)
+    //优先使用 FileOptions 中设置的 FileSelectCondition
+    .filter(object : FileSelectCondition {
+        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+            when (fileType) {
+                FileType.IMAGE -> {
+                    return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                }
+                FileType.VIDEO -> true
+                FileType.AUDIO -> true
+                else -> true
+            }
+            return true
+        }
+    })
+    .callback(object : FileSelectCallBack {
+        override fun onSuccess(results: List<FileSelectResult>?) {
+            FileLogger.w("回调 onSuccess ${results?.size}")
+            mTvResult.text = ""
+            if (results.isNullOrEmpty()) return
+            shortToast("正在压缩图片...")
+            showSelectResult(results)
+        }
+        override fun onError(e: Throwable?) {
+            FileLogger.e("回调 onError ${e?.message}")
+            mTvResultError.text = mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
+        }
+    })
+    .choose()
+```
+### 3. 多选文件
+```
+//图片
+val optionsImage = FileSelectOptions().apply {
+    fileType = FileType.IMAGE
+    mMinCount = 1
+    mMaxCount = 2
+    mMinCountTip = "至少选择一张图片"
+    mMaxCountTip = "最多选择两张图片"
+    mSingleFileMaxSize = 3145728  // 20M = 20971520 B
+    mSingleFileMaxSizeTip = "单张图片最大不超过3M！"
+    mAllFilesMaxSize = 5242880  // 5M 5242880 
+    mAllFilesMaxSizeTip = "图片总大小不超过5M！"
+    mFileCondition = object : FileSelectCondition {
+        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+            return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+        }
+    }
+}
+//视频
+val optionsVideo = FileSelectOptions().apply {
+    fileType = FileType.VIDEO
+    mMinCount = 1
+    mMaxCount = 1
+    mMinCountTip = "至少选择一个视频文件"
+    mMaxCountTip = "最多选择一个视频文件"
+    mSingleFileMaxSize = 20971520  // 20M = 20971520 B
+    mSingleFileMaxSizeTip = "单视频最大不超过20M！"
+    mAllFilesMaxSize = 31457280  //3M 3145728
+    mAllFilesMaxSizeTip = "视频总大小不超过30M！"
+    mFileCondition = object : FileSelectCondition {
+        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+            return (uri != null)
+        }
+    }
+}
+mFileSelector = FileSelector
+    .with(this)
+    .setRequestCode(REQUEST_CHOOSE_FILE)
+    .setSelectMode(true)
+    .setMinCount(1, "至少选一个文件!")
+    .setMaxCount(5, "最多选五个文件!")
+    // 优先使用自定义 FileSelectOptions 中设置的单文件大小限制,如果没有设置则采用该值
+    // 100M = 104857600 KB  ;80M 83886080 ;50M 52428800 ; 20M 20971520  ;5M 5242880 ;
+    .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
+    .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
+    // 超过限制大小两种返回策略: 1.OVER_SIZE_LIMIT_ALL_DONT,超过限制大小全部不返回;2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART,超过限制大小去掉后面相同类型文件
+    .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
+    .setMimeTypes(null)//默认为 null,*/* 即不做文件类型限定;  MIME_MEDIA 媒体文件, 不同 arrayOf("video/*","audio/*","image/*") 系统提供的选择UI不一样
+    .applyOptions(optionsImage, optionsVideo)
+    // 优先使用 FileOptions 中设置的 FileSelectCondition , 没有的情况下才使用通用的
+    .filter(object : FileSelectCondition {
+        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+            when (fileType) {
+                FileType.IMAGE -> {
+                    return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                }
+                FileType.VIDEO -> true
+                FileType.AUDIO -> true
+                else -> true
+            }
+            return true
+        }
+    })
+    .callback(object : FileSelectCallBack {
+        override fun onSuccess(results: List<FileSelectResult>?) {
+            FileLogger.w("回调 onSuccess ${results?.size}")
+            mTvResult.text = ""
+            if (results.isNullOrEmpty()) return
+            showSelectResult(results)
+        }
+        override fun onError(e: Throwable?) {
+            FileLogger.e("回调 onError ${e?.message}")
+            mTvResultError.text = mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
+        }
+    })
+    .choose()
+```
+### 4.压缩图片
+```
+//T 为 String.filePath / Uri / File
+fun <T> compressImage(photos: List<T>) {
+    ImageCompressor
+        .with(this)
+        .load(photos)
+        .ignoreBy(100)//B
+        .setTargetDir(getPathImageCache())
+        .setFocusAlpha(false)
+        .enableCache(true)
+        .filter(object : ImageCompressPredicate {
+            override fun apply(uri: Uri?): Boolean {
+                //getFilePathByUri(uri)
+                FileLogger.i("image predicate $uri  ${getFilePathByUri(uri)}")
+                return if (uri != null) {
+                    val path = getFilePathByUri(uri)
+                    !(TextUtils.isEmpty(path) || (path?.toLowerCase()
+                        ?.endsWith(".gif") == true))
+                } else {
+                    false
+                }
+            }
+        })
+        .setRenameListener(object : OnImageRenameListener {
+            override fun rename(uri: Uri?): String? {
+                try {
+                    val filePath = getFilePathByUri(uri)
+                    val md = MessageDigest.getInstance("MD5")
+                    md.update(filePath?.toByteArray() ?: return "")
+                    return BigInteger(1, md.digest()).toString(32)
+                } catch (e: NoSuchAlgorithmException) {
+                    e.printStackTrace()
+                }
+                return ""
+            }
+        })
+        .setImageCompressListener(object : OnImageCompressListener {
+            override fun onStart() {}
+            override fun onSuccess(uri: Uri?) {
+                val path = "$cacheDir/image/"
+                FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
+              
+                val bitmap = getBitmapFromUri(uri)
+                dumpMetaData(uri) { displayName: String?, size: String? ->
+                    runOnUiThread {
+                        mTvResult.text = mTvResult.text.toString().plus(
+                            "\n ---------\n👉压缩后 \n Uri : $uri \n 路径: ${uri?.path} \n 文件名称 ：$displayName \n 大小：$size B \n" +
+                                    "格式化 : ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}\n ---------"
+                        )
+                    }
+                }
+                mIvCompressed.setImageBitmap(bitmap)
+            }
+            override fun onError(e: Throwable?) {
+                FileLogger.e("compress onError ${e?.message}")
+            }
+        }).launch()
+}
+```
+
+> 注意:  `onActivityResult` 中要把选择文件的结果交给`FileSelector`处理`mFileSelector?.obtainResult(requestCode, resultCode, data)`
+
+---
 
 ### 参考
 
@@ -80,7 +340,8 @@ implementation 'com.ando.file:FileOperator:0.8.0'
 - FilePicker <https://github.com/chsmy/FilePicker>
 
 
-### 任务
+---
+### 任务 -> todo
 ```
 
 ### 优先级 自定义FileSelectOptions > 统一的 CallBack

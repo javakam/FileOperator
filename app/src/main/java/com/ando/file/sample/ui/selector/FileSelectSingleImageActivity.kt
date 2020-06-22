@@ -39,7 +39,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     val REQUEST_CHOOSE_FILE = 10
 
     //文件选择
-    private var mFileChooser: FileSelector? = null
+    private var mFileSelector: FileSelector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,9 +58,6 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     private fun chooseFile() {
 
         //FileOptions T 为 String.filePath / Uri / File
-        /*
-        最多五张图片
-         */
         val optionsImage = FileSelectOptions()
         optionsImage.fileType = FileType.IMAGE
 //        options.mMinCount = 0
@@ -75,7 +72,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             }
         }
 
-        mFileChooser = FileSelector
+        mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setSelectMode(false)
@@ -169,7 +166,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         mIvOrigin.setImageBitmap(null)
         mIvCompressed.setImageBitmap(null)
 
-        mFileChooser?.obtainResult(requestCode, resultCode, data)
+        mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
     /**

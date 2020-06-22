@@ -38,7 +38,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
     val REQUEST_CHOOSE_FILE = 10
 
     //文件选择
-    private var mFileChooser: FileSelector? = null
+    private var mFileSelector: FileSelector? = null
 
     //返回值策略
     private var mOverSizeStrategy: Int = OVER_SIZE_LIMIT_ALL_DONT
@@ -67,9 +67,6 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
     private fun chooseFile() {
 
         //FileOptions T 为 String.filePath / Uri / File
-        /*
-        最多五张图片
-         */
         val optionsImage = FileSelectOptions()
         optionsImage.fileType = FileType.IMAGE
 //        options.mMinCount = 0
@@ -84,7 +81,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             }
         }
 
-        mFileChooser = FileSelector
+        mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setSelectMode(true)
@@ -182,7 +179,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mIvOrigin.setImageBitmap(null)
         mIvCompressed.setImageBitmap(null)
 
-        mFileChooser?.obtainResult(requestCode, resultCode, data)
+        mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
     /**

@@ -38,7 +38,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
     val REQUEST_CHOOSE_FILE = 10
 
     //文件选择
-    private var mFileChooser: FileSelector? = null
+    private var mFileSelector: FileSelector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,7 +93,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             }
         }
 
-        mFileChooser = FileSelector
+        mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setSelectMode(true)
@@ -201,7 +201,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         mIvOrigin.setImageBitmap(null)
         mIvCompressed.setImageBitmap(null)
 
-        mFileChooser?.obtainResult(requestCode, resultCode, data)
+        mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
     /**
@@ -213,7 +213,6 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
      * T 为 String.filePath / Uri / File
      */
     fun <T> compressImage(photos: List<T>) {
-
         ImageCompressor
             .with(this)
             .load(photos)
