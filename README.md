@@ -23,8 +23,8 @@ FileOperator.init(this,BuildConfig.DEBUG)
 ```
 val optionsImage = FileSelectOptions()
 optionsImage.fileType = FileType.IMAGE
-  options.mMinCount = 0
-  options.mMaxCount = 10
+options.mMinCount = 0
+options.mMaxCount = 10
 optionsImage.mSingleFileMaxSize = 2097152  // 20M = 20971520 B
 optionsImage.mSingleFileMaxSizeTip = "图片最大不超过2M！"
 optionsImage.mAllFilesMaxSize = 5242880  //5M 5242880 ; 20M = 20971520 B
@@ -78,8 +78,8 @@ mFileSelector = FileSelector
 ```
 val optionsImage = FileSelectOptions()
 optionsImage.fileType = FileType.IMAGE
-  options.mMinCount = 0
-  options.mMaxCount = 10
+options.mMinCount = 0
+options.mMaxCount = 10
 optionsImage.mSingleFileMaxSize = 3145728  // 20M = 20971520 B
 optionsImage.mSingleFileMaxSizeTip = "单张图片最大不超过3M！"
 optionsImage.mAllFilesMaxSize = 5242880  //3M 3145728 ; 5M 5242880 ; 10M 10485760 ; 20M = 20971520 B
@@ -132,6 +132,9 @@ mFileSelector = FileSelector
     .choose()
 ```
 ### 3. 多选文件
+> 🌴适用于处理复杂文件选择情形,如: 选取图片、视频文件,其中图片至少选择一张,最多选择两张,每张图片大小不超过3M,全部图片大小不超过5M ; 
+视频文件只能选择一个, 每个视频大小不超过20M,全部视频大小不超过30M。
+
 ```
 //图片
 val optionsImage = FileSelectOptions().apply {
