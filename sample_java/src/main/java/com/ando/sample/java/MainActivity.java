@@ -166,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
     private void showSelectResult(List<FileSelectResult> results) {
         mTvResult.setText("");
 
-
         for (FileSelectResult result : results) {
 
             //1.打印Log
@@ -209,6 +208,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 压缩图片
+     */
     private void compressImage(List<Uri> photos) {
 
         ImageCompressor.Companion
@@ -221,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
                 .filter(new ImageCompressPredicate() {
                     @Override
                     public boolean apply(Uri uri) {
-                        //getFilePathByUri(uri)
                         final String path = getFilePathByUri(uri);
                         FileLogger.INSTANCE.i("image predicate " + uri + "  " + path);
                         if (uri != null) {
