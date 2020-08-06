@@ -136,8 +136,8 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
 
     class Builder internal constructor(private val context: Context) {
         var mTargetDir: String? = null
-        var cache = false
-        var focusAlpha = false
+        var mCache = false
+        var mFocusAlpha = false
         var mIgnoreMinCompressSize = 100 //B
         var mImageRenameListener: OnImageRenameListener? = null
         var mImageCompressListener: OnImageCompressListener? = null
@@ -204,7 +204,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
         }
 
         fun enableCache(cache: Boolean): Builder {
-            this.cache = cache
+            this.mCache = cache
             return this
         }
 
@@ -218,7 +218,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
          *  false - don't keep alpha channel, it might have a black background.
          */
         fun setFocusAlpha(focusAlpha: Boolean): Builder {
-            this.focusAlpha = focusAlpha
+            this.mFocusAlpha = focusAlpha
             return this
         }
 
@@ -307,8 +307,8 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
         mCacheDir = builder.mTargetDir
         mImageRenameListener = builder.mImageRenameListener
         mUriProviders = builder.mUriProviders
-        cache = builder.cache
-        focusAlpha = builder.focusAlpha
+        cache = builder.mCache
+        focusAlpha = builder.mFocusAlpha
         mImageCompressListener = builder.mImageCompressListener
         mIgnoreMinCompressSize = builder.mIgnoreMinCompressSize
         mImageCompressPredicate = builder.mImageCompressPredicate

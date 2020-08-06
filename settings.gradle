@@ -1,3 +1,4 @@
+include ':sample_java'
 rootProject.name='FileOperator'
 include ':app'
 include ':library_file_core'
