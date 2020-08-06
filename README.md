@@ -424,3 +424,8 @@ File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 - AndroidFilePicker <https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md>
 
 - FilePicker <https://github.com/chsmy/FilePicker>
+
+## bintrayUpload
+[novoda](ttps://github.com/novoda/bintray-release)
+
+`gradlew clean build bintrayUpload -PbintrayUser=javakam -PbintrayKey=xxx -PdryRun=false`
