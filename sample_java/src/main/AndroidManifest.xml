@@ -2,18 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ando.sample.java">
 
-    <!-- Apps on devices running Android 4.4 (API level 19) or higher cannot
-            access external storage outside their own "sandboxed" directory, so
-            the READ_EXTERNAL_STORAGE (and WRITE_EXTERNAL_STORAGE) permissions
-            aren't necessary. -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-
-    <!--  照片的位置信息  -->
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-
     <application
         android:name="com.ando.sample.java.App"
         android:allowBackup="true"
