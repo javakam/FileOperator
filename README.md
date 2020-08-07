@@ -10,7 +10,7 @@
 ## Gradle:
 
 ```
-implementation 'com.ando.file:FileOperator:0.8.0'
+implementation 'com.ando.file:FileOperator:0.9.0'
 ```
 
 ## Usage:
