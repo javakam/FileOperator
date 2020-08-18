@@ -37,11 +37,15 @@ var sDirFilter = FileFilter { file: File ->
 }
 
 // Checks if a volume containing external storage is available for read and write.
-fun isExternalStorageWritable(): Boolean = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
+fun isExternalStorageWritable(): Boolean =
+    Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
 // Checks if a volume containing external storage is available to at least read.
 fun isExternalStorageReadable(): Boolean =
-    Environment.getExternalStorageState() in setOf(Environment.MEDIA_MOUNTED, Environment.MEDIA_MOUNTED_READ_ONLY)
+    Environment.getExternalStorageState() in setOf(
+        Environment.MEDIA_MOUNTED,
+        Environment.MEDIA_MOUNTED_READ_ONLY
+    )
 
 /**
  * 获取外部存储空间视图模式
@@ -56,7 +60,7 @@ fun isExternalStorageLegacy(): Boolean = Environment.isExternalStorageLegacy()
  *
  * @return 系统根目录
  */
-fun getRootDirectory(): String? = Environment.getRootDirectory().absolutePath
+fun getRootDirectory(): File = Environment.getRootDirectory()
 
 /**
  * 获取 data 目录
@@ -64,7 +68,7 @@ fun getRootDirectory(): String? = Environment.getRootDirectory().absolutePath
  *
  * @return data 目录
  */
-fun getDataDirectory(): String? = Environment.getDataDirectory().absolutePath
+fun getDataDirectory(): File = Environment.getDataDirectory()
 
 /**
  * 获取缓存目录
@@ -72,7 +76,7 @@ fun getDataDirectory(): String? = Environment.getDataDirectory().absolutePath
  *
  * @return 缓存目录
  */
-fun getDownloadCacheDirectory(): String? = Environment.getDownloadCacheDirectory().absolutePath
+fun getDownloadCacheDirectory(): File = Environment.getDownloadCacheDirectory()
 
 /**
  * Media File[]
@@ -97,7 +101,8 @@ fun getExternalCacheDirs(): Array<File> = FileOperator.getContext().externalCach
  *     getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
  * </pre>
  */
-fun getExternalFilesDirs(type: String): Array<File> = FileOperator.getContext().getExternalFilesDirs(type)
+fun getExternalFilesDirs(type: String): Array<File> =
+    FileOperator.getContext().getExternalFilesDirs(type)
 
 /**
  * 获取此应用的缓存目录
@@ -105,7 +110,7 @@ fun getExternalFilesDirs(type: String): Array<File> = FileOperator.getContext().
  *
  * @return 此应用的缓存目录
  */
-fun getCacheDir(): String? = FileOperator.getContext().cacheDir.absolutePath
+fun getCacheDir(): File = FileOperator.getContext().cacheDir
 
 /**
  * 获取此应用的文件目录
@@ -113,7 +118,7 @@ fun getCacheDir(): String? = FileOperator.getContext().cacheDir.absolutePath
  *
  * @return 此应用的文件目录
  */
-fun getFilesDir(): String? = FileOperator.getContext().filesDir.absolutePath
+fun getFilesDir(): File = FileOperator.getContext().filesDir
 
 /**
  * 获取此应用的数据库文件目录
@@ -122,7 +127,7 @@ fun getFilesDir(): String? = FileOperator.getContext().filesDir.absolutePath
  * @param name 数据库文件名
  * @return 数据库文件目录
  */
-fun getDatabasePath(name: String?): String? = FileOperator.getContext().getDatabasePath(name).absolutePath
+fun getDatabasePath(name: String?): File = FileOperator.getContext().getDatabasePath(name)
 
 /**
  * 获取此应用的 Obb 目录
@@ -131,7 +136,7 @@ fun getDatabasePath(name: String?): String? = FileOperator.getContext().getDatab
  *
  * @return 此应用的 Obb 目录
  */
-fun getObbDir(): String? = FileOperator.getContext().obbDir.absolutePath
+fun getObbDir(): File = FileOperator.getContext().obbDir
 
 //getExternalFilesDir
 //--------------------------------------------------------------------------
@@ -142,7 +147,7 @@ fun getObbDir(): String? = FileOperator.getContext().obbDir.absolutePath
  *
  * @return 此应用在外置储存中的缓存目录
  */
-fun getExternalCacheDir(): String? = FileOperator.getContext().externalCacheDir?.absolutePath
+fun getExternalCacheDir(): File? = FileOperator.getContext().externalCacheDir
 
 /**
  * 获取此应用在外置储存中的文件目录
@@ -157,7 +162,7 @@ fun getExternalCacheDir(): String? = FileOperator.getContext().externalCacheDir?
  *  </pre>
  * @return 此应用在外置储存中的文件目录
  */
-fun getExternalFilesDir(): String? = FileOperator.getContext().getExternalFilesDir(null)?.absolutePath
+fun getExternalFilesDir(): File? = FileOperator.getContext().getExternalFilesDir(null)
 
 /**
  * 获取此应用在外置储存中的闹钟铃声目录
@@ -165,7 +170,8 @@ fun getExternalFilesDir(): String? = FileOperator.getContext().getExternalFilesD
  *
  * @return 此应用在外置储存中的闹钟铃声目录
  */
-fun getExternalFilesDirALARMS(): String? = FileOperator.getContext().getExternalFilesDir(Environment.DIRECTORY_ALARMS)?.absolutePath
+fun getExternalFilesDirALARMS(): File? =
+    FileOperator.getContext().getExternalFilesDir(Environment.DIRECTORY_ALARMS)
 
 /**
  * 获取此应用在外置储存中的相机目录
@@ -173,7 +179,8 @@ fun getExternalFilesDirALARMS(): String? = FileOperator.getContext().getExternal
  *
  * @return 此应用在外置储存中的相机目录
  */
-fun getExternalFilesDirDCIM(): String? = FileOperator.getContext().getExternalFilesDir(Environment.DIRECTORY_DCIM)?.absolutePath
+fun getExternalFilesDirDCIM(): File? =
+    FileOperator.getContext().getExternalFilesDir(Environment.DIRECTORY_DCIM)
 
 /**
  * 获取此应用在外置储存中的文档目录
@@ -182,8 +189,8 @@ fun getExternalFilesDirDCIM(): String? = FileOperator.getContext().getExternalFi
  * @return 此应用在外置储存中的文档目录
  */
 @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-fun getExternalFilesDirDOCUMENTS(): String? = FileOperator.getContext()
-    .getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)?.absolutePath
+fun getExternalFilesDirDOCUMENTS(): File? = FileOperator.getContext()
+    .getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
 
 /**
  * 获取此应用在外置储存中的下载目录
@@ -191,8 +198,8 @@ fun getExternalFilesDirDOCUMENTS(): String? = FileOperator.getContext()
  *
  * @return 此应用在外置储存中的闹钟目录
  */
-fun getExternalFilesDirDOWNLOADS(): String? = FileOperator.getContext()
-    .getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)?.absolutePath
+fun getExternalFilesDirDOWNLOADS(): File? = FileOperator.getContext()
+    .getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
 
 /**
  * 获取此应用在外置储存中的视频目录
@@ -200,7 +207,8 @@ fun getExternalFilesDirDOWNLOADS(): String? = FileOperator.getContext()
  *
  * @return 此应用在外置储存中的视频目录
  */
-fun getExternalFilesDirMOVIES(): String? = FileOperator.getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES)?.absolutePath
+fun getExternalFilesDirMOVIES(): File? =
+    FileOperator.getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES)
 
 /**
  * 获取此应用在外置储存中的音乐目录
@@ -208,7 +216,8 @@ fun getExternalFilesDirMOVIES(): String? = FileOperator.getContext().getExternal
  *
  * @return 此应用在外置储存中的音乐目录
  */
-fun getExternalFilesDirMUSIC(): String? = FileOperator.getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC)?.absolutePath
+fun getExternalFilesDirMUSIC(): File? =
+    FileOperator.getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC)
 
 /**
  * 获取此应用在外置储存中的提示音目录
@@ -216,8 +225,8 @@ fun getExternalFilesDirMUSIC(): String? = FileOperator.getContext().getExternalF
  *
  * @return 此应用在外置储存中的提示音目录
  */
-fun getExternalFilesDirNOTIFICATIONS(): String? = FileOperator.getContext()
-    .getExternalFilesDir(Environment.DIRECTORY_NOTIFICATIONS)?.absolutePath
+fun getExternalFilesDirNOTIFICATIONS(): File? = FileOperator.getContext()
+    .getExternalFilesDir(Environment.DIRECTORY_NOTIFICATIONS)
 
 /**
  * 获取此应用在外置储存中的图片目录
@@ -225,8 +234,8 @@ fun getExternalFilesDirNOTIFICATIONS(): String? = FileOperator.getContext()
  *
  * @return 此应用在外置储存中的图片目录
  */
-fun getExternalFilesDirPICTURES(): String? = FileOperator.getContext()
-    .getExternalFilesDir(Environment.DIRECTORY_PICTURES)?.absolutePath
+fun getExternalFilesDirPICTURES(): File? = FileOperator.getContext()
+    .getExternalFilesDir(Environment.DIRECTORY_PICTURES)
 
 /**
  * 获取此应用在外置储存中的 Podcasts 目录
@@ -234,8 +243,8 @@ fun getExternalFilesDirPICTURES(): String? = FileOperator.getContext()
  *
  * @return 此应用在外置储存中的 Podcasts 目录
  */
-fun getExternalFilesDirPODCASTS(): String? = FileOperator.getContext()
-    .getExternalFilesDir(Environment.DIRECTORY_PODCASTS)?.absolutePath
+fun getExternalFilesDirPODCASTS(): File? = FileOperator.getContext()
+    .getExternalFilesDir(Environment.DIRECTORY_PODCASTS)
 
 /**
  * 获取此应用在外置储存中的铃声目录
@@ -243,8 +252,8 @@ fun getExternalFilesDirPODCASTS(): String? = FileOperator.getContext()
  *
  * @return 此应用在外置储存中的铃声目录
  */
-fun getExternalFilesDirRINGTONES(): String? = FileOperator.getContext()
-    .getExternalFilesDir(Environment.DIRECTORY_RINGTONES)?.absolutePath
+fun getExternalFilesDirRINGTONES(): File? = FileOperator.getContext()
+    .getExternalFilesDir(Environment.DIRECTORY_RINGTONES)
 
 //从 File Path 中获取 Uri
 //----------------------------------------------------------------
@@ -350,7 +359,8 @@ private fun getPath(context: Context, uri: Uri?): String? {
                 return Environment.getExternalStorageDirectory()
                     .toString() + File.separator + split[1]
             } else if ("home".equals(type, ignoreCase = true)) {
-                return Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
+                return Environment.getExternalStorageDirectory()
+                    .toString() + File.separator + "documents" + File.separator + split[1]
             }
         } else if (isDownloadsDocument(uri)) {
             val id = DocumentsContract.getDocumentId(uri)
@@ -432,19 +442,23 @@ private fun getDataColumn(
 ): String? {
     val column = MediaStore.Files.FileColumns.DATA
     val projection = arrayOf(column)
-    var cursor: Cursor? = null
-    try {
-        cursor = context.contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)
-        if (cursor != null && cursor.moveToFirst()) {
-            val columnIndex = cursor.getColumnIndex(column)
-            return cursor.getString(columnIndex)
-        } else {
-            uri.path
+    context.contentResolver.query(
+        uri ?: return null,
+        projection,
+        selection,
+        selectionArgs,
+        null
+    )?.use {
+        try {
+            if (it.moveToFirst()) {
+                val columnIndex = it.getColumnIndex(column)
+                return it.getString(columnIndex)
+            } else uri.path
+        } catch (e: Throwable) {
+            FileLogger.e("getDataColumn -> ${e.message}")
         }
-    } finally {
-        cursor?.close()
     }
-    return uri?.path
+    return uri.path
 }
 
 /**

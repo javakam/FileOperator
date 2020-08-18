@@ -15,7 +15,7 @@ const val REQUEST_CODE_SENDER = 0x10
  * </pre>
  */
 fun getPathImageCache(): String? {
-    val path = "${getCacheDir()}/image/"
+    val path = "${getCacheDir().absolutePath}/image/"
     val file = File(path)
     return if (file.mkdirs()) {
         path

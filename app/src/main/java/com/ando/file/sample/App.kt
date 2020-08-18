@@ -38,7 +38,7 @@ class App : Application() {
             BuildConfig.DEBUG
         )
 
-        CrashHandler.init(this, "${getExternalFilesDirDOCUMENTS()}/Crash/")
+        CrashHandler.init(this, "${getExternalFilesDirDOCUMENTS()?.absolutePath}/Crash/")
 
     }
 

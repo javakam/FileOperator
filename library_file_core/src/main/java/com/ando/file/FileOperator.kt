@@ -68,15 +68,15 @@ object FileOperator {
     /**
      * 获取数据库存储路径/SDCard/Android/data/包名/cache/
      */
-    fun getCacheDir(): String? =
-        if (isDebug()) getExternalCacheDir() else getCacheDir()
+    fun getCacheDir(): File? =
+        if (isDebug()) getExternalCacheDir() else context.cacheDir
 
     /**
      * 获取数据库存储路径/SDCard/Android/data/包名/cache/
      * 设置：对应清除缓存
      */
     fun getCachePath(dirName: String): String? {
-        val root = getCacheDir()
+        val root = getCacheDir()?.absolutePath
         return if (root != null && root.isNotBlank() && !TextUtils.isEmpty(dirName)) {
             val path = root + File.separator + dirName + File.separator
             val file = File(path)
@@ -90,7 +90,7 @@ object FileOperator {
     //getFileDir
     //--------------------------------------------------------------------------
 
-    fun getFileDir(): String? =
+    fun getFileDir(): File? =
         if (isDebug()) getExternalFilesDir() else getFilesDir()
 
     /**
@@ -98,7 +98,7 @@ object FileOperator {
      * 设置：对应清除数据
      */
     fun getFilesPath(dirName: String): String? {
-        val root = getFileDir()
+        val root = getFileDir()?.absolutePath
         return if (root != null && root.isNotBlank() && !TextUtils.isEmpty(dirName)) {
             val path = root + File.separator + dirName + File.separator
             val file = File(path)
