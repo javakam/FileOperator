@@ -21,7 +21,7 @@ FileOperator.init(this,BuildConfig.DEBUG)
 
 ## 演示
 ### 功能列表
-<img src="https://github.com/javakam/FileOperator/blob/master/screenshot/img1.png" width="576" height="1221"/>
+<img src="https://github.com/javakam/FileOperator/blob/master/screenshot/img1.png" width="288" height="610"/>
 
 ### API
  
@@ -36,7 +36,7 @@ FileOperator.init(this,BuildConfig.DEBUG)
 |![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick1.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick2.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick3.png)|
 
 ### 缓存目录
-<img src="screenshot/cache1.png" width="540" height="1128"/>
+<img src="screenshot/cache1.png" width="270" height="564"/>
 
 
 ## Usage:
