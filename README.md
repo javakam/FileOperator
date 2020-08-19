@@ -38,7 +38,7 @@ FileOperator.init(this,BuildConfig.DEBUG)
 |![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick1.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick2.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick3.png)|
 
 ### 缓存目录
-<img src="screenshot/cache1.png" width="270" height="564"/>
+<img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache1.png" width="270" height="564"/>
 
 
 ## Usage:
