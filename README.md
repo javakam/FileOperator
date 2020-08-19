@@ -13,7 +13,7 @@
 implementation 'com.ando.file:FileOperator:0.9.1'
 ```
 
-- `Application`中初始化:
+> 然后在`Application`中初始化:
 
 ```
 FileOperator.init(this,BuildConfig.DEBUG)
@@ -21,22 +21,23 @@ FileOperator.init(this,BuildConfig.DEBUG)
 
 ## 演示
 ### 功能列表
-![](screenshot/img1.png)
+<img src="https://github.com/javakam/FileOperator/blob/master/screenshot/img1.png" width="576" height="1221"/>
 
 ### API
  
 | App Specific | MediaStore | Storage Access Framework|
 |:---:|:---:|:---:|
-|![](screenshot/img2.png)|![](screenshot/img3.png)|![](screenshot/img4.png)|
+|![](https://github.com/javakam/FileOperator/blob/master/screenshot/img2.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/img3.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/img4.png)|
 
 ### 文件选择
 
 | 单图 + 压缩 | 多图 + 压缩 | 多文件 |
 |:---:|:---:|:---:|
-|![](screenshot/pick1.png)|![](screenshot/pick2.png)|![](screenshot/pick3.png)|
+|![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick1.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick2.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick3.png)|
 
 ### 缓存目录
-![](screenshot/cache1.png)
+<img src="screenshot/cache1.png" width="540" height="1128"/>
+
 
 ## Usage:
 
