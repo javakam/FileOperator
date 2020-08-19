@@ -10,15 +10,35 @@
 ## Gradle:
 
 ```
-implementation 'com.ando.file:FileOperator:0.9.0'
+implementation 'com.ando.file:FileOperator:0.9.1'
 ```
 
-## Usage:
+- `Application`中初始化:
 
-### 初始化 `Application.onCreated`
 ```
 FileOperator.init(this,BuildConfig.DEBUG)
 ```
+
+## 演示
+### 功能列表
+![](screenshot/img1.png)
+
+### API
+ 
+| App Specific | MediaStore | Storage Access Framework|
+|:---:|:---:|:---:|
+|![](screenshot/img2.png)|![](screenshot/img3.png)|![](screenshot/img4.png)|
+
+### 文件选择
+
+| 单图 + 压缩 | 多图 + 压缩 | 多文件 |
+|:---:|:---:|:---:|
+|![](screenshot/pick1.png)|![](screenshot/pick2.png)|![](screenshot/pick3.png)|
+
+### 缓存目录
+![](screenshot/cache1.png)
+
+## Usage:
 
 ### 1. 单选图片
 ```

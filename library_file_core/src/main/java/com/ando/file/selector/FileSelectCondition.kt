@@ -1,6 +1,7 @@
 package com.ando.file.selector
 
 import android.net.Uri
+import androidx.annotation.NonNull
 import com.ando.file.common.FileType
 
 /**
@@ -13,6 +14,6 @@ import com.ando.file.common.FileType
  */
 interface FileSelectCondition {
 
-    fun accept(fileType: FileType, uri: Uri?): Boolean
+    fun accept(@NonNull fileType: FileType, uri: Uri?): Boolean
 
 }

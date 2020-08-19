@@ -1,7 +1,6 @@
 package com.ando.sample.java;
 
 import android.Manifest;
-import android.annotation.NonNull;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         mFileSelector = FileSelector.Companion.with(this)
 
                 .setRequestCode(REQUEST_CHOOSE_FILE)
@@ -127,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
                 .applyOptions(options)
 
                 //优先使用 FileOptions 中设置的 FileSelectCondition
-
                 .filter(new FileSelectCondition() {
                     @Override
                     public boolean accept(@NonNull FileType fileType, Uri uri) {
