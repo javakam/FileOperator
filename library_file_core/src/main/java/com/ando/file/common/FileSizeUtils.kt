@@ -47,9 +47,7 @@ object FileSizeUtils {
         if (files.isNullOrEmpty()) return size
 
         for (i in files.indices) {
-            size += if (files[i].isDirectory) getFolderSize(files[i]) else getFileSize(
-                files[i]
-            )
+            size += if (files[i].isDirectory) getFolderSize(files[i]) else getFileSize(files[i])
         }
         return size
     }
@@ -57,8 +55,7 @@ object FileSizeUtils {
     /**
      * 获取文件大小
      */
-    @Throws(Exception::class)
-    fun getFileSize(file: File): Long = if (file.exists()) file.length() else 0L
+    fun getFileSize(file: File?): Long = if (file?.exists() == true) file.length() else 0L
 
     fun getFileSize(uri: Uri?): Long = getFileSize(getContext(), uri) ?: 0L
 
@@ -70,7 +67,11 @@ object FileSizeUtils {
             val zero = 0L
             val uriScheme = uri.scheme
             val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q || TextUtils.equals("content", uriScheme)) {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q || TextUtils.equals(
+                    "content",
+                    uriScheme
+                )
+            ) {
                 cursor?.use {
                     val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
                     // 1.Technically the column stores an int, but cursor.getString() will do the conversion automatically.
@@ -78,7 +79,9 @@ object FileSizeUtils {
                     // 2.it.moveToFirst() -> Caused by: android.database.CursorIndexOutOfBoundsException: Index -1 requested, with a size of 1
                     if (it.moveToFirst() && !it.isNull(sizeIndex)) it.getLong(sizeIndex) else zero
                 }
-            } else if (TextUtils.equals("file", uriScheme)) File(getFilePathByUri(uri) ?: return zero).length() else zero
+            } else if (TextUtils.equals("file", uriScheme)) File(
+                getFilePathByUri(uri) ?: return zero
+            ).length() else zero
         }
 
 
@@ -95,9 +98,7 @@ object FileSizeUtils {
         val file = File(path)
         var blockSize = 0L
         try {
-            blockSize = if (file.isDirectory) getFolderSize(file) else getFileSize(
-                file
-            )
+            blockSize = if (file.isDirectory) getFolderSize(file) else getFileSize(file)
         } catch (e: Exception) {
             e.printStackTrace()
             e("获取文件大小 获取失败!")
@@ -149,19 +150,32 @@ object FileSizeUtils {
     fun formatFileSize(size: Long, scale: Int): String {
         val dividend = 1024L
         //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
-        val kiloByte = BigDecimal(size.toDouble()).divide(BigDecimal(dividend), scale, BigDecimal.ROUND_DOWN)
+        val kiloByte =
+            BigDecimal(size.toDouble()).divide(BigDecimal(dividend), scale, BigDecimal.ROUND_DOWN)
         if (kiloByte.toDouble() < 1) {
             return "${kiloByte.toPlainString()}B"
         }
-        val megaByte = BigDecimal(kiloByte.toDouble()).divide(BigDecimal(dividend), scale, BigDecimal.ROUND_HALF_UP)
+        val megaByte = BigDecimal(kiloByte.toDouble()).divide(
+            BigDecimal(dividend),
+            scale,
+            BigDecimal.ROUND_HALF_UP
+        )
         if (megaByte.toDouble() < 1) {
             return "${kiloByte.toPlainString()}KB"
         }
-        val gigaByte = BigDecimal(megaByte.toDouble()).divide(BigDecimal(dividend), scale, BigDecimal.ROUND_HALF_UP)
+        val gigaByte = BigDecimal(megaByte.toDouble()).divide(
+            BigDecimal(dividend),
+            scale,
+            BigDecimal.ROUND_HALF_UP
+        )
         if (gigaByte.toDouble() < 1) {
             return "${megaByte.toPlainString()}M"
         }
-        val teraBytes = BigDecimal(gigaByte.toDouble()).divide(BigDecimal(dividend), scale, BigDecimal.ROUND_HALF_UP)
+        val teraBytes = BigDecimal(gigaByte.toDouble()).divide(
+            BigDecimal(dividend),
+            scale,
+            BigDecimal.ROUND_HALF_UP
+        )
         if (teraBytes.toDouble() < 1) {
             return "${gigaByte.toPlainString()}GB"
         }
@@ -194,7 +208,9 @@ object FileSizeUtils {
                     SIZE_TYPE_GB -> 1024L * 1024L * 1024L
                     SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
                 }
-            ), scale, if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
+            ),
+            scale,
+            if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
         )
 
     /**
