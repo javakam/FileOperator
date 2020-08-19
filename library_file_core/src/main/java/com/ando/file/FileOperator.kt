@@ -21,7 +21,7 @@ object FileOperator {
 
     private lateinit var context: Context
     private lateinit var application: Application
-    private var isDebug: Boolean = true
+    private var isDebug: Boolean = false
 
     fun init(application: Application, isDebug: Boolean) {
         this.application = application
@@ -30,17 +30,11 @@ object FileOperator {
         FileLogger.init(isDebug)
     }
 
-    fun getContext(): Context {
-        return context
-    }
+    fun getContext(): Context = context
 
-    fun getApplication(): Application {
-        return application
-    }
+    fun getApplication(): Application = application
 
-    fun isDebug(): Boolean {
-        return isDebug
-    }
+    fun isDebug(): Boolean = isDebug
 
     //getDatabasePath
     //--------------------------------------------------------------------------
@@ -70,12 +64,14 @@ object FileOperator {
     fun getCacheDir(): File? =
         if (isDebug()) getExternalCacheDir() else context.cacheDir
 
+    fun getCachePath(dirName: String): String? = getCachePath(getCacheDir(), dirName)
+
     /**
      * 获取数据库存储路径/SDCard/Android/data/包名/cache/
      * 设置：对应清除缓存
      */
-    fun getCachePath(dirName: String): String? {
-        val root = getCacheDir()?.absolutePath
+    fun getCachePath(cacheDir: File?, dirName: String): String? {
+        val root = cacheDir?.absolutePath
         return if (root != null && root.isNotBlank() && !TextUtils.isEmpty(dirName)) {
             val path = root + File.separator + dirName + File.separator
             val file = File(path)
@@ -92,12 +88,14 @@ object FileOperator {
     fun getFileDir(): File? =
         if (isDebug()) getExternalFilesDir() else getFilesDir()
 
+    fun getFilesPath(dirName: String): String? = getFilesPath(getFileDir(), dirName)
+
     /**
      * 获取数据库存储路径/SDCard/Android/data/包名/files/
      * 设置：对应清除数据
      */
-    fun getFilesPath(dirName: String): String? {
-        val root = getFileDir()?.absolutePath
+    fun getFilesPath(filesDir: File?, dirName: String): String? {
+        val root = filesDir?.absolutePath
         return if (root != null && root.isNotBlank() && !TextUtils.isEmpty(dirName)) {
             val path = root + File.separator + dirName + File.separator
             val file = File(path)

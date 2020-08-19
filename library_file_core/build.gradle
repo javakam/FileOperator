@@ -57,7 +57,7 @@ publish {
     groupId = 'com.ando.file'
     artifactId = 'FileOperator'
     uploadName = 'FileOperator'
-    publishVersion = '0.9.1'
+    publishVersion = '0.9.2'
     desc = 'Ando File Helper.'
     website = "https://github.com/javakam/${rootProject.name}"
 }
