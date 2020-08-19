@@ -23,19 +23,19 @@ FileOperator.init(this,BuildConfig.DEBUG)
 
 ## 演示
 ### 功能列表
-<img src="https://github.com/javakam/FileOperator/blob/master/screenshot/img1.png" width="288" height="610"/>
+<img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/img1.png" width="288" height="610"/>
 
 ### API
  
 | App Specific | MediaStore | Storage Access Framework|
 |:---:|:---:|:---:|
-|![](https://github.com/javakam/FileOperator/blob/master/screenshot/img2.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/img3.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/img4.png)|
+|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/img2.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/img3.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/img4.png)|
 
 ### 文件选择
 
 | 单图 + 压缩 | 多图 + 压缩 | 多文件 |
 |:---:|:---:|:---:|
-|![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick1.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick2.png)|![](https://github.com/javakam/FileOperator/blob/master/screenshot/pick3.png)|
+|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick1.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick2.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick3.png)|
 
 ### 缓存目录
 <img src="screenshot/cache1.png" width="270" height="564"/>
@@ -236,7 +236,7 @@ mFileSelector = FileSelector
     })
     .choose()
 ```
-### 4.压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/compress/ImageCompressor.kt)
+### 4.压缩图片 [ImageCompressor.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/compress/ImageCompressor.kt)
 ```
 //T 为 String.filePath / Uri / File
 fun <T> compressImage(photos: List<T>) {
@@ -299,13 +299,13 @@ fun <T> compressImage(photos: List<T>) {
 
 ## 直接使用静态方法
 
-### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileMimeType.kt)
+### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileMimeType.kt)
 
-### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileSizeUtils.kt)
+### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileSizeUtils.kt)
 
-### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileOpener.kt)
+### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileOpener.kt)
 
-### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileUri.kt)
+### 4. 获取文件Uri/Path👉[FileUri.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileUri.kt)
 
 - 从File路径中获取 Uri
 
@@ -341,7 +341,7 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 }
 ```
 
-### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_file_core/src/main/java/com/ando/file/common/FileUtils.kt)
+### 5. 通用文件工具类👉[FileUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileUtils.kt)
 - getExtension 获取文件后缀 `jpg`
 - getExtensionFull 获取文件后缀 `.jpg`
 - getExtensionFromUri(uri: Uri?) 获取文件后缀 
