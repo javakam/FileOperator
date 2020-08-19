@@ -28,7 +28,6 @@ object FileOperator {
         this.context = application.applicationContext
         this.isDebug = isDebug
         FileLogger.init(isDebug)
-
     }
 
     fun getContext(): Context {

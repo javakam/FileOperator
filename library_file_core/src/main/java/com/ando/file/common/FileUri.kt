@@ -327,6 +327,9 @@ private fun getPathKitkat(context: Context, contentUri: Uri): String? =
  * Callers should check whether the path is local before assuming it
  * represents a local file.
  *
+ * <pre>
+ * 错误的方式 -> 采用复制文件的方式重新写入再获取路径
+ * https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist
  * @param context The context.
  * @param uri     The Uri to query.
  * @see #isLocal
@@ -387,7 +390,7 @@ private fun getPath(context: Context, uri: Uri?): String? {
                 }
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                return resolveAndroidQPath(uri)
+                return uri?.path
             }
         } else if (isMediaDocument(uri)) {
             val docId = DocumentsContract.getDocumentId(uri)
@@ -414,7 +417,7 @@ private fun getPath(context: Context, uri: Uri?): String? {
                 return uriPath.replace("/root".toRegex(), "")
             }
         }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) resolveAndroidQPath(uri)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) uri?.path
         else getDataColumn(context, uri, null, null)
     } else if ("file".equals(uri?.scheme, ignoreCase = true)) {
         uri?.path
@@ -461,15 +464,6 @@ private fun getDataColumn(
     return uri.path
 }
 
-/**
- * 从 API 26 中解析出路径
- * <pre>
- * 错误的方式 -> 采用复制文件的方式重新写入再获取路径
- * https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist
- */
-@TargetApi(Build.VERSION_CODES.O)
-fun resolveAndroidQPath(uri: Uri?): String? = uri?.path
-
 //File Name
 //----------------------------------------------------------------
 
@@ -501,10 +495,6 @@ fun getFileNameFromUri(uri: Uri?): String? {
     }
     return filename
 }
-
-//File Extension
-//----------------------------------------------------------------
-
 
 //The Uri to check
 //----------------------------------------------------------------

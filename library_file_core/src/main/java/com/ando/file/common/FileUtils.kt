@@ -36,18 +36,21 @@ object FileUtils {
     fun getExtension(fileName: String?, split: Char, fullExtension: Boolean): String {
         if (fileName.isNullOrBlank()) return ""
         val dot = fileName.lastIndexOf(split)
-        return if (dot > 0) fileName.substring(if (fullExtension) dot else (dot + 1)).toLowerCase(Locale.getDefault()) else "" // No extension.
+        return if (dot > 0) fileName.substring(if (fullExtension) dot else (dot + 1))
+            .toLowerCase(Locale.getDefault()) else "" // No extension.
     }
 
     fun getExtension(fileName: String): String = getExtension(fileName, '.', false)
 
-    fun getExtension(uri: Uri?): String = if (uri != null) getExtension(getFilePathByUri(uri) ?: "") else ""
+    fun getExtension(uri: Uri?): String =
+        if (uri != null) getExtension(getFilePathByUri(uri) ?: "") else ""
 
     fun getExtension(file: File?): String = if (file != null) getExtension(file.name) else ""
 
     fun getExtensionFull(fileName: String): String = getExtension(fileName, '.', true)
 
-    fun getExtensionFull(file: File?): String = if (file != null) getExtensionFull(file.name) else ""
+    fun getExtensionFull(file: File?): String =
+        if (file != null) getExtensionFull(file.name) else ""
 
     fun getExtensionFromUri(uri: Uri?): String {
         FileOperator.getContext().contentResolver.query(uri ?: return "", null, null, null, null)
@@ -103,7 +106,8 @@ object FileUtils {
         return count
     }
 
-    fun deleteFileDir(dirPath: String?): Boolean = if (dirPath.isNullOrBlank()) false else deleteFileDir(File(dirPath))
+    fun deleteFileDir(dirPath: String?): Boolean =
+        if (dirPath.isNullOrBlank()) false else deleteFileDir(File(dirPath))
 
     /**
      * 只删除文件，不删除文件夹
@@ -179,7 +183,7 @@ object FileUtils {
             fis = FileInputStream(file)
             fis.read(bytesArray)
         } catch (e: IOException) {
-            e.printStackTrace()
+            e("readFileBytes -> ${e.message}")
         } finally {
             closeIO(fis)
         }
@@ -285,7 +289,8 @@ object FileUtils {
      *
      * @return Whether the URI is a local one.
      */
-    fun isLocal(url: String?): Boolean = url != null && url.isNotBlank() && !url.startsWith("http://") && !url.startsWith("https://")
+    fun isLocal(url: String?): Boolean =
+        url != null && url.isNotBlank() && !url.startsWith("http://") && !url.startsWith("https://")
 
     //File Gif
     //----------------------------------------------------------------
@@ -295,7 +300,8 @@ object FileUtils {
      *
      * @param mimeType
      */
-    fun isGif(mimeType: String?): Boolean = !mimeType.isNullOrBlank() && mimeType.equals("image/gif", true)
+    fun isGif(mimeType: String?): Boolean =
+        !mimeType.isNullOrBlank() && mimeType.equals("image/gif", true)
 
     /**
      * File name/path/url
