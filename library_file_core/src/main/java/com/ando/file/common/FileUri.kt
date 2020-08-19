@@ -464,38 +464,6 @@ private fun getDataColumn(
     return uri.path
 }
 
-//File Name
-//----------------------------------------------------------------
-
-fun getFileNameFromPath(path: String?): String? {
-    if (path.isNullOrBlank()) return null
-    val cut = path.lastIndexOf('/')
-    if (cut != -1) return path.substring(cut + 1)
-    return path
-}
-
-fun getFileNameFromUri(uri: Uri?): String? {
-    if (uri == null) return null
-    var filename: String? = null
-
-    val resolver = FileOperator.getContext().contentResolver
-    val mimeType = resolver.getType(uri)
-    if (mimeType == null) {
-        filename = getFileNameFromPath(getFilePathByUri(uri))
-    } else {
-        val cursor = resolver.query(
-            uri, null, null, null, null
-        )
-        if (cursor != null) {
-            val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            cursor.moveToFirst()
-            filename = cursor.getString(nameIndex)
-            cursor.close()
-        }
-    }
-    return filename
-}
-
 //The Uri to check
 //----------------------------------------------------------------
 
