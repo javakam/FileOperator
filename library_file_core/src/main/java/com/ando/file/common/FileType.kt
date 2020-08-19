@@ -2,7 +2,6 @@ package com.ando.file.common
 
 import android.net.Uri
 import android.text.TextUtils
-import android.webkit.MimeTypeMap
 import java.io.File
 import java.util.*
 
@@ -29,25 +28,17 @@ enum class FileType {
      */
     fun typeByFileName(fileName: String?): FileType {
         return typeByFileSuffix(
-            FileUtils.getExtension(
-                fileName ?: return UNKNOWN
-            )
+            FileUtils.getExtension(fileName ?: return UNKNOWN)
         )
     }
 
     fun typeByFileName(fileName: String?, split: Char): FileType {
         return typeByFileSuffix(
-            FileUtils.getExtension(
-                fileName ?: return UNKNOWN, split, false
-            )
+            FileUtils.getExtension(fileName ?: return UNKNOWN, split, false)
         )
     }
 
-    fun typeByUri(uri: Uri?): FileType = typeByFileSuffix(
-        FileUtils.getExtension(
-            uri
-        )
-    )
+    fun typeByUri(uri: Uri?): FileType = typeByFileSuffix(FileUtils.getExtension(uri))
 
     fun typeByFilePath(filePath: String?): FileType {
         if (TextUtils.isEmpty(filePath)) UNKNOWN
@@ -55,11 +46,7 @@ enum class FileType {
         return if (!file.exists()) UNKNOWN else typeByFile(file)
     }
 
-    fun typeByFile(file: File): FileType = typeByFileSuffix(
-        FileUtils.getExtension(
-            file
-        )
-    )
+    fun typeByFile(file: File): FileType = typeByFileSuffix(FileUtils.getExtension(file))
 
     /**
      * 依据扩展名的类型决定 MimeType
