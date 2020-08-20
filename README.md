@@ -22,8 +22,10 @@ FileOperator.init(this,BuildConfig.DEBUG)
 ```
 
 ## 演示
-### 功能列表
-<img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/img1.png" width="288" height="610"/>
+
+| 功能列表 | 缓存目录 |
+|:---:|:---:|
+| <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/img1.png" width="288" height="610"/> | <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache1.png" width="270" height="564"/> |
 
 ### API
  
@@ -36,10 +38,6 @@ FileOperator.init(this,BuildConfig.DEBUG)
 | 单图 + 压缩 | 多图 + 压缩 | 多文件 |
 |:---:|:---:|:---:|
 |![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick1.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick2.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick3.png)|
-
-### 缓存目录
-<img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache1.png" width="270" height="564"/>
-
 
 ## Usage:
 
