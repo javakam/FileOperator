@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "com.ando.sample.java"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
@@ -33,6 +33,8 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:28.0.0'
 //    implementation 'androidx.appcompat:appcompat:1.1.0'
 
-    implementation project(':library_file_core')
+    implementation project(':library')
+    implementation project(':library_operator')
+    implementation project(':library_compressor')
 
 }

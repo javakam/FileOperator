@@ -1,7 +1,7 @@
 ext {
 
     android = [
-            applicationId    : "com.ando.file.sample",
+            applicationId    : "ando.file.sample",
             compileSdkVersion: 30,
             buildToolsVersion: '30.0.2',
             minSdkVersion    : 21,

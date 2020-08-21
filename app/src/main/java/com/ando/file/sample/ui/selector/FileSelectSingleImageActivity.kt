@@ -8,14 +8,14 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.ando.file.common.*
-import com.ando.file.selector.*
-import com.ando.file.compress.ImageCompressPredicate
-import com.ando.file.compress.OnImageCompressListener
-import com.ando.file.compress.OnImageRenameListener
-import com.ando.file.getBitmapFromUri
-import com.ando.file.loadThumbnail
-import com.ando.file.compress.ImageCompressor
+import ando.file.core.*
+import ando.file.compressor.ImageCompressPredicate
+import ando.file.compressor.OnImageCompressListener
+import ando.file.compressor.OnImageRenameListener
+import ando.file.getBitmapFromUri
+import ando.file.loadThumbnail
+import ando.file.compressor.ImageCompressor
+import ando.file.operator.selector.*
 import com.ando.file.sample.R
 import com.ando.file.sample.getPathImageCache
 import com.ando.file.sample.utils.PermissionManager
@@ -109,7 +109,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
                 override fun onError(e: Throwable?) {
                     FileLogger.e("回调 onError ${e?.message}")
-                    mTvResultError.text = mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
+                    mTvResultError.text =
+                        mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
                 }
             })
             .choose()
@@ -216,7 +217,13 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                 override fun onStart() {}
                 override fun onSuccess(uri: Uri?) {
                     val path = "$cacheDir/image/"
-                    FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
+                    FileLogger.i(
+                        "compress onSuccess  uri=$uri  path=${uri?.path}  缓存目录总大小=${
+                            FileSizeUtils.getFolderSize(
+                                File(path)
+                            )
+                        }"
+                    )
 
                     /*
                     uri=content://com.ando.file.sample.fileProvider/ando_file_repo/temp/image/5ikt5v3j7joe8r472odg6b297a

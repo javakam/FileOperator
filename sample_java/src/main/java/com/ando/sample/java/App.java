@@ -1,6 +1,8 @@
 package com.ando.sample.java;
 
-import com.ando.file.FileOperator;
+
+import ando.file.BuildConfig;
+import ando.file.FileOperator;
 
 /**
  * Title:

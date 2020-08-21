@@ -4,9 +4,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
-import com.ando.file.common.FileSizeUtils.formatFileSize
-import com.ando.file.common.FileSizeUtils.getFolderSize
-import com.ando.file.common.FileUtils.deleteFileDir
+import ando.file.core.FileSizeUtils.formatFileSize
+import ando.file.core.FileSizeUtils.getFolderSize
+import ando.file.core.FileUtils.deleteFileDir
 import java.io.File
 
 /**

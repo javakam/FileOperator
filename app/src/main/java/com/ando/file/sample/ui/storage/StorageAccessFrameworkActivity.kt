@@ -12,9 +12,10 @@ import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
-import com.ando.file.*
-import com.ando.file.common.*
-import com.ando.file.data.BaseMediaColumnsData
+import ando.file.core.*
+import ando.file.*
+import ando.file.data.BaseMediaColumnsData
+import ando.file.selectSingleImage
 import com.ando.file.sample.R
 import kotlinx.android.synthetic.main.activity_storage_access_framework.*
 import java.io.*
@@ -112,7 +113,8 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             dumpMetaData(uri) { displayName: String?, size: String? ->
                                 runOnUiThread {
-                                    createFileUriTv.text = "👉$msg \n👉 Uri : $uri \n 文件名称 ：$displayName \n Size：$size B"
+                                    createFileUriTv.text =
+                                        "👉$msg \n👉 Uri : $uri \n 文件名称 ：$displayName \n Size：$size B"
                                 }
                             }
                         }
@@ -184,7 +186,8 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     dumpMetaData(uri) { displayName: String?, size: String? ->
                         runOnUiThread {
-                            createFileUriTv.text = "👉 Uri : $uri \n 文件名称 ：$displayName \n Size：$size B"
+                            createFileUriTv.text =
+                                "👉 Uri : $uri \n 文件名称 ：$displayName \n Size：$size B"
                         }
                     }
                 } else {
@@ -232,14 +235,15 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
                 // use{} lets the document provider know you're done by automatically closing the stream
                 FileOutputStream(it.fileDescriptor).use { fos ->
                     fos.write(
-                            ("Overwritten by MyCloud at ${System.currentTimeMillis()}\n").toByteArray()
+                        ("Overwritten by MyCloud at ${System.currentTimeMillis()}\n").toByteArray()
                     )
                     fos.flush()
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         readTextFromUri(uri) { content ->
                             dumpMetaData(uri) { displayName: String?, size: String? ->
-                                val editResult = "👉编辑成功 \n👉 Uri : $uri \n 文件名称 ：$displayName \n Size：$size B \n 内容: $content"
+                                val editResult =
+                                    "👉编辑成功 \n👉 Uri : $uri \n 文件名称 ：$displayName \n Size：$size B \n 内容: $content"
                                 FileLogger.d(editResult)
                                 runOnUiThread {
                                     createFileUriTv.text = editResult

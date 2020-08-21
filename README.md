@@ -12,7 +12,7 @@
 ## Gradle:
 
 ```
-implementation 'com.ando.file:FileOperator:0.9.1'
+implementation 'ando.file:FileOperator:0.9.1'
 ```
 
 > 然后在`Application`中初始化:
@@ -234,7 +234,7 @@ mFileSelector = FileSelector
     })
     .choose()
 ```
-### 4.压缩图片 [ImageCompressor.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/compress/ImageCompressor.kt)
+### 4.压缩图片 [ImageCompressor.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_compressor/src/main/java/com/ando/compress/ImageCompressor.kt)
 ```
 //T 为 String.filePath / Uri / File
 fun <T> compressImage(photos: List<T>) {
@@ -297,13 +297,13 @@ fun <T> compressImage(photos: List<T>) {
 
 ## 直接使用静态方法
 
-### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileMimeType.kt)
+### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileMimeType.kt)
 
-### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileSizeUtils.kt)
+### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileSizeUtils.kt)
 
-### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileOpener.kt)
+### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileOpener.kt)
 
-### 4. 获取文件Uri/Path👉[FileUri.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileUri.kt)
+### 4. 获取文件Uri/Path👉[FileUri.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileUri.kt)
 
 - 从File路径中获取 Uri
 
@@ -339,7 +339,7 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 }
 ```
 
-### 5. 通用文件工具类👉[FileUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_file_core/src/main/java/com/ando/file/common/FileUtils.kt)
+### 5. 通用文件工具类👉[FileUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileUtils.kt)
 - getExtension 获取文件后缀 `jpg`
 - getExtensionFull 获取文件后缀 `.jpg`
 - getExtensionFromUri(uri: Uri?) 获取文件后缀 

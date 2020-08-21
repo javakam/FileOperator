@@ -60,8 +60,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation project(':library_file_core')
-    //implementation project(':library_file_downloader')
+    implementation project(':library')
+    implementation project(':library_operator')
+    implementation project(':library_compressor')
+    //implementation project(':library_downloader')
 
     implementation 'com.ando.string:StringExpandUtils:1.0.0'
     implementation 'com.github.bumptech.glide:glide:4.11.0'

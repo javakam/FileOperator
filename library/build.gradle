@@ -1,0 +1,63 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.novoda.bintray-release'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+    buildTypes {
+        debug {}
+        stage {}
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    // For Kotlin projects
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+}
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+    testImplementation 'junit:junit:4.13'
+
+    compileOnly 'androidx.core:core-ktx:1.3.1'
+    compileOnly 'androidx.appcompat:appcompat:1.2.0'
+    compileOnly 'androidx.annotation:annotation:1.1.0'
+    compileOnly 'androidx.documentfile:documentfile:1.0.1'
+
+}
+
+
+publish {
+    repoName = 'maven'
+    userOrg = 'javakam'
+    groupId = 'ando.file'
+    artifactId = 'FileOperator'
+    uploadName = 'core'
+    publishVersion = '1.0.0'
+    desc = 'Ando File Helper Core Library.'
+    website = "https://github.com/javakam/${rootProject.name}"
+}

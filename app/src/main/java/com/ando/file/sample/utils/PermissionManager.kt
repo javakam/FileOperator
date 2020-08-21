@@ -11,7 +11,7 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.ando.file.common.FileLogger
+import ando.file.core.FileLogger
 
 /**
  * <pre>

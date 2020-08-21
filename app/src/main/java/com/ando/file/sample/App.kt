@@ -2,9 +2,9 @@ package com.ando.file.sample
 
 import android.app.Application
 import android.content.Context
-import com.ando.file.BuildConfig
-import com.ando.file.FileOperator
-import com.ando.file.common.getExternalFilesDirDOCUMENTS
+import ando.file.BuildConfig
+import ando.file.FileOperator
+import ando.file.core.getExternalFilesDirDOCUMENTS
 import com.ando.file.sample.utils.CrashHandler
 
 /**

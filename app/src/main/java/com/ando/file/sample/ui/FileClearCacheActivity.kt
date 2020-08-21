@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ando.file.common.FileSizeUtils
-import com.ando.file.common.FileLogger
+import ando.file.core.FileSizeUtils
+import ando.file.core.FileLogger
 import com.ando.file.sample.R
 import kotlinx.android.synthetic.main.activity_file_clear_cache.*
 import java.io.File

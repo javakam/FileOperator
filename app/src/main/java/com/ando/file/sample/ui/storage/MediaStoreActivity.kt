@@ -23,9 +23,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ando.file.*
-import com.ando.file.common.*
-import com.ando.file.data.MediaStoreImage
+import ando.file.*
+import ando.file.core.*
+import ando.file.data.MediaStoreImage
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.PermissionManager.havePermissions

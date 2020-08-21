@@ -7,10 +7,10 @@ import android.os.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
-import com.ando.file.common.getUriByFile
-import com.ando.file.common.FileLogger
-import com.ando.file.createFileInAppSpecific
-import com.ando.file.readTextFromUri
+import ando.file.core.getUriByFile
+import ando.file.core.FileLogger
+import ando.file.createFileInAppSpecific
+import ando.file.readTextFromUri
 import com.ando.file.sample.R
 import kotlinx.android.synthetic.main.activity_app_specific.*
 import java.io.File

@@ -5,10 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import com.ando.file.FileOperator.getContext
-import com.ando.file.common.getUriByPath
-import com.ando.file.common.FileLogger.e
-import com.ando.file.common.getFilePathByUri
+import ando.file.FileOperator.getContext
+import ando.file.core.getUriByPath
+import ando.file.core.FileLogger.e
+import ando.file.core.getFilePathByUri
 import java.io.*
 
 /**

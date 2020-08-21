@@ -1,6 +1,7 @@
 package com.ando.sample.java;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -15,22 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
-import com.ando.file.common.FileLogger;
-import com.ando.file.common.FileSizeUtils;
-import com.ando.file.common.FileType;
-import com.ando.file.common.FileUtils;
-import com.ando.file.compress.ImageCompressPredicate;
-import com.ando.file.compress.ImageCompressor;
-import com.ando.file.compress.OnImageCompressListener;
-import com.ando.file.compress.OnImageRenameListener;
-import com.ando.file.selector.FileSelectCallBack;
-import com.ando.file.selector.FileSelectCondition;
-import com.ando.file.selector.FileSelectOptions;
-import com.ando.file.selector.FileSelectResult;
-import com.ando.file.selector.FileSelector;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,9 +26,23 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ando.file.FileOperatorQKt.getBitmapFromUri;
-import static com.ando.file.FileOperatorQKt.loadThumbnail;
-import static com.ando.file.common.FileUriKt.getFilePathByUri;
+import ando.file.compressor.ImageCompressPredicate;
+import ando.file.compressor.ImageCompressor;
+import ando.file.compressor.OnImageCompressListener;
+import ando.file.compressor.OnImageRenameListener;
+import ando.file.core.FileLogger;
+import ando.file.core.FileSizeUtils;
+import ando.file.core.FileType;
+import ando.file.core.FileUtils;
+import ando.file.operator.selector.FileSelectCallBack;
+import ando.file.operator.selector.FileSelectCondition;
+import ando.file.operator.selector.FileSelectOptions;
+import ando.file.operator.selector.FileSelectResult;
+import ando.file.operator.selector.FileSelector;
+
+import static ando.file.FileOperatorQKt.getBitmapFromUri;
+import static ando.file.FileOperatorQKt.loadThumbnail;
+import static ando.file.core.FileUriKt.getFilePathByUri;
 
 /**
  * Title:MainActivity
@@ -53,7 +53,7 @@ import static com.ando.file.common.FileUriKt.getFilePathByUri;
  * @author javakam
  * @date 2020/8/6 16:42
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private static final int REQUEST_CHOOSE_FILE = 10;
     private FileSelector mFileSelector;
@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 21);
 

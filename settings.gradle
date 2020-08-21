@@ -1,7 +1,9 @@
+include ':library_operator'
+include ':library_compressor'
 include ':sample_java'
 rootProject.name='FileOperator'
 include ':app'
-include ':library_file_core'
+include ':library'
 
 // 配合 com.liulishuo.okdownload 做文件下载
 //include ':library_file_downloader'
