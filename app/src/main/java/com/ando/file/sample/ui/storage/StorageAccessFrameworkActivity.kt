@@ -1,5 +1,6 @@
 package com.ando.file.sample.ui.storage
 
+import ando.file.androidq.*
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
@@ -13,15 +14,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import ando.file.core.*
-import ando.file.*
-import ando.file.data.BaseMediaColumnsData
-import ando.file.selectSingleImage
+import ando.file.androidq.BaseMediaColumnsData
 import com.ando.file.sample.R
 import kotlinx.android.synthetic.main.activity_storage_access_framework.*
 import java.io.*
 
 class StorageAccessFrameworkActivity : AppCompatActivity() {
-    private val TAG = "123"
+
     private var mCreateFile: BaseMediaColumnsData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -156,6 +155,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     @SuppressLint("SetTextI18n")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -215,6 +215,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
     /**
      * 通过Uri获取Bitmap
      */
+    @Suppress("DEPRECATION")
     internal inner class GetBitmapFromUriAsyncTask : AsyncTask<Uri, Void, Bitmap>() {
         override fun doInBackground(vararg params: Uri): Bitmap? {
             val uri = params[0]

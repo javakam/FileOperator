@@ -1,5 +1,6 @@
 package com.ando.file.sample.ui.storage
 
+import ando.file.androidq.*
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -23,9 +24,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ando.file.*
 import ando.file.core.*
-import ando.file.data.MediaStoreImage
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.PermissionManager.havePermissions
@@ -170,11 +169,12 @@ class MediaStoreActivity : AppCompatActivity() {
 //            val images = queryMediaStoreImages()
 
             //条件查询
-            val projection = arrayOf(
-                MediaStore.Images.Media._ID,
-                MediaStore.Images.Media.DISPLAY_NAME,
-                MediaStore.Images.Media.DATE_ADDED
-            )
+//            val projection = arrayOf(
+//                MediaStore.Images.Media._ID,
+//                MediaStore.Images.Media.DISPLAY_NAME,
+//                MediaStore.Images.Media.DATE_ADDED
+//            )
+
             //
             val queryStatement = buildQuerySelectionStatement(
                 MEDIA_TYPE_IMAGE, null, null,
@@ -278,6 +278,7 @@ class MediaStoreActivity : AppCompatActivity() {
                 } catch (e1: RecoverableSecurityException) {
                     //e1.printStackTrace()
                     try {
+                        @Suppress("DEPRECATION")
                         startIntentSenderForResult(
                             e1.userAction.actionIntent.intentSender,
                             REQUEST_CODE_SENDER,
@@ -355,7 +356,6 @@ class MediaStoreActivity : AppCompatActivity() {
 
                 PermissionManager.handleRequestPermissionsResult(
                     this,
-                    requestCode,
                     permissions,
                     grantResults
                 ) { result: Boolean, showRationale: Boolean ->
@@ -405,6 +405,7 @@ class MediaStoreActivity : AppCompatActivity() {
             .show()
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_SENDER) {

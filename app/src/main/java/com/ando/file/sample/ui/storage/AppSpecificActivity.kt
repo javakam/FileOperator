@@ -9,8 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import ando.file.core.getUriByFile
 import ando.file.core.FileLogger
-import ando.file.createFileInAppSpecific
-import ando.file.readTextFromUri
+import ando.file.androidq.createFileInAppSpecific
+import ando.file.androidq.readTextFromUri
 import com.ando.file.sample.R
 import kotlinx.android.synthetic.main.activity_app_specific.*
 import java.io.File

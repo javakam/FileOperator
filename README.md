@@ -12,6 +12,12 @@
 ## Gradle:
 
 ```
+implementation 'ando.file:file-core:1.0.0' //核心库必选
+
+```
+
+Deprecated
+```
 implementation 'ando.file:FileOperator:0.9.1'
 ```
 
@@ -69,7 +75,7 @@ mFileSelector = FileSelector
     //优先使用 FileOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
         override fun accept(fileType: FileType, uri: Uri?): Boolean {
-            when (fileType) {
+           return when (fileType) {
                 FileType.IMAGE -> {
                     return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
@@ -77,7 +83,6 @@ mFileSelector = FileSelector
                 FileType.AUDIO -> true
                 else -> true
             }
-            return true
         }
     })
     .callback(object : FileSelectCallBack {
@@ -127,7 +132,7 @@ mFileSelector = FileSelector
     //优先使用 FileOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
         override fun accept(fileType: FileType, uri: Uri?): Boolean {
-            when (fileType) {
+           return when (fileType) {
                 FileType.IMAGE -> {
                     return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
@@ -135,7 +140,6 @@ mFileSelector = FileSelector
                 FileType.AUDIO -> true
                 else -> true
             }
-            return true
         }
     })
     .callback(object : FileSelectCallBack {
@@ -209,7 +213,7 @@ mFileSelector = FileSelector
     // 优先使用 FileOptions 中设置的 FileSelectCondition , 没有的情况下才使用通用的
     .filter(object : FileSelectCondition {
         override fun accept(fileType: FileType, uri: Uri?): Boolean {
-            when (fileType) {
+           return when (fileType) {
                 FileType.IMAGE -> {
                     return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
@@ -217,7 +221,6 @@ mFileSelector = FileSelector
                 FileType.AUDIO -> true
                 else -> true
             }
-            return true
         }
     })
     .callback(object : FileSelectCallBack {

@@ -276,7 +276,7 @@ object Base64Utils {
     @Throws(IOException::class)
     private fun readBytes(file: File?): ByteArray? {
         val baos = ByteArrayOutputStream()
-        var b: ByteArray? = null
+        val b: ByteArray?
         var fis: InputStream? = null
         var ins: InputStream? = null
         try {

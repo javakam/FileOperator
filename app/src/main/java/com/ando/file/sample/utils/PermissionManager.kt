@@ -143,7 +143,6 @@ object PermissionManager {
 
     fun handleRequestPermissionsResult(
         activity: Activity,
-        requestCode: Int,
         permissions: Array<String>,
         grantResults: IntArray,
         block: (result: Boolean, showRationale: Boolean) -> Unit

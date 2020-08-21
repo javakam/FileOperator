@@ -1,4 +1,4 @@
-package ando.file.operator.selector
+package ando.file.operator
 
 import android.content.Context
 import android.content.Intent

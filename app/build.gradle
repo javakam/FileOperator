@@ -42,6 +42,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    packagingOptions {
+        exclude 'META-INF/*.kotlin_module'
+    }
 }
 
 dependencies {
@@ -61,6 +64,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(':library')
+    implementation project(':library_android_q')
     implementation project(':library_operator')
     implementation project(':library_compressor')
     //implementation project(':library_downloader')

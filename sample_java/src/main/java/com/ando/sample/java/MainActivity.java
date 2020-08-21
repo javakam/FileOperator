@@ -34,14 +34,14 @@ import ando.file.core.FileLogger;
 import ando.file.core.FileSizeUtils;
 import ando.file.core.FileType;
 import ando.file.core.FileUtils;
-import ando.file.operator.selector.FileSelectCallBack;
-import ando.file.operator.selector.FileSelectCondition;
-import ando.file.operator.selector.FileSelectOptions;
-import ando.file.operator.selector.FileSelectResult;
-import ando.file.operator.selector.FileSelector;
+import ando.file.operator.FileSelectCallBack;
+import ando.file.operator.FileSelectCondition;
+import ando.file.operator.FileSelectOptions;
+import ando.file.operator.FileSelectResult;
+import ando.file.operator.FileSelector;
 
-import static ando.file.FileOperatorQKt.getBitmapFromUri;
-import static ando.file.FileOperatorQKt.loadThumbnail;
+import static ando.file.androidq.FileOperatorQKt.getBitmapFromUri;
+import static ando.file.androidq.FileOperatorQKt.loadThumbnail;
 import static ando.file.core.FileUriKt.getFilePathByUri;
 
 /**

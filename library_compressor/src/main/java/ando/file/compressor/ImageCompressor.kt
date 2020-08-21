@@ -68,11 +68,11 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
             val iterator = it.iterator()
             while (iterator.hasNext()) {
                 val path = iterator.next()
+                @Suppress("DEPRECATION")
                 AsyncTask.execute {
                     try {
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_START))
-                        val result = compress(context, path)
-                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_SUCCESS, result))
+                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_SUCCESS,  compress(context, path)))
                     } catch (e: IOException) {
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_ERROR, e))
                     }

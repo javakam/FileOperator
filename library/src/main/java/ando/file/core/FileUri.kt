@@ -79,6 +79,7 @@ fun getDownloadCacheDirectory(): File = Environment.getDownloadCacheDirectory()
 /**
  * Media File[]
  */
+@Suppress("DEPRECATION")
 fun getExternalMediaDirs(): Array<File> = FileOperator.getContext().externalMediaDirs
 
 /**
@@ -313,6 +314,7 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 
 private fun getPathKitkat(context: Context, contentUri: Uri): String? =
     context.contentResolver.query(contentUri, null, null, null, null).use { c ->
+        @Suppress("DEPRECATION")
         val column = MediaStore.Files.FileColumns.DATA
         return if (null != c && c.moveToFirst()) c.getString(c.getColumnIndex(column)) else null
     }
@@ -357,9 +359,11 @@ private fun getPath(context: Context, uri: Uri?): String? {
             val split = docId.split(":").toTypedArray()
             val type = split[0]
             if ("primary".equals(type, ignoreCase = true)) {
+                @Suppress("DEPRECATION")
                 return Environment.getExternalStorageDirectory()
                     .toString() + File.separator + split[1]
             } else if ("home".equals(type, ignoreCase = true)) {
+                @Suppress("DEPRECATION")
                 return Environment.getExternalStorageDirectory()
                     .toString() + File.separator + "documents" + File.separator + split[1]
             }
@@ -439,8 +443,9 @@ private fun getDataColumn(
     context: Context,
     uri: Uri?,
     selection: String?,
-    selectionArgs: Array<String>?
+    selectionArgs: Array<String>?,
 ): String? {
+    @Suppress("DEPRECATION")
     val column = MediaStore.Files.FileColumns.DATA
     val projection = arrayOf(column)
     context.contentResolver.query(

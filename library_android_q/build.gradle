@@ -23,7 +23,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -51,17 +50,19 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    //implementation project(':library')
-    implementation 'ando.file:file-core:1.0.0'
+    implementation project(':library')
+   // implementation 'ando.file:file-core:1.0.0'
+
+    implementation 'androidx.documentfile:documentfile:1.0.1'
 }
 
 //publish {
 //    repoName = 'maven'
 //    userOrg = 'javakam'
 //    groupId = 'ando.file'
-//    artifactId = 'file-operator'
+//    artifactId = 'file-android-q'
 //    publishVersion = '1.0.0'
-//    desc = 'Ando File Helper Operator.'
+//    desc = 'Ando File Helper Android Q.'
 //    website = "https://github.com/javakam/${rootProject.name}"
-//    //dryRun = true
+//    //dryRun = false
 //}

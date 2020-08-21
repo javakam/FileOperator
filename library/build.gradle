@@ -38,6 +38,10 @@ android {
         jvmTarget = "1.8"
     }
 
+    // More than one file was found with OS independent path 'META-INF/library_release.kotlin_module'
+    packagingOptions {
+        exclude 'META-INF/*.kotlin_module'
+    }
 }
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
@@ -50,14 +54,14 @@ dependencies {
 
 }
 
-
+//https://github.com/novoda/bintray-release/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3HOME
 publish {
     repoName = 'maven'
     userOrg = 'javakam'
     groupId = 'ando.file'
-    artifactId = 'FileOperator'
-    uploadName = 'core'
+    artifactId = 'file-core'
     publishVersion = '1.0.0'
     desc = 'Ando File Helper Core Library.'
     website = "https://github.com/javakam/${rootProject.name}"
+    //dryRun = true
 }

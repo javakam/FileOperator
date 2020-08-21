@@ -1,4 +1,4 @@
-package ando.file.operator.selector
+package ando.file.operator
 
 import ando.file.core.FileType
 import android.app.Activity

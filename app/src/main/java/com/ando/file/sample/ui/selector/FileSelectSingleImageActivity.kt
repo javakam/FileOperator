@@ -12,10 +12,10 @@ import ando.file.core.*
 import ando.file.compressor.ImageCompressPredicate
 import ando.file.compressor.OnImageCompressListener
 import ando.file.compressor.OnImageRenameListener
-import ando.file.getBitmapFromUri
-import ando.file.loadThumbnail
+import ando.file.androidq.getBitmapFromUri
+import ando.file.androidq.loadThumbnail
 import ando.file.compressor.ImageCompressor
-import ando.file.operator.selector.*
+import ando.file.operator.*
 import com.ando.file.sample.R
 import com.ando.file.sample.getPathImageCache
 import com.ando.file.sample.utils.PermissionManager
@@ -33,6 +33,7 @@ import java.security.NoSuchAlgorithmException
  * @author javakam
  * @date 2020/5/19  16:04
  */
+@Suppress("UNUSED_PARAMETER")
 @SuppressLint("SetTextI18n")
 class FileSelectSingleImageActivity : AppCompatActivity() {
 
@@ -86,15 +87,12 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             //优先使用 FileOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    when (fileType) {
-                        FileType.IMAGE -> {
-                            return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                        }
+                    return when (fileType) {
+                        FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                         FileType.VIDEO -> true
                         FileType.AUDIO -> true
                         else -> true
                     }
-                    return true
                 }
             })
             .callback(object : FileSelectCallBack {
@@ -159,6 +157,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 

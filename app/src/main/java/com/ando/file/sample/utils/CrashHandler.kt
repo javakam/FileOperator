@@ -64,6 +64,8 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
         return true
     }
 
+
+    @Suppress("DEPRECATION")
     private fun collectDeviceInfo(context: Context): String {
         var packageInfo: PackageInfo? = null
         try {

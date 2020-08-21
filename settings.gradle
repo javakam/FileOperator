@@ -1,7 +1,9 @@
+rootProject.name='FileOperator'
+
+include ':library_android_q'
 include ':library_operator'
 include ':library_compressor'
 include ':sample_java'
-rootProject.name='FileOperator'
 include ':app'
 include ':library'
 

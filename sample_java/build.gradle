@@ -20,6 +20,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/*.kotlin_module'
+    }
 }
 
 dependencies {
@@ -34,6 +38,7 @@ dependencies {
 //    implementation 'androidx.appcompat:appcompat:1.1.0'
 
     implementation project(':library')
+    implementation project(':library_android_q')
     implementation project(':library_operator')
     implementation project(':library_compressor')
 

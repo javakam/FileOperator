@@ -1,4 +1,4 @@
-package ando.file
+package ando.file.androidq
 
 import android.Manifest.permission.ACCESS_MEDIA_LOCATION
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -21,12 +21,9 @@ import androidx.core.content.edit
 import androidx.documentfile.provider.DocumentFile
 import ando.file.FileOperator.getContext
 import ando.file.core.*
-import ando.file.data.MediaStoreImage
-import ando.file.data.MediaStoreVideo
 import java.io.*
 import java.util.*
 import java.util.concurrent.TimeUnit
-
 
 /**
  * Title: FileOperatorQ
@@ -38,9 +35,8 @@ import java.util.concurrent.TimeUnit
  */
 
 //todo 2020年5月28日 17:14:02 测试该方法
-fun getAppSpecificAlbumStorageDir(context: Context, albumName: String): File? {
-    // Get the pictures directory that's inside the app-specific directory on
-    // external storage.
+private fun getAppSpecificAlbumStorageDir(context: Context, albumName: String): File? {
+    // Get the pictures directory that's inside the app-specific directory on  external storage.
     val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), albumName)
     if (!file.exists() && !file.mkdirs()) {
         FileLogger.e("Directory not created")
@@ -67,22 +63,15 @@ fun getAppSpecificAlbumStorageDir(context: Context, albumName: String): File? {
  *      {@link android.os.Environment#DIRECTORY_PICTURES}, or
  *      {@link android.os.Environment#DIRECTORY_MOVIES}.
  */
-fun createFileInAppSpecific(
-    type: String,
-    displayName: String?,
-    text: String?,
-    block: (file: File?) -> Unit
-) {
+fun createFileInAppSpecific(type: String, displayName: String?, text: String?, block: (file: File?) -> Unit) {
     // val fileDir = getContext().getExternalFilesDirs(type)
     // 或者
     val fileDir = getContext().getExternalFilesDir(type)
     if (fileDir != null && fileDir.exists()) {
         try {
-            val newFile = File(
-                fileDir.absolutePath,
-                if (displayName == null || displayName.isBlank()) SystemClock.currentThreadTimeMillis()
-                    .toString() else displayName
-            )
+            val newFile = File(fileDir.absolutePath,
+                if (displayName == null || displayName.isBlank()) SystemClock.currentThreadTimeMillis().toString() else displayName)
+
             FileOutputStream(newFile).use {
                 it.write((if (text == null || text.isBlank()) "" else text).toByteArray(Charsets.UTF_8))
                 it.flush()
@@ -114,12 +103,8 @@ fun createFileInAppSpecific(
  * @param isPending 默认0 , 0是可见，其他不可见
  */
 fun createContentValues(
-    displayName: String? = null,
-    description: String? = null,
-    mimeType: String? = null,
-    title: String? = null,
-    relativePath: String? = null,
-    isPending: Int? = 1
+    displayName: String? = null, description: String? = null, mimeType: String? = null, title: String? = null,
+    relativePath: String? = null, isPending: Int? = 1,
 ): ContentValues {
     return ContentValues().apply {
         put(MediaStore.Images.Media.DISPLAY_NAME, displayName)
@@ -162,7 +147,7 @@ fun insertMediaFile(
     description: String?,
     saveFileName: String?,
     saveSecondaryDir: String?,
-    savePrimaryDir: String?
+    savePrimaryDir: String?,
 ): String? {
     val values = ContentValues()
     values.put(MediaStore.Images.Media.DISPLAY_NAME, displayName)
@@ -170,25 +155,20 @@ fun insertMediaFile(
     values.put(MediaStore.Images.Media.MIME_TYPE, mimeType)
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        values.put(
-            MediaStore.Images.Media.RELATIVE_PATH,
-            savePrimaryDir + File.separator + saveSecondaryDir
-        )
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, savePrimaryDir + File.separator + saveSecondaryDir)
     }
 //    else {
 //        values.put(MediaStore.Images.Media.PRIMARY_DIRECTORY, savePrimaryDir)
 //        values.put(MediaStore.Images.Media.SECONDARY_DIRECTORY, saveSecondaryDir)
 //    }
-
     var url: Uri? = null
     var stringUrl: String? = null /* value to be returned */
     val cr = context.contentResolver
     try {
         if (uri == null || saveFileName.isNullOrBlank()) return null
-
         url = cr.insert(uri, values) ?: return null
-
         val buffer = ByteArray(1024)
+
         val pfd = openFileDescriptor(uri, MODE_WRITE_ONLY_ERASING)
         if (pfd != null) {
             val fos = FileOutputStream(pfd.fileDescriptor)
@@ -230,10 +210,7 @@ fun insertMediaFile(
  *      at android.content.ContentResolver.insert(ContentResolver.java:1844)
  * </pre>
  */
-fun insertBitmap(
-    bitmap: Bitmap?,
-    values: ContentValues
-): Uri? {
+fun insertBitmap(bitmap: Bitmap?, values: ContentValues): Uri? {
     val externalUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
     val resolver = getContext().contentResolver
@@ -271,7 +248,7 @@ fun insertBitmap(
 }
 
 //todo 2020年5月28日 17:14:02 测试该方法
-fun insertAudio(displayName: String?) {
+private fun insertAudio(displayName: String?) {
     val resolver = getContext().contentResolver
 
     //https://developer.android.google.cn/training/data-storage/shared/media#kotlin
@@ -292,10 +269,9 @@ fun insertAudio(displayName: String?) {
     val songContentUri = resolver.insert(audioCollection, songDetails)
 
     songContentUri?.let {
-        resolver.openFileDescriptor(songContentUri, "w", null).use { pfd ->
+        resolver.openFileDescriptor(songContentUri, "w", null).use {
             // Write data into the pending audio file.
         }
-
         // Now that we're finished, release the "pending" status, and allow other apps
         // to play the audio track.
         songDetails.clear()
@@ -316,7 +292,7 @@ fun buildQuerySelectionStatement(
     mimeType: String?,
     title: String?,
     relativePath: String?,
-    isFuzzy: Boolean
+    isFuzzy: Boolean,
 ): QuerySelectionStatement {
     val symbol = if (isFuzzy) " like " else " = "
     val selection = StringBuilder()
@@ -333,8 +309,7 @@ fun buildQuerySelectionStatement(
         selectionArgs.add(noNull(displayName))
         needAddPre = true
     }
-    //MediaStore.Audio 没有 DESCRIPTION 字段
-    if (isNotBlank(description) && mediaType != MEDIA_TYPE_AUDIO) {
+    if (isNotBlank(description) && mediaType != MEDIA_TYPE_AUDIO) {// MediaStore.Audio 没有 DESCRIPTION 字段
         val columnDescription: String? = when (mediaType) {
             MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.DESCRIPTION
             else -> MediaStore.Images.Media.DESCRIPTION
@@ -383,12 +358,12 @@ fun buildQuerySelectionStatement(
 }
 
 
-//   MediaStore.XXX.Media.EXTERNAL_CONTENT_URI
+// MediaStore.XXX.Media.EXTERNAL_CONTENT_URI
 fun getMediaCursor(
     uri: Uri,
     projectionArgs: Array<String>? = arrayOf(MediaStore.Video.Media._ID),
     sortOrder: String? = null,
-    querySelectionStatement: QuerySelectionStatement?
+    querySelectionStatement: QuerySelectionStatement?,
 ): Cursor? {
     // Need the READ_EXTERNAL_STORAGE permission if accessing video files that your app didn't create.
     return getContext().contentResolver.query(
@@ -402,18 +377,11 @@ fun getMediaCursor(
 
 @RequiresPermission(value = READ_EXTERNAL_STORAGE)
 fun testQueryMediaVideoByUri() {
-    val projectionArgs = arrayOf(
-        MediaStore.Video.Media._ID,
-        MediaStore.Video.Media.DISPLAY_NAME,
-        MediaStore.Video.Media.DURATION,
-        MediaStore.Video.Media.SIZE
-    )
-
+    val projectionArgs =
+        arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.Media.DISPLAY_NAME, MediaStore.Video.Media.DURATION, MediaStore.Video.Media.SIZE)
     // Display videos in alphabetical order based on their display name.
     val sortOrder = "${MediaStore.Video.Media.DISPLAY_NAME} ASC"
-
     val videoList = queryMediaStoreVideo(projectionArgs, sortOrder, 5L, TimeUnit.MINUTES)
-
     videoList?.let { video ->
         video.forEach {
             FileLogger.i("视频列表: $it")
@@ -426,7 +394,7 @@ fun queryMediaStoreVideo(
     projectionArgs: Array<String>? = arrayOf(MediaStore.Video.Media._ID),
     sortOrder: String? = null,
     sourceDuration: Long,
-    sourceUnit: TimeUnit
+    sourceUnit: TimeUnit,
 ): MutableList<MediaStoreVideo>? {
     // Need the READ_EXTERNAL_STORAGE permission if accessing video files that your app didn't create.
 
@@ -446,13 +414,7 @@ fun queryMediaStoreVideo(
             ).toString()
         )
     )
-
-    getMediaCursor(
-        MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-        projectionArgs,
-        sortOrder,
-        queryStatement
-    )?.use { cursor ->
+    getMediaCursor(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projectionArgs, sortOrder, queryStatement)?.use { cursor ->
         // Cache column indices.
         val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
         val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
@@ -490,19 +452,14 @@ fun queryMediaStoreVideo(
 fun queryMediaStoreImages(
     projectionArgs: Array<String>? = arrayOf(MediaStore.Images.Media._ID),
     sortOrder: String? = null,
-    querySelectionStatement: QuerySelectionStatement?
+    querySelectionStatement: QuerySelectionStatement?,
 ): MutableList<MediaStoreImage>? {
     val imageList = mutableListOf<MediaStoreImage>()
     val external = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
 
     val cursor: Cursor?
     try {
-        cursor = getMediaCursor(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            projectionArgs,
-            sortOrder,
-            querySelectionStatement
-        )
+        cursor = getMediaCursor(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projectionArgs, sortOrder, querySelectionStatement)
         FileLogger.i("Found ${cursor?.count} images")
 
         cursor?.use {
@@ -547,30 +504,14 @@ fun queryMediaStoreImages(
 }
 
 fun queryMediaStoreImages(
-    projectionArgs: Array<String>? = arrayOf(MediaStore.Images.Media._ID),
-    sortOrder: String? = null,
-    displayName: String?,
-    description: String?,
-    mimeType: String?,
-    title: String?,
-    relativePath: String?,
-    isFuzzy: Boolean
+    projectionArgs: Array<String>? = arrayOf(MediaStore.Images.Media._ID), sortOrder: String? = null, displayName: String?,
+    description: String?, mimeType: String?, title: String?, relativePath: String?, isFuzzy: Boolean,
 ): MutableList<MediaStoreImage>? {
-    val queryStatement = buildQuerySelectionStatement(
-        MEDIA_TYPE_IMAGE,
-        displayName,
-        description,
-        mimeType,
-        title,
-        relativePath,
-        isFuzzy
-    )
+    val queryStatement = buildQuerySelectionStatement(MEDIA_TYPE_IMAGE, displayName, description, mimeType, title, relativePath, isFuzzy)
     return queryMediaStoreImages(projectionArgs, sortOrder, queryStatement)
 }
 
-fun queryMediaStoreImages(displayName: String): Uri? {
-    return queryMediaStoreImages(displayName, false)
-}
+fun queryMediaStoreImages(displayName: String): Uri? = queryMediaStoreImages(displayName, false)
 
 fun queryMediaStoreImages(displayName: String, isFuzzy: Boolean): Uri? {
     val images = queryMediaStoreImages(null, null, displayName, null, null, null, null, isFuzzy)
@@ -580,17 +521,12 @@ fun queryMediaStoreImages(displayName: String, isFuzzy: Boolean): Uri? {
     return images[0].uri
 }
 
-//fun queryMediaStoreMedias(@FileMediaType mediaType: String): MutableList<MediaStoreImage>? {
-//}
-
 /**
  * 查询全部图片
  */
 fun queryMediaStoreImages(): MutableList<MediaStoreImage>? {
-    val queryStatement = buildQuerySelectionStatement(
-        MEDIA_TYPE_IMAGE, null, null,
-        null, null, null, true
-    )
+    val queryStatement = buildQuerySelectionStatement(MEDIA_TYPE_IMAGE,
+        null, null, null, null, null, true)
     return queryMediaStoreImages(null, null, queryStatement)
 }
 
@@ -620,23 +556,14 @@ const val REQUEST_CODE_SAF_CHOOSE_DOCUMENT_DIR: Int = 0x04
 /**
  * 选择一个图片文件
  */
-fun selectSingleImage(activity: Activity) {
-    selectSingleFile(activity, "image/*", REQUEST_CODE_SAF_SELECT_SINGLE_IMAGE)
-}
+fun selectSingleImage(activity: Activity) = selectSingleFile(activity, "image/*", REQUEST_CODE_SAF_SELECT_SINGLE_IMAGE)
 
 /**
  * 选择一个文件
  */
 fun selectSingleFile(activity: Activity, mimeType: String, requestCode: Int) {
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-        // Filter to only show results that can be "opened", such as a
-        // file (as opposed to a list of contacts or timezones)
         addCategory(Intent.CATEGORY_OPENABLE)
-
-        // Filter to show only images, using the image MIME data type.
-        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
-        // To search for all documents available via installed storage providers,
-        // it would be "*/*".
         type = mimeType
     }
     activity.startActivityForResult(intent, requestCode)
@@ -657,27 +584,17 @@ fun createFileSAF(
     pickerInitialUri: Uri?,
     fileName: String,
     mimeType: String,
-    requestCode: Int = REQUEST_CODE_SAF_CREATE_FILE
+    requestCode: Int = REQUEST_CODE_SAF_CREATE_FILE,
 ) {
     val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
-        // Filter to only show results that can be "opened", such as
-        // a file (as opposed to a list of contacts or timezones).
         addCategory(Intent.CATEGORY_OPENABLE)
-
-        // Create a file with the requested MIME type.
         type = mimeType
         putExtra(Intent.EXTRA_TITLE, fileName)
-
-        // Optionally, specify a URI for the directory that should be opened in
-        // the system file picker before your app creates the document.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
     }
-    activity.startActivityForResult(
-        intent,
-        if (requestCode < 1) REQUEST_CODE_SAF_CREATE_FILE else requestCode
-    )
+    activity.startActivityForResult(intent, if (requestCode < 1) REQUEST_CODE_SAF_CREATE_FILE else requestCode)
 }
 
 /**
@@ -689,18 +606,9 @@ fun createFileSAF(
  *      3.intent.setType("image/ *") 语句可做进一步过滤，从而只显示 MIME 数据类型为图像的文档。
  */
 //todo 2020年5月28日 17:14:02 测试该方法
-fun performFileSearch(activity: Activity, mimeType: String, requestCode: Int) {
-    // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
-    // browser.
+private fun performFileSearch(activity: Activity, mimeType: String, requestCode: Int) {
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-        // Filter to only show results that can be "opened", such as a
-        // file (as opposed to a list of contacts or timezones)
         addCategory(Intent.CATEGORY_OPENABLE)
-
-        // Filter to show only images, using the image MIME data type.
-        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
-        // To search for all documents available via installed storage providers,
-        // it would be "*/*".
         type = mimeType
     }
     activity.startActivityForResult(intent, requestCode)
@@ -715,13 +623,10 @@ fun performFileSearch(activity: Activity, mimeType: String, requestCode: Int) {
  *      3.intent.setType("image/ *") 语句可做进一步过滤，从而只显示 MIME 数据类型为图像的文档。
  */
 //todo 2020年5月28日 17:14:02 测试该方法
-fun openFileSAF(activity: Activity, pickerInitialUri: Uri?, mimeType: String, requestCode: Int) {
+private fun openFileSAF(activity: Activity, pickerInitialUri: Uri?, mimeType: String, requestCode: Int) {
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
         type = mimeType
-
-        // Optionally, specify a URI for the file that should appear in the
-        // system file picker when it loads.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
@@ -743,15 +648,9 @@ fun openFileSAF(activity: Activity, pickerInitialUri: Uri?, mimeType: String, re
  * </pre>
  */
 //todo 2020年5月28日 17:14:02 测试该方法
-fun openDirectorySAF(activity: Activity, pickerInitialUri: Uri?, requestCode: Int) {
-    // Choose a directory using the system's file picker.
+private fun openDirectorySAF(activity: Activity, pickerInitialUri: Uri?, requestCode: Int) {
     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-        // Provide read access to files and sub-directories in the user-selected
-        // directory.
         flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-
-        // Optionally, specify a URI for the directory that should be opened in
-        // the system file picker when it loads.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
         }
@@ -760,22 +659,16 @@ fun openDirectorySAF(activity: Activity, pickerInitialUri: Uri?, requestCode: In
 }
 
 //todo 2020年5月28日 17:14:02 测试该方法
-fun moveFileSAF(
+private fun moveFileSAF(
     sourceDocumentUri: Uri,
     sourceParentDocumentUri: Uri,
-    targetParentDocumentUri: Uri
+    targetParentDocumentUri: Uri,
 ) {
-    //Document.COLUMN_FLAGS
-    //DocumentsProvider.moveDocument(String, String, String)
+    //Document.COLUMN_FLAGS  DocumentsProvider.moveDocument(String, String, String)
     if (checkUriFlagSAF(sourceDocumentUri, DocumentsContract.Document.FLAG_SUPPORTS_MOVE)) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             try {
-                DocumentsContract.moveDocument(
-                    getContext().contentResolver,
-                    sourceDocumentUri,
-                    sourceParentDocumentUri,
-                    targetParentDocumentUri
-                )
+                DocumentsContract.moveDocument(getContext().contentResolver, sourceDocumentUri, sourceParentDocumentUri, targetParentDocumentUri)
             } catch (e: FileNotFoundException) {
                 FileLogger.e("${e.message}")
             }
@@ -819,8 +712,7 @@ private fun getInputStreamForVirtualFile(uri: Uri, mimeTypeFilter: String): Inpu
     return if (openableMimeTypes?.isNotEmpty() == true) {
         resolver.openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null)?.createInputStream()
     } else {
-        //throw FileNotFoundException()
-        FileLogger.e("文件文找到!")
+        FileLogger.e("文件文找到!")  //throw FileNotFoundException()
         null
     }
 }
@@ -832,26 +724,10 @@ private fun getInputStreamForVirtualFile(uri: Uri, mimeTypeFilter: String): Inpu
  */
 @RequiresApi(Build.VERSION_CODES.N)
 fun isVirtualFile(uri: Uri): Boolean {
-    if (!DocumentsContract.isDocumentUri(getContext(), uri)) {
-        return false
-    }
-
-    val cursor: Cursor? = getContext().contentResolver.query(
-        uri,
-        arrayOf(DocumentsContract.Document.COLUMN_FLAGS),
-        null,
-        null,
-        null
-    )
-
-    val flags: Int = cursor?.use {
-        if (cursor.moveToFirst()) {
-            cursor.getInt(0)
-        } else {
-            0
-        }
-    } ?: 0
-
+    if (!DocumentsContract.isDocumentUri(getContext(), uri)) return false
+    val cursor: Cursor? = getContext().contentResolver.query(uri, arrayOf(DocumentsContract.Document.COLUMN_FLAGS),
+        null, null, null)
+    val flags: Int = cursor?.use { if (cursor.moveToFirst()) cursor.getInt(0) else 0 } ?: 0
     return flags and DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT != 0
 }
 
@@ -867,25 +743,16 @@ fun isVirtualFile(uri: Uri): Boolean {
 fun renameFileSAF(
     uri: Uri,
     newDisplayName: String?,
-    block: (isSuccess: Boolean, msg: String) -> Unit
+    block: (isSuccess: Boolean, msg: String) -> Unit,
 ) {
     if (checkUriFlagSAF(uri, DocumentsContract.Document.FLAG_SUPPORTS_RENAME)) {
         val cursor = getContext().contentResolver.query(uri, null, null, null, null)
         try {
-            //新旧名不能相同
-            if (cursor != null && cursor.moveToFirst()) {
+            if (cursor != null && cursor.moveToFirst()) {//新旧名不能相同
                 val displayName =
                     cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                if (!displayName.equals(
-                        if (newDisplayName.isNullOrBlank()) "" else newDisplayName,
-                        true
-                    )
-                ) {
-                    DocumentsContract.renameDocument(
-                        getContext().contentResolver,
-                        uri,
-                        newDisplayName ?: ""
-                    )
+                if (!displayName.equals(if (newDisplayName.isNullOrBlank()) "" else newDisplayName, true)) {
+                    DocumentsContract.renameDocument(getContext().contentResolver, uri, newDisplayName ?: "")
                 }
                 //查看目录中是否已存在 newDisplayName 的文件 -> 涉及到获取当前目录临时权限,太麻烦了,交给外部做吧 getDocumentTree
 //                try {
@@ -907,7 +774,6 @@ fun renameFileSAF(
     block.invoke(false, "重命名失败")
 }
 
-
 /**
  * 获取目录的访问权限, 并访问文件列表
  */
@@ -915,24 +781,21 @@ fun getDocumentTreeSAF(activity: Activity, uri: Uri?, requestCode: Int): Documen
     var root: DocumentFile? = null
     if (uri != null) {
         try {
-            val takeFlags: Int =
-                activity.intent.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            val takeFlags: Int = activity.intent.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             // Check for the freshest data.
             activity.contentResolver.takePersistableUriPermission(uri, takeFlags)
-            // todo 2020年5月29日 15:08:22 activity.contentResolver.persistedUriPermissions
 
+            // todo  activity.contentResolver.persistedUriPermissions
             FileLogger.d("已经获得永久访问权限")
             root = DocumentFile.fromTreeUri(activity, uri)
             return root
         } catch (e: SecurityException) {
             FileLogger.d("uri 权限失效，调用目录获取")
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            activity.startActivityForResult(intent, requestCode)
+            activity.startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), requestCode)
         }
     } else {
         FileLogger.d("没有永久访问权限，调用目录获取")
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-        activity.startActivityForResult(intent, requestCode)
+        activity.startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), requestCode)
     }
     return root
 }
@@ -951,11 +814,9 @@ fun saveDocTreePersistablePermissionSAF(activity: Activity, uri: Uri) {
     val sp = activity.getSharedPreferences("DirPermission", Context.MODE_PRIVATE)
     sp.edit {
         this.putString("uri", uri.toString())
-        this.commit()
+        this.apply()
     }
-    val takeFlags: Int = activity.intent.flags and
-            (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-    // Check for the freshest data.
+    val takeFlags: Int = activity.intent.flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     activity.contentResolver.takePersistableUriPermission(uri, takeFlags)
 }
 
@@ -965,15 +826,12 @@ fun saveDocTreePersistablePermissionSAF(activity: Activity, uri: Uri) {
 @RequiresPermission(value = ACCESS_MEDIA_LOCATION)
 @RequiresApi(Build.VERSION_CODES.Q)
 fun getMediaLocation(uri: Uri, block: (latLong: FloatArray) -> Unit) {
-    // Get location data using the ExifInterface library.
-    // Exception occurs if ACCESS_MEDIA_LOCATION permission isn't granted.
     val photoUri = MediaStore.setRequireOriginal(uri)
     getContext().contentResolver.openInputStream(photoUri)?.use { stream ->
         ExifInterface(stream).run {
-
             val latLong: FloatArray = floatArrayOf(0F, 0F)
             // If lat/long is null, fall back to the coordinates (0, 0).
-            val latLongResult = getLatLong(latLong)
+            // val latLongResult = getLatLong(latLong)
             block.invoke(latLong)
         }
     }
@@ -981,7 +839,6 @@ fun getMediaLocation(uri: Uri, block: (latLong: FloatArray) -> Unit) {
 
 //ContentResolver
 //------------------------------------------------------------------------------------------------
-
 
 /**
  * 通过Uri获取Bitmap,耗时操作不应该在主线程
@@ -991,11 +848,10 @@ fun getMediaLocation(uri: Uri, block: (latLong: FloatArray) -> Unit) {
  * Note: You should complete this operation on a background thread, not the UI thread.
  */
 @Throws(IOException::class, IllegalStateException::class)
-fun getBitmapFromUri(uri: Uri?): Bitmap? {
-    return openFileDescriptor(uri ?: return null, MODE_READ_ONLY)?.fileDescriptor?.let {
+fun getBitmapFromUri(uri: Uri?): Bitmap? =
+    openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor?.let {
         BitmapFactory.decodeFileDescriptor(it)
     }
-}
 
 /**
  * 读取文档信息
@@ -1019,14 +875,12 @@ fun readTextFromUri(uri: Uri): String {
 fun readTextFromUri(uri: Uri, block: (result: String?) -> Unit) {
     getContext().contentResolver.openInputStream(uri)?.use { inputStream ->
         BufferedReader(InputStreamReader(inputStream)).use { reader ->
-
             val sb = StringBuilder()
             var line: String? = reader.readLine()
             while (line != null) {
                 sb.append(line)
                 line = reader.readLine()
             }
-
             block.invoke(sb.toString())
         }
     }
@@ -1036,20 +890,15 @@ fun readTextFromUri(uri: Uri, block: (result: String?) -> Unit) {
  * 编辑文档
  */
 fun writeTextToUri(uri: Uri, text: String?) {
-    if (text.isNullOrBlank()) return
-    if (!checkUriFlagSAF(uri, DocumentsContract.Document.FLAG_SUPPORTS_WRITE)) {
-        return
-    }
+    if (text.isNullOrBlank() || !checkUriFlagSAF(uri, DocumentsContract.Document.FLAG_SUPPORTS_WRITE)) return
     try {
         openFileDescriptor(uri, MODE_WRITE_ONLY_ERASING)?.use {
-            FileOutputStream(it.fileDescriptor).use { fos ->
-                fos.write(text.toByteArray())
-            }
+            FileOutputStream(it.fileDescriptor).use { fos -> fos.write(text.toByteArray()) }
         }
     } catch (e: FileNotFoundException) {
-        e.printStackTrace()
+        FileLogger.e("writeTextToUri Failed : ${e.message}")
     } catch (e: IOException) {
-        e.printStackTrace()
+        FileLogger.e("writeTextToUri Failed : ${e.message}")
     }
 }
 
@@ -1061,26 +910,12 @@ fun writeTextToUri(uri: Uri, text: String?) {
 fun loadThumbnail(uri: Uri?, width: Int, height: Int): Bitmap? {
     try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return getContext().contentResolver.loadThumbnail(
-                uri ?: return null,
-                Size(width, height),
-                null
-            )
+            return getContext().contentResolver.loadThumbnail(uri ?: return null, Size(width, height), null)
         }
     } catch (e: FileNotFoundException) {
         FileLogger.e("loadThumbnail Failed : ${e.message}")
     }
     return null
-}
-
-fun checkUriFileExit(uri: Uri?): Boolean {
-    val cursor = getContext().contentResolver.query(uri ?: return false, null, null, null, null)
-    if (cursor == null || !cursor.moveToFirst()) {
-        FileLogger.e("删除失败 -> 1.没有找到 Uri 对应的文件 ; 2.目录为空 ")
-        closeIO(cursor)
-        return false
-    }
-    return true
 }
 
 /**
@@ -1093,19 +928,11 @@ fun checkUriFileExit(uri: Uri?): Boolean {
  *       不能删除之前创建的文件,因此建议采用 SAF 方式做清空目录操作
  */
 //@RequiresPermission(allOf = [Manifest.permission.READ_EXTERNAL_STORAGE])
-fun deleteUri(
-    activity: Activity,
-    uri: Uri?,
-    where: String?,
-    selectionArgs: Array<String>?,
-    requestCode: Int
-): Boolean {
+fun deleteUri(activity: Activity, uri: Uri?, where: String?, selectionArgs: Array<String>?, requestCode: Int): Boolean {
     var delete = 0
     try {
         //删除失败 -> 重复删除同一 Uri 对应的文件!
-        if (!checkUriFileExit(uri)) {
-            return false
-        }
+        if (!checkUriFileExit(uri)) return false
 
         delete = getContext().contentResolver.delete(uri ?: return false, where, selectionArgs)
         FileLogger.d("删除结果 $uri $delete")
@@ -1117,39 +944,26 @@ fun deleteUri(
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 // In your code, handle IntentSender.SendIntentException.
-                val recoverableSecurityException =
-                    e1 as? RecoverableSecurityException ?: throw e1
-                val requestAccessIntentSender =
-                    recoverableSecurityException.userAction.actionIntent.intentSender
-
-                activity.startIntentSenderForResult(
-                    requestAccessIntentSender,
-                    requestCode,
-                    null,
-                    0,
-                    0,
-                    0,
-                    null
-                )
+                val recoverableSecurityException = e1 as? RecoverableSecurityException ?: throw e1
+                val requestAccessIntentSender = recoverableSecurityException.userAction.actionIntent.intentSender
+                activity.startIntentSenderForResult(requestAccessIntentSender, requestCode,
+                    null, 0, 0, 0, null)
             } else {
                 FileLogger.e("低于Q版本 ${e1.message} ")
             }
         } catch (e2: IntentSender.SendIntentException) {
-            e2.printStackTrace()
             FileLogger.e("delete Fail e2 $uri  ${e2.message} ")
         }
     }
     return delete != -1
 }
 
-fun deleteUri(activity: Activity, uri: Uri?, requestCode: Int): Boolean {
-    return deleteUri(activity, uri, null, null, requestCode)
-}
+fun deleteUri(activity: Activity, uri: Uri?, requestCode: Int): Boolean = deleteUri(activity, uri, null, null, requestCode)
 
 fun deleteUriDirectory(
     activity: Activity,
     requestCode: Int,
-    @FileMediaType mediaType: String
+    @FileMediaType mediaType: String,
 ): Boolean {
     val uri = when (mediaType) {
         MEDIA_TYPE_AUDIO -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
@@ -1159,19 +973,8 @@ fun deleteUriDirectory(
     return deleteUri(activity, uri, null, null, requestCode)
 }
 
-fun deleteUriMediaStoreImage(
-    activity: Activity,
-    mediaImage: MediaStoreImage,
-    requestCode: Int
-): Boolean {
-    return deleteUri(
-        activity,
-        mediaImage.uri,
-        "${MediaStore.Images.Media._ID} = ?",
-        arrayOf(mediaImage.id.toString()),
-        requestCode
-    )
-}
+fun deleteUriMediaStoreImage(activity: Activity, mediaImage: MediaStoreImage, requestCode: Int): Boolean =
+    deleteUri(activity, mediaImage.uri, "${MediaStore.Images.Media._ID} = ?", arrayOf(mediaImage.id.toString()), requestCode)
 
 // String Empty checks
 //-----------------------------------------------------------------------
@@ -1183,9 +986,7 @@ private fun noNull(any: Any?): String =
         else -> any.toString()
     }
 
-private fun isNotBlank(cs: CharSequence?): Boolean {
-    return !(cs.isNullOrBlank())
-}
+private fun isNotBlank(cs: CharSequence?): Boolean = (!(cs.isNullOrBlank()))
 
 //Dump
 //------------------------------------------------------------------------------------------------
@@ -1200,5 +1001,13 @@ fun dumpDocumentFileTree(root: DocumentFile?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             dumpMetaData(it.uri)
         }
+    }
+}
+
+private fun closeIO(io: Closeable?) {
+    try {
+        io?.close()
+    } catch (e: IOException) {
+        e.printStackTrace()
     }
 }

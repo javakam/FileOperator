@@ -1,4 +1,4 @@
-package ando.file.operator.selector
+package ando.file.operator
 
 import android.net.Uri
 import android.os.Parcel
@@ -47,6 +47,7 @@ class FileSelectResult : Parcelable {
 
     constructor()
 
+    @Suppress("UNUSED_PARAMETER")
     constructor(source: Parcel) : this(
     )
 
