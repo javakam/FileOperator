@@ -4,9 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.text.TextUtils
 import ando.file.core.FileLogger
-import ando.file.core.getExternalCacheDir
-import ando.file.core.getExternalFilesDir
-import ando.file.core.getFilesDir
+import ando.file.core.FileDirectory.getExternalCacheDir
+import ando.file.core.FileDirectory.getExternalFilesDir
+import ando.file.core.FileDirectory.getFilesDir
 import java.io.File
 
 /**

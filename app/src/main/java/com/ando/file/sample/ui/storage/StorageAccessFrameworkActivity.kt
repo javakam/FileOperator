@@ -15,6 +15,22 @@ import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import ando.file.core.*
 import ando.file.androidq.BaseMediaColumnsData
+import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_CHOOSE_DOCUMENT_DIR
+import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_CREATE_FILE
+import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_EDIT_FILE
+import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_SELECT_SINGLE_IMAGE
+import ando.file.androidq.FileOperatorQ.createFileSAF
+import ando.file.androidq.FileOperatorQ.deleteFileSAF
+import ando.file.androidq.FileOperatorQ.dumpDocumentFileTree
+import ando.file.androidq.FileOperatorQ.getBitmapFromUri
+import ando.file.androidq.FileOperatorQ.getDocumentTreeSAF
+import ando.file.androidq.FileOperatorQ.readTextFromUri
+import ando.file.androidq.FileOperatorQ.renameFileSAF
+import ando.file.androidq.FileOperatorQ.saveDocTreePersistablePermissionSAF
+import ando.file.androidq.FileOperatorQ.selectSingleImage
+import ando.file.core.FileGlobal.MODE_WRITE_ONLY_ERASING
+import ando.file.core.FileGlobal.dumpMetaData
+import ando.file.core.FileGlobal.openFileDescriptor
 import com.ando.file.sample.R
 import kotlinx.android.synthetic.main.activity_storage_access_framework.*
 import java.io.*
@@ -128,7 +144,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
 
     private fun editDocument() {
         editDocumentBtn.setOnClickListener {
-            selectSingleFile(this, "text/plain", REQUEST_CODE_SAF_EDIT_FILE)
+            FileOperatorQ.selectSingleFile(this, "text/plain", REQUEST_CODE_SAF_EDIT_FILE)
         }
     }
 

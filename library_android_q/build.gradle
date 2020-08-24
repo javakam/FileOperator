@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-//apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 30
@@ -51,18 +51,18 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation project(':library')
-   // implementation 'ando.file:file-core:1.0.0'
+    //implementation 'ando.file:file-core:1.0.0'
 
     implementation 'androidx.documentfile:documentfile:1.0.1'
 }
 
-//publish {
-//    repoName = 'maven'
-//    userOrg = 'javakam'
-//    groupId = 'ando.file'
-//    artifactId = 'file-android-q'
-//    publishVersion = '1.0.0'
-//    desc = 'Ando File Helper Android Q.'
-//    website = "https://github.com/javakam/${rootProject.name}"
-//    //dryRun = false
-//}
+publish {
+    repoName = 'maven'
+    userOrg = 'javakam'
+    groupId = 'ando.file'
+    artifactId = 'android-q'
+    publishVersion = '1.0.0'
+    desc = 'Ando File Helper Compatible with Android Q.'
+    website = "https://github.com/javakam/${rootProject.name}"
+    //dryRun = false
+}

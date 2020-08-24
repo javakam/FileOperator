@@ -1,4 +1,4 @@
-package ando.file.operator
+package ando.file.selector
 
 import ando.file.core.FileType
 import android.app.Activity
@@ -8,7 +8,7 @@ import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 
 /**
- * Title:
+ * Title: FileSelectorExt
  * <p>
  * Description:
  * </p>

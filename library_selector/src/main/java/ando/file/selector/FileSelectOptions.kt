@@ -1,4 +1,4 @@
-package ando.file.operator
+package ando.file.selector
 
 import ando.file.core.FileType
 

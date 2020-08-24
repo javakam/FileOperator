@@ -7,6 +7,8 @@ import android.provider.OpenableColumns
 import android.text.TextUtils
 import ando.file.core.FileLogger.e
 import ando.file.core.FileLogger.w
+import ando.file.core.FileMimeType.getMimeType
+import ando.file.core.FileUri.getFilePathByUri
 import java.io.*
 import java.nio.channels.FileChannel
 import java.util.*

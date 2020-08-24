@@ -26,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ando.file.androidq.FileOperatorQ;
 import ando.file.compressor.ImageCompressPredicate;
 import ando.file.compressor.ImageCompressor;
 import ando.file.compressor.OnImageCompressListener;
@@ -33,16 +34,13 @@ import ando.file.compressor.OnImageRenameListener;
 import ando.file.core.FileLogger;
 import ando.file.core.FileSizeUtils;
 import ando.file.core.FileType;
+import ando.file.core.FileUri;
 import ando.file.core.FileUtils;
-import ando.file.operator.FileSelectCallBack;
-import ando.file.operator.FileSelectCondition;
-import ando.file.operator.FileSelectOptions;
-import ando.file.operator.FileSelectResult;
-import ando.file.operator.FileSelector;
-
-import static ando.file.androidq.FileOperatorQKt.getBitmapFromUri;
-import static ando.file.androidq.FileOperatorQKt.loadThumbnail;
-import static ando.file.core.FileUriKt.getFilePathByUri;
+import ando.file.selector.FileSelectCallBack;
+import ando.file.selector.FileSelectCondition;
+import ando.file.selector.FileSelectOptions;
+import ando.file.selector.FileSelectResult;
+import ando.file.selector.FileSelector;
 
 /**
  * Title:MainActivity
@@ -181,7 +179,7 @@ public class MainActivity extends Activity {
                 switch (fileType) {
                     case IMAGE:
                         try {
-                            final Bitmap bitmap = getBitmapFromUri(result.getUri());
+                            final Bitmap bitmap = FileOperatorQ.INSTANCE.getBitmapFromUri(result.getUri());
                             //原图
                             mIvOrigin.setImageBitmap(bitmap);
                             //压缩(Luban)
@@ -195,7 +193,7 @@ public class MainActivity extends Activity {
                         }
                         break;
                     case VIDEO:
-                        final Bitmap thumbnail = loadThumbnail(result.getUri(), 100, 200);
+                        final Bitmap thumbnail = FileOperatorQ.INSTANCE.loadThumbnail(result.getUri(), 100, 200);
                         if (thumbnail != null && !thumbnail.isRecycled()) {
                             mIvOrigin.setImageBitmap(thumbnail);
                         }
@@ -222,7 +220,7 @@ public class MainActivity extends Activity {
                 .filter(new ImageCompressPredicate() {
                     @Override
                     public boolean apply(Uri uri) {
-                        final String path = getFilePathByUri(uri);
+                        final String path = FileUri.INSTANCE.getFilePathByUri(uri);
                         FileLogger.INSTANCE.i("image predicate " + uri + "  " + path);
                         if (uri != null) {
                             return !TextUtils.isEmpty(path) && !path.toLowerCase().endsWith(".gif");
@@ -234,7 +232,7 @@ public class MainActivity extends Activity {
                     @Override
                     public String rename(Uri uri) {
                         try {
-                            String filePath = getFilePathByUri(uri);
+                            String filePath = FileUri.INSTANCE.getFilePathByUri(uri);
                             MessageDigest md = MessageDigest.getInstance("MD5");
                             md.update(filePath.getBytes());
                             return new BigInteger(1, md.digest()).toString(32);
@@ -277,7 +275,7 @@ public class MainActivity extends Activity {
                                     mTvResult.getText().toString(), uri, displayName, size, FileSizeUtils.INSTANCE.formatFileSize(Long.parseLong(size))));
 
                             //2.设置压缩过的图片
-                            final Bitmap bitmap = getBitmapFromUri(uri);
+                            final Bitmap bitmap = FileOperatorQ.INSTANCE.getBitmapFromUri(uri);
                             mIvCompressed.setImageBitmap(bitmap);
                         } catch (IOException e) {
                             e.printStackTrace();

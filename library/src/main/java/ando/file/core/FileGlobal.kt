@@ -1,12 +1,18 @@
 package ando.file.core
 
 import ando.file.FileOperator
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
 import androidx.annotation.IntDef
 import androidx.annotation.StringDef
+import androidx.fragment.app.Fragment
+import java.io.Closeable
+import java.io.IOException
 
 /**
  * 文件的访问模式 mode :
@@ -24,104 +30,163 @@ import androidx.annotation.StringDef
  * android.os.ParcelFileDescriptor#openInternal 👇
  * https://www.man7.org/linux/man-pages/man2/open.2.html
  */
-const val MODE_READ_ONLY = "r"
-const val MODE_WRITE_ONLY_ERASING = "w"
-const val MODE_WRITE_ONLY_APPEND = "wa"
-const val MODE_READ_WRITE_DATA = "rw"
-const val MODE_READ_WRITE_FILE = "rwt"
+internal const val PATH_SUFFIX = ".fileProvider"
+internal const val HIDDEN_PREFIX = "."
 
-@Retention(AnnotationRetention.SOURCE)
-@StringDef(value = [MODE_READ_ONLY, MODE_WRITE_ONLY_ERASING, MODE_WRITE_ONLY_APPEND, MODE_READ_WRITE_DATA, MODE_READ_WRITE_FILE])
-annotation class FileOpenMode {}
+internal fun noNull(s: String?): String = if (s.isNullOrBlank()) "" else s
 
-const val MEDIA_TYPE_IMAGE = "image"
-const val MEDIA_TYPE_AUDIO = "audio"
-const val MEDIA_TYPE_VIDEO = "video"
-
-@Retention(AnnotationRetention.SOURCE)
-@StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
-annotation class FileMediaType {}
-
-const val OVER_SIZE_LIMIT_ALL_DONT = 1                //超过限制大小全部不返回
-const val OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART = 2    //超过限制大小去掉后面相同类型文件
-
-@Retention(AnnotationRetention.SOURCE)
-@IntDef(value = [OVER_SIZE_LIMIT_ALL_DONT, OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART])
-annotation class FileOverSizeStrategy {}
-
-/**
- * eg:
- *      val queryStatement = buildQuerySelectionStatement(MEDIA_TYPE_VIDEO, null, null, null, null, null, false)
- *      queryStatement.append(
- *          "${MediaStore.Video.Media.DURATION} >= ? ",
- *          noNull(TimeUnit.MILLISECONDS.convert(sourceDuration,sourceUnit).toString())
- *      )
- */
-data class QuerySelectionStatement(
-    val selection: StringBuilder,
-    val selectionArgs: MutableList<String>,
-    val needAddPre: Boolean,
-) {
-    fun append(selectionNew: String, selectionArgsNew: String) {
-        selection.append("${if (needAddPre) " and " else " "} $selectionNew ")
-        selectionArgs.add(selectionArgsNew)
+internal fun closeIO(io: Closeable?) {
+    try {
+        io?.close()
+    } catch (e: IOException) {
+        e.printStackTrace()
     }
 }
 
-/**
- * 加载媒体 单个媒体文件 👉 ContentResolver.openFileDescriptor
- * <p>
- * 根据文件描述符选择对应的打开方式。"r"表示读，"w"表示写
- */
-fun openFileDescriptor(
-    uri: Uri?,
-    @FileOpenMode mode: String = MODE_READ_ONLY,
-    cancellationSignal: CancellationSignal? = null,
-): ParcelFileDescriptor? {
-    if (!checkUriFileExit(uri)) return null
-    return FileOperator.getContext().contentResolver.openFileDescriptor(uri ?: return null, mode, cancellationSignal)
+internal fun isActivityLive(activity: Activity?): Boolean {
+    return activity != null && !activity.isFinishing && !activity.isDestroyed
 }
 
-fun checkUriFileExit(uri: Uri?): Boolean {
-    val cursor = FileOperator.getContext().contentResolver.query(uri ?: return false, null, null, null, null)
-    if (cursor == null || !cursor.moveToFirst()) {
-        FileLogger.e("删除失败 -> 1.没有找到 Uri 对应的文件 ; 2.目录为空 ")
-        closeIO(cursor)
-        return false
+internal fun startActivity(context: Any, intent: Intent) {
+    if (context is Activity) {
+        if (isActivityLive(context)) {
+            context.startActivity(intent)
+        }
+    } else if (context is Fragment) {
+        val activity = context.activity
+        if (isActivityLive(activity)) {
+            context.startActivity(intent)
+        }
+    } else if (context is Context) {
+        (context as? Context)?.startActivity(intent)
     }
-    return true
 }
 
-//dump
-//------------------------------------------------------------------------------------------------
-
-fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) =
-    if (pfd != null) {
-        //读取成功 : 91  1519
-        FileLogger.d("读取成功 : ${pfd.fd}  大小:${pfd.statSize}B")
-    } else {
-        FileLogger.e("读取成功失败!")
-    }
-
-/**
- * 获取文档元数据
- */
-fun dumpMetaData(uri: Uri?) = dumpMetaData(uri) { _: String?, _: String? -> }
-
-fun dumpMetaData(uri: Uri?, block: (displayName: String?, size: String?) -> Unit) {
-    val cursor =
-        FileOperator.getContext().contentResolver.query(uri ?: return, null, null, null, null)
-
-    cursor?.use {
-        while (it.moveToNext()) { // moveToFirst die
-            val displayName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-
-            val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
-            val size: String = if (!it.isNull(sizeIndex)) {
-                it.getString(sizeIndex)
-            } else "Unknown"
-            block.invoke(displayName, size)
-            FileLogger.i("文件名称 ：$displayName  Size：$size B")
+internal fun startActivityForResult(context: Any, intent: Intent, requestCode: Int) {
+    if (context is Activity) {
+        if (isActivityLive(context)) {
+            context.startActivityForResult(intent, requestCode)
+        }
+    } else if (context is Fragment) {
+        val activity = context.activity
+        if (isActivityLive(activity)) {
+            context.startActivityForResult(intent, requestCode)
         }
     }
+}
+
+object FileGlobal {
+    //
+    const val MODE_READ_ONLY = "r"
+    const val MODE_WRITE_ONLY_ERASING = "w"
+    const val MODE_WRITE_ONLY_APPEND = "wa"
+    const val MODE_READ_WRITE_DATA = "rw"
+    const val MODE_READ_WRITE_FILE = "rwt"
+
+    @Retention(AnnotationRetention.SOURCE)
+    @StringDef(value = [MODE_READ_ONLY, MODE_WRITE_ONLY_ERASING, MODE_WRITE_ONLY_APPEND, MODE_READ_WRITE_DATA, MODE_READ_WRITE_FILE])
+    annotation class FileOpenMode
+
+
+    //
+    const val MEDIA_TYPE_IMAGE = "image"
+    const val MEDIA_TYPE_AUDIO = "audio"
+    const val MEDIA_TYPE_VIDEO = "video"
+
+    @Retention(AnnotationRetention.SOURCE)
+    @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
+    annotation class FileMediaType
+
+    //
+    const val OVER_SIZE_LIMIT_ALL_DONT = 1                //超过限制大小全部不返回
+    const val OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART = 2    //超过限制大小去掉后面相同类型文件
+
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(value = [OVER_SIZE_LIMIT_ALL_DONT, OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART])
+    annotation class FileOverSizeStrategy
+
+
+    /**
+     * eg:
+     *      val queryStatement = buildQuerySelectionStatement(MEDIA_TYPE_VIDEO, null, null, null, null, null, false)
+     *      queryStatement.append(
+     *          "${MediaStore.Video.Media.DURATION} >= ? ",
+     *          noNull(TimeUnit.MILLISECONDS.convert(sourceDuration,sourceUnit).toString())
+     *      )
+     */
+    data class QuerySelectionStatement(
+        val selection: StringBuilder,
+        val selectionArgs: MutableList<String>,
+        val needAddPre: Boolean,
+    ) {
+        fun append(selectionNew: String, selectionArgsNew: String) {
+            selection.append("${if (needAddPre) " and " else " "} $selectionNew ")
+            selectionArgs.add(selectionArgsNew)
+        }
+    }
+
+
+    /**
+     * 加载媒体 单个媒体文件 👉 ContentResolver.openFileDescriptor
+     * <p>
+     * 根据文件描述符选择对应的打开方式。"r"表示读，"w"表示写
+     */
+    fun openFileDescriptor(
+        uri: Uri?,
+        @FileOpenMode mode: String = MODE_READ_ONLY,
+        cancellationSignal: CancellationSignal? = null,
+    ): ParcelFileDescriptor? {
+        if (!checkUriFileExit(uri)) return null
+        return FileOperator.getContext().contentResolver.openFileDescriptor(uri ?: return null, mode, cancellationSignal)
+    }
+
+
+    /**
+     * 检查 uri 对应的文件是否存在
+     */
+    fun checkUriFileExit(uri: Uri?): Boolean {
+        val cursor = FileOperator.getContext().contentResolver.query(uri ?: return false, null, null, null, null)
+        if (cursor == null || !cursor.moveToFirst()) {
+            FileLogger.e("删除失败 -> 1.没有找到 Uri 对应的文件 ; 2.目录为空 ")
+            closeIO(cursor)
+            return false
+        }
+        return true
+    }
+
+
+    //dump
+    //------------------------------------------------------------------------------------------------
+
+    fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) =
+        if (pfd != null) {
+            //读取成功 : 91  1519
+            FileLogger.d("读取成功 : ${pfd.fd}  大小:${pfd.statSize}B")
+        } else {
+            FileLogger.e("读取成功失败!")
+        }
+
+    /**
+     * 获取文档元数据
+     */
+    fun dumpMetaData(uri: Uri?) = dumpMetaData(uri) { _: String?, _: String? -> }
+
+    fun dumpMetaData(uri: Uri?, block: (displayName: String?, size: String?) -> Unit) {
+        val cursor =
+            FileOperator.getContext().contentResolver.query(uri ?: return, null, null, null, null)
+
+        cursor?.use {
+            while (it.moveToNext()) { // moveToFirst die
+                val displayName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+
+                val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
+                val size: String = if (!it.isNull(sizeIndex)) {
+                    it.getString(sizeIndex)
+                } else "Unknown"
+                block.invoke(displayName, size)
+                FileLogger.i("文件名称 ：$displayName  Size：$size B")
+            }
+        }
+    }
+
 }

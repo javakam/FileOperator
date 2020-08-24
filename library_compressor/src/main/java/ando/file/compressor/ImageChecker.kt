@@ -1,12 +1,12 @@
 package ando.file.compressor
 
+import ando.file.core.FileGlobal.MODE_READ_ONLY
+import ando.file.core.FileGlobal.openFileDescriptor
 import android.graphics.BitmapFactory
 import android.net.Uri
 
 import ando.file.core.FileSizeUtils
 import ando.file.core.FileLogger
-import ando.file.core.MODE_READ_ONLY
-import ando.file.core.openFileDescriptor
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream

@@ -1,5 +1,7 @@
 package com.ando.file.sample.ui.selector
 
+import ando.file.androidq.FileOperatorQ.getBitmapFromUri
+import ando.file.androidq.FileOperatorQ.loadThumbnail
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -14,9 +16,12 @@ import ando.file.compressor.OnImageCompressListener
 import ando.file.compressor.OnImageRenameListener
 import ando.file.compressor.ImageCompressor
 import com.ando.file.sample.R
-import ando.file.androidq.getBitmapFromUri
-import ando.file.androidq.loadThumbnail
-import ando.file.operator.*
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_DONT
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
+import ando.file.core.FileGlobal.dumpMetaData
+import ando.file.core.FileMimeType.MIME_MEDIA
+import ando.file.core.FileUri.getFilePathByUri
+import ando.file.selector.*
 import com.ando.file.sample.getPathImageCache
 import com.ando.file.sample.utils.PermissionManager
 import kotlinx.android.synthetic.main.activity_file_operator.*

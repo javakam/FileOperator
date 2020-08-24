@@ -1,6 +1,8 @@
+> **上一篇** 👉 [Android Q & Android 11存储适配(一) 基础知识点梳理](https://juejin.im/post/6854573214447140871)
+
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href='https://bintray.com/javakam/maven/FileOperator/_latestVersion'><img src='https://api.bintray.com/packages/javakam/maven/FileOperator/images/download.svg'></a>
+<a href="https://bintray.com/javakam/maven/core/1.0.0/link"><img src="https://api.bintray.com/packages/javakam/maven/core/images/download.svg?version=1.0.0"/></a>
 
 - 🚀[FileOperator GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理Android系统文件操作
@@ -10,19 +12,25 @@
 - 🚀Java 案例 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
 
 ## Gradle:
+Project `build.gradle` :
+```
+repositories {
+    maven { url 'https://dl.bintray.com/javakam/maven' }
+}
+```
+> 推荐方式 :
 
 ```
-implementation 'ando.file:file-core:1.0.0' //核心库必选
-
+implementation 'ando.file:core:1.0.0'         //核心库必选
+implementation 'ando.file:android-q:1.0.0'    //AndroidQ & Android 11 兼容库
+implementation 'ando.file:compressor:1.0.0'   //图片压缩,核心算法采用 Luban
+implementation 'ando.file:selector:1.0.0'     //文件选择器
 ```
-
-Deprecated
+整体引入(不推荐):
 ```
 implementation 'ando.file:FileOperator:0.9.1'
 ```
-
-> 然后在`Application`中初始化:
-
+`Application`中初始化:
 ```
 FileOperator.init(this,BuildConfig.DEBUG)
 ```
@@ -69,7 +77,7 @@ mFileSelector = FileSelector
     .setMinCount(1, "至少选一个文件!")
     .setMaxCount(10, "最多选十个文件!")
     .setSingleFileMaxSize(5242880, "大小不能超过5M！") //5M 5242880 ; 100M = 104857600 KB
-    .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//
+    .setAllFilesMaxSize(10485760, "总大小不能超过10M！")
     .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同 arrayOf("video/*","audio/*","image/*") 系统提供的选择UI不一样
     .applyOptions(optionsImage)
     //优先使用 FileOptions 中设置的 FileSelectCondition
@@ -157,9 +165,10 @@ mFileSelector = FileSelector
     })
     .choose()
 ```
+
 ### 3. 多选文件
-> 🌴适用于处理复杂文件选择情形,如: 选取图片、视频文件,其中图片至少选择一张,最多选择两张,每张图片大小不超过3M,全部图片大小不超过5M ; 
-视频文件只能选择一个, 每个视频大小不超过20M,全部视频大小不超过30M。
+> 🌴适用于处理复杂文件选择情形, 如: 选取图片、视频文件,其中图片至少选择一张, 最多选择两张, 每张图片大小不超过3M, 全部图片大小不超过5M ; 
+ 视频文件只能选择一个, 每个视频大小不超过20M, 全部视频大小不超过30M 。
 
 ```
 //图片
@@ -237,7 +246,7 @@ mFileSelector = FileSelector
     })
     .choose()
 ```
-### 4.压缩图片 [ImageCompressor.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library_compressor/src/main/java/com/ando/compress/ImageCompressor.kt)
+### 4.压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
 ```
 //T 为 String.filePath / Uri / File
 fun <T> compressImage(photos: List<T>) {
@@ -300,15 +309,128 @@ fun <T> compressImage(photos: List<T>) {
 
 ## 直接使用静态方法
 
-### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileMimeType.kt)
+### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileMimeType.kt)
 
-### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileSizeUtils.kt)
+#### 根据`File Name/Path/Url`获取相应`MimeType`
+```
+fun getMimeType(str: String?): String {...}
 
-### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileOpener.kt)
+fun getMimeType(uri: Uri?): String {...}
 
-### 4. 获取文件Uri/Path👉[FileUri.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileUri.kt)
+//MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
+fun getMimeTypeSupplement(fileName: String): String {...}
+```
 
-- 从File路径中获取 Uri
+### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileSizeUtils.kt)
+#### 获取指定`文件/文件夹`大小
+```
+@Throws(Exception::class)
+fun getFolderSize(file: File?): Long {
+    var size = 0L
+    if (file == null || !file.exists()) return size
+    val files = file.listFiles()
+    if (files.isNullOrEmpty()) return size
+    for (i in files.indices) {
+        size += if (files[i].isDirectory) getFolderSize(files[i]) else getFileSize(files[i])
+    }
+    return size
+}
+```
+#### 获取文件大小
+```
+fun getFileSize(file: File?): Long{...}
+
+fun getFileSize(uri: Uri?): Long{...}
+```
+#### 自动计算指定`文件/文件夹`大小
+自动计算指定文件或指定文件夹的大小 , 返回值带 B、KB、M、GB、TB 单位的字符串
+```
+fun getFileOrDirSizeFormatted(path: String?): String {}...}
+```
+#### 格式化大小(`BigDecimal`实现)
+```
+//scale 表示 精确到小数点以后几位
+fun formatFileSize(size: Long, scale: Int): String {...}
+```
+转换文件大小,指定转换的类型:
+```
+//scale 精确到小数点以后几位
+fun formatSizeByType(size: Long, scale: Int, sizeType: FileSizeType): BigDecimal =
+        BigDecimal(size.toDouble()).divide(
+            BigDecimal(
+                when (sizeType) {
+                    SIZE_TYPE_B -> 1L
+                    SIZE_TYPE_KB -> 1024L
+                    SIZE_TYPE_MB -> 1024L * 1024L
+                    SIZE_TYPE_GB -> 1024L * 1024L * 1024L
+                    SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
+                }
+            ),
+            scale,
+            if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
+        )
+```
+
+转换文件大小带单位:
+```
+fun getFormattedSizeByType(size: Long, scale: Int, sizeType: FileSizeType): String {
+    return "${formatSizeByType(size, scale, sizeType).toPlainString()}${sizeType.unit}"
+}
+```
+
+### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileOpener.kt)
+#### 直接打开`Url`对应的系统应用
+eg: 如果url是视频地址,则直接用系统的播放器打开
+```
+fun openUrl(activity: Activity, url: String?) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(Uri.parse(url), getMimeType(url))
+        activity.startActivity(intent)
+    } catch (e: Exception) {
+        FileLogger.e("openUrl error : " + e.message)
+    }
+}
+```
+#### 根据 文件路径 和 类型(后缀判断) 显示支持该格式的程序
+```
+fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
+    uri?.let { u ->
+        Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
+            startActivity(context, it)
+        }
+    }
+```
+#### 选择文件【调用系统的文件管理】
+```
+fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
+    // Implicitly allow the user to select a particular kind of data. Same as : Intent.ACTION_GET_CONTENT
+    Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
+        // The MIME data type filter
+        //intent.setType("image/*");    //选择图片
+        //intent.setType("audio/*");    //选择音频
+        //intent.setType("video/*");    //选择视频 （mp4 3gp 是 android支持的视频格式）
+        //intent.setType("file/*");     //比 */* 少了一些侧边栏选项
+        //intent.setType("video/*;image/*");//错误方式;同时选择视频和图片 ->  https://www.jianshu.com/p/e98c97669af0
+        if (mimeType.isNullOrBlank() && mimeTypes.isNullOrEmpty()) type = "*/*"
+        else {
+            type = if (mimeType.isNullOrEmpty()) "*/*" else mimeType
+            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+        }
+        // Only return URIs that can be opened with ContentResolver
+        addCategory(Intent.CATEGORY_OPENABLE)
+    }
+```
+> 注: 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;1.Intent.setType 不能为空!
+<br>&nbsp;&nbsp;&nbsp;&nbsp;2.mimeTypes 会覆盖 mimeType
+<br>&nbsp;&nbsp;&nbsp;&nbsp;3.ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT 效果相同
+<br>&nbsp;&nbsp;&nbsp;&nbsp;4.开启多选 resultCode=-1
+
+### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileUri.kt)
+
+#### 从`File`路径中获取`Uri`
 
 ```
 fun getUriByPath(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path))
@@ -324,7 +446,7 @@ fun getUriByFile(file: File?): Uri? {
 }
 ```
 
-- 获取Uri对应的文件路径,兼容API 26
+#### 获取`Uri`对应的文件路径,兼容`API 26`
 
 ```
 fun getFilePathByUri(context: Context?, uri: Uri?): String? {
@@ -347,11 +469,11 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 - getExtensionFull 获取文件后缀 `.jpg`
 - getExtensionFromUri(uri: Uri?) 获取文件后缀 
 - deleteFile 删除文件或目录
-- deleteFilesButDir(file: File?, vararg excludeDirs: String?) 删除文件或目录 , excludeDirs 跳过指定名称的一些`目录/文件`
+- deleteFilesButDir(file: File?, vararg excludeDirs: String?) 删除文件或目录 , `excludeDirs` 跳过指定名称的一些`目录/文件`
 - deleteFileDir 只删除文件，不删除文件夹
 - readFileText 读取文本文件中的内容 `String`
 - readFileBytes 读取文本文件中的内容 `ByteArray`
-- copyFile 根据文件路径拷贝文件 java.nio
+- copyFile 根据文件路径拷贝文件 `java.nio`
 
 ```
 eg :boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i, getExternalFilesDir(null).getPath());

@@ -1,5 +1,7 @@
 package com.ando.file.sample.ui.selector
 
+import ando.file.androidq.FileOperatorQ.getBitmapFromUri
+import ando.file.androidq.FileOperatorQ.loadThumbnail
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -14,9 +16,11 @@ import ando.file.compressor.OnImageCompressListener
 import ando.file.compressor.OnImageRenameListener
 import ando.file.compressor.ImageCompressor
 import com.ando.file.sample.R
-import ando.file.androidq.getBitmapFromUri
-import ando.file.androidq.loadThumbnail
-import ando.file.operator.*
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
+import ando.file.core.FileGlobal.dumpMetaData
+import ando.file.core.FileOpener.openFileBySystemChooser
+import ando.file.core.FileUri.getFilePathByUri
+import ando.file.selector.*
 import com.ando.file.sample.getPathImageCache
 import com.ando.file.sample.utils.PermissionManager
 import kotlinx.android.synthetic.main.activity_file_operator.*
@@ -114,7 +118,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             // 优先使用 FileOptions 中设置的 FileSelectCondition , 没有的情况下才使用通用的
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    return  when (fileType) {
+                    return when (fileType) {
                         FileType.IMAGE -> {
                             return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                         }

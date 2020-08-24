@@ -1,5 +1,7 @@
 package com.ando.file.sample.ui.storage
 
+import ando.file.androidq.FileOperatorQ.createFileInAppSpecific
+import ando.file.androidq.FileOperatorQ.readTextFromUri
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -7,14 +9,11 @@ import android.os.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
-import ando.file.core.getUriByFile
 import ando.file.core.FileLogger
-import ando.file.androidq.createFileInAppSpecific
-import ando.file.androidq.readTextFromUri
+import ando.file.core.FileUri.getUriByFile
 import com.ando.file.sample.R
 import kotlinx.android.synthetic.main.activity_app_specific.*
 import java.io.File
-
 
 /**
  * Title: AppSpecificActivity
@@ -59,24 +58,22 @@ class AppSpecificActivity : AppCompatActivity() {
         //文件列表  Environment.DIRECTORY_DOCUMENTS
         getDocuments.setOnClickListener {
             getExternalFilesDirs(Environment.DIRECTORY_DOCUMENTS)
-                    .let { dir ->
-                        val sb = StringBuilder()
-                        val line = "--------------------------------------------------- \n"
-                        dir.forEach { file ->
-                            sb.append(line)
-                            sb.append("${Environment.DIRECTORY_DOCUMENTS}：${file.name} \n ${file.path} \n ${file.toUri()} \n")
-                            if (file.isDirectory) {
-                                file.listFiles()?.forEach { fl ->
-                                    sb.append("\n ${fl.name} \n ${fl.path} \n ${fl.toUri()} \n ${getUriByFile(
-                                        fl
-                                    )} \n")
-                                }
+                .let { dir ->
+                    val sb = StringBuilder()
+                    val line = "--------------------------------------------------- \n"
+                    dir.forEach { file ->
+                        sb.append(line)
+                        sb.append("${Environment.DIRECTORY_DOCUMENTS}：${file.name} \n ${file.path} \n ${file.toUri()} \n")
+                        if (file.isDirectory) {
+                            file.listFiles()?.forEach { fl ->
+                                sb.append("\n ${fl.name} \n ${fl.path} \n ${fl.toUri()} \n ${getUriByFile(fl)} \n")
                             }
-                            sb.append(line)
                         }
-
-                        tvDocumentsFilesInfo.text = sb.toString()
+                        sb.append(line)
                     }
+
+                    tvDocumentsFilesInfo.text = sb.toString()
+                }
         }
 
         //新建文件  Environment.DIRECTORY_DOCUMENTS
@@ -108,8 +105,8 @@ class AppSpecificActivity : AppCompatActivity() {
         deleteFileInDocuments.setOnClickListener {
             val delete = mJustCreatedFile?.delete()
             Toast.makeText(
-                    this,
-                    "删除${if (delete == true) "成功" else "失败"}!", Toast.LENGTH_SHORT
+                this,
+                "删除${if (delete == true) "成功" else "失败"}!", Toast.LENGTH_SHORT
             ).show()
         }
 

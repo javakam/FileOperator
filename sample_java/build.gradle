@@ -39,7 +39,7 @@ dependencies {
 
     implementation project(':library')
     implementation project(':library_android_q')
-    implementation project(':library_operator')
+    implementation project(':library_selector')
     implementation project(':library_compressor')
 
 }

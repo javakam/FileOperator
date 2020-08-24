@@ -10,6 +10,7 @@ import android.text.TextUtils
 import ando.file.core.FileSizeUtils.FileSizeType.*
 import ando.file.core.FileLogger.e
 import ando.file.core.FileLogger.i
+import ando.file.core.FileUri.getFilePathByUri
 import java.io.File
 import java.math.BigDecimal
 
@@ -118,11 +119,9 @@ object FileSizeUtils {
         val file = File(path)
         var blockSize = 0L
         try {
-            blockSize = if (file.isDirectory) getFolderSize(file) else getFileSize(
-                file
-            )
+            blockSize = if (file.isDirectory) getFolderSize(file) else getFileSize(file)
         } catch (e: Exception) {
-            e.printStackTrace()
+            //e.printStackTrace()
             e("获取文件大小 获取失败!")
         }
         i("获取文件大小 =$blockSize")

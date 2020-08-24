@@ -6,8 +6,8 @@ import android.os.*
 import android.text.TextUtils
 import android.util.Log
 import ando.file.core.FileLogger
-import ando.file.core.getUriByFile
-import ando.file.core.getUriByPath
+import ando.file.core.FileUri.getUriByFile
+import ando.file.core.FileUri.getUriByPath
 import java.io.*
 import java.util.*
 

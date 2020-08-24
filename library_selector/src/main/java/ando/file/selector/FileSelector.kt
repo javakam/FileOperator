@@ -1,10 +1,13 @@
-package ando.file.operator
+package ando.file.selector
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.collection.ArrayMap
 import ando.file.core.*
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_DONT
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
+import ando.file.core.FileOpener.createChooseIntent
 import ando.file.core.FileType.INSTANCE
 
 /**
@@ -18,8 +21,8 @@ import ando.file.core.FileType.INSTANCE
 class FileSelector private constructor(builder: Builder) {
 
     companion object {
-        val DEFAULT_SINGLE_FILE_SIZE_THRESHOLD = "文件超过限定大小"
-        val DEFAULT_ALL_FILE_SIZE_THRESHOLD = "文件超过限定大小"
+        val DEFAULT_SINGLE_FILE_SIZE_THRESHOLD = "超过限定文件大小"
+        val DEFAULT_ALL_FILE_SIZE_THRESHOLD = "超过限定文件总大小"
 
         fun with(context: Context): Builder {
             return Builder(context)
@@ -87,7 +90,7 @@ class FileSelector private constructor(builder: Builder) {
         //单选 Intent.getData ; 多选  Intent.getClipData
         return if (mIsMultiSelect) {
             // Android 系统文件判断策略 : Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            // 开启多选条件下只选择一个文件时,需要安装单选逻辑走... Σ( ° △ °|||)︴
+            // 开启多选条件下只选择一个文件时,需要走单选逻辑... Σ( ° △ °|||)︴
             if (intent?.clipData == null) handleSingleSelectCase(intent) else handleMultiSelectCase(intent)
         } else {
             handleSingleSelectCase(intent)
@@ -180,14 +183,12 @@ class FileSelector private constructor(builder: Builder) {
 
                 if (totalSize > mAllFilesMaxSize) {//byte (B)
                     isFileSizeIllegal = true
-
                     when (mOverSizeLimitStrategy) {
                         OVER_SIZE_LIMIT_ALL_DONT -> {
                             mFileSelectCallBack?.onError(Throwable(mAllFilesMaxSizeTip))
                             isNeedBreak = true
                         }
                         OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART -> {
-
                             uriListAll.clear()
                             uriList.values.forEach { uriListAll.addAll(it) }
 
@@ -225,7 +226,7 @@ class FileSelector private constructor(builder: Builder) {
                         .let { l ->
                             uriList.values.forEach { ls ->
                                 ls.filter {
-                                    FileLogger.e("lll $it  ${INSTANCE.typeByUri(it)}  ${l.contains(INSTANCE.typeByUri(it))} ")
+                                    // FileLogger.e("lll $it  ${INSTANCE.typeByUri(it)}  ${l.contains(INSTANCE.typeByUri(it))} ")
                                     !l.contains(INSTANCE.typeByUri(it))
                                 }.toMutableList().let {
                                     uriListAll.addAll(it)
@@ -245,7 +246,6 @@ class FileSelector private constructor(builder: Builder) {
                             }
                         }
                     }
-
                     FileLogger.e("uriListAll mFileSelectCallBack ${uriListAll.size}")
 
                     mFileSelectCallBack?.onSuccess(createResult(uriListAll))
@@ -322,7 +322,7 @@ class FileSelector private constructor(builder: Builder) {
     private fun createResult(
         uri: Uri,
         fileType: FileType,
-        fileSize: Long
+        fileSize: Long,
     ): MutableList<FileSelectResult> =
         mutableListOf<FileSelectResult>().apply {
             add(FileSelectResult().apply {
@@ -408,7 +408,7 @@ class FileSelector private constructor(builder: Builder) {
             return this
         }
 
-        fun setOverSizeLimitStrategy(@FileOverSizeStrategy overSizeLimitStrategy: Int): Builder {
+        fun setOverSizeLimitStrategy(@FileGlobal.FileOverSizeStrategy overSizeLimitStrategy: Int): Builder {
             this.mOverSizeLimitStrategy = overSizeLimitStrategy
             return this
         }

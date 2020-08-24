@@ -2,9 +2,8 @@ package com.ando.file.sample
 
 import android.app.Application
 import android.content.Context
-import ando.file.BuildConfig
 import ando.file.FileOperator
-import ando.file.core.getExternalFilesDirDOCUMENTS
+import ando.file.core.FileDirectory.getExternalFilesDirDOCUMENTS
 import com.ando.file.sample.utils.CrashHandler
 
 /**
@@ -35,7 +34,7 @@ class App : Application() {
 
         FileOperator.init(
             this,
-            BuildConfig.DEBUG
+            true
         )
 
         CrashHandler.init(this, "${getExternalFilesDirDOCUMENTS()?.absolutePath}/Crash/")

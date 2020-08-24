@@ -1,6 +1,6 @@
 package com.ando.file.sample
 
-import ando.file.core.getCacheDir
+import ando.file.core.FileDirectory.getCacheDir
 import java.io.File
 
 
