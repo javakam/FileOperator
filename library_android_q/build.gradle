@@ -44,11 +44,11 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.3.1'
+    implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    testImplementation 'junit:junit:4.13'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     implementation project(':library')
     //implementation 'ando.file:file-core:1.0.0'
@@ -61,7 +61,7 @@ publish {
     userOrg = 'javakam'
     groupId = 'ando.file'
     artifactId = 'android-q'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     desc = 'Ando File Helper Compatible with Android Q.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = false

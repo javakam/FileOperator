@@ -35,15 +35,13 @@ object FileUri {
      * @param file The file.
      * @return a content URI for a given file
      */
-    fun getUriByFile(file: File?): Uri? {
-        if (file == null) return null
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val authority = FileOperator.getContext().packageName + PATH_SUFFIX
-            FileProvider.getUriForFile(FileOperator.getContext(), authority, file)
-        } else {
-            Uri.fromFile(file)
+    fun getUriByFile(file: File?): Uri? =
+        file?.let {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                val authority = FileOperator.getContext().packageName + PATH_SUFFIX
+                FileProvider.getUriForFile(FileOperator.getContext(), authority, file)
+            } else Uri.fromFile(file)
         }
-    }
 
     //获取Uri对应的文件路径 兼容API 26
     //----------------------------------------------------------------
@@ -70,15 +68,9 @@ object FileUri {
     fun getFilePathByUri(context: Context?, uri: Uri?): String? {
         if (context == null || uri == null) return null
         val scheme = uri.scheme
-        // 以 file:// 开头的
-        if (ContentResolver.SCHEME_FILE.equals(scheme, ignoreCase = true)) {//使用第三方应用打开
-            uri.path
-        }
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //4.4以后
-            getPath(context, uri)
-        } else { //4.4以下
-            getPathKitkat(context, uri)
-        }
+        // 以 file:// 开头的使用第三方应用打开
+        if (ContentResolver.SCHEME_FILE.equals(scheme, ignoreCase = true)) return uri.path
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) getPath(context, uri) else getPathKitkat(context, uri)//4.4版本
     }
 
     private fun getPathKitkat(context: Context, contentUri: Uri): String? =
@@ -129,12 +121,10 @@ object FileUri {
                 val type = split[0]
                 if ("primary".equals(type, ignoreCase = true)) {
                     @Suppress("DEPRECATION")
-                    return Environment.getExternalStorageDirectory()
-                        .toString() + File.separator + split[1]
+                    return Environment.getExternalStorageDirectory().toString() + File.separator + split[1]
                 } else if ("home".equals(type, ignoreCase = true)) {
                     @Suppress("DEPRECATION")
-                    return Environment.getExternalStorageDirectory()
-                        .toString() + File.separator + "documents" + File.separator + split[1]
+                    return Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
                 }
             } else if (isDownloadsDocument(uri)) {
                 val id = DocumentsContract.getDocumentId(uri)
@@ -148,10 +138,7 @@ object FileUri {
                     "content://downloads/all_downloads"
                 )
                 for (contentUriPrefix in contentUriPrefixesToTry) {
-                    val contentUri = ContentUris.withAppendedId(
-                        Uri.parse(contentUriPrefix),
-                        id.toLong()
-                    )
+                    val contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), id.toLong())
                     try {
                         val path = getDataColumn(context, contentUri, null, null)
                         if (!TextUtils.isEmpty(path)) {
@@ -160,9 +147,7 @@ object FileUri {
                     } catch (e: Exception) {
                     }
                 }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    return uri?.path
-                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) return uri?.path
             } else if (isMediaDocument(uri)) {
                 val docId = DocumentsContract.getDocumentId(uri)
                 val split = docId.split(":").toTypedArray()
@@ -190,8 +175,6 @@ object FileUri {
             }
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) uri?.path
             else getDataColumn(context, uri, null, null)
-        } else if ("file".equals(uri?.scheme, ignoreCase = true)) {
-            uri?.path
         }
         return uri?.path
     }
@@ -217,13 +200,7 @@ object FileUri {
         @Suppress("DEPRECATION")
         val column = MediaStore.Files.FileColumns.DATA
         val projection = arrayOf(column)
-        context.contentResolver.query(
-            uri ?: return null,
-            projection,
-            selection,
-            selectionArgs,
-            null
-        )?.use {
+        context.contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use {
             try {
                 if (it.moveToFirst()) {
                     val columnIndex = it.getColumnIndex(column)

@@ -1,6 +1,8 @@
 package com.ando.file.sample
 
 import ando.file.core.FileDirectory.getCacheDir
+import android.content.Context
+import android.widget.Toast
 import java.io.File
 
 
@@ -20,4 +22,16 @@ fun getPathImageCache(): String? {
     return if (file.mkdirs()) {
         path
     } else path
+}
+
+fun Context.toastShort(msg: String?) {
+    msg?.let {
+        Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun Context.toastLong(msg: String?) {
+    msg?.let {
+        Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+    }
 }

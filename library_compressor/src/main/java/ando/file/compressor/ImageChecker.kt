@@ -155,12 +155,10 @@ object ImageChecker {
         }
     }
 
-    fun needCompress(leastCompressSize: Int, uri: Uri?): Boolean {
+    fun needCompress(leastCompressSize: Int, uri: Uri?): Boolean =
         if (leastCompressSize > 0) {
-            return FileSizeUtils.getFileSize(uri) > leastCompressSize shl 10
-        }
-        return true
-    }
+            FileSizeUtils.getFileSize(uri) > leastCompressSize shl 10
+        } else true
 
     private fun pack(
         bytes: ByteArray,

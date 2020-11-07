@@ -8,24 +8,19 @@ import ando.file.core.FileType
  * @author javakam
  * @date 2020/5/21  10:51
  */
- class FileSelectOptions{
+class FileSelectOptions {
 
-    var mMinCount: Int = 0                              //可选文件最小数量
-    var mMaxCount: Int = Int.MAX_VALUE                  //可选文件最大数量
-    var mMinCountTip: String? = ""
-    var mMaxCountTip: String? = ""
+    var maxCount: Int = Int.MAX_VALUE                  //可选文件最大数量
+    var minCountTip: String? = ""
+    var maxCountTip: String? = ""
 
     var fileType: FileType? = null
-    var mSingleFileMaxSize: Long = -1      //单文件大小控制 KB
-    var mSingleFileMaxSizeTip: String? = FileSelector.DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
-    var mAllFilesMaxSize: Long = -1       //总文件大小控制 KB
-    var mAllFilesMaxSizeTip: String? = FileSelector.DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
+    var singleFileMaxSize: Long = -1                   //单文件大小控制 Byte
+    var singleFileMaxSizeTip: String? = FileSelector.DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
+    var allFilesMaxSize: Long = -1                     //总文件大小控制 Byte
+    var allFilesMaxSizeTip: String? = FileSelector.DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
 
-    var mFileCondition: FileSelectCondition? = null
+    var fileCondition: FileSelectCondition? = null
 
-
-    internal var mIsFileSizePassed = false
-    internal var mIsMinCountPassed = false
-    internal var mIsMaxCountPassed = false
 
 }

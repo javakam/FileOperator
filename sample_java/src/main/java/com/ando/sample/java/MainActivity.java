@@ -25,6 +25,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import ando.file.androidq.FileOperatorQ;
 import ando.file.compressor.ImageCompressPredicate;
@@ -55,19 +56,16 @@ public class MainActivity extends Activity {
 
     private static final int REQUEST_CHOOSE_FILE = 10;
     private FileSelector mFileSelector;
-    //
+
     private TextView mTvResult, mTvResultError;
     private ImageView mIvOrigin, mIvCompressed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 21);
-
         setContentView(R.layout.activity_main);
-
         setTitle("单选图片");
 
         mTvResult = findViewById(R.id.mTvResult);
@@ -80,13 +78,11 @@ public class MainActivity extends Activity {
                 chooseFile();
             }
         });
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (mFileSelector != null) {
             mTvResultError.setText("");
             mTvResult.setText("");
@@ -98,14 +94,19 @@ public class MainActivity extends Activity {
     }
 
     private void chooseFile() {
+         /*
+        说明:
+            FileOptions T 为 String.filePath / Uri / File
+            3M 3145728 Byte ; 5M 5242880 Byte; 10M 10485760 ; 20M = 20971520 Byte
+         */
 
         FileSelectOptions options = new FileSelectOptions();
         options.setFileType(FileType.IMAGE);
-        options.setMSingleFileMaxSize(2097152); // 20M = 20971520 B
-        options.setMSingleFileMaxSizeTip("图片最大不超过2M！");
-        options.setMAllFilesMaxSize(5242880);//5M 5242880 ; 20M = 20971520 B
-        options.setMAllFilesMaxSizeTip("总图片大小不超过5M！");
-        options.setMFileCondition(new FileSelectCondition() {
+        options.setSingleFileMaxSize(2097152);
+        options.setSingleFileMaxSizeTip("图片最大不超过2M！");
+        options.setAllFilesMaxSize(5242880);
+        options.setAllFilesMaxSizeTip("总图片大小不超过5M！");
+        options.setFileCondition(new FileSelectCondition() {
             @Override
             public boolean accept(@NonNull FileType fileType, Uri uri) {
                 return (uri != null && !TextUtils.isEmpty(uri.getPath()) && !FileUtils.INSTANCE.isGif(uri));
@@ -113,15 +114,14 @@ public class MainActivity extends Activity {
         });
 
         mFileSelector = FileSelector.Companion.with(this)
-
                 .setRequestCode(REQUEST_CHOOSE_FILE)
                 .setSelectMode(false)
                 .setMinCount(1, "至少选一个文件!")
                 .setMaxCount(10, "最多选十个文件!")
-                .setSingleFileMaxSize(5242880, "大小不能超过5M！") //5M 5242880 ; 100M = 104857600 KB
-                .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//
-                .setMimeTypes(new String[]{"image/*"})//默认为 */* 可以选择任何文件类型, 不同 arrayOf("video/*","audio/*","image/*") 系统提供的选择UI不一样
-
+                .setSingleFileMaxSize(5242880, "大小不能超过5M！")
+                .setAllFilesMaxSize(10485760, "总大小不能超过10M！")
+                //默认为 */* 可以选择任何文件类型, 不同系统提供的选择UI不一样 eg:arrayOf("video/*","audio/*","image/*")
+                .setMimeTypes(new String[]{"image/*"})
                 .applyOptions(options)
 
                 //优先使用 FileOptions 中设置的 FileSelectCondition
@@ -133,8 +133,8 @@ public class MainActivity extends Activity {
                                 return (uri != null && !TextUtils.isEmpty(uri.getPath()) && !FileUtils.INSTANCE.isGif(uri));
                             case VIDEO:
                             case AUDIO:
-                                break;
                             default:
+                                break;
                         }
                         return true;
                     }
@@ -147,7 +147,6 @@ public class MainActivity extends Activity {
                             mTvResult.setText("");
 
                             showSelectResult(results);
-
                         }
                     }
 
@@ -162,16 +161,12 @@ public class MainActivity extends Activity {
 
     private void showSelectResult(List<FileSelectResult> results) {
         mTvResult.setText("");
-
         for (FileSelectResult result : results) {
-
             //1.打印Log
             final String info = result.toString() + "  格式化 :  " + FileSizeUtils.INSTANCE.formatFileSize(result.getFileSize()) + " \n";
             FileLogger.INSTANCE.w("FileOptions onSuccess  " + info);
-            //Caused by: java.util.MissingFormatArgumentException: Format specifier '%3A'
             mTvResult.setText(String.format("%s选择结果 : %s |--------- \n\uD83D\uDC49压缩前 \n%s",
                     mTvResult.getText().toString(), FileType.INSTANCE.typeByUri(result.getUri()), info));
-
 
             //2.压缩图片
             final FileType fileType = result.getFileType();
@@ -179,15 +174,14 @@ public class MainActivity extends Activity {
                 switch (fileType) {
                     case IMAGE:
                         try {
-                            final Bitmap bitmap = FileOperatorQ.INSTANCE.getBitmapFromUri(result.getUri());
                             //原图
+                            final Bitmap bitmap = FileOperatorQ.INSTANCE.getBitmapFromUri(result.getUri());
                             mIvOrigin.setImageBitmap(bitmap);
                             //压缩(Luban)
                             List<Uri> photos = new ArrayList<Uri>();
                             photos.add(result.getUri());
+                            //or Engine.compress(uri,  100L)
                             compressImage(photos);
-                            //or
-                            //Engine.compress(uri,  100L)
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -202,18 +196,17 @@ public class MainActivity extends Activity {
                 }
             }
         }
-
     }
 
     /**
      * 压缩图片
      */
     private void compressImage(List<Uri> photos) {
-
         ImageCompressor.Companion
                 .with(this)
                 .load(photos)
-                .ignoreBy(100)//B
+                //Byte
+                .ignoreBy(100)
                 .setTargetDir(getPathImageCache())
                 .setFocusAlpha(false)
                 .enableCache(true)
@@ -223,7 +216,7 @@ public class MainActivity extends Activity {
                         final String path = FileUri.INSTANCE.getFilePathByUri(uri);
                         FileLogger.INSTANCE.i("image predicate " + uri + "  " + path);
                         if (uri != null) {
-                            return !TextUtils.isEmpty(path) && !path.toLowerCase().endsWith(".gif");
+                            return path != null && !TextUtils.isEmpty(path) && !path.toLowerCase(Locale.getDefault()).endsWith(".gif");
                         }
                         return false;
                     }
@@ -234,8 +227,10 @@ public class MainActivity extends Activity {
                         try {
                             String filePath = FileUri.INSTANCE.getFilePathByUri(uri);
                             MessageDigest md = MessageDigest.getInstance("MD5");
-                            md.update(filePath.getBytes());
-                            return new BigInteger(1, md.digest()).toString(32);
+                            if (filePath != null) {
+                                md.update(filePath.getBytes());
+                                return new BigInteger(1, md.digest()).toString(32);
+                            }
                         } catch (NoSuchAlgorithmException e) {
                             e.printStackTrace();
                         }
@@ -245,7 +240,6 @@ public class MainActivity extends Activity {
                 .setImageCompressListener(new OnImageCompressListener() {
                     @Override
                     public void onStart() {
-
                     }
 
                     @Override
@@ -268,6 +262,7 @@ public class MainActivity extends Activity {
                                     int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
                                     size = cursor.getString(sizeIndex);
                                 }
+                                cursor.close();
                             }
 
                             mTvResult.setText(String.format(
@@ -280,7 +275,6 @@ public class MainActivity extends Activity {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
                     }
 
                     @Override
@@ -289,7 +283,6 @@ public class MainActivity extends Activity {
                     }
                 })
                 .launch();
-
     }
 
     private String getPathImageCache() {
@@ -299,10 +292,6 @@ public class MainActivity extends Activity {
             file.mkdirs();
         }
         return path;
-    }
-
-    private void shortToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 }

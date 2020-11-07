@@ -12,17 +12,15 @@ import ando.file.core.FileType.INSTANCE
 
 /**
  * Title: FileSelector
- * <pre>
  *
- * </pre>
  * @author javakam
  * @date 2020/5/21  9:32
  */
 class FileSelector private constructor(builder: Builder) {
 
     companion object {
-        val DEFAULT_SINGLE_FILE_SIZE_THRESHOLD = "超过限定文件大小"
-        val DEFAULT_ALL_FILE_SIZE_THRESHOLD = "超过限定文件总大小"
+        const val DEFAULT_SINGLE_FILE_SIZE_THRESHOLD = "超过限定文件大小"
+        const val DEFAULT_ALL_FILE_SIZE_THRESHOLD = "超过限定文件总大小"
 
         fun with(context: Context): Builder {
             return Builder(context)
@@ -38,8 +36,8 @@ class FileSelector private constructor(builder: Builder) {
     private var mMaxCount: Int = Int.MAX_VALUE                  //可选文件最大数量
     private var mMinCountTip: String = ""
     private var mMaxCountTip: String = ""
-    private var mSingleFileMaxSize: Long = -1                   //单文件大小控制 B
-    private var mAllFilesMaxSize: Long = -1                     //总文件大小控制 B
+    private var mSingleFileMaxSize: Long = -1                   //单文件大小控制 Byte
+    private var mAllFilesMaxSize: Long = -1                     //总文件大小控制 Byte
     private var mOverSizeLimitStrategy = OVER_SIZE_LIMIT_ALL_DONT
 
     private var mSingleFileMaxSizeTip: String = DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
@@ -87,10 +85,10 @@ class FileSelector private constructor(builder: Builder) {
 
         if (requestCode == -1 || requestCode != mRequestCode) return this
 
-        //单选 Intent.getData ; 多选  Intent.getClipData
+        //单选 Intent.getData ; 多选 Intent.getClipData
         return if (mIsMultiSelect) {
             // Android 系统文件判断策略 : Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            // 开启多选条件下只选择一个文件时,需要走单选逻辑... Σ( ° △ °|||)︴
+            // 开启多选条件下只选择一个文件时, 系统走的是单选逻辑... Σ( ° △ °|||)︴
             if (intent?.clipData == null) handleSingleSelectCase(intent) else handleMultiSelectCase(intent)
         } else {
             handleSingleSelectCase(intent)
@@ -101,11 +99,10 @@ class FileSelector private constructor(builder: Builder) {
         this.mIsMultiSelect = false
         intent?.data?.let {
             processIntentUri(it) { o, t, s, r ->
-
                 if (r) mFileSelectCallBack?.onSuccess(createResult(it, t, s))
                 else {
                     if (o?.fileType == t) {
-                        mFileSelectCallBack?.onError(Throwable(if (o.mSingleFileMaxSizeTip != null) o.mSingleFileMaxSizeTip else o.mAllFilesMaxSizeTip))
+                        mFileSelectCallBack?.onError(Throwable(if (o.singleFileMaxSizeTip != null) o.singleFileMaxSizeTip else o.allFilesMaxSizeTip))
                     } else {
                         mFileSelectCallBack?.onError(Throwable(mSingleFileMaxSizeTip))
                     }
@@ -145,7 +142,7 @@ class FileSelector private constructor(builder: Builder) {
                 if (!r) {
                     isFileSizeIllegal = true
                     if (isCurrentType && mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_DONT) {
-                        mFileSelectCallBack?.onError(Throwable(o?.mSingleFileMaxSizeTip ?: mSingleFileMaxSizeTip))
+                        mFileSelectCallBack?.onError(Throwable(o?.singleFileMaxSizeTip ?: mSingleFileMaxSizeTip))
                         isNeedBreak = true
                     }
                     return@processIntentUri
@@ -156,9 +153,9 @@ class FileSelector private constructor(builder: Builder) {
 
                 //Control Custom Option Size
                 if (isCurrentType && o != null) {
-                    FileLogger.i("handleMultiSelectCase  Custom Option  mMaxCount : ${(uriList[o]?.size ?: 0 >= o.mMaxCount)} ")
-                    if (uriList[o]?.size ?: 0 >= o.mMaxCount) {
-                        if (mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_DONT) mFileSelectCallBack?.onError(Throwable(o.mMaxCountTip))
+                    FileLogger.i("handleMultiSelectCase  Custom Option  mMaxCount : ${(uriList[o]?.size ?: 0 >= o.maxCount)} ")
+                    if (uriList[o]?.size ?: 0 >= o.maxCount) {
+                        if (mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_DONT) mFileSelectCallBack?.onError(Throwable(o.maxCountTip))
                         canJoinTypeMap[o] = false
                         isFileSizeIllegal = true
                         isNeedBreak = true
@@ -214,8 +211,8 @@ class FileSelector private constructor(builder: Builder) {
             when (mOverSizeLimitStrategy) {
                 OVER_SIZE_LIMIT_ALL_DONT -> {
                     canJoinTypeMap.filter { (k, v) ->
-                        if (v == false && uriList[k]?.size ?: 0 < k.mMaxCount)
-                            mFileSelectCallBack?.onError(Throwable(k.mAllFilesMaxSizeTip ?: mAllFilesMaxSizeTip))
+                        if (v == false && uriList[k]?.size ?: 0 < k.maxCount)
+                            mFileSelectCallBack?.onError(Throwable(k.allFilesMaxSizeTip ?: mAllFilesMaxSizeTip))
 
                         uriList.clear()
                         uriListAll.clear()
@@ -242,12 +239,11 @@ class FileSelector private constructor(builder: Builder) {
                         uriList.forEach {
                             //if ( it.value.size <it.key.mMaxCount){
                             it.value.filter { uri -> INSTANCE.typeByUri(uri) == op.fileType }.let { ls ->
-                                uriListAll.addAll(ls.take(it.key.mMaxCount))
+                                uriListAll.addAll(ls.take(it.key.maxCount))
                             }
                         }
                     }
                     FileLogger.e("uriListAll mFileSelectCallBack ${uriListAll.size}")
-
                     mFileSelectCallBack?.onSuccess(createResult(uriListAll))
                     return this
                 }
@@ -257,7 +253,6 @@ class FileSelector private constructor(builder: Builder) {
         if (!uriList.isNullOrEmpty()) mFileSelectCallBack?.onSuccess(createResult(uriListAll))
         return this
     }
-
 
     private fun processIntentUri(uri: Uri, block: (option: FileSelectOptions?, fileType: FileType, fileSize: Long, sizeFit: Boolean) -> Unit) {
         val fileType = INSTANCE.typeByUri(uri)
@@ -272,24 +267,14 @@ class FileSelector private constructor(builder: Builder) {
             //没有设置 FileOptions 时,使用通用的配置
             val isAccept = (mFileSelectCondition != null) && mFileSelectCondition?.accept(fileType, uri) ?: false
             if (!isAccept) return
-            block.invoke(
-                null,
-                fileType,
-                fileSize,
-                limitFileSize(fileSize, realLimitSizeThreshold(null))
-            )
+            block.invoke(null, fileType, fileSize, limitFileSize(fileSize, realLimitSizeThreshold(null)))
         } else {
             currentOption?.forEach {
                 //获取 CallBack -> 优先使用 FileOptions 中设置的 FileSelectCallBack
                 //控制类型 -> 自定义规则 -> 优先使用 FileOptions 中设置的 FileSelectCondition
-                val isAccept = mFileSelectCondition?.accept(fileType, uri) ?: true && it.mFileCondition?.accept(fileType, uri) ?: true
+                val isAccept = mFileSelectCondition?.accept(fileType, uri) ?: true && it.fileCondition?.accept(fileType, uri) ?: true
                 if (!isAccept) {
-                    block.invoke(
-                        it,
-                        fileType,
-                        fileSize,
-                        limitFileSize(fileSize, realLimitSizeThreshold(null))
-                    )
+                    block.invoke(it, fileType, fileSize, limitFileSize(fileSize, realLimitSizeThreshold(null)))
                     return@forEach
                 }
                 val success = limitFileSize(fileSize, realLimitSizeThreshold(it))
@@ -308,11 +293,11 @@ class FileSelector private constructor(builder: Builder) {
 
     private fun realLimitSizeThreshold(option: FileSelectOptions?): Long =
         if (option == null) if (mSingleFileMaxSize < 0) if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize else mSingleFileMaxSize
-        else if (option.mSingleFileMaxSize < 0) if (option.mAllFilesMaxSize < 0) realLimitSizeThreshold(null) else option.mAllFilesMaxSize else option.mSingleFileMaxSize
+        else if (option.singleFileMaxSize < 0) if (option.allFilesMaxSize < 0) realLimitSizeThreshold(null) else option.allFilesMaxSize else option.singleFileMaxSize
 
     private fun realLimitSizeAllThreshold(option: FileSelectOptions?): Long =
         if (option == null) Long.MAX_VALUE
-        else if (option.mAllFilesMaxSize < 0) if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize else option.mAllFilesMaxSize
+        else if (option.allFilesMaxSize < 0) if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize else option.allFilesMaxSize
 
     private fun limitFileSize(fileSize: Long, sizeThreshold: Long): Boolean {
         FileLogger.i("limitFileSize  : $fileSize")
@@ -346,7 +331,6 @@ class FileSelector private constructor(builder: Builder) {
         }
 
     class Builder internal constructor(private val context: Context) {
-
         var mRequestCode: Int = 0
 
         var mMimeTypes: Array<String>? = null

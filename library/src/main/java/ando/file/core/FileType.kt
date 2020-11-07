@@ -9,17 +9,12 @@ import java.util.*
  * 常用的文件类型 -> FileMimeType.kt
  */
 enum class FileType {
-    /**
-     *
-     */
-    INSTANCE, AUDIO,
-    VIDEO, IMAGE,
-    APK, PPT,
-    EXCEL, WORD, WPS,
-    PDF, CHM,
+
+    INSTANCE, UNKNOWN,
+    AUDIO, VIDEO, IMAGE,
+    PPT, EXCEL, WORD, WPS, PDF, CHM,
     TXT, HTML,
-    ZIP,
-    UNKNOWN, VALID;
+    APK, ZIP;
 
     /**
      * url : https://app-xxx-oss.oss-cn-beijing.aliyuncs.com/xxx/xxxx/2020-04-07/1586267702635.gif

@@ -12,7 +12,7 @@ import android.net.Uri
 interface ImageCompressPredicate {
     /**
      * Determine the given input path should be compressed and return a boolean.
-     * @param path input path
+     * @param uri input uri
      * @return the boolean result
      */
     fun apply(uri: Uri?): Boolean

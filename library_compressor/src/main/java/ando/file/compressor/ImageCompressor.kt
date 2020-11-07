@@ -16,7 +16,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
     private var mCacheDir: String?
     private var cache = false
     private var focusAlpha = false
-    private val mIgnoreMinCompressSize: Int
+    private val mIgnoreMinCompressSize: Int //Byte
     private val mImageRenameListener: OnImageRenameListener?
     private val mImageCompressListener: OnImageCompressListener?
     private val mImageCompressPredicate: ImageCompressPredicate?
@@ -42,10 +42,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
         return File(cacheBuilder)
     }
 
-    private fun getImageCustomFile(
-        context: Context,
-        filename: String
-    ): File {
+    private fun getImageCustomFile(context: Context, filename: String): File {
         if (TextUtils.isEmpty(mCacheDir)) {
             mCacheDir = getImageCacheDir(context)?.absolutePath
         }
@@ -53,9 +50,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
         return File(cacheBuilder)
     }
 
-    private fun getImageCacheDir(context: Context): File? {
-        return getImageCacheDir(context, DEFAULT_DISK_CACHE_DIR)
-    }
+    private fun getImageCacheDir(context: Context): File? = getImageCacheDir(context, DEFAULT_DISK_CACHE_DIR)
 
     /**
      * start asynchronous compress thread
@@ -72,7 +67,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
                 AsyncTask.execute {
                     try {
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_START))
-                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_SUCCESS,  compress(context, path)))
+                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_SUCCESS, compress(context, path)))
                     } catch (e: IOException) {
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_ERROR, e))
                     }
@@ -109,9 +104,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
     }
 
     @Throws(IOException::class)
-    private fun compress(context: Context, uri: Uri): Uri? {
-        return compressReal(context, uri)
-    }
+    private fun compress(context: Context, uri: Uri): Uri? = compressReal(context, uri)
 
     @Throws(IOException::class)
     private fun compressReal(context: Context, uri: Uri): Uri? {
@@ -121,15 +114,11 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
             targetFile = getImageCustomFile(context, filename ?: return uri)
         }
         return if (mImageCompressPredicate != null) {
-            if (mImageCompressPredicate.apply(uri) &&
-                ImageChecker.needCompress(mIgnoreMinCompressSize, uri)
-            ) ImageCompressEngine.compressCompat(uri, targetFile, cache, focusAlpha) else uri
+            if (mImageCompressPredicate.apply(uri) && ImageChecker.needCompress(mIgnoreMinCompressSize, uri))
+                ImageCompressEngine.compressCompat(uri, targetFile, cache, focusAlpha) else uri
         } else {
-            if (ImageChecker.needCompress(
-                    mIgnoreMinCompressSize,
-                    uri
-                )
-            ) ImageCompressEngine.compressCompat(uri, targetFile, cache, focusAlpha) else uri
+            if (ImageChecker.needCompress(mIgnoreMinCompressSize, uri))
+                ImageCompressEngine.compressCompat(uri, targetFile, cache, focusAlpha) else uri
         }
     }
 
@@ -147,7 +136,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
         var mTargetDir: String? = null
         var mCache = false
         var mFocusAlpha = false
-        var mIgnoreMinCompressSize = 100 //B
+        var mIgnoreMinCompressSize = 100 //Byte
         var mImageRenameListener: OnImageRenameListener? = null
         var mImageCompressListener: OnImageCompressListener? = null
         var mImageCompressPredicate: ImageCompressPredicate? = null
@@ -161,18 +150,10 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
             for (src in list) {
                 if (src == null) continue
                 when (src) {
-                    is String -> {
-                        load(src as String)
-                    }
-                    is File -> {
-                        load(src as File)
-                    }
-                    is Uri -> {
-                        load(src as Uri)
-                    }
-                    else -> {
-                        throw IllegalArgumentException("Incoming data type exception, it must be String, File, Uri or Bitmap")
-                    }
+                    is String -> load(src as String)
+                    is File -> load(src as File)
+                    is Uri -> load(src as Uri)
+                    else -> throw IllegalArgumentException("Incoming data type exception, it must be String, File, Uri or Bitmap")
                 }
             }
             return this

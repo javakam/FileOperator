@@ -170,10 +170,10 @@ object FileOperatorQ {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             values.put(MediaStore.Images.Media.RELATIVE_PATH, savePrimaryDir + File.separator + saveSecondaryDir)
         }
-        //    else {
-        //        values.put(MediaStore.Images.Media.PRIMARY_DIRECTORY, savePrimaryDir)
-        //        values.put(MediaStore.Images.Media.SECONDARY_DIRECTORY, saveSecondaryDir)
-        //    }
+        //else {
+        //    values.put(MediaStore.Images.Media.PRIMARY_DIRECTORY, savePrimaryDir)
+        //    values.put(MediaStore.Images.Media.SECONDARY_DIRECTORY, saveSecondaryDir)
+        //}
         var url: Uri? = null
         var stringUrl: String? = null /* value to be returned */
         val cr = context.contentResolver
@@ -263,7 +263,6 @@ object FileOperatorQ {
     //todo 2020年5月28日 17:14:02 测试该方法
     private fun insertAudio(displayName: String?) {
         val resolver = getContext().contentResolver
-
         //https://developer.android.google.cn/training/data-storage/shared/media#kotlin
         // Find all audio files on the primary external storage device.
         // On API <= 28, use VOLUME_EXTERNAL instead.

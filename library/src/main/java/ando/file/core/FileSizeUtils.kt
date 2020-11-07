@@ -62,17 +62,14 @@ object FileSizeUtils {
 
     /**
      * ContentResolver.query 获取 `文件/文件夹` 大小
+     * @return 文件大小, 单位 Byte
      */
     private fun getFileSize(context: Context, uri: Uri?): Long? =
         uri?.let {
             val zero = 0L
             val uriScheme = uri.scheme
             val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q || TextUtils.equals(
-                    "content",
-                    uriScheme
-                )
-            ) {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q || TextUtils.equals("content", uriScheme)) {
                 cursor?.use {
                     val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
                     // 1.Technically the column stores an int, but cursor.getString() will do the conversion automatically.
@@ -80,9 +77,7 @@ object FileSizeUtils {
                     // 2.it.moveToFirst() -> Caused by: android.database.CursorIndexOutOfBoundsException: Index -1 requested, with a size of 1
                     if (it.moveToFirst() && !it.isNull(sizeIndex)) it.getLong(sizeIndex) else zero
                 }
-            } else if (TextUtils.equals("file", uriScheme)) File(
-                getFilePathByUri(uri) ?: return zero
-            ).length() else zero
+            } else if (TextUtils.equals("file", uriScheme)) File(getFilePathByUri(uri) ?: return zero).length() else zero
         }
 
 

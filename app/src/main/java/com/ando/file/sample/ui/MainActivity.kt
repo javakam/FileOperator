@@ -12,7 +12,6 @@ import com.ando.file.sample.ui.storage.AppSpecificActivity
 import com.ando.file.sample.ui.storage.MediaStoreActivity
 import com.ando.file.sample.ui.storage.StorageAccessFrameworkActivity
 
-
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,9 +1,9 @@
 package ando.file.selector
 
 import android.net.Uri
-import android.os.Parcel
 import android.os.Parcelable
 import ando.file.core.FileType
+import kotlinx.android.parcel.Parcelize
 
 /**
  * Title: FileSelectResult
@@ -13,15 +13,19 @@ import ando.file.core.FileType
  * @author javakam
  * @date 2020/5/14  10:32
  */
-class FileSelectResult : Parcelable {
-    var fileType: FileType? = null
-
-    var uri: Uri? = null
-
-    var filePath: String? = null
-
+@Parcelize
+data class FileSelectResult(
+    var fileType: FileType?,
+    var uri: Uri?,
+    var filePath: String?,
     var fileSize: Long = 0L
+) : Parcelable {
 
+    constructor() : this(null, null, null, 0L)
+
+    override fun toString(): String {
+        return " fileType=$fileType, \n uri=$uri, \n filePath=$filePath, \n fileSize=$fileSize \n "
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -43,31 +47,6 @@ class FileSelectResult : Parcelable {
         result = 31 * result + (filePath?.hashCode() ?: 0)
         result = 31 * result + fileSize.hashCode()
         return result
-    }
-
-    constructor()
-
-    @Suppress("UNUSED_PARAMETER")
-    constructor(source: Parcel) : this(
-    )
-
-    override fun describeContents() = 0
-
-    override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {}
-
-    override fun toString(): String {
-        return " fileType=$fileType, \n uri=$uri, \n filePath=$filePath, \n fileSize=$fileSize \n "
-    }
-
-    companion object {
-        @JvmField
-        val CREATOR: Parcelable.Creator<FileSelectResult> =
-            object : Parcelable.Creator<FileSelectResult> {
-                override fun createFromParcel(source: Parcel): FileSelectResult =
-                    FileSelectResult(source)
-
-                override fun newArray(size: Int): Array<FileSelectResult?> = arrayOfNulls(size)
-            }
     }
 
 }

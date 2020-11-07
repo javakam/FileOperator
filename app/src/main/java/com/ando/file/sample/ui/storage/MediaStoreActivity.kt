@@ -61,7 +61,6 @@ import java.util.concurrent.TimeUnit
 class MediaStoreActivity : AppCompatActivity() {
 
     companion object {
-
         val RELATIVE_PATH = "${Environment.DIRECTORY_PICTURES}${File.separator}img"
     }
 

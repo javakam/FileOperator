@@ -45,14 +45,13 @@ android {
 }
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
 
-    compileOnly 'androidx.core:core-ktx:1.3.1'
+    compileOnly 'androidx.core:core-ktx:1.3.2'
     compileOnly 'androidx.appcompat:appcompat:1.2.0'
     compileOnly 'androidx.annotation:annotation:1.1.0'
 
 }
-
 
 //https://github.com/novoda/bintray-release/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3HOME
 publish {
@@ -60,7 +59,7 @@ publish {
     userOrg = 'javakam'
     groupId = 'ando.file'
     artifactId = 'core'
-    publishVersion = '1.0.0'
+    publishVersion = '1.0.1'
     desc = 'Ando File Helper Core Library.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true
