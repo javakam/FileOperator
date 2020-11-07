@@ -2,7 +2,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/maven/core/1.0.0/link"><img src="https://api.bintray.com/packages/javakam/maven/core/images/download.svg?version=1.0.0"/></a>
+<a href="https://bintray.com/javakam/maven/core/1.0.1/link"><img src="https://api.bintray.com/packages/javakam/maven/core/images/download.svg?version=1.0.1"/></a>
 
 - 🚀[FileOperator GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理Android系统文件操作
@@ -20,10 +20,10 @@ repositories {
 > 推荐方式 :
 
 ```
-implementation 'ando.file:core:1.0.0'         //核心库必选
-implementation 'ando.file:android-q:1.0.0'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.0.0'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.0.0'     //文件选择器
+implementation 'ando.file:core:1.0.1'         //核心库必选
+implementation 'ando.file:android-q:1.0.1'    //AndroidQ & Android 11 兼容库
+implementation 'ando.file:compressor:1.0.1'   //图片压缩,核心算法采用 Luban
+implementation 'ando.file:selector:1.0.1'     //文件选择器
 ```
 整体引入(不推荐):
 ```
@@ -499,7 +499,7 @@ File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 
 
 4. Android 系统问题 : Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-开启多选条件下只选择一个文件时,需要安装单选逻辑走... Σ( ° △ °|||)︴
+开启多选条件下只选择一个文件时,系统是按照单选逻辑走的... Σ( ° △ °|||)︴
 
 5. 回调处理
 
@@ -510,7 +510,7 @@ File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 ```
 1.做一个自定义UI的文件管理器
 2.增加Fragment使用案例 , 视频压缩-郭笑醒 , 清除缓存功能  , 外置存储适配
-3.整理更详细的文档 配合 com.liulishuo.okdownload 做文件下载 👉 library_file_downloader
+3.整理更详细的文档 配合 `com.liulishuo.okdownload` 做文件下载 👉 `library_file_downloader`
 4.
 ```
 ---
