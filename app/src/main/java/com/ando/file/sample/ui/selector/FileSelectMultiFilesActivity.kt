@@ -1,7 +1,6 @@
 package com.ando.file.sample.ui.selector
 
 import ando.file.androidq.FileOperatorQ.getBitmapFromUri
-import ando.file.androidq.FileOperatorQ.loadThumbnail
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -48,7 +47,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_operator)
-        PermissionManager.verifyStoragePermissions(this)
+        PermissionManager.requestStoragePermission(this)
         title = "多选文件"
 
         mBtOpenMediaFile.visibility = View.VISIBLE
@@ -105,7 +104,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setSelectMode(true)
+            .setMultiSelect()//默认是单选 false
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(5, "最多选五个文件!")
 

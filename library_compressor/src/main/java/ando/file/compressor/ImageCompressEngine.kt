@@ -1,12 +1,13 @@
 package ando.file.compressor
 
-import android.graphics.*
-import android.net.Uri
 import ando.file.FileOperator.getContext
 import ando.file.core.*
 import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.openFileDescriptor
 import ando.file.core.FileUri.getUriByFile
+import android.graphics.*
+import android.media.ExifInterface
+import android.net.Uri
 import java.io.*
 import kotlin.math.ceil
 import kotlin.math.max
@@ -30,7 +31,7 @@ object ImageCompressEngine {
     fun calculateInSampleSize(
         options: BitmapFactory.Options,
         srcWidth: Int,
-        srcHeight: Int
+        srcHeight: Int,
     ): Int {
         if (srcWidth <= 0 || srcHeight <= 0) return 1
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
@@ -81,28 +82,34 @@ object ImageCompressEngine {
      * 图片尺寸压缩 + 质量压缩
      *
      * @param cache 是否将压缩后的图片写入本地 Pictures/xxx
-     * @param sizeLimit 单位KB , 限制图片压缩的大小,仅限于 Q 以下
      */
     @Throws(IOException::class, FileNotFoundException::class)
     fun compressCompat(uri: Uri?, targetFile: File, cache: Boolean, focusAlpha: Boolean): Uri? =
         BitmapFactory.Options().run {
             if (uri == null || !ImageChecker.isImage(uri)) return null
-            val fd: FileDescriptor? = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
+            val fd: FileDescriptor = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
 
             var tagBitmap: Bitmap? = BitmapFactory.Options().run {
                 inJustDecodeBounds = true
                 BitmapFactory.decodeFileDescriptor(fd, null, this)
                 inSampleSize = calculateInSampleSize(outWidth, outHeight)
                 inJustDecodeBounds = false
-                FileLogger.w("inSampleSize= $inSampleSize")
                 BitmapFactory.decodeFileDescriptor(fd, null, this)
             }
 
-            val ins: InputStream? = getContext().contentResolver.openInputStream(uri)
-            if (ImageChecker.isJPG(ins)) {
-                tagBitmap = rotatingImage(tagBitmap, ImageChecker.getOrientation(ins))
-            }
-            var quality = 50
+            val ins: InputStream = getContext().contentResolver.openInputStream(uri) ?: return null
+            val angle: Int = if (ImageChecker.isJPG(ins)) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    ImageChecker.getRotateDegree(ExifInterface(ins))
+                } else {
+                    ImageChecker.getOrientation(ins)
+                }
+            } else -1
+            if (angle != -1) tagBitmap = rotatingImage(tagBitmap, angle)
+
+            FileLogger.w("inSampleSize= $inSampleSize  angle=$angle")
+
+            var quality = 70
             val byteArrOps = ByteArrayOutputStream(1024)
             tagBitmap?.compress(
                 if (focusAlpha) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG,
@@ -119,7 +126,7 @@ object ImageCompressEngine {
                     byteArrOps
                 )
                 // 最低限度
-                if (quality == 30) break
+                if (quality == 50) break
                 quality -= 10
             }
             val byteArray = byteArrOps.toByteArray()
@@ -132,10 +139,12 @@ object ImageCompressEngine {
                     it.write(byteArray)
                     it.flush()
                     byteArrOps.close()
+                    ins.close()
                     getUriByFile(targetFile)
                 }
             } else {
                 byteArrOps.close()
+                ins.close()
                 null
             }
         }

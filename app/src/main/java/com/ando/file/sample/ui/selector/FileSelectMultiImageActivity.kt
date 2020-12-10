@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.*
 import ando.file.compressor.ImageCompressPredicate
@@ -54,7 +53,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_operator)
-        PermissionManager.verifyStoragePermissions(this)
+        PermissionManager.requestStoragePermission(this)
 
         title = "多选图片"
 
@@ -94,7 +93,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setSelectMode(true)
+            .setMultiSelect()//默认是单选 false
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(10, "最多选十个文件!")
             //优先以自定义的 optionsImage.mSingleFileMaxSize , 单位 Byte
@@ -113,9 +112,9 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
                         FileType.IMAGE -> {
                             return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                         }
-                        FileType.VIDEO -> true
-                        FileType.AUDIO -> true
-                        else -> true
+                        FileType.VIDEO -> false
+                        FileType.AUDIO -> false
+                        else -> false
                     }
                 }
             })
@@ -123,9 +122,11 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
                 override fun onSuccess(results: List<FileSelectResult>?) {
                     FileLogger.w("回调 onSuccess ${results?.size}")
                     mTvResult.text = ""
-                    if (results.isNullOrEmpty()) return
+                    if (results.isNullOrEmpty()) {
+                        toastShort("没有选取文件")
+                        return
+                    }
 
-                    toastShort("正在压缩图片...")
                     showSelectResult(results)
                 }
 

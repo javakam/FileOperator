@@ -54,7 +54,6 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        PermissionManager.verifyStoragePermissions(this)
         setContentView(R.layout.activity_file_select_single)
         mBtSelectSingle = findViewById(R.id.bt_select_single)
         mTvError = findViewById(R.id.tv_error)
@@ -66,13 +65,14 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
         mBtSelectSingle.visibility = View.VISIBLE
         mBtSelectSingle.setOnClickListener {
-            chooseFile()
+            PermissionManager.requestStoragePermission(this) {
+                if (it) chooseFile()
+            }
         }
     }
 
     private fun chooseFile() {
         /*
-
         说明:
             FileOptions T 为 String.filePath / Uri / File
             3M 3145728 Byte ; 5M 5242880 Byte; 10M 10485760 ; 20M = 20971520 Byte
@@ -80,8 +80,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
             fileTypeMismatchTip = "文件类型不匹配"
-            singleFileMaxSize = 2097152
-            singleFileMaxSizeTip = "图片最大不超过2M！"
+            singleFileMaxSize = 3145728
+            singleFileMaxSizeTip = "图片最大不超过3M！"
             allFilesMaxSize = 5242880
             allFilesMaxSizeTip = "总图片大小不超过5M！"
             fileCondition = object : FileSelectCondition {
@@ -94,7 +94,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setSelectMode(false)
+            .setTypeMismatchTip("文件类型不匹配") //会覆盖 FileSelectOptions 中的 fileTypeMismatchTip
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(10, "最多选十个文件!")
             .setSingleFileMaxSize(5242880, "大小不能超过5M！") //5M 5242880 ; 100M = 104857600 Byte
@@ -115,16 +115,18 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             })
             .callback(object : FileSelectCallBack {
                 override fun onSuccess(results: List<FileSelectResult>?) {
-                    FileLogger.w("回调 onSuccess ${results?.size}")
+                    FileLogger.w("onSuccess ${results?.size}")
                     mTvResult.text = ""
-                    if (results.isNullOrEmpty()) return
+                    if (results.isNullOrEmpty()) {
+                        toastShort("没有选取文件")
+                        return
+                    }
 
-                    toastShort("正在压缩图片...")
                     showSelectResult(results)
                 }
 
                 override fun onError(e: Throwable?) {
-                    FileLogger.e("回调 onError ${e?.message}")
+                    FileLogger.e("onError ${e?.message}")
                     mTvError.text = mTvError.text.toString().plus(" 错误信息: ${e?.message} \n")
                 }
             })
@@ -153,6 +155,9 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                     //原图
                     val bitmap = getBitmapFromUri(uri)
                     mIvOrigin.setImageBitmap(bitmap)
+                    mIvOrigin.setOnClickListener {
+                        FileOpener.openFileBySystemChooser(this, uri, "image/*")
+                    }
                     //压缩(Luban)
                     val photos = mutableListOf<Uri>()
                     photos.add(uri)
@@ -243,6 +248,9 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                         }
                     }
                     mIvCompressed.setImageBitmap(bitmap)
+                    mIvCompressed.setOnClickListener {
+                        FileOpener.openFileBySystemChooser(this, uri, "image/*")
+                    }
                 }
 
                 override fun onError(e: Throwable?) {

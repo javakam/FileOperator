@@ -516,6 +516,9 @@ File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 ---
 
 ## v1.0.2
+1.加入文件不匹配时的判断;
+2.开启多选: FileSelector.setSelectMode(true) 改为 setMultiSelect() , 默认为单选模式
+
 ```
 Caused by: android.graphics.ImageDecoder$DecodeException: Failed to create image decoder with message 'unimplemented'Input contained an error.
 ```

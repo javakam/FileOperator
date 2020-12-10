@@ -9,11 +9,9 @@ import ando.file.androidq.FileOperatorQ.deleteUriMediaStoreImage
 import ando.file.androidq.FileOperatorQ.insertBitmap
 import ando.file.androidq.FileOperatorQ.loadThumbnail
 import ando.file.androidq.FileOperatorQ.queryMediaStoreImages
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.RecoverableSecurityException
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentSender
 import android.graphics.*
@@ -25,7 +23,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DiffUtil
@@ -39,10 +36,8 @@ import ando.file.core.FileGlobal.dumpParcelFileDescriptor
 import ando.file.core.FileGlobal.openFileDescriptor
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
-import com.ando.file.sample.utils.PermissionManager.havePermissions
 import com.ando.file.sample.REQUEST_CODE_SENDER
 import com.bumptech.glide.Glide
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.android.synthetic.main.activity_media_store.*
 import java.io.File
 import java.io.IOException
@@ -146,32 +141,33 @@ class MediaStoreActivity : AppCompatActivity() {
             //通过 DisplayName 查询图片
             //1.读取文件需要权限 READ_EXTERNAL_STORAGE
             //2.系统只提供了多媒体文件的读权限，没有提供写权限，应用无法通过申请写权限修改其他应用生成的文件
-            if (!havePermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                PermissionManager.verifyStoragePermissions(this)
-                return@setOnClickListener
-            } else {
-                mQueryUri = queryMediaStoreImages(
-                    "BitmapImage.png", true
-                )
-            }
+            PermissionManager.requestStoragePermission(this){ per->
+                if (per) {
+                    mQueryUri = queryMediaStoreImages(
+                        "BitmapImage.png", true
+                    )
 
-            // 根据 Uri，获取 Bitmap
-            imageIv.setImageBitmap(null)
-            val pfd: ParcelFileDescriptor? = openFileDescriptor(mQueryUri, MODE_READ_ONLY)
-            pfd?.let {
-                it.use { pfdNoNull ->
-                    dumpParcelFileDescriptor(pfdNoNull) //Log
+                    // 根据 Uri，获取 Bitmap
+                    imageIv.setImageBitmap(null)
+                    val pfd: ParcelFileDescriptor? = openFileDescriptor(mQueryUri, MODE_READ_ONLY)
+                    pfd?.let {
+                        it.use { pfdNoNull ->
+                            dumpParcelFileDescriptor(pfdNoNull) //Log
 
-                    // java.lang.NullPointerException: fdObj == null
-                    val bitmap = BitmapFactory.decodeFileDescriptor(pfdNoNull.fileDescriptor)
-                    imageIv.setImageBitmap(bitmap)
+                            // java.lang.NullPointerException: fdObj == null
+                            val bitmap = BitmapFactory.decodeFileDescriptor(pfdNoNull.fileDescriptor)
+                            imageIv.setImageBitmap(bitmap)
+                        }
+                    }
+
+                    // 根据 Uri，获取 Thumbnail
+                    imageIv1.setImageBitmap(null)
+                    val bitmap = loadThumbnail(mQueryUri, 50, 100)
+                    imageIv1.setImageBitmap(bitmap)
+                }else{
+
                 }
             }
-
-            // 根据 Uri，获取 Thumbnail
-            imageIv1.setImageBitmap(null)
-            val bitmap = loadThumbnail(mQueryUri, 50, 100)
-            imageIv1.setImageBitmap(bitmap)
         }
 
         //查询全部
@@ -271,43 +267,48 @@ class MediaStoreActivity : AppCompatActivity() {
     private fun updateFileByMediaStore() {
 
         updateFileByMediaStoreBtn.setOnClickListener {
-            //需要 READ_EXTERNAL_STORAGE 权限
-            if (havePermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                //这里的 img 是我相册里的图片，需要换成你自己的
-                val queryUri = queryMediaStoreImages("zp1548551182218.jpg")
-                val bitmap = loadThumbnail(queryUri, 400, 100)
-                imageIv2.setImageBitmap(bitmap)
 
-                var os: OutputStream? = null
-                try {
-                    queryUri?.let { uri ->
-                        os = contentResolver.openOutputStream(uri)
-                        FileLogger.d("修改成功")
-                    }
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e1: RecoverableSecurityException) {
-                    //e1.printStackTrace()
+            //需要 READ_EXTERNAL_STORAGE 权限
+            PermissionManager.requestStoragePermission(this) { b: Boolean ->
+                if (b) {
+
+                    //这里的 img 是我相册里的图片，需要换成你自己的
+                    val queryUri = queryMediaStoreImages("zp1548551182218.jpg")
+                    val bitmap = loadThumbnail(queryUri, 400, 100)
+                    imageIv2.setImageBitmap(bitmap)
+
+                    var os: OutputStream? = null
                     try {
-                        @Suppress("DEPRECATION")
-                        startIntentSenderForResult(
-                            e1.userAction.actionIntent.intentSender,
-                            REQUEST_CODE_SENDER,
-                            null,
-                            0,
-                            0,
-                            0,
-                            null
-                        )
-                    } catch (e2: IntentSender.SendIntentException) {
-                        e2.printStackTrace()
+                        queryUri?.let { uri ->
+                            os = contentResolver.openOutputStream(uri)
+                            FileLogger.d("修改成功")
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e1: RecoverableSecurityException) {
+                        //e1.printStackTrace()
+                        try {
+                            @Suppress("DEPRECATION")
+                            startIntentSenderForResult(
+                                e1.userAction.actionIntent.intentSender,
+                                REQUEST_CODE_SENDER,
+                                null,
+                                0,
+                                0,
+                                0,
+                                null
+                            )
+                        } catch (e2: IntentSender.SendIntentException) {
+                            e2.printStackTrace()
+                        }
+                    } finally {
+                        os?.close()
                     }
-                } finally {
-                    os?.close()
+                } else {
+                    FileLogger.d("没有 READ_EXTERNAL_STORAGE 权限，请动态申请")
+                    PermissionManager.requestStoragePermission(this)
                 }
-            } else {
-                FileLogger.d("没有READ_EXTERNAL_STORAGE权限，请动态申请")
-                PermissionManager.verifyStoragePermissions(this)
+
             }
         }
     }
@@ -352,68 +353,6 @@ class MediaStoreActivity : AppCompatActivity() {
             deleteUriDirectory(this, REQUEST_CODE_SENDER, MEDIA_TYPE_IMAGE)
 
         }
-
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            PermissionManager.REQUEST_EXTERNAL_STORAGE -> {
-
-                PermissionManager.handleRequestPermissionsResult(
-                    this,
-                    permissions,
-                    grantResults
-                ) { result: Boolean, showRationale: Boolean ->
-                    if (result) {
-                        Toast.makeText(this, "申请权限成功!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        FileLogger.w("showRationale =$showRationale ")
-
-
-                        if (showRationale) {
-                            //无权限
-                            Toast.makeText(this, "申请权限失败!", Toast.LENGTH_SHORT).show()
-                        } else {
-                            //用户点了禁止获取权限，并勾选不再提示
-                            //Toast.makeText(this, "请申请存储权限!", Toast.LENGTH_LONG).show()
-                            //PermissionManager.goToSettings(this)
-
-                            //or 弹窗提示更友好
-                            showRequestPermissionSystem()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showRequestPermissionSystem() {
-        /*
-          Caused by: java.lang.IllegalArgumentException: com.google.android.material.dialog.MaterialAlertDialogBuilder requires a value for the com.ando.file.sample:attr/colorSurface attribute to be set in your app theme. You can either set the attribute in your theme or update your theme to inherit from Theme.MaterialComponents (or a descendant).
-        at com.google.android.material.resources.MaterialAttributes.resolveOrThrow(MaterialAttributes.java:69)
-        at com.google.android.material.color.MaterialColors.getColor(MaterialColors.java:64)
-        at com.google.android.material.dialog.MaterialAlertDialogBuilder.<init>(MaterialAlertDialogBuilder.java:120)
-        at com.google.android.material.dialog.MaterialAlertDialogBuilder.<init>(MaterialAlertDialogBuilder.java:103)
-        at com.ando.file.sample.ui.storage.MediaStoreActivity.showRequestPermissionSystem(MediaStoreActivity.kt:273)
-
-        Fixed: parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-         */
-        MaterialAlertDialogBuilder(this)
-            .setTitle("是否去系统页面申请存储权限？")
-            .setPositiveButton("确定") { dialog: DialogInterface, _: Int ->
-                dialog.dismiss()
-                PermissionManager.goToSettings(this)
-            }
-            .setNegativeButton("取消") { dialog: DialogInterface, _: Int ->
-                dialog.dismiss()
-            }
-            .show()
     }
 
     @Suppress("DEPRECATION")

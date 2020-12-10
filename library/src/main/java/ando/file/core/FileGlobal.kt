@@ -160,10 +160,10 @@ object FileGlobal {
 
     fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) =
         if (pfd != null) {
-            //读取成功 : 91  1519
+            //读取成功 : 87  大小:2498324B
             FileLogger.d("读取成功 : ${pfd.fd}  大小:${pfd.statSize}B")
         } else {
-            FileLogger.e("读取成功失败!")
+            FileLogger.e("读取失败!")
         }
 
     /**

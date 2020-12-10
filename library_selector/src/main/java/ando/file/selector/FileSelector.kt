@@ -41,6 +41,7 @@ class FileSelector private constructor(builder: Builder) {
     private var mAllFilesMaxSize: Long = -1                     //总文件大小控制 Byte
     private var mOverSizeLimitStrategy = OVER_SIZE_LIMIT_ALL_DONT
 
+    private var mFileTypeMismatchTip: String = DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
     private var mSingleFileMaxSizeTip: String = DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
     private var mAllFilesMaxSizeTip: String = DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
 
@@ -59,6 +60,7 @@ class FileSelector private constructor(builder: Builder) {
         mMinCountTip = builder.mMinCountTip
         mMaxCountTip = builder.mMaxCountTip
         mSingleFileMaxSize = builder.mSingleFileMaxSize
+        mFileTypeMismatchTip = builder.mFileTypeMismatchTip
         mSingleFileMaxSizeTip = builder.mSingleFileMaxSizeTip
         mAllFilesMaxSize = builder.mAllFilesMaxSize
         mAllFilesMaxSizeTip = builder.mAllFilesMaxSizeTip
@@ -102,7 +104,7 @@ class FileSelector private constructor(builder: Builder) {
             processIntentUri(it) { o, t, tf, s, sf ->
                 if (!tf) {
                     mFileSelectCallBack?.onError(Throwable(
-                        if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
+                        if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else mFileTypeMismatchTip
                     ))
                     return@processIntentUri
                 }
@@ -150,7 +152,7 @@ class FileSelector private constructor(builder: Builder) {
                 //FileType Mismatch -> onError
                 if (!tf) {
                     mFileSelectCallBack?.onError(Throwable(
-                        if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
+                        if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else mFileTypeMismatchTip
                     ))
 
                     uriList.clear()
@@ -370,6 +372,7 @@ class FileSelector private constructor(builder: Builder) {
         var mMaxCountTip: String = ""
         var mSingleFileMaxSize: Long = -1                   //单文件大小控制 B
         var mAllFilesMaxSize: Long = -1                     //总文件大小控制 B
+        var mFileTypeMismatchTip: String = DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
         var mSingleFileMaxSizeTip: String = DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
         var mAllFilesMaxSizeTip: String = DEFAULT_ALL_FILE_SIZE_THRESHOLD
         var mOverSizeLimitStrategy = OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
@@ -392,8 +395,8 @@ class FileSelector private constructor(builder: Builder) {
             return this
         }
 
-        fun setSelectMode(isMultiSelect: Boolean): Builder {
-            this.mIsMultiSelect = isMultiSelect
+        fun setMultiSelect(): Builder {
+            this.mIsMultiSelect = true
             return this
         }
 
@@ -406,6 +409,11 @@ class FileSelector private constructor(builder: Builder) {
         fun setMaxCount(maxCount: Int, msg: String): Builder {
             this.mMaxCount = maxCount
             this.mMaxCountTip = msg
+            return this
+        }
+
+        fun setTypeMismatchTip(fileTypeMismatchTip: String): Builder {
+            this.mFileTypeMismatchTip = fileTypeMismatchTip
             return this
         }
 

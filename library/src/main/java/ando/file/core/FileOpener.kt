@@ -32,7 +32,7 @@ object FileOpener {
     }
 
 
-    fun createOpenFileIntent(uri: Uri, mimeType: String?): Intent? = Intent(Intent.ACTION_VIEW).run {
+    fun createOpenFileIntent(uri: Uri, mimeType: String?): Intent = Intent(Intent.ACTION_VIEW).run {
         addCategory(Intent.CATEGORY_DEFAULT)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

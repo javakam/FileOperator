@@ -12,7 +12,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -115,7 +114,6 @@ public class MainActivity extends Activity {
 
         mFileSelector = FileSelector.Companion.with(this)
                 .setRequestCode(REQUEST_CHOOSE_FILE)
-                .setSelectMode(false)
                 .setMinCount(1, "至少选一个文件!")
                 .setMaxCount(10, "最多选十个文件!")
                 .setSingleFileMaxSize(5242880, "大小不能超过5M！")

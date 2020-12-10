@@ -2,11 +2,11 @@ package ando.file.compressor
 
 import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.openFileDescriptor
-import android.graphics.BitmapFactory
-import android.net.Uri
-
-import ando.file.core.FileSizeUtils
 import ando.file.core.FileLogger
+import ando.file.core.FileSizeUtils
+import android.graphics.BitmapFactory
+import android.media.ExifInterface
+import android.net.Uri
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -27,17 +27,10 @@ object ImageChecker {
     /**
      * Determine if it is JPG.
      *
-     * @param is image file input stream
+     * @param ins image file input stream
      */
     fun isJPG(ins: InputStream?): Boolean {
         return isJPG(toByteArray(ins))
-    }
-
-    /**
-     * Returns the degrees in clockwise. Values are 0, 90, 180, or 270.
-     */
-    fun getOrientation(ins: InputStream?): Int {
-        return getOrientation(toByteArray(ins))
     }
 
     private fun isJPG(data: ByteArray?): Boolean {
@@ -48,7 +41,53 @@ object ImageChecker {
         return JPEG_SIGNATURE.contentEquals(signatureB)
     }
 
-    private fun getOrientation(jpeg: ByteArray?): Int {
+    fun extSuffix(uri: Uri?): String {
+        return try {
+            BitmapFactory.Options().run {
+                inJustDecodeBounds = true
+                BitmapFactory.decodeFileDescriptor(openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return JPG, null, this)
+                outMimeType.replace("image/", ".")
+            }
+        } catch (e: Exception) {
+            JPG
+        }
+    }
+
+    fun needCompress(leastCompressSize: Int, uri: Uri?): Boolean =
+        if (leastCompressSize > 0) {
+            FileSizeUtils.getFileSize(uri) > leastCompressSize shl 10
+        } else true
+
+    /**
+     * 获取图片的旋转角度
+     * 只能通过原始文件获取，如果已经进行过 bitmap 操作无法获取。
+     */
+    fun getRotateDegree(exif: ExifInterface): Int {
+        var result = 0
+        try {
+            val orientation: Int = exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL)
+            when (orientation) {
+                ExifInterface.ORIENTATION_ROTATE_90 -> result = 90
+                ExifInterface.ORIENTATION_ROTATE_180 -> result = 180
+                ExifInterface.ORIENTATION_ROTATE_270 -> result = 270
+            }
+        } catch (ignore: IOException) {
+            FileLogger.e("Orientation not found")
+            return 0
+        }
+        return result
+    }
+
+    /**
+     * Returns the degrees in clockwise. Values are 0, 90, 180, or 270.
+     */
+    fun getOrientation(ins: InputStream?): Int {
+        return getOrientation(toByteArray(ins))
+    }
+
+    fun getOrientation(jpeg: ByteArray?): Int {
         if (jpeg == null) {
             return 0
         }
@@ -142,23 +181,6 @@ object ImageChecker {
         FileLogger.e("Orientation not found")
         return 0
     }
-
-    fun extSuffix(uri: Uri?): String {
-        return try {
-            BitmapFactory.Options().run {
-                inJustDecodeBounds = true
-                BitmapFactory.decodeFileDescriptor(openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return JPG, null, this)
-                outMimeType.replace("image/", ".")
-            }
-        } catch (e: Exception) {
-            JPG
-        }
-    }
-
-    fun needCompress(leastCompressSize: Int, uri: Uri?): Boolean =
-        if (leastCompressSize > 0) {
-            FileSizeUtils.getFileSize(uri) > leastCompressSize shl 10
-        } else true
 
     private fun pack(
         bytes: ByteArray,

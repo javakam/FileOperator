@@ -11,12 +11,12 @@
         android:padding="8dp">
 
         <Button
-            android:id="@+id/bt_select_single"
+            android:id="@+id/bt_select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="选择一张图片并压缩"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/font_13" />
+            android:textSize="@dimen/font_13"
+            tools:text="XXXX" />
 
         <TextView
             android:id="@+id/tv_error"
@@ -29,7 +29,7 @@
             android:textColorHint="@color/color_font_black"
             android:textSize="12sp"
             android:textStyle="bold"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <TextView
@@ -43,7 +43,8 @@
             android:textColor="@color/color_font_black"
             android:textColorHint="@color/color_font_black"
             android:textSize="12sp"
-            android:visibility="visible" />
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tv_origin"
@@ -63,7 +64,7 @@
             android:layout_marginTop="5dp"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <TextView
@@ -73,7 +74,7 @@
             android:padding="3dp"
             android:text="压缩后"
             android:textColor="@color/color_font_black"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:visibility="visible" />
 
         <ImageView
@@ -84,7 +85,7 @@
             android:layout_marginTop="5dp"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:visibility="visible" />
 
     </LinearLayout>
