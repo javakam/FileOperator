@@ -245,7 +245,7 @@ public class MainActivity extends Activity {
                         final String path = getCacheDir() + "/image/";
                         try {
                             FileLogger.INSTANCE.i("compress onSuccess  uri=" + uri + "  path= " + path
-                                    + " 缓存目录总大小= " + FileSizeUtils.INSTANCE.getFolderSize(new File(path)));
+                                    + " 压缩图片缓存目录总大小= " + FileSizeUtils.INSTANCE.getFolderSize(new File(path)));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

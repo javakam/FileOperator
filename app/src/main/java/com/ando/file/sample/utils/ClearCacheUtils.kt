@@ -26,7 +26,7 @@ object ClearCacheUtils {
      */
     fun showClearDialog(
         context: Context?,
-        onPositiveClickListener: DialogInterface.OnClickListener?
+        onPositiveClickListener: DialogInterface.OnClickListener?,
     ): Dialog {
         return AlertDialog.Builder(context!!)
             .setCancelable(true)
@@ -49,6 +49,15 @@ object ClearCacheUtils {
         val cacheSize = getFolderSize(dir)
         //L.w("缓存大小 : " + cacheSize);
         return formatFileSize(cacheSize)
+    }
+
+    /**
+     * 清除缓存
+     */
+    fun clearAllCache(path: String): Boolean {
+        val delPath = File(path)
+        if (!delPath.exists()) delPath.mkdirs()
+        return deleteFileDir(delPath)
     }
 
     /**

@@ -21,7 +21,7 @@ import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileMimeType.MIME_MEDIA
 import ando.file.core.FileUri.getFilePathByUri
 import ando.file.selector.*
-import com.ando.file.sample.getPathImageCache
+import com.ando.file.sample.getCompressedImageCacheDir
 import com.ando.file.sample.toastShort
 import com.ando.file.sample.utils.PermissionManager
 import kotlinx.android.synthetic.main.activity_file_operator.*
@@ -196,7 +196,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .with(this)
             .load(photos)
             .ignoreBy(100)//Byte
-            .setTargetDir(getPathImageCache())
+            .setTargetDir(getCompressedImageCacheDir())
             .setFocusAlpha(false)
             .enableCache(true)
             .filter(object : ImageCompressPredicate {
@@ -225,7 +225,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
                 override fun onStart() {}
                 override fun onSuccess(uri: Uri?) {
                     val path = "$cacheDir/image/"
-                    FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
+                    FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
 
                     val bitmap = getBitmapFromUri(uri)
                     dumpMetaData(uri) { displayName: String?, size: String? ->

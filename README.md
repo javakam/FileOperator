@@ -289,7 +289,7 @@ private fun <T> compressImage(photos: List<T>) {
             override fun onStart() {}
             override fun onSuccess(uri: Uri?) {
                 val path = "$cacheDir/image/"
-                FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
+                FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
                 val bitmap = getBitmapFromUri(uri)
                 dumpMetaData(uri) { displayName: String?, size: String? ->
                     runOnUiThread {

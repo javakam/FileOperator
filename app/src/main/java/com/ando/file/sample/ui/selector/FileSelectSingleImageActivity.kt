@@ -21,7 +21,7 @@ import ando.file.selector.*
 import android.widget.ImageView
 import android.widget.TextView
 import com.ando.file.sample.R
-import com.ando.file.sample.getPathImageCache
+import com.ando.file.sample.getCompressedImageCacheDir
 import com.ando.file.sample.toastShort
 import com.ando.file.sample.utils.PermissionManager
 import java.io.File
@@ -194,7 +194,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .with(this)
             .load(photos)
             .ignoreBy(100)//单位 Byte
-            .setTargetDir(getPathImageCache())
+            .setTargetDir(getCompressedImageCacheDir())
             .setFocusAlpha(false)
             .enableCache(true)
             .filter(object : ImageCompressPredicate {
@@ -222,10 +222,9 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .setImageCompressListener(object : OnImageCompressListener {
                 override fun onStart() {}
                 override fun onSuccess(uri: Uri?) {
-                    val path = "$cacheDir/image/"
                     FileLogger.i(
                         "compress onSuccess  uri=$uri  path=${uri?.path}  " +
-                                "缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}"
+                                "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
                     )
 
                     /*

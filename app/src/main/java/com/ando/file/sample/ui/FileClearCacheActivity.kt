@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.FileSizeUtils
 import ando.file.core.FileLogger
 import com.ando.file.sample.R
+import com.ando.file.sample.clearCompressedImageCacheDir
+import com.ando.file.sample.toastShort
 import kotlinx.android.synthetic.main.activity_file_clear_cache.*
 import java.io.File
 
@@ -27,7 +29,8 @@ class FileClearCacheActivity : AppCompatActivity() {
 
         //清除缓存
         mBtClearCache.setOnClickListener {
-
+            val result = clearCompressedImageCacheDir()
+            toastShort(if (result) "清理压缩图片缓存成功!" else "清理压缩图片缓存失败!")
         }
 
         fileList()?.forEach {
