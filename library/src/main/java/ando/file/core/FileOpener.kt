@@ -31,7 +31,6 @@ object FileOpener {
         }
     }
 
-
     fun createOpenFileIntent(uri: Uri, mimeType: String?): Intent = Intent(Intent.ACTION_VIEW).run {
         addCategory(Intent.CATEGORY_DEFAULT)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -39,7 +38,6 @@ object FileOpener {
         addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         setDataAndType(uri, if (mimeType.isNullOrBlank()) getMimeType(uri) else mimeType)
     }
-
 
     /**
      * 根据 文件路径 和 类型(后缀判断) 显示支持该格式的程序
@@ -55,7 +53,6 @@ object FileOpener {
                 startActivity(context, it)
             }
         }
-
 
     /**
      * 选择文件【调用系统的文件管理】

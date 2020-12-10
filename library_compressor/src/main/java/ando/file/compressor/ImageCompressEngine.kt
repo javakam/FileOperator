@@ -6,8 +6,8 @@ import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.openFileDescriptor
 import ando.file.core.FileUri.getUriByFile
 import android.graphics.*
-import android.media.ExifInterface
 import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
 import java.io.*
 import kotlin.math.ceil
 import kotlin.math.max

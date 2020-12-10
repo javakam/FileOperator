@@ -518,6 +518,23 @@ File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 ## v1.0.2
 1.加入文件不匹配时的判断;
 2.开启多选: FileSelector.setSelectMode(true) 改为 setMultiSelect() , 默认为单选模式
+3.
+```
+W/ExifInterface: Invalid image: ExifInterface got an unsupported image format
+    file(ExifInterface supports JPEG and some RAW image formats only) or a corrupted JPEG file to ExifInterface.
+     java.io.IOException: Invalid byte order: 0
+         at android.media.ExifInterface.readByteOrder(ExifInterface.java:3134)
+         at android.media.ExifInterface.isOrfFormat(ExifInterface.java:2449)
+         at android.media.ExifInterface.getMimeType(ExifInterface.java:2327)
+         at android.media.ExifInterface.loadAttributes(ExifInterface.java:1755)
+         at android.media.ExifInterface.<init>(ExifInterface.java:1449)
+      ...
+
+Fixed :
+    compileOnly "androidx.exifinterface:exifinterface:1.3.2"
+    replace `android.media.ExifInterface` with `androidx.exifinterface.media.ExifInterface`
+```
+4.
 
 ```
 Caused by: android.graphics.ImageDecoder$DecodeException: Failed to create image decoder with message 'unimplemented'Input contained an error.

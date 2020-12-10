@@ -5,8 +5,8 @@ import ando.file.core.FileGlobal.openFileDescriptor
 import ando.file.core.FileLogger
 import ando.file.core.FileSizeUtils
 import android.graphics.BitmapFactory
-import android.media.ExifInterface
 import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
