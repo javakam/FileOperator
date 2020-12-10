@@ -31,7 +31,13 @@ class FileClearCacheActivity : AppCompatActivity() {
         mBtClearCache.setOnClickListener {
             val result = clearCompressedImageCacheDir()
             toastShort(if (result) "清理压缩图片缓存成功!" else "清理压缩图片缓存失败!")
+
+            refresh()
         }
+
+    }
+
+    private fun refresh() {
 
         fileList()?.forEach {
             FileLogger.i("fileList item: $it")
@@ -57,7 +63,6 @@ class FileClearCacheActivity : AppCompatActivity() {
         //getExternalCacheDirs
         //getExternalMediaDirs
         //getDir(String name, int mode)
-
 
     }
 

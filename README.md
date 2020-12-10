@@ -534,7 +534,7 @@ Fixed :
     compileOnly "androidx.exifinterface:exifinterface:1.3.2"
     replace `android.media.ExifInterface` with `androidx.exifinterface.media.ExifInterface`
 ```
-4.
+4.增加清理压缩图片缓存方法
 
 ```
 Caused by: android.graphics.ImageDecoder$DecodeException: Failed to create image decoder with message 'unimplemented'Input contained an error.
