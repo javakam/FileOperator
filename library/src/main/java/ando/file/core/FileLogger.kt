@@ -10,10 +10,12 @@ import android.util.Log
  */
 object FileLogger {
 
-    private const val TAG = "FileLogger"
+    private const val TAG_DEFAULT = "FileLogger"
+    private var TAG = javaClass.simpleName
     private var isDebug = false
 
-    fun init(isDebug: Boolean) {
+    fun init(isDebug: Boolean, tag: String = TAG_DEFAULT) {
+        TAG = if (tag.isBlank()) TAG_DEFAULT else tag
         FileLogger.isDebug = isDebug
     }
 
@@ -53,7 +55,6 @@ object FileLogger {
         }
     }
 
-    //
     fun v(tag: String?, msg: String?) {
         if (isDebug) {
             Log.v(tag, noNull(msg))

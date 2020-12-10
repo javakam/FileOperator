@@ -83,7 +83,7 @@ mFileSelector = FileSelector
     .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//
     .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
     .applyOptions(optionsImage)
-    //优先使用 FileOptions 中设置的 FileSelectCondition
+    //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
         override fun accept(fileType: FileType, uri: Uri?): Boolean {
             return when (fileType) {
@@ -138,7 +138,7 @@ mFileSelector = FileSelector
     .setOverSizeLimitStrategy(this.mOverSizeStrategy)
     .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
     .applyOptions(optionsImage)
-    //优先使用 FileOptions 中设置的 FileSelectCondition
+    //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
         override fun accept(fileType: FileType, uri: Uri?): Boolean {
             return when (fileType) {
@@ -223,7 +223,7 @@ mFileSelector = FileSelector
     .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
     .setMimeTypes(null)//默认为 null,*/* 即不做文件类型限定;MIME_MEDIA 媒体文件,不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
     .applyOptions(optionsImage, optionsVideo)
-    // 优先使用 FileOptions 中设置的 FileSelectCondition,没有的情况下才使用通用的
+    // 优先使用 FileSelectOptions 中设置的 FileSelectCondition,没有的情况下才使用通用的
     .filter(object : FileSelectCondition {
         override fun accept(fileType: FileType, uri: Uri?): Boolean {
             return when (fileType) {
@@ -514,6 +514,14 @@ File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 4.
 ```
 ---
+
+## v1.0.2
+```
+Caused by: android.graphics.ImageDecoder$DecodeException: Failed to create image decoder with message 'unimplemented'Input contained an error.
+```
+[What is new in Android P — ImageDecoder & AnimatedImageDrawable](https://medium.com/appnroll-publication/what-is-new-in-android-p-imagedecoder-animatedimagedrawable-a65744bec7c1)
+
+
 
 ## 参考
 

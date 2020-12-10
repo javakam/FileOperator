@@ -19,6 +19,7 @@ import ando.file.core.FileType.INSTANCE
 class FileSelector private constructor(builder: Builder) {
 
     companion object {
+        const val DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD = "文件类型不匹配"
         const val DEFAULT_SINGLE_FILE_SIZE_THRESHOLD = "超过限定文件大小"
         const val DEFAULT_ALL_FILE_SIZE_THRESHOLD = "超过限定文件总大小"
 
@@ -98,8 +99,14 @@ class FileSelector private constructor(builder: Builder) {
     private fun handleSingleSelectCase(intent: Intent?): FileSelector {
         this.mIsMultiSelect = false
         intent?.data?.let {
-            processIntentUri(it) { o, t, s, r ->
-                if (r) mFileSelectCallBack?.onSuccess(createResult(it, t, s))
+            processIntentUri(it) { o, t, tf, s, sf ->
+                if (!tf) {
+                    mFileSelectCallBack?.onError(Throwable(
+                        if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
+                    ))
+                    return@processIntentUri
+                }
+                if (sf) mFileSelectCallBack?.onSuccess(createResult(it, t, s))
                 else {
                     if (o?.fileType == t) {
                         mFileSelectCallBack?.onError(Throwable(if (o.singleFileMaxSizeTip != null) o.singleFileMaxSizeTip else o.allFilesMaxSizeTip))
@@ -128,6 +135,7 @@ class FileSelector private constructor(builder: Builder) {
 
         var totalSize = 0L
         var isNeedBreak = false
+        var isFileTypeIllegal = false
         var isFileSizeIllegal = false
         val canJoinTypeMap = ArrayMap<FileSelectOptions, Boolean>()
 
@@ -135,11 +143,24 @@ class FileSelector private constructor(builder: Builder) {
             if (isNeedBreak) return this
 
             val u = clipData.getItemAt(i)?.uri ?: return@forEach
-            processIntentUri(u) { o, t, s, r ->
+            processIntentUri(u) { o, t, tf, s, sf ->
                 val isCurrentType = (t == o?.fileType)
-                FileLogger.w("processIntentUri: ${o?.fileType}  isCurrentType=$isCurrentType  isSuccess=$r")
+                FileLogger.w("processIntentUri: ${o?.fileType}  isCurrentType=$isCurrentType  isSuccess=$sf")
 
-                if (!r) {
+                //FileType Mismatch -> onError
+                if (!tf) {
+                    mFileSelectCallBack?.onError(Throwable(
+                        if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
+                    ))
+
+                    uriList.clear()
+                    uriListAll.clear()
+                    isNeedBreak = true
+                    isFileTypeIllegal = true
+                    return@processIntentUri
+                }
+
+                if (!sf) {
                     isFileSizeIllegal = true
                     if (isCurrentType && mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_DONT) {
                         mFileSelectCallBack?.onError(Throwable(o?.singleFileMaxSizeTip ?: mSingleFileMaxSizeTip))
@@ -197,14 +218,14 @@ class FileSelector private constructor(builder: Builder) {
                 }
 
                 if (true == canJoinTypeMap[o]) {
-                    if (uriList[o].isNullOrEmpty()) uriList[o] = mutableListOf<Uri>()
+                    if (uriList[o].isNullOrEmpty()) uriList[o] = mutableListOf()
                     uriList[o]?.add(u)
                     uriListAll.add(u)
                 }
             }
         }
 
-        FileLogger.i("handleMultiSelectCase isIllegal  : $isFileSizeIllegal ")
+        FileLogger.w("handleMultiSelectCase isFileTypeIllegal=$isFileTypeIllegal ; isFileSizeIllegal=$isFileSizeIllegal ")
 
         //filter data
         if (isFileSizeIllegal) {
@@ -250,35 +271,43 @@ class FileSelector private constructor(builder: Builder) {
             }
         }
 
-        if (!uriList.isNullOrEmpty()) mFileSelectCallBack?.onSuccess(createResult(uriListAll))
+        if (!isFileTypeIllegal && !uriList.isNullOrEmpty()) mFileSelectCallBack?.onSuccess(createResult(uriListAll))
         return this
     }
 
-    private fun processIntentUri(uri: Uri, block: (option: FileSelectOptions?, fileType: FileType, fileSize: Long, sizeFit: Boolean) -> Unit) {
+    private fun processIntentUri(
+        uri: Uri,
+        block: (option: FileSelectOptions?, fileType: FileType, typeFit: Boolean, fileSize: Long, sizeFit: Boolean) -> Unit,
+    ) {
         val fileType = INSTANCE.typeByUri(uri)
         val fileSize = FileSizeUtils.getFileSize(uri)
 
         val currentOption: List<FileSelectOptions>? = mFileOptions?.filter { it.fileType == fileType }
         val isFileOptionsNullOrEmpty = mFileOptions.isNullOrEmpty() || currentOption.isNullOrEmpty()
 
-        FileLogger.i("Select File ：chooseFilePath: $uri   fileType: $fileType currentOption:${currentOption?.size}  isFileOptionsNullOrEmpty=$isFileOptionsNullOrEmpty")
+        FileLogger.i("processIntentUri -> chooseFilePath: $uri   fileType: $fileType currentOption:${currentOption?.size}  isFileOptionsNullOrEmpty=$isFileOptionsNullOrEmpty")
+
+        if (currentOption.isNullOrEmpty()) {
+            block.invoke(null, fileType, false, fileSize, false)
+            return
+        }
 
         if (isFileOptionsNullOrEmpty) {
             //没有设置 FileOptions 时,使用通用的配置
             val isAccept = (mFileSelectCondition != null) && mFileSelectCondition?.accept(fileType, uri) ?: false
             if (!isAccept) return
-            block.invoke(null, fileType, fileSize, limitFileSize(fileSize, realLimitSizeThreshold(null)))
+            block.invoke(null, fileType, true, fileSize, limitFileSize(fileSize, realLimitSizeThreshold(null)))
         } else {
             currentOption?.forEach {
-                //获取 CallBack -> 优先使用 FileOptions 中设置的 FileSelectCallBack
-                //控制类型 -> 自定义规则 -> 优先使用 FileOptions 中设置的 FileSelectCondition
+                //获取 CallBack -> 优先使用 FileSelectOptions 中设置的 FileSelectCallBack
+                //控制类型 -> 自定义规则 -> 优先使用 FileSelectOptions 中设置的 FileSelectCondition
                 val isAccept = mFileSelectCondition?.accept(fileType, uri) ?: true && it.fileCondition?.accept(fileType, uri) ?: true
                 if (!isAccept) {
-                    block.invoke(it, fileType, fileSize, limitFileSize(fileSize, realLimitSizeThreshold(null)))
+                    block.invoke(it, fileType, true, fileSize, limitFileSize(fileSize, realLimitSizeThreshold(null)))
                     return@forEach
                 }
                 val success = limitFileSize(fileSize, realLimitSizeThreshold(it))
-                block.invoke(it, fileType, fileSize, success)
+                block.invoke(it, fileType, true, fileSize, success)
                 if (!success) return@forEach
             }
         }

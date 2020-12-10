@@ -124,7 +124,7 @@ public class MainActivity extends Activity {
                 .setMimeTypes(new String[]{"image/*"})
                 .applyOptions(options)
 
-                //优先使用 FileOptions 中设置的 FileSelectCondition
+                //优先使用 FileSelectOptions 中设置的 FileSelectCondition
                 .filter(new FileSelectCondition() {
                     @Override
                     public boolean accept(@NonNull FileType fileType, Uri uri) {

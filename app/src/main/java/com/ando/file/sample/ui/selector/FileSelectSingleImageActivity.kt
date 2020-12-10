@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.*
 import ando.file.compressor.ImageCompressPredicate
@@ -19,11 +18,12 @@ import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileMimeType.MIME_MEDIA
 import ando.file.core.FileUri.getFilePathByUri
 import ando.file.selector.*
+import android.widget.ImageView
+import android.widget.TextView
 import com.ando.file.sample.R
 import com.ando.file.sample.getPathImageCache
 import com.ando.file.sample.toastShort
 import com.ando.file.sample.utils.PermissionManager
-import kotlinx.android.synthetic.main.activity_file_operator.*
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -31,9 +31,9 @@ import java.security.NoSuchAlgorithmException
 import java.util.*
 
 /**
- * Title: FileSelectImageSingleActivity
+ * Title: FileSelectSingleImageActivity
  *
- * Description:
+ * Description: 单选图片
  *
  * @author javakam
  * @date 2020/5/19  16:04
@@ -42,39 +42,51 @@ import java.util.*
 @SuppressLint("SetTextI18n")
 class FileSelectSingleImageActivity : AppCompatActivity() {
 
-    private val REQUEST_CHOOSE_FILE = 10
+    private lateinit var mBtSelectSingle: View
+    private lateinit var mTvError: TextView
+    private lateinit var mTvResult: TextView
+    private lateinit var mIvOrigin: ImageView
+    private lateinit var mIvCompressed: ImageView
 
     //文件选择
+    private val REQUEST_CHOOSE_FILE = 10
     private var mFileSelector: FileSelector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_file_operator)
         PermissionManager.verifyStoragePermissions(this)
+        setContentView(R.layout.activity_file_select_single)
+        mBtSelectSingle = findViewById(R.id.bt_select_single)
+        mTvError = findViewById(R.id.tv_error)
+        mTvResult = findViewById(R.id.tv_result)
+        mIvOrigin = findViewById(R.id.iv_origin)
+        mIvCompressed = findViewById(R.id.iv_compressed)
 
         title = "单选图片"
 
-        mBtChooseSingle.visibility = View.VISIBLE
-        mBtChooseSingle.setOnClickListener {
+        mBtSelectSingle.visibility = View.VISIBLE
+        mBtSelectSingle.setOnClickListener {
             chooseFile()
         }
     }
 
     private fun chooseFile() {
         /*
+
         说明:
             FileOptions T 为 String.filePath / Uri / File
             3M 3145728 Byte ; 5M 5242880 Byte; 10M 10485760 ; 20M = 20971520 Byte
          */
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
+            fileTypeMismatchTip = "文件类型不匹配"
             singleFileMaxSize = 2097152
             singleFileMaxSizeTip = "图片最大不超过2M！"
             allFilesMaxSize = 5242880
             allFilesMaxSizeTip = "总图片大小不超过5M！"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                    return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             }
         }
@@ -90,14 +102,14 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage)
 
-            //优先使用 FileOptions 中设置的 FileSelectCondition
+            //优先使用 FileSelectOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
                     return when (fileType) {
                         FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                        FileType.VIDEO -> true
-                        FileType.AUDIO -> true
-                        else -> true
+                        FileType.VIDEO -> false
+                        FileType.AUDIO -> false
+                        else -> false
                     }
                 }
             })
@@ -113,7 +125,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
                 override fun onError(e: Throwable?) {
                     FileLogger.e("回调 onError ${e?.message}")
-                    mTvResultError.text = mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
+                    mTvError.text = mTvError.text.toString().plus(" 错误信息: ${e?.message} \n")
                 }
             })
             .choose()
@@ -122,7 +134,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     private fun showSelectResult(results: List<FileSelectResult>) {
         mTvResult.text = ""
         results.forEach {
-            val info = "${it.toString()}格式化 : ${FileSizeUtils.formatFileSize(it.fileSize)}\n"
+            val info = "${it}格式化 : ${FileSizeUtils.formatFileSize(it.fileSize)}\n"
             FileLogger.w("FileOptions onSuccess  $info")
 
             mTvResult.text = mTvResult.text.toString().plus(
@@ -159,7 +171,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        mTvResultError.text = ""
+        mTvError.text = ""
         mTvResult.text = ""
         mIvOrigin.setImageBitmap(null)
         mIvCompressed.setImageBitmap(null)

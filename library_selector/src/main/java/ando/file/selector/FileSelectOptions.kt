@@ -15,6 +15,7 @@ class FileSelectOptions {
     var maxCountTip: String? = ""
 
     var fileType: FileType? = null
+    var fileTypeMismatchTip: String? = FileSelector.DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD //文件类型不匹配提示
     var singleFileMaxSize: Long = -1                   //单文件大小控制 Byte
     var singleFileMaxSizeTip: String? = FileSelector.DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
     var allFilesMaxSize: Long = -1                     //总文件大小控制 Byte

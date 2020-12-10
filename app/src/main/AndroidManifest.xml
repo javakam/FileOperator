@@ -10,7 +10,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+        android:maxSdkVersion="28"
+        tools:ignore="ScopedStorage" />
 
     <!--  照片的位置信息  -->
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />

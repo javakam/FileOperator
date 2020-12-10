@@ -106,7 +106,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage)
 
-            //优先使用 FileOptions 中设置的 FileSelectCondition
+            //优先使用 FileSelectOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
                     return when (fileType) {

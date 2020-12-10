@@ -100,8 +100,7 @@ object FileUri {
     private fun getPath(context: Context, uri: Uri?): String? {
         if (uri != null) {
             FileLogger.i(
-                "FileUri getPath -> File : ",
-                "Authority: " + uri.authority +
+                "FileUri getPath -> Authority: " + uri.authority +
                         ", Fragment: " + uri.fragment +
                         ", Port: " + uri.port +
                         ", Query: " + uri.query +

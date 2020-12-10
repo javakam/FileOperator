@@ -118,7 +118,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             .setMimeTypes(null)//默认为 null,*/* 即不做文件类型限定;MIME_MEDIA 媒体文件,不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage, optionsVideo)
 
-            // 优先使用 FileOptions 中设置的 FileSelectCondition,没有的情况下才使用通用的
+            // 优先使用 FileSelectOptions 中设置的 FileSelectCondition,没有的情况下才使用通用的
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
                     return when (fileType) {
@@ -180,7 +180,9 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
                     photos.add(uri)
                     compressImage(photos) //or Engine.compress(uri,  100L)
                 }
-                FileType.VIDEO -> loadThumbnail(uri, 100, 200)?.let { b -> mIvOrigin.setImageBitmap(b) }
+                FileType.VIDEO -> {
+                    //loadThumbnail(uri, 100, 200)?.let { b -> mIvOrigin.setImageBitmap(b) }
+                }
                 else -> {
                 }
             }
