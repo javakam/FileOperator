@@ -545,6 +545,7 @@ Fixed :
 4.增加清理压缩图片缓存方法
 5.单选 setMinCount 提示问题
 6.修改`FileSizeUtils.kt`算法
+7.FileSelectResult 加入MimeType
 ```
 Caused by: android.graphics.ImageDecoder$DecodeException: Failed to create image decoder with message 'unimplemented'Input contained an error.
 ```

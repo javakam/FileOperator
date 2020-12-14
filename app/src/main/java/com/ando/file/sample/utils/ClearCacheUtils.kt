@@ -54,10 +54,11 @@ object ClearCacheUtils {
     /**
      * 清除缓存
      */
-    fun clearAllCache(path: String): Boolean {
-        val delPath = File(path)
-        if (!delPath.exists()) delPath.mkdirs()
-        return deleteFileDir(delPath)
+    fun clearAllCache(path: String?): Boolean {
+        if (path.isNullOrBlank()) return false
+        val file = File(path)
+        if (!file.exists()) file.mkdirs()
+        return deleteFileDir(file)
     }
 
     /**

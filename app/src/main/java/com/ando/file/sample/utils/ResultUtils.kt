@@ -41,7 +41,7 @@ object ResultUtils {
         val bitmap: Bitmap? = FileOperatorQ.getBitmapFromUri(uri)
         imageView.setImageBitmap(bitmap)
         imageView.setOnClickListener {
-            FileOpener.openFileBySystemChooser(this, uri, "image/*")
+            FileOpener.openFileBySystemChooser(imageView.context, uri, "image/*")
         }
     }
 

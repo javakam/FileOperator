@@ -59,9 +59,8 @@ enum class FileType {
             "pdf" -> PDF
             "chm" -> CHM
             "txt", "xml", "rc", "sh", "c", "conf", "cpp", "prop", "java", "kt" -> TXT
-            "html", "htm", "md" -> HTML
+            "html", "htm", "htmls", "md" -> HTML
             "zip" -> ZIP
             else -> UNKNOWN
         }
-
 }

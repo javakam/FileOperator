@@ -1,5 +1,6 @@
 package ando.file.selector
 
+import ando.file.FileOperator
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -290,8 +291,9 @@ class FileSelector private constructor(builder: Builder) {
 
         val currentOption: List<FileSelectOptions>? = mFileOptions?.filter { it.fileType == fileType }
         val isFileOptionsNullOrEmpty = mFileOptions.isNullOrEmpty() || currentOption.isNullOrEmpty()
-
-        FileLogger.i("processIntentUri -> chooseFilePath: $uri   fileType: $fileType currentOption:${currentOption?.size}  isFileOptionsNullOrEmpty=$isFileOptionsNullOrEmpty")
+        if (FileOperator.isDebug()) {
+            FileLogger.i("processIntentUri -> chooseFilePath: $uri   fileType: $fileType currentOption:${currentOption?.size}  isFileOptionsNullOrEmpty=$isFileOptionsNullOrEmpty")
+        }
 
         if (currentOption.isNullOrEmpty()) {
             block.invoke(null, fileType, false, fileSize, false)
@@ -304,7 +306,7 @@ class FileSelector private constructor(builder: Builder) {
             if (!isAccept) return
             block.invoke(null, fileType, true, fileSize, limitFileSize(fileSize, realLimitSizeThreshold(null)))
         } else {
-            currentOption?.forEach {
+            currentOption.forEach {
                 //获取 CallBack -> 优先使用 FileSelectOptions 中设置的 FileSelectCallBack
                 //控制类型 -> 自定义规则 -> 优先使用 FileSelectOptions 中设置的 FileSelectCondition
                 val isAccept = mFileSelectCondition?.accept(fileType, uri) ?: true && it.fileCondition?.accept(fileType, uri) ?: true
@@ -335,7 +337,9 @@ class FileSelector private constructor(builder: Builder) {
         else if (option.allFilesMaxSize < 0) if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize else option.allFilesMaxSize
 
     private fun limitFileSize(fileSize: Long, sizeThreshold: Long): Boolean {
-        FileLogger.i("limitFileSize  : $fileSize")
+        if (FileOperator.isDebug()) {
+            FileLogger.i("limitFileSize  : $fileSize ${fileSize <= sizeThreshold}")
+        }
         return fileSize <= sizeThreshold
     }
 
@@ -348,6 +352,7 @@ class FileSelector private constructor(builder: Builder) {
             add(FileSelectResult().apply {
                 this.uri = uri
                 this.filePath = uri.path
+                this.mimeType = FileMimeType.getMimeType(uri)
                 this.fileType = fileType
                 this.fileSize = fileSize
             })
@@ -359,6 +364,7 @@ class FileSelector private constructor(builder: Builder) {
                 add(FileSelectResult().apply {
                     this.uri = u
                     this.filePath = u.path
+                    this.mimeType = FileMimeType.getMimeType(u)
                     this.fileType = INSTANCE.typeByUri(u)
                     this.fileSize = FileSizeUtils.getFileSize(u)
                 })

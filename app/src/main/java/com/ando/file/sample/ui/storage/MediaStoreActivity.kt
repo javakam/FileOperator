@@ -36,7 +36,6 @@ import ando.file.core.FileGlobal.dumpParcelFileDescriptor
 import ando.file.core.FileGlobal.openFileDescriptor
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
-import com.ando.file.sample.REQUEST_CODE_SENDER
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_media_store.*
 import java.io.File
@@ -56,6 +55,7 @@ import java.util.concurrent.TimeUnit
 class MediaStoreActivity : AppCompatActivity() {
 
     companion object {
+        val REQUEST_CODE_SENDER = 0x10
         val RELATIVE_PATH = "${Environment.DIRECTORY_PICTURES}${File.separator}img"
     }
 
@@ -141,7 +141,7 @@ class MediaStoreActivity : AppCompatActivity() {
             //通过 DisplayName 查询图片
             //1.读取文件需要权限 READ_EXTERNAL_STORAGE
             //2.系统只提供了多媒体文件的读权限，没有提供写权限，应用无法通过申请写权限修改其他应用生成的文件
-            PermissionManager.requestStoragePermission(this){ per->
+            PermissionManager.requestStoragePermission(this) { per ->
                 if (per) {
                     mQueryUri = queryMediaStoreImages(
                         "BitmapImage.png", true
@@ -164,7 +164,7 @@ class MediaStoreActivity : AppCompatActivity() {
                     imageIv1.setImageBitmap(null)
                     val bitmap = loadThumbnail(mQueryUri, 50, 100)
                     imageIv1.setImageBitmap(bitmap)
-                }else{
+                } else {
 
                 }
             }

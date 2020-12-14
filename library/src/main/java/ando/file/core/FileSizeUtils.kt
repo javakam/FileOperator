@@ -6,13 +6,14 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
-import android.text.TextUtils
 import ando.file.core.FileSizeUtils.FileSizeType.*
 import ando.file.core.FileLogger.e
 import ando.file.core.FileLogger.i
 import ando.file.core.FileUri.getFilePathByUri
+import android.annotation.TargetApi
 import java.io.File
 import java.math.BigDecimal
+import java.net.URI
 
 /**
  * FileSizeUtils 计算文件大小 👉 BigDecimal
@@ -52,34 +53,6 @@ object FileSizeUtils {
         }
         return size
     }
-
-    /**
-     * 获取文件大小
-     */
-    fun getFileSize(file: File?): Long = if (file?.exists() == true) file.length() else 0L
-
-    fun getFileSize(uri: Uri?): Long = getFileSize(getContext(), uri) ?: 0L
-
-    /**
-     * ContentResolver.query 获取 `文件/文件夹` 大小
-     * @return 文件大小, 单位 Byte
-     */
-    private fun getFileSize(context: Context, uri: Uri?): Long? =
-        uri?.let {
-            val zero = 0L
-            val uriScheme = uri.scheme
-            val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q || TextUtils.equals("content", uriScheme)) {
-                cursor?.use {
-                    val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
-                    // 1.Technically the column stores an int, but cursor.getString() will do the conversion automatically.
-                    // it.getString(sizeIndex)
-                    // 2.it.moveToFirst() -> Caused by: android.database.CursorIndexOutOfBoundsException: Index -1 requested, with a size of 1
-                    if (it.moveToFirst() && !it.isNull(sizeIndex)) it.getLong(sizeIndex) else zero
-                }
-            } else if (TextUtils.equals("file", uriScheme)) File(getFilePathByUri(uri) ?: return zero).length() else zero
-        }
-
 
     /**
      * 计算`文件/文件夹`的大小
@@ -132,6 +105,34 @@ object FileSizeUtils {
     fun getFileOrDirSizeFormatted(path: String?): String = formatFileSize(
         calculateFileOrDirSize(path)
     )
+
+    /**
+     * 获取文件大小
+     */
+    fun getFileSize(file: File?): Long = if (file?.exists() == true) file.length() else 0L
+
+    fun getFileSize(uri: Uri?): Long = getFileSize(getContext(), uri) ?: 0L
+
+    /**
+     * ContentResolver.query 获取 `文件/文件夹` 大小
+     *
+     * @return 文件大小, 单位 Byte
+     */
+    private fun getFileSize(context: Context, uri: Uri?): Long? =
+        uri?.let {
+            val zero = 0L
+            val uriScheme = uri.scheme
+            val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q || "content".equals(uriScheme, true)) {
+                cursor?.use { c ->
+                    val sizeIndex: Int = c.getColumnIndex(OpenableColumns.SIZE)
+                    // 1.Technically the column stores an int, but cursor.getString() will do the conversion automatically.
+                    // it.getString(sizeIndex)
+                    // 2.it.moveToFirst() -> Caused by: android.database.CursorIndexOutOfBoundsException: Index -1 requested, with a size of 1
+                    if (c.moveToFirst() && !c.isNull(sizeIndex)) c.getLong(sizeIndex) else zero
+                }
+            } else if ("file".equals(uriScheme, true)) File(getFilePathByUri(uri) ?: return zero).length() else zero
+        }
 
     // format size
     //-----------------------------------------------------------------------

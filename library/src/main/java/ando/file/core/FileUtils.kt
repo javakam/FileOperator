@@ -145,6 +145,8 @@ object FileUtils {
 
     /**
      * 只删除文件，不删除文件夹
+     *
+     * @param dir 目录
      */
     fun deleteFileDir(dir: File?): Boolean {
         if (dir == null || !dir.exists() || !dir.isDirectory) return false
@@ -241,7 +243,7 @@ object FileUtils {
     fun copyFile(
         src: File?,
         destFileName: String,
-        destPath: String?
+        destPath: String?,
     ): Boolean {
         if (src == null || !src.exists() || destPath.isNullOrBlank()) return false
         val dest = File(destPath + destFileName)
