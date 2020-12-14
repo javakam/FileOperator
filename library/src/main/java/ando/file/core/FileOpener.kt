@@ -17,9 +17,8 @@ object FileOpener {
 
     /**
      * 直接打开 Url 对应的系统应用
-     * <pre>
+     *
      * eg: 如果url是视频地址,则直接用系统的播放器打开
-     * </pre>
      */
     fun openUrl(activity: Activity, url: String?) {
         try {
@@ -42,10 +41,12 @@ object FileOpener {
     /**
      * 根据 文件路径 和 类型(后缀判断) 显示支持该格式的程序
      *
-     * @param uri
+     * (√) /storage/emulated/0/Pictures/sl2/BitmapImage.png
+     *
+     * (X) /data/user/0/xxx.xxx.app/cache/documents/microMsg.15798.jpg
+     *
      * @param mimeType 指定打开文件的 MimeType 类型
-     * [√] /storage/emulated/0/Pictures/sl2/BitmapImage.png
-     * [X] /data/user/0/xxx.cn.app/cache/documents/microMsg.1579490868646(2).jpg
+     *
      */
     fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
         uri?.let { u ->
@@ -57,13 +58,15 @@ object FileOpener {
     /**
      * 选择文件【调用系统的文件管理】
      *
-     * <pre>
-     *  注:
+     * 注:
+     *
      *      1.Intent.setType 不能为空!
+     *
      *      2.mimeTypes 会覆盖 mimeType
-     *      3.ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT 效果相同
+     *
+     *      3.ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同
+     *
      *      4.开启多选 resultCode=-1
-     * </pre>
      */
     fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
         // Implicitly allow the user to select a particular kind of data. Same as : Intent.ACTION_GET_CONTENT

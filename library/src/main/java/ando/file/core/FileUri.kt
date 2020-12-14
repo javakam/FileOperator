@@ -59,8 +59,8 @@ object FileUri {
     /**
      * 根据uri获取文件的绝对路径，解决Android 4.4以上 根据uri获取路径的方法
      *
-     * <p>
-     *      RequiresPermission(permission.READ_EXTERNAL_STORAGE)
+     * 需要权限: RequiresPermission(permission.READ_EXTERNAL_STORAGE)
+     *
      * @param context
      * @param uri
      * @return

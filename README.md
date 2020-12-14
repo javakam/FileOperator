@@ -485,9 +485,17 @@ File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 - isLocal 检验是否为本地URI
 - isGif 检验是否为 gif
 
-## 注意的点
+## 注意
 
-1. `onActivityResult` 中要把选择文件的结果交给`FileSelector`处理`mFileSelector?.obtainResult(requestCode, resultCode, data)` 
+1. `onActivityResult` 中要把选择文件的结果交给`FileSelector`处理 :
+
+```kotlin
+override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    mFileSelector?.obtainResult(requestCode, resultCode, data)
+}
+```
 
 2. 选择文件不满足预设条件时,有两种策略 : 
 
@@ -535,7 +543,8 @@ Fixed :
     replace `android.media.ExifInterface` with `androidx.exifinterface.media.ExifInterface`
 ```
 4.增加清理压缩图片缓存方法
-
+5.单选 setMinCount 提示问题
+6.修改`FileSizeUtils.kt`算法
 ```
 Caused by: android.graphics.ImageDecoder$DecodeException: Failed to create image decoder with message 'unimplemented'Input contained an error.
 ```

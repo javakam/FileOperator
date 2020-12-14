@@ -100,21 +100,25 @@ class FileSelector private constructor(builder: Builder) {
 
     private fun handleSingleSelectCase(intent: Intent?): FileSelector {
         this.mIsMultiSelect = false
-        intent?.data?.let {
-            processIntentUri(it) { o, t, tf, s, sf ->
-                if (!tf) {
-                    mFileSelectCallBack?.onError(Throwable(
-                        if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else mFileTypeMismatchTip
-                    ))
-                    return@processIntentUri
-                }
-                if (sf) mFileSelectCallBack?.onSuccess(createResult(it, t, s))
-                else {
-                    if (o?.fileType == t) {
-                        mFileSelectCallBack?.onError(Throwable(if (o.singleFileMaxSizeTip != null) o.singleFileMaxSizeTip else o.allFilesMaxSizeTip))
-                    } else {
-                        mFileSelectCallBack?.onError(Throwable(mSingleFileMaxSizeTip))
-                    }
+        val intentData: Uri? = intent?.data
+        if (intentData == null) {
+            mFileSelectCallBack?.onError(Throwable(mMinCountTip))
+            return this
+        }
+
+        processIntentUri(intentData) { o, t, tf, s, sf ->
+            if (!tf) {
+                mFileSelectCallBack?.onError(Throwable(
+                    if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else mFileTypeMismatchTip
+                ))
+                return@processIntentUri
+            }
+            if (sf) mFileSelectCallBack?.onSuccess(createResult(intentData, t, s))
+            else {
+                if (o?.fileType == t) {
+                    mFileSelectCallBack?.onError(Throwable(if (o.singleFileMaxSizeTip != null) o.singleFileMaxSizeTip else o.allFilesMaxSizeTip))
+                } else {
+                    mFileSelectCallBack?.onError(Throwable(mSingleFileMaxSizeTip))
                 }
             }
         }

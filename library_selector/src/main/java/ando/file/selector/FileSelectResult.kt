@@ -24,7 +24,7 @@ data class FileSelectResult(
     constructor() : this(null, null, null, 0L)
 
     override fun toString(): String {
-        return " fileType=$fileType, \n uri=$uri, \n filePath=$filePath, \n fileSize=$fileSize \n "
+        return "类型(fileType) = $fileType \n Uri = $uri \n 路径(filePath) = $filePath \n 大小(fileSize) = $fileSize \n "
     }
 
     override fun equals(other: Any?): Boolean {

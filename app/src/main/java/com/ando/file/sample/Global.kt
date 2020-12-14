@@ -16,7 +16,8 @@ const val REQUEST_CODE_SENDER = 0x10
  *      1.压缩图片后的缓存目录
  *
  * <pre>
- *     path:  /data/data/package/cache
+ *     手机文件管理器看不到, 需要用AS自带的Device File Explorer查看
+ *     path:  /data/data/com.ando.file.sample/cache/image/
  * </pre>
  */
 fun getCompressedImageCacheDir(): String {
@@ -25,7 +26,7 @@ fun getCompressedImageCacheDir(): String {
     return if (file.mkdirs()) path else path
 }
 
-fun clearCompressedImageCacheDir():Boolean {
+fun clearCompressedImageCacheDir(): Boolean {
     return ClearCacheUtils.clearAllCache(getCompressedImageCacheDir())
 }
 

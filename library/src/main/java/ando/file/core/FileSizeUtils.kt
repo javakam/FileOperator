@@ -88,7 +88,7 @@ object FileSizeUtils {
      * @param sizeType 指定要转换的单位类型
      * @return 大小 double
      */
-    fun calculateFileOrDirSize(path: String?, sizeType: FileSizeType): Double {
+    fun calculateFileOrDirSize(path: String?, scale: Int = 2, sizeType: FileSizeType): Double {
         if (path.isNullOrBlank()) return 0.00
 
         val file = File(path)
@@ -99,7 +99,7 @@ object FileSizeUtils {
             e.printStackTrace()
             e("获取文件大小 获取失败!")
         }
-        return formatSizeByType(blockSize, 2, sizeType).toDouble()
+        return formatSizeByTypeWithoutUnit(blockSize.toBigDecimal(), scale, sizeType).toDouble()
     }
 
     /**
@@ -136,52 +136,44 @@ object FileSizeUtils {
     // format size
     //-----------------------------------------------------------------------
 
-    fun formatFileSize(size: Long): String = formatFileSize(size, 2)
+    fun formatFileSize(size: Long): String = formatFileSize(size, 2, true)
 
     /**
      * @param scale 精确到小数点以后几位
      */
-    fun formatFileSize(size: Long, scale: Int): String {
-        val dividend = 1024L
+    fun formatFileSize(size: Long, scale: Int, withUnit: Boolean = false): String {
+        val divisor = 1024L
         //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
-        val kiloByte =
-            BigDecimal(size.toDouble()).divide(BigDecimal(dividend), scale, BigDecimal.ROUND_DOWN)
+        val kiloByte: BigDecimal = formatSizeByTypeWithDivisor(BigDecimal(size), scale, SIZE_TYPE_B, divisor)
         if (kiloByte.toDouble() < 1) {
-            return "${kiloByte.toPlainString()}B"
+            return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_B.unit else ""}"
         }
-        val megaByte = BigDecimal(kiloByte.toDouble()).divide(
-            BigDecimal(dividend),
-            scale,
-            BigDecimal.ROUND_HALF_UP
-        )
+        //KB
+        val megaByte = formatSizeByTypeWithDivisor(kiloByte, scale, SIZE_TYPE_KB, divisor)
         if (megaByte.toDouble() < 1) {
-            return "${kiloByte.toPlainString()}KB"
+            return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_KB.unit else ""}"
         }
-        val gigaByte = BigDecimal(megaByte.toDouble()).divide(
-            BigDecimal(dividend),
-            scale,
-            BigDecimal.ROUND_HALF_UP
-        )
+        //M
+        val gigaByte = formatSizeByTypeWithDivisor(megaByte, scale, SIZE_TYPE_MB, divisor)
         if (gigaByte.toDouble() < 1) {
-            return "${megaByte.toPlainString()}M"
+            return "${megaByte.toPlainString()}${if (withUnit) SIZE_TYPE_MB.unit else ""}"
         }
-        val teraBytes = BigDecimal(gigaByte.toDouble()).divide(
-            BigDecimal(dividend),
-            scale,
-            BigDecimal.ROUND_HALF_UP
-        )
+        //GB
+        val teraBytes = formatSizeByTypeWithDivisor(gigaByte, scale, SIZE_TYPE_GB, divisor)
         if (teraBytes.toDouble() < 1) {
-            return "${gigaByte.toPlainString()}GB"
+            return "${gigaByte.toPlainString()}${if (withUnit) SIZE_TYPE_GB.unit else ""}"
         }
-        return "${teraBytes.toPlainString()}TB"
+        //TB
+        return "${teraBytes.toPlainString()}${if (withUnit) SIZE_TYPE_TB.unit else ""}"
     }
 
     /**
-     * 转换文件大小,指定转换的类型
+     * ### 转换文件大小不带单位, 注:没有单位,可自定义. 如: sizeType为`FileSizeType.SIZE_TYPE_MB`则返回`2.383`, 即`2.383M`
      *
-     * BigDecimal 实现提供（相对）精确的除法运算。当发生除不尽的情况时(ArithmeticException)，由scale参数指定精度，以后的数字四舍五入
-     * <p>
-     * https://www.liaoxuefeng.com/wiki/1252599548343744/1279768011997217
+     *
+     * - BigDecimal 实现提供（相对）精确的除法运算。当发生除不尽的情况时(ArithmeticException)，由scale参数指定精度，以后的数字四舍五入
+     *
+     * - https://www.liaoxuefeng.com/wiki/1252599548343744/1279768011997217
      * https://zhuanlan.zhihu.com/p/75780642
      * <pre>
      *      注: 禁止使用构造方法BigDecimal(double)的方式把double值转化为BigDecimal对象
@@ -192,8 +184,8 @@ object FileSizeUtils {
      * @param size 大小 Byte
      * @param scale 精确到小数点以后几位
      */
-    fun formatSizeByType(size: Long, scale: Int, sizeType: FileSizeType): BigDecimal =
-        BigDecimal(size.toDouble()).divide(
+    fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSizeType): BigDecimal =
+        size.divide(
             BigDecimal(
                 when (sizeType) {
                     SIZE_TYPE_B -> 1L
@@ -204,14 +196,23 @@ object FileSizeUtils {
                 }
             ),
             scale,
+            //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
+            if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
+        )
+
+    fun formatSizeByTypeWithDivisor(size: BigDecimal, scale: Int, sizeType: FileSizeType, divisor: Long): BigDecimal =
+        size.divide(
+            BigDecimal(divisor),
+            scale,
+            //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
             if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
         )
 
     /**
-     * 转换文件大小带单位
+     * 转换文件大小带单位, 注:带单位 2.383M
      */
-    fun getFormattedSizeByType(size: Long, scale: Int, sizeType: FileSizeType): String {
-        return "${formatSizeByType(size, scale, sizeType).toPlainString()}${sizeType.unit}"
+    fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): String {
+        return "${formatSizeByTypeWithoutUnit(size.toBigDecimal(), scale, sizeType).toPlainString()}${sizeType.unit}"
     }
 
 }

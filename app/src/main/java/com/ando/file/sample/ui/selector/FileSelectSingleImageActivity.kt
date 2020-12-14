@@ -1,20 +1,12 @@
 package com.ando.file.sample.ui.selector
 
-import ando.file.androidq.FileOperatorQ.getBitmapFromUri
-import ando.file.androidq.FileOperatorQ.loadThumbnail
-import android.annotation.SuppressLint
+import ando.file.compressor.*
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.*
-import ando.file.compressor.ImageCompressPredicate
-import ando.file.compressor.OnImageCompressListener
-import ando.file.compressor.OnImageRenameListener
-import ando.file.compressor.ImageCompressor
-import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileMimeType.MIME_MEDIA
 import ando.file.core.FileUri.getFilePathByUri
 import ando.file.selector.*
@@ -24,6 +16,7 @@ import com.ando.file.sample.R
 import com.ando.file.sample.getCompressedImageCacheDir
 import com.ando.file.sample.toastShort
 import com.ando.file.sample.utils.PermissionManager
+import com.ando.file.sample.utils.ResultUtils
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
@@ -39,7 +32,6 @@ import java.util.*
  * @date 2020/5/19  16:04
  */
 @Suppress("UNUSED_PARAMETER")
-@SuppressLint("SetTextI18n")
 class FileSelectSingleImageActivity : AppCompatActivity() {
 
     private lateinit var mBtSelectSingle: View
@@ -71,6 +63,12 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        ResultUtils.resetUI(mTvError, mTvResult, mIvOrigin, mIvCompressed)
+        mFileSelector?.obtainResult(requestCode, resultCode, data)
+    }
+
     private fun chooseFile() {
         /*
         说明:
@@ -82,8 +80,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             fileTypeMismatchTip = "文件类型不匹配"
             singleFileMaxSize = 3145728
             singleFileMaxSizeTip = "图片最大不超过3M！"
-            allFilesMaxSize = 5242880
-            allFilesMaxSizeTip = "总图片大小不超过5M！"
+            allFilesMaxSize = 10485760
+            allFilesMaxSizeTip = "总图片大小不超过10M！"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -115,74 +113,42 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             })
             .callback(object : FileSelectCallBack {
                 override fun onSuccess(results: List<FileSelectResult>?) {
-                    FileLogger.w("onSuccess ${results?.size}")
-                    mTvResult.text = ""
+                    ResultUtils.resetUI(mTvResult)
                     if (results.isNullOrEmpty()) {
                         toastShort("没有选取文件")
                         return
                     }
-
                     showSelectResult(results)
                 }
 
                 override fun onError(e: Throwable?) {
-                    FileLogger.e("onError ${e?.message}")
-                    mTvError.text = mTvError.text.toString().plus(" 错误信息: ${e?.message} \n")
+                    FileLogger.e("FileSelectCallBack onError ${e?.message}")
+                    ResultUtils.setErrorText(mTvError, e)
                 }
             })
             .choose()
     }
 
     private fun showSelectResult(results: List<FileSelectResult>) {
-        mTvResult.text = ""
-        results.forEach {
-            val info = "${it}格式化 : ${FileSizeUtils.formatFileSize(it.fileSize)}\n"
-            FileLogger.w("FileOptions onSuccess  $info")
+        ResultUtils.setFormattedResults(tvResult = mTvResult, results = results)
 
-            mTvResult.text = mTvResult.text.toString().plus(
-                """选择结果 : ${FileType.INSTANCE.typeByUri(it.uri)} 
-                    |---------
-                    |👉压缩前
-                    |$info
-                    |""".trimMargin()
-            )
-        }
-
+        val photos = mutableListOf<Uri>()
         results.forEach {
             val uri = it.uri ?: return@forEach
             when (FileType.INSTANCE.typeByUri(uri)) {
                 FileType.IMAGE -> {
                     //原图
-                    val bitmap = getBitmapFromUri(uri)
-                    mIvOrigin.setImageBitmap(bitmap)
-                    mIvOrigin.setOnClickListener {
-                        FileOpener.openFileBySystemChooser(this, uri, "image/*")
-                    }
-                    //压缩(Luban)
-                    val photos = mutableListOf<Uri>()
+                    ResultUtils.setImageEvent(mIvOrigin, uri)
+                    //压缩
                     photos.add(uri)
-                    compressImage(photos)//or Engine.compress(uri,  100L)
-                }
-                FileType.VIDEO -> {
-                    loadThumbnail(uri, 100, 200)?.let { b -> mIvOrigin.setImageBitmap(b) }
                 }
                 else -> {
                 }
             }
         }
+        compressImage(photos)//or Engine.compress(uri,  100L)
     }
 
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        mTvError.text = ""
-        mTvResult.text = ""
-        mIvOrigin.setImageBitmap(null)
-        mIvCompressed.setImageBitmap(null)
-
-        mFileSelector?.obtainResult(requestCode, resultCode, data)
-    }
 
     /**
      * 压缩图片 1.Luban算法; 2.直接压缩 -> Engine.compress(uri,  100L)
@@ -199,11 +165,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .enableCache(true)
             .filter(object : ImageCompressPredicate {
                 override fun apply(uri: Uri?): Boolean {
-                    FileLogger.i("image predicate $uri  ${getFilePathByUri(uri)}")
-                    return if (uri != null) {
-                        val path = getFilePathByUri(uri)
-                        !(TextUtils.isEmpty(path) || (path?.toLowerCase(Locale.getDefault())?.endsWith(".gif") == true))
-                    } else false
+                    //FileLogger.i("image predicate $uri  ${getFilePathByUri(uri)}")
+                    return if (uri != null) !FileUtils.getExtension(uri).endsWith("gif") else false
                 }
             })
             .setRenameListener(object : OnImageRenameListener {
@@ -223,37 +186,19 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                 override fun onStart() {}
                 override fun onSuccess(uri: Uri?) {
                     FileLogger.i(
-                        "compress onSuccess  uri=$uri  path=${uri?.path}  " +
+                        "compressImage onSuccess  uri=$uri  path=${uri?.path}  " +
                                 "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
                     )
 
-                    /*
-                    uri=content://com.ando.file.sample.fileProvider/ando_file_repo/temp/image/5ikt5v3j7joe8r472odg6b297a
-                    path=/ando_file_repo/temp/image/5ikt5v3j7joe8r472odg6b297a
-                    文件名称 ：5ikt5v3j7joe8r472odg6b297a  Size：85608 B
-
-                    uri=content://com.ando.file.sample.fileProvider/ando_file_repo/temp/image/17setspjc1rk0h4lo8kft2et22
-                    path=/ando_file_repo/temp/image/17setspjc1rk0h4lo8kft2et22
-                    文件名称 ：17setspjc1rk0h4lo8kft2et22  Size：85608 B
-                     */
-
-                    val bitmap = getBitmapFromUri(uri)
-                    dumpMetaData(uri) { displayName: String?, size: String? ->
-                        runOnUiThread {
-                            mTvResult.text = mTvResult.text.toString().plus(
-                                "\n ---------\n👉压缩后 \n Uri : $uri \n 路径: ${uri?.path} \n 文件名称 ：$displayName \n 大小：$size B \n" +
-                                        "格式化 : ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}\n ---------"
-                            )
-                        }
+                    ResultUtils.formatCompressedImageInfo(uri) {
+                        mTvResult.text = mTvResult.text.toString().plus(it)
                     }
-                    mIvCompressed.setImageBitmap(bitmap)
-                    mIvCompressed.setOnClickListener {
-                        FileOpener.openFileBySystemChooser(this, uri, "image/*")
-                    }
+
+                    ResultUtils.setImageEvent(mIvCompressed, uri)
                 }
 
                 override fun onError(e: Throwable?) {
-                    FileLogger.e("compress onError ${e?.message}")
+                    FileLogger.e("compressImage onError ${e?.message}")
                 }
             }).launch()
     }

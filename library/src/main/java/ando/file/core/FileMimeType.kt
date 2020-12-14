@@ -7,19 +7,19 @@ import ando.file.core.FileUri.getFilePathByUri
 import java.util.*
 
 /**
- * Title: MimeType
+ * MimeType 工具类
  *
- * @author javakam
- * @date 2020/6/3  14:42
- */
-
-/**
- * 根据 File Name/Path/Url 获取相应的 MimeType
+ * 1. getMimeType(str: String?) 先用`android.webkit.MimeTypeMap`获取`mimeType`, 如果为空再去`MIME_TABLES`中找
  *
- * @return mineType  "application/x-flac" , "video/3gpp" ...
+ * 2. getMimeType(uri: Uri?) 先用`android.content.Context.getContentResolver`获取`mimeType`, 如果为空则转换`uri`为`path`,执行`getMimeType(str: String?)`
  */
 object FileMimeType {
 
+    /**
+     * 根据 File Name/Path/Url 获取相应的 MimeType
+     *
+     * @return mineType  "application/x-flac" , "video/3gpp" ...
+     */
     fun getMimeType(str: String?): String {
         val type = "*/*"
         if (str.isNullOrBlank()) return type
@@ -58,9 +58,9 @@ object FileMimeType {
 
 
     /**
+     * 常见的文件 MimeType
      *
-     * 1.
-     * https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+     * 1. https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_types
      * https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
      *
      * 2. https://www.sitepoint.com/mime-types-complete-list/

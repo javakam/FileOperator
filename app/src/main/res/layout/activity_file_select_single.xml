@@ -51,8 +51,9 @@
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:text="原图"
-            android:textColor="@color/color_font_black"
-            android:visibility="gone"
+            android:textStyle="bold"
+            android:textColor="@color/color_main_theme_dark"
+            android:visibility="visible"
             tools:visibility="visible" />
 
         <ImageView
@@ -71,8 +72,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
+            android:textStyle="bold"
             android:text="压缩后"
-            android:textColor="@color/color_font_black"
+            android:textColor="@color/color_main_theme_dark"
             android:visibility="visible"
             tools:visibility="visible" />
 
