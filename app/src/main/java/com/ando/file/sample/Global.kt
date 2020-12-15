@@ -1,10 +1,24 @@
 package com.ando.file.sample
 
+import ando.file.compressor.ImageCompressPredicate
+import ando.file.compressor.ImageCompressor
+import ando.file.compressor.OnImageCompressListener
+import ando.file.compressor.OnImageRenameListener
+import ando.file.core.*
 import ando.file.core.FileDirectory.getCacheDir
 import android.content.Context
+import android.net.Uri
 import android.widget.Toast
 import com.ando.file.sample.utils.ClearCacheUtils
 import java.io.File
+import java.math.BigInteger
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+
+/**
+ * startActivityForResult -> requestCode
+ */
+const val REQUEST_CHOOSE_FILE = 10
 
 /**
  * 应用缓存目录 :
@@ -34,4 +48,48 @@ fun Context.toastLong(msg: String?) {
     msg?.let {
         Toast.makeText(this, it, Toast.LENGTH_LONG).show()
     }
+}
+
+/**
+ * 压缩图片 1.Luban算法; 2.直接压缩 -> Engine.compress(uri,  100L)
+ *
+ * T 为 String.filePath / Uri / File
+ */
+fun <T> compressImage(context: Context, photos: List<T>, success: (uri: Uri?) -> Unit) {
+    ImageCompressor
+        .with(context)
+        .load(photos)
+        .ignoreBy(100)//单位 Byte
+        .setTargetDir(getCompressedImageCacheDir())
+        .setFocusAlpha(false)
+        .enableCache(true)
+        .filter(object : ImageCompressPredicate {
+            override fun apply(uri: Uri?): Boolean {
+                //FileLogger.i("compressImage predicate $uri  ${FileUri.getFilePathByUri(uri)}")
+                return if (uri != null) !FileUtils.getExtension(uri).endsWith("gif") else false
+            }
+        })
+        .setRenameListener(object : OnImageRenameListener {
+            override fun rename(uri: Uri?): String? {
+                try {
+                    val filePath = FileUri.getFilePathByUri(uri)
+                    val md = MessageDigest.getInstance("MD5")
+                    md.update(filePath?.toByteArray() ?: return "")
+                    return BigInteger(1, md.digest()).toString(32)
+                } catch (e: NoSuchAlgorithmException) {
+                    e.printStackTrace()
+                }
+                return ""
+            }
+        })
+        .setImageCompressListener(object : OnImageCompressListener {
+            override fun onStart() {}
+            override fun onSuccess(uri: Uri?) {
+                success.invoke(uri)
+            }
+
+            override fun onError(e: Throwable?) {
+                FileLogger.e("compressImage onError ${e?.message}")
+            }
+        }).launch()
 }

@@ -139,7 +139,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
 
                 override fun onError(e: Throwable?) {
                     FileLogger.e("回调 onError ${e?.message}")
-                    mTvResultError.text = mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
+                    mTvError.text = mTvError.text.toString().plus(" 错误信息: ${e?.message} \n")
                 }
             })
             .choose()
@@ -192,7 +192,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        mTvResultError.text = ""
+        mTvError.text = ""
         mTvResult.text = ""
         mIvOrigin.setImageBitmap(null)
         mIvCompressed.setImageBitmap(null)

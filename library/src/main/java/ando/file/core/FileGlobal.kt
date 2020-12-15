@@ -62,7 +62,6 @@ object FileGlobal {
     const val MODE_WRITE_ONLY_APPEND = "wa"
     const val MODE_READ_WRITE_DATA = "rw"
     const val MODE_READ_WRITE_FILE = "rwt"
-
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MODE_READ_ONLY, MODE_WRITE_ONLY_ERASING, MODE_WRITE_ONLY_APPEND, MODE_READ_WRITE_DATA, MODE_READ_WRITE_FILE])
     annotation class FileOpenMode
@@ -71,22 +70,19 @@ object FileGlobal {
     const val MEDIA_TYPE_IMAGE = "image"
     const val MEDIA_TYPE_AUDIO = "audio"
     const val MEDIA_TYPE_VIDEO = "video"
-
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
     annotation class FileMediaType
 
 
     /**
-     * 文件超过限制大小直接抛出移除走(onError)
+     * 文件超过限制大小直接返回失败(onError)
      */
     const val OVER_SIZE_LIMIT_ALL_EXCEPT: Int = 1
-
     /**
-     * 文件超过限制大小保留未超限制的文件并返回,剔除超出部分(onSuccess)
+     * 文件超过限制大小保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
      */
     const val OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART: Int = 2
-
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(value = [OVER_SIZE_LIMIT_ALL_EXCEPT, OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART])
     annotation class FileOverSizeStrategy
@@ -142,12 +138,12 @@ object FileGlobal {
     }
 
     //dump
-    //------------------------------------------------------------------------------------------------
+    //---------------------------------------------------------------------------------
 
     fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) =
         if (pfd != null) {
             //读取成功 : 87  大小:2498324B
-            FileLogger.d("读取成功 : ${pfd.fd}  大小:${pfd.statSize}B")
+            FileLogger.d("读取成功: getStatSize=${pfd.statSize}B")
         } else {
             FileLogger.e("读取失败!")
         }

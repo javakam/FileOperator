@@ -7,16 +7,16 @@ import android.net.Uri
 
 /**
  * Title: FileOpener
- * <p>
- * Description: 打开该 Uri 对应文件类型的所有软件, 通常情况下是底部弹窗
- * </p>
+ *
+ * Description: 打开该 Uri 对应文件类型的所有软件, 通常情况下是个部弹窗
+ *
  * @author javakam
  * @date 2020/8/24 11:20
  */
 object FileOpener {
 
     /**
-     * 直接打开 Url 对应的系统应用
+     * ### 直接打开 Url 对应的系统应用
      *
      * eg: 如果url是视频地址,则直接用系统的播放器打开
      */
@@ -39,7 +39,7 @@ object FileOpener {
     }
 
     /**
-     * 根据 文件路径 和 类型(后缀判断) 显示支持该格式的程序
+     * ### 根据 文件路径 和 类型(后缀判断) 显示支持该格式的程序
      *
      * (√) /storage/emulated/0/Pictures/sl2/BitmapImage.png
      *
@@ -56,20 +56,24 @@ object FileOpener {
         }
 
     /**
-     * 选择文件【调用系统的文件管理】
+     * ### 选择文件【调用系统的文件管理】
      *
      * 注:
      *
-     *      1.Intent.setType 不能为空!
+     * 1. Intent.setType 不能为空!
      *
-     *      2.mimeTypes 会覆盖 mimeType
+     * 2. mimeTypes 会覆盖 mimeType
      *
-     *      3.ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同
+     * 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
+     * ```
+     *      java.lang.SecurityException: UID 10483 does not have permission to content://com.android.providers.media.documents/document/image%3A16012 [user 0];
+     *      you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
+     * ```
      *
-     *      4.开启多选 resultCode=-1
+     * 4. 开启多选 resultCode = -1
      */
     fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
-        // Implicitly allow the user to select a particular kind of data. Same as : Intent.ACTION_GET_CONTENT
+        // Implicitly allow the user to select a particular kind of data. Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
             // The MIME data type filter

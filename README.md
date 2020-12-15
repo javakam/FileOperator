@@ -551,7 +551,15 @@ Caused by: android.graphics.ImageDecoder$DecodeException: Failed to create image
 ```
 [What is new in Android P — ImageDecoder & AnimatedImageDrawable](https://medium.com/appnroll-publication/what-is-new-in-android-p-imagedecoder-animatedimagedrawable-a65744bec7c1)
 
-
+8.
+```
+java.lang.SecurityException: UID 10483 does not have permission to content://com.android.providers.media.documents/document/image%3A16012 [user 0];
+you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
+```
+Fixed: `ando.file.core.FileOpener.createChooseIntent`
+```kotlin
+把 Intent(Intent.ACTION_GET_CONTENT) 改为 Intent(Intent.ACTION_OPEN_DOCUMENT)
+```
 
 ## 参考
 

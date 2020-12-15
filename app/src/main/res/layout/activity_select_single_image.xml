@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:text="选择一张图片并压缩"
             android:textColor="@android:color/white"
+            android:textStyle="bold"
             android:textSize="@dimen/font_13" />
 
         <TextView

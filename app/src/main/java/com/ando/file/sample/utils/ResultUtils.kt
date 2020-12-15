@@ -6,10 +6,12 @@ import ando.file.core.FileOpener
 import ando.file.core.FileSizeUtils
 import ando.file.selector.FileSelectResult
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import com.ando.file.sample.R
 import com.ando.file.sample.getCompressedImageCacheDir
 import java.io.File
 
@@ -34,14 +36,16 @@ object ResultUtils {
             return
         }
         tvError.visibility = View.VISIBLE
-        tvError.text = tvError.text.toString().plus(" 错误信息: ${e.message} \n")
+        tvError.text = tvError.text.toString().plus("错误信息: ${e.message}")
     }
 
     fun setImageEvent(imageView: ImageView, uri: Uri?) {
         val bitmap: Bitmap? = FileOperatorQ.getBitmapFromUri(uri)
-        imageView.setImageBitmap(bitmap)
+        val context = imageView.context
+        imageView.setImageBitmap(if (bitmap == null || bitmap.isRecycled)
+            BitmapFactory.decodeResource(context.resources, R.mipmap.ic_place_holder) else bitmap)
         imageView.setOnClickListener {
-            FileOpener.openFileBySystemChooser(imageView.context, uri, "image/*")
+            FileOpener.openFileBySystemChooser(context, uri, "image/*")
         }
     }
 
@@ -57,7 +61,7 @@ object ResultUtils {
         val infoList = mutableListOf<String>()
         results.forEach {
             val info = "${it}格式化大小: ${FileSizeUtils.formatFileSize(it.fileSize)}\n" +
-                    " 格式化大小(保留三位小数): ${FileSizeUtils.formatFileSize(it.fileSize, 3)}\n" +
+                    " 格式化大小(不带单位, 保留三位小数): ${FileSizeUtils.formatFileSize(it.fileSize, 3)}\n" +
                     " 格式化大小(自定义单位, 保留一位小数): ${FileSizeUtils.formatSizeByTypeWithUnit(it.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
             dumpMetaData(uri = it.uri) { name: String?, _: String? ->
                 infoList.add(""" 选择结果:
@@ -90,7 +94,7 @@ object ResultUtils {
             if (v is TextView) {
                 v.text = ""
             } else if (v is ImageView) {
-                v.setImageBitmap(null)
+                v.setImageBitmap(BitmapFactory.decodeResource(v.resources, R.mipmap.ic_place_holder))
             }
         }
     }

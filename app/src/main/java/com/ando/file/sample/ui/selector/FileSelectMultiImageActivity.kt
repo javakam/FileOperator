@@ -1,34 +1,23 @@
 package com.ando.file.sample.ui.selector
 
 import ando.file.androidq.FileOperatorQ.getBitmapFromUri
-import ando.file.androidq.FileOperatorQ.loadThumbnail
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.*
-import ando.file.compressor.ImageCompressPredicate
-import ando.file.compressor.OnImageCompressListener
-import ando.file.compressor.OnImageRenameListener
-import ando.file.compressor.ImageCompressor
-import com.ando.file.sample.R
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_EXCEPT
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
-import ando.file.core.FileGlobal.dumpMetaData
-import ando.file.core.FileMimeType.MIME_MEDIA
-import ando.file.core.FileUri.getFilePathByUri
 import ando.file.selector.*
-import com.ando.file.sample.getCompressedImageCacheDir
-import com.ando.file.sample.toastShort
+import android.widget.Button
+import android.widget.RadioGroup
+import android.widget.TextView
+import com.ando.file.sample.*
+import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
-import kotlinx.android.synthetic.main.activity_file_operator.*
+import com.ando.file.sample.utils.ResultUtils
 import java.io.File
-import java.math.BigInteger
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.util.*
 
 /**
@@ -42,9 +31,11 @@ import java.util.*
 @SuppressLint("SetTextI18n")
 class FileSelectMultiImageActivity : AppCompatActivity() {
 
-    private val REQUEST_CHOOSE_FILE = 10
+    private lateinit var mTvCurrStrategy: TextView
+    private lateinit var mTvResult: TextView
+    private lateinit var mTvError: TextView
+    private lateinit var mRgStrategy: RadioGroup
 
-    //文件选择
     private var mFileSelector: FileSelector? = null
 
     //返回值策略
@@ -52,40 +43,55 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_file_operator)
+        setContentView(R.layout.activity_select_multi_image)
         PermissionManager.requestStoragePermission(this)
+        mTvCurrStrategy= findViewById(R.id.tv_curr_strategy)
+        mTvResult = findViewById(R.id.tv_result)
+        mTvError = findViewById(R.id.tv_error)
+        mRgStrategy = findViewById(R.id.rg_strategy)
 
         title = "多选图片"
 
-        mBtChooseMulti.visibility = View.VISIBLE
-        mBtChooseMulti.setOnClickListener {
-            this.mOverSizeStrategy = OVER_SIZE_LIMIT_ALL_EXCEPT
-            chooseFile()
+        //策略切换
+        mRgStrategy.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.rb_strategy1 -> {
+                    this.mOverSizeStrategy = OVER_SIZE_LIMIT_ALL_EXCEPT
+                    mTvCurrStrategy.text="当前策略: OVER_SIZE_LIMIT_ALL_EXCEPT"
+                }
+                R.id.rb_strategy2 -> {
+                    this.mOverSizeStrategy = OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
+                    mTvCurrStrategy.text="当前策略: OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
+                }
+                else -> {
+                }
+            }
         }
+        mTvCurrStrategy.text="当前策略: OVER_SIZE_LIMIT_ALL_EXCEPT"
 
-        mBtChooseMulti2.visibility = View.VISIBLE
-        mBtChooseMulti2.setOnClickListener {
-            this.mOverSizeStrategy = OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
+        findViewById<Button>(R.id.bt_select_multi).setOnClickListener {
             chooseFile()
         }
     }
 
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        ResultUtils.resetUI(mTvError, mTvResult)
+        mFileSelector?.obtainResult(requestCode, resultCode, data)
+    }
+
     private fun chooseFile() {
-        /*
-        说明:
-            FileOptions T 为 String.filePath / Uri / File
-            3M 3145728 Byte ; 5M 5242880 Byte; 10M 10485760 ; 20M = 20971520 Byte
-         */
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
-            //maxCount = 2
-            singleFileMaxSize = 3145728
-            singleFileMaxSizeTip = "单张图片最大不超过3M！"
-            allFilesMaxSize = 5242880
-            allFilesMaxSizeTip = "图片总大小不超过5M！"
+            fileTypeMismatchTip = "文件类型不匹配"
+            singleFileMaxSize = 5242880
+            singleFileMaxSizeTip = "单张图片最大不超过5M！"
+            allFilesMaxSize = 10485760
+            allFilesMaxSizeTip = "图片总大小不超过10M！"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                    return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             }
         }
@@ -96,13 +102,15 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .setMultiSelect()//默认是单选 false
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(10, "最多选十个文件!")
-            //优先以自定义的 optionsImage.mSingleFileMaxSize , 单位 Byte
-            .setSingleFileMaxSize(2097152, "单个大小不能超过2M！")
+
+            //优先使用 FileSelectOptions.singleFileMaxSize , 单位 Byte
+            .setSingleFileMaxSize(3145728, "单个大小不能超过3M！")
             .setAllFilesMaxSize(20971520, "总文件大小不能超过20M！")
 
-            //1.OVER_SIZE_LIMIT_ALL_EXCEPT  超过限制大小全部不返回  ; 2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  超过限制大小去掉后面相同类型文件
+            //1.OVER_SIZE_LIMIT_ALL_EXCEPT            文件超过限制大小直接返回失败(onError)
+            //2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  文件超过限制大小保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
             .setOverSizeLimitStrategy(this.mOverSizeStrategy)
-            .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
+            .setMimeTypes("image/*")//默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage)
 
             //优先使用 FileSelectOptions 中设置的 FileSelectCondition
@@ -120,8 +128,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             })
             .callback(object : FileSelectCallBack {
                 override fun onSuccess(results: List<FileSelectResult>?) {
-                    FileLogger.w("回调 onSuccess ${results?.size}")
-                    mTvResult.text = ""
+                    ResultUtils.resetUI(mTvResult)
                     if (results.isNullOrEmpty()) {
                         toastShort("没有选取文件")
                         return
@@ -131,118 +138,46 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
                 }
 
                 override fun onError(e: Throwable?) {
-                    FileLogger.e("回调 onError ${e?.message}")
-                    mTvResultError.text = mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
+                    FileLogger.e("FileSelectCallBack onError ${e?.message}")
+                    ResultUtils.setErrorText(mTvError, e)
                 }
             })
             .choose()
     }
 
     private fun showSelectResult(results: List<FileSelectResult>) {
-        mTvResult.text = ""
-        results.forEach {
-            val info = "${it.toString()}格式化 : ${FileSizeUtils.formatFileSize(it.fileSize)}\n"
-            FileLogger.w("FileOptions onSuccess  \n $info")
+        ResultUtils.setErrorText(mTvError, null)
+        ResultUtils.setFormattedResults(tvResult = mTvResult, results = results)
 
-            mTvResult.text = mTvResult.text.toString().plus(
-                """选择结果 : ${FileType.INSTANCE.typeByUri(it.uri)} 
-                    |---------
-                    |👉压缩前
-                    |$info
-                    |""".trimMargin()
-            )
-        }
-
+        val photos = mutableListOf<Uri>()
         results.forEach {
             val uri = it.uri ?: return@forEach
             when (FileType.INSTANCE.typeByUri(uri)) {
                 FileType.IMAGE -> {
                     //原图
-                    val bitmap = getBitmapFromUri(uri)
-                    mIvOrigin.setImageBitmap(bitmap)
-                    //压缩(Luban)
-                    val photos = mutableListOf<Uri>()
+                    //val bitmap = getBitmapFromUri(uri)
+                    //mIvOrigin.setImageBitmap(bitmap)
+                    //压缩
                     photos.add(uri)
-                    compressImage(photos) //or Engine.compress(uri,  100L)
-                }
-                FileType.VIDEO -> {
-                    loadThumbnail(uri, 100, 200)?.let { b -> mIvOrigin.setImageBitmap(b) }
                 }
                 else -> {
                 }
             }
         }
-    }
 
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        //or Engine.compress(uri,  100L)
+        compressImage(this, photos) { uri ->
+            FileLogger.i(
+                "compressImage onSuccess  uri=$uri  path=${uri?.path}  " +
+                        "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
+            )
 
-        mTvResultError.text = ""
-        mTvResult.text = ""
-        mIvOrigin.setImageBitmap(null)
-        mIvCompressed.setImageBitmap(null)
+            ResultUtils.formatCompressedImageInfo(uri) {
+                mTvResult.text = mTvResult.text.toString().plus(it)
+            }
 
-        mFileSelector?.obtainResult(requestCode, resultCode, data)
-    }
-
-    /**
-     * 压缩图片 1.Luban算法; 2.直接压缩 -> Engine.compress(uri,  100L)
-     *
-     * T 为 String.filePath / Uri / File
-     */
-    private fun <T> compressImage(photos: List<T>) {
-        ImageCompressor
-            .with(this)
-            .load(photos)
-            .ignoreBy(100)//Byte
-            .setTargetDir(getCompressedImageCacheDir())
-            .setFocusAlpha(false)
-            .enableCache(true)
-            .filter(object : ImageCompressPredicate {
-                override fun apply(uri: Uri?): Boolean {
-                    FileLogger.i("image predicate $uri  ${getFilePathByUri(uri)}")
-                    return if (uri != null) {
-                        val path = getFilePathByUri(uri)
-                        !(TextUtils.isEmpty(path) || (path?.toLowerCase(Locale.getDefault())?.endsWith(".gif") == true))
-                    } else false
-                }
-            })
-            .setRenameListener(object : OnImageRenameListener {
-                override fun rename(uri: Uri?): String? {
-                    try {
-                        val filePath = getFilePathByUri(uri)
-                        val md = MessageDigest.getInstance("MD5")
-                        md.update(filePath?.toByteArray() ?: return "")
-                        return BigInteger(1, md.digest()).toString(32)
-                    } catch (e: NoSuchAlgorithmException) {
-                        e.printStackTrace()
-                    }
-                    return ""
-                }
-            })
-            .setImageCompressListener(object : OnImageCompressListener {
-                override fun onStart() {}
-                override fun onSuccess(uri: Uri?) {
-                    val path = "$cacheDir/image/"
-                    FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
-
-                    val bitmap = getBitmapFromUri(uri)
-                    dumpMetaData(uri) { displayName: String?, size: String? ->
-                        runOnUiThread {
-                            mTvResult.text = mTvResult.text.toString().plus(
-                                "\n ---------\n👉压缩后 \n Uri : $uri \n 路径: ${uri?.path} \n 文件名称 ：$displayName \n 大小：$size B \n" +
-                                        "格式化 : ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}\n ---------"
-                            )
-                        }
-                    }
-                    mIvCompressed.setImageBitmap(bitmap)
-                }
-
-                override fun onError(e: Throwable?) {
-                    FileLogger.e("compress onError ${e?.message}")
-                }
-            }).launch()
+            //mIvCompressed.setImageBitmap(bitmap)
+        }
     }
 
 }

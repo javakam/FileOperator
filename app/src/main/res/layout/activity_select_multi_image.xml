@@ -9,96 +9,98 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <Button
-            android:id="@+id/mBtChooseSingle"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="选择一张图片并压缩"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_13"
-            android:visibility="gone" />
+            android:maxLines="2"
+            android:padding="3dp"
+            android:text="文件大小超出后提供两种策略: "
+            android:textColor="@color/color_font_black"
+            android:textSize="@dimen/font_12"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/mBtChooseMulti"
-            android:layout_width="match_parent"
-            android:gravity="left|top"
-            android:layout_height="wrap_content"
-            android:text="👉策略一: 超过限制大小返回失败 \n OVER_SIZE_LIMIT_ALL_EXCEPT"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_13"
-            android:visibility="gone" />
 
-        <Button
-            android:id="@+id/mBtChooseMulti2"
+        <RadioGroup
+            android:id="@+id/rg_strategy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="left|top"
-            android:text="👉策略二: 超过限制大小去掉后面溢出的部分 \n OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_13"
-            android:visibility="gone" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/mBtChooseMultiFiles"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="选择多个文件"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_13"
-            android:visibility="gone" />
-        <Button
-            android:id="@+id/mBtOpenMediaFile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="测试打开音视频文件"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_13"
-            android:visibility="gone" />
+            <RadioButton
+                android:id="@+id/rb_strategy1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/sel_strategy_change"
+                android:button="@null"
+                android:checked="true"
+                android:padding="8dp"
+                android:text="👉超过限制大小直接返回失败 \n OVER_SIZE_LIMIT_ALL_EXCEPT"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_12" />
+
+            <RadioButton
+                android:id="@+id/rb_strategy2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sel_strategy_change"
+                android:button="@null"
+                android:padding="8dp"
+                android:text="👉超过限制大小去掉后面溢出的部分 \n OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_12" />
+
+        </RadioGroup>
 
         <TextView
-            android:id="@+id/mTvError"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_curr_strategy"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="错误信息"
+            android:maxLines="2"
             android:padding="3dp"
-            android:textColor="@android:color/holo_red_light"
-            android:textSize="12sp"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="当前策略: "
+            android:textColor="@color/color_main_theme_dark"
+            android:textSize="@dimen/font_10"
+            android:textStyle="bold" />
+
+        <!--    并压缩    -->
+        <Button
+            android:id="@+id/bt_select_multi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:text="选择多张图片"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_13"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/mTvResult"
+            android:id="@+id/tv_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="错误信息"
+            android:padding="3dp"
+            android:textColor="@android:color/holo_red_dark"
+            android:textColorHint="@color/color_font_black"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:hint="选择结果"
             android:padding="3dp"
-            android:textColor="#000"
-            android:textSize="12sp" />
+            android:textColor="@color/color_font_black"
+            android:textColorHint="@color/color_font_black"
+            android:textSize="12sp"
+            android:visibility="visible" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="原图" />
-
-        <ImageView
-            android:id="@+id/mIvOrigin"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            android:src="@mipmap/ic_launcher" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="压缩后(Luban)" />
-
-        <ImageView
-            android:id="@+id/mIvCompressed"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            android:src="@mipmap/ic_launcher" />
 
         <!--        <androidx.recyclerview.widget.RecyclerView-->
         <!--            android:id="@+id/recyclerView"-->

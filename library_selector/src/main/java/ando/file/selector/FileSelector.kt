@@ -405,6 +405,11 @@ class FileSelector private constructor(builder: Builder) {
             return this
         }
 
+        fun setMimeTypes(mimeTypes: String): Builder {
+            this.mMimeTypes = arrayOf(mimeTypes)
+            return this
+        }
+
         fun setMultiSelect(): Builder {
             this.mIsMultiSelect = true
             return this
@@ -422,8 +427,8 @@ class FileSelector private constructor(builder: Builder) {
             return this
         }
 
-        fun setTypeMismatchTip(fileTypeMismatchTip: String): Builder {
-            this.mFileTypeMismatchTip = fileTypeMismatchTip
+        fun setTypeMismatchTip(typeMismatchTip: String): Builder {
+            this.mFileTypeMismatchTip = typeMismatchTip
             return this
         }
 

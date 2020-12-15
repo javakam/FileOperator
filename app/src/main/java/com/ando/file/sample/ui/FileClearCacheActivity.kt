@@ -6,15 +6,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.FileSizeUtils
 import ando.file.core.FileLogger
-import ando.file.core.FileOpener
 import ando.file.core.FileUri
+import android.widget.Button
 import android.widget.TextView
-import androidx.core.net.toUri
-import com.ando.file.sample.R
-import com.ando.file.sample.clearCompressedImageCacheDir
-import com.ando.file.sample.getCompressedImageCacheDir
-import com.ando.file.sample.toastShort
-import kotlinx.android.synthetic.main.activity_file_clear_cache.*
+import com.ando.file.sample.*
 import java.io.File
 import kotlin.text.StringBuilder
 
@@ -29,17 +24,23 @@ import kotlin.text.StringBuilder
 @SuppressLint("SetTextI18n")
 class FileClearCacheActivity : AppCompatActivity() {
 
-    private lateinit var tvCompressedImageCacheDir: TextView
+    private lateinit var tvDataDir: TextView
+    private lateinit var tvFilesDir: TextView
+    private lateinit var tvCacheDir: TextView
+    private lateinit var tvCompressedImgCacheDir: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_clear_cache)
-        tvCompressedImageCacheDir = findViewById(R.id.tvCompressedImageCacheDir)
+        tvDataDir = findViewById(R.id.tvDataDir)
+        tvFilesDir = findViewById(R.id.tvFilesDir)
+        tvCacheDir = findViewById(R.id.tvCacheDir)
+        tvCompressedImgCacheDir = findViewById(R.id.tvCompressedImageCacheDir)
 
         //清除缓存
-        mBtClearCache.setOnClickListener {
+        findViewById<Button>(R.id.mBtClearCache).setOnClickListener {
             val result = clearCompressedImageCacheDir()
-            toastShort(if (result) "清理压缩图片缓存成功!" else "清理压缩图片缓存失败!")
+            toastLong(if (result) "清理压缩图片缓存成功!" else "清理压缩图片缓存失败!")
             refresh()
         }
 
@@ -75,7 +76,7 @@ class FileClearCacheActivity : AppCompatActivity() {
 
         ///////////////////////
         val compressedImageCacheDir: String = getCompressedImageCacheDir()
-        FileUri.getUriByPath(compressedImageCacheDir)?.let { u ->
+        FileUri.getUriByPath(compressedImageCacheDir)?.let { uri ->
 
             /*
             3.4KB
@@ -87,25 +88,27 @@ class FileClearCacheActivity : AppCompatActivity() {
             val fileList: List<File>? = File(compressedImageCacheDir).listFiles()?.asList()
             val childFileSb = StringBuilder()
             fileList?.forEachIndexed { i, f ->
-                childFileSb.append("\n  No.$i ${f.name} ${FileSizeUtils.formatFileSize(FileSizeUtils.getFileSize(f))}\n ")
+                childFileSb.append("\n $i -> ${f.name} 大小: ${FileSizeUtils.formatFileSize(FileSizeUtils.getFileSize(f))}")
             }
 
             val sizeTotal = FileSizeUtils.calculateFileOrDirSize(compressedImageCacheDir)
-            val sizeTotal2 = FileSizeUtils.calculateFileOrDirSize(FileUri.getFilePathByUri(u))
+            val sizeTotal2 = FileSizeUtils.calculateFileOrDirSize(FileUri.getFilePathByUri(uri))
 
-            tvCompressedImageCacheDir.text =
-                """🔥压缩图片的缓存目录: 
-                | 路径: $compressedImageCacheDir 大小: $sizeTotal
-                | 路径: ${FileUri.getFilePathByUri(u)} 大小: $sizeTotal2
-                | 大小(OpenableColumns.SIZE): ${FileSizeUtils.getFileSize(u)}
+            tvCompressedImgCacheDir.text =
+                """🍎压缩图片的缓存目录: 
+                | ❎路径: ${FileUri.getFilePathByUri(uri)} 大小: $sizeTotal2
+                | ❎大小(OpenableColumns.SIZE): ${FileSizeUtils.getFileSize(uri)}
+                | ---
+                | ✅路径: $compressedImageCacheDir 大小: $sizeTotal
                 | 格式化: ${FileSizeUtils.formatFileSize(sizeTotal)}
-                | 文件列表: $childFileSb
+                | 🍎缓存图片列表(${fileList?.size}): $childFileSb
                 | """.trimMargin()
-            tvCompressedImageCacheDir.setOnClickListener {
-                FileOpener.openFileBySystemChooser(this, u, "file/*")
+            tvCompressedImgCacheDir.setOnClickListener {
+                //FileOpener.openFileBySystemChooser(this, u, "file/*")
             }
-
         }
+        ///////////////////////
+
     }
 
     /**
