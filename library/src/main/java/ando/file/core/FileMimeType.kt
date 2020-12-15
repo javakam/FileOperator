@@ -7,11 +7,12 @@ import ando.file.core.FileUri.getFilePathByUri
 import java.util.*
 
 /**
- * MimeType 工具类
+ * 文件 MimeType 工具类
  *
  * 1. getMimeType(str: String?) 先用`android.webkit.MimeTypeMap`获取`mimeType`, 如果为空再去`MIME_TABLES`中找
  *
- * 2. getMimeType(uri: Uri?) 先用`android.content.Context.getContentResolver`获取`mimeType`, 如果为空则转换`uri`为`path`,执行`getMimeType(str: String?)`
+ * 2. getMimeType(uri: Uri?) 先用`android.content.Context.getContentResolver`获取`mimeType`,
+ *   如果结果为空则借助`getFilePathByUri(uri)`将`uri`转换为`path`, 执行`getMimeType(str: String?)`
  */
 object FileMimeType {
 
@@ -28,15 +29,13 @@ object FileMimeType {
         val mimeType = if (extension.isNullOrBlank()) getMimeTypeSupplement(str)
         else MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: type
 
-        FileLogger.i("系统 MimeType ：$mimeType  extension=$extension")
+        FileLogger.i("FileMimeType ：extension=$extension  mimeType=$mimeType")
         return mimeType.toLowerCase(Locale.getDefault())
     }
-
 
     fun getMimeType(uri: Uri?): String =
         if (uri != null) getContext().contentResolver.getType(uri)?.toLowerCase(Locale.getDefault()) ?: getMimeType(getFilePathByUri(uri))
         else getMimeType(getFilePathByUri(uri))
-
 
     /**
      * MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充

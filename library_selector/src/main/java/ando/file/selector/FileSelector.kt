@@ -6,7 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.collection.ArrayMap
 import ando.file.core.*
-import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_DONT
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_EXCEPT
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
 import ando.file.core.FileOpener.createChooseIntent
 import ando.file.core.FileType.INSTANCE
@@ -40,7 +40,7 @@ class FileSelector private constructor(builder: Builder) {
     private var mMaxCountTip: String = ""
     private var mSingleFileMaxSize: Long = -1                   //单文件大小控制 Byte
     private var mAllFilesMaxSize: Long = -1                     //总文件大小控制 Byte
-    private var mOverSizeLimitStrategy = OVER_SIZE_LIMIT_ALL_DONT
+    private var mOverSizeLimitStrategy = OVER_SIZE_LIMIT_ALL_EXCEPT
 
     private var mFileTypeMismatchTip: String = DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
     private var mSingleFileMaxSizeTip: String = DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
@@ -169,7 +169,7 @@ class FileSelector private constructor(builder: Builder) {
 
                 if (!sf) {
                     isFileSizeIllegal = true
-                    if (isCurrentType && mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_DONT) {
+                    if (isCurrentType && mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_EXCEPT) {
                         mFileSelectCallBack?.onError(Throwable(o?.singleFileMaxSizeTip ?: mSingleFileMaxSizeTip))
                         isNeedBreak = true
                     }
@@ -183,7 +183,7 @@ class FileSelector private constructor(builder: Builder) {
                 if (isCurrentType && o != null) {
                     FileLogger.i("handleMultiSelectCase  Custom Option  mMaxCount : ${(uriList[o]?.size ?: 0 >= o.maxCount)} ")
                     if (uriList[o]?.size ?: 0 >= o.maxCount) {
-                        if (mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_DONT) mFileSelectCallBack?.onError(Throwable(o.maxCountTip))
+                        if (mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_EXCEPT) mFileSelectCallBack?.onError(Throwable(o.maxCountTip))
                         canJoinTypeMap[o] = false
                         isFileSizeIllegal = true
                         isNeedBreak = true
@@ -209,7 +209,7 @@ class FileSelector private constructor(builder: Builder) {
                 if (totalSize > mAllFilesMaxSize) {//byte (B)
                     isFileSizeIllegal = true
                     when (mOverSizeLimitStrategy) {
-                        OVER_SIZE_LIMIT_ALL_DONT -> {
+                        OVER_SIZE_LIMIT_ALL_EXCEPT -> {
                             mFileSelectCallBack?.onError(Throwable(mAllFilesMaxSizeTip))
                             isNeedBreak = true
                         }
@@ -237,7 +237,7 @@ class FileSelector private constructor(builder: Builder) {
         //filter data
         if (isFileSizeIllegal) {
             when (mOverSizeLimitStrategy) {
-                OVER_SIZE_LIMIT_ALL_DONT -> {
+                OVER_SIZE_LIMIT_ALL_EXCEPT -> {
                     canJoinTypeMap.filter { (k, v) ->
                         if (v == false && uriList[k]?.size ?: 0 < k.maxCount)
                             mFileSelectCallBack?.onError(Throwable(k.allFilesMaxSizeTip ?: mAllFilesMaxSizeTip))

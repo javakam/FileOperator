@@ -1,18 +1,9 @@
 package ando.file.core
 
 import ando.file.FileOperator
-import android.annotation.TargetApi
-import android.content.ContentResolver
-import android.content.ContentUris
-import android.content.Context
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.text.TextUtils
 import androidx.annotation.RequiresApi
-import androidx.core.content.FileProvider
 import java.io.*
 
 object FileDirectory {

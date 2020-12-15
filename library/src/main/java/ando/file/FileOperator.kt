@@ -44,15 +44,14 @@ object FileOperator {
      */
     fun getDatabasePath(context: Context, dirName: String): String? {
         val root = context.getDatabasePath(null)
-        if (root != null) {
+        return if (root != null) {
             val path = root.absolutePath + File.separator + dirName + File.separator
             val file = File(path)
             if (!file.exists() && !file.mkdirs()) {
-                //throw RuntimeException("can't make dirs in " + file.absolutePath)
+                throw RuntimeException("can't make dirs in " + file.absolutePath)
             }
-            return path
-        }
-        return null
+            path
+        } else root
     }
 
     //getCacheDir
@@ -76,7 +75,7 @@ object FileOperator {
             val path = root + File.separator + dirName + File.separator
             val file = File(path)
             if (!file.exists() && !file.mkdirs()) {
-                //throw  RuntimeException("can't make dirs in " + file.absolutePath);
+                throw  RuntimeException("can't make dirs in " + file.absolutePath);
             }
             path
         } else root
@@ -100,7 +99,7 @@ object FileOperator {
             val path = root + File.separator + dirName + File.separator
             val file = File(path)
             if (!file.exists() && !file.mkdirs()) {
-                //throw  RuntimeException("can't make dirs in " + file.absolutePath);
+                throw  RuntimeException("can't make dirs in " + file.absolutePath);
             }
             path
         } else root

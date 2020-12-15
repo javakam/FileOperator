@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:gravity="left|top"
             android:layout_height="wrap_content"
-            android:text="👉策略一: 超过限制大小返回失败 \n OVER_SIZE_LIMIT_ALL_DONT"
+            android:text="👉策略一: 超过限制大小返回失败 \n OVER_SIZE_LIMIT_ALL_EXCEPT"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_13"
             android:visibility="gone" />

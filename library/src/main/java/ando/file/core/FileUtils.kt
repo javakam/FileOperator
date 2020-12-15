@@ -221,7 +221,7 @@ object FileUtils {
         } catch (e: IOException) {
             e("readFileBytes -> ${e.message}")
         } finally {
-            closeIO(fis)
+            fis?.close()
         }
         return bytesArray
     }
@@ -265,8 +265,8 @@ object FileUtils {
             e.printStackTrace()
             false
         } finally {
-            closeIO(srcChannel)
-            closeIO(dstChannel)
+            srcChannel?.close()
+            dstChannel?.close()
         }
     }
 
@@ -287,7 +287,7 @@ object FileUtils {
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         } finally {
-            closeIO(out)
+            out?.close()
         }
     }
 
@@ -312,8 +312,8 @@ object FileUtils {
         } catch (e: IOException) {
             e.printStackTrace()
         } finally {
-            closeIO(input)
-            closeIO(output)
+            input?.close()
+            output?.close()
         }
     }
 

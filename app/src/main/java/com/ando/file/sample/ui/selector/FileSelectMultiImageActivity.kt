@@ -15,7 +15,7 @@ import ando.file.compressor.OnImageCompressListener
 import ando.file.compressor.OnImageRenameListener
 import ando.file.compressor.ImageCompressor
 import com.ando.file.sample.R
-import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_DONT
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_EXCEPT
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
 import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileMimeType.MIME_MEDIA
@@ -48,7 +48,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
     private var mFileSelector: FileSelector? = null
 
     //返回值策略
-    private var mOverSizeStrategy: Int = OVER_SIZE_LIMIT_ALL_DONT
+    private var mOverSizeStrategy: Int = OVER_SIZE_LIMIT_ALL_EXCEPT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +59,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
 
         mBtChooseMulti.visibility = View.VISIBLE
         mBtChooseMulti.setOnClickListener {
-            this.mOverSizeStrategy = OVER_SIZE_LIMIT_ALL_DONT
+            this.mOverSizeStrategy = OVER_SIZE_LIMIT_ALL_EXCEPT
             chooseFile()
         }
 
@@ -100,7 +100,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .setSingleFileMaxSize(2097152, "单个大小不能超过2M！")
             .setAllFilesMaxSize(20971520, "总文件大小不能超过20M！")
 
-            //1.OVER_SIZE_LIMIT_ALL_DONT  超过限制大小全部不返回  ; 2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  超过限制大小去掉后面相同类型文件
+            //1.OVER_SIZE_LIMIT_ALL_EXCEPT  超过限制大小全部不返回  ; 2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  超过限制大小去掉后面相同类型文件
             .setOverSizeLimitStrategy(this.mOverSizeStrategy)
             .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage)

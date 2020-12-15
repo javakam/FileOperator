@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.*
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
 import ando.file.core.FileMimeType.MIME_MEDIA
 import ando.file.core.FileUri.getFilePathByUri
 import ando.file.selector.*
@@ -69,19 +70,20 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
+    /*
+       3M = 3145728 Byte
+       5M = 5242880 Byte
+       10M = 10485760 Byte
+       20M = 20971520 Byte
+    */
     private fun chooseFile() {
-        /*
-        说明:
-            FileOptions T 为 String.filePath / Uri / File
-            3M 3145728 Byte ; 5M 5242880 Byte; 10M 10485760 ; 20M = 20971520 Byte
-         */
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
             fileTypeMismatchTip = "文件类型不匹配"
-            singleFileMaxSize = 3145728
-            singleFileMaxSizeTip = "图片最大不超过3M！"
+            singleFileMaxSize = 5242880
+            singleFileMaxSizeTip = "图片最大不超过5M！"
             allFilesMaxSize = 10485760
-            allFilesMaxSizeTip = "总图片大小不超过10M！"
+            allFilesMaxSizeTip = "总图片大小不超过10M！"//单选条件下无效,只做单个图片大小判断
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -94,7 +96,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setTypeMismatchTip("文件类型不匹配") //会覆盖 FileSelectOptions 中的 fileTypeMismatchTip
             .setMinCount(1, "至少选一个文件!")
-            .setMaxCount(10, "最多选十个文件!")
+            .setMaxCount(10, "最多选十个文件!")//单选条件下无效,只做最少数量判断
+            .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
             .setSingleFileMaxSize(5242880, "大小不能超过5M！") //5M 5242880 ; 100M = 104857600 Byte
             .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//
             .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")

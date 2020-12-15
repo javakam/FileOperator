@@ -3,13 +3,11 @@ package ando.file.selector
 import android.net.Uri
 import android.os.Parcelable
 import ando.file.core.FileType
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
- * Title: FileSelectResult
- * <p>
- * Description:
- * </p>
+ * ### 选择结果
+ *
  * @author javakam
  * @date 2020/5/14  10:32
  */

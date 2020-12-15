@@ -11,37 +11,30 @@ import android.provider.OpenableColumns
 import androidx.annotation.IntDef
 import androidx.annotation.StringDef
 import androidx.fragment.app.Fragment
-import java.io.Closeable
-import java.io.IOException
 
 /**
  * 文件的访问模式 mode :
- * 可能是“r”表示只读访问，
- * “w”表示只写访问(擦除文件中当前的任何数据)，“wa”表示只写访问，以追加到任何现有数据，
- * “rw”表示对任何现有数据的读写访问，“rwt”表示对任何现有文件的读写访问。
- * <pre>
- * Access mode for the file.  May be "r" for read-only access,
+ *
+ * 1. “r”表示只读访问，
+ *
+ * 2. “w”表示只写访问(擦除文件中当前的任何数据)，“wa”表示只写访问，以追加到任何现有数据，
+ *
+ * 3. “rw”表示对任何现有数据的读写访问，“rwt”表示对任何现有文件的读写访问。
+ *
+ *
+ * > Access mode for the file.  May be "r" for read-only access,
  * "w" for write-only access (erasing whatever data is currently in
  * the file), "wa" for write-only access to append to any existing data,
  * "rw" for read and write access on any existing data, and "rwt" for read
  * and write access that truncates any existing file.
- * </pre>
  *
- * android.os.ParcelFileDescriptor#openInternal 👇
- * https://www.man7.org/linux/man-pages/man2/open.2.html
+ * See android.os.ParcelFileDescriptor#openInternal
+ *  [https://www.man7.org/linux/man-pages/man2/open.2.html](https://www.man7.org/linux/man-pages/man2/open.2.html)
  */
-internal const val PATH_SUFFIX = ".fileProvider"
+internal const val PATH_SUFFIX = ".andoFileProvider"
 internal const val HIDDEN_PREFIX = "."
 
 internal fun noNull(s: String?): String = if (s.isNullOrBlank()) "" else s
-
-internal fun closeIO(io: Closeable?) {
-    try {
-        io?.close()
-    } catch (e: IOException) {
-        e.printStackTrace()
-    }
-}
 
 internal fun isActivityLive(activity: Activity?): Boolean {
     return activity != null && !activity.isFinishing && !activity.isDestroyed
@@ -62,21 +55,8 @@ internal fun startActivity(context: Any, intent: Intent) {
     }
 }
 
-internal fun startActivityForResult(context: Any, intent: Intent, requestCode: Int) {
-    if (context is Activity) {
-        if (isActivityLive(context)) {
-            context.startActivityForResult(intent, requestCode)
-        }
-    } else if (context is Fragment) {
-        val activity = context.activity
-        if (isActivityLive(activity)) {
-            context.startActivityForResult(intent, requestCode)
-        }
-    }
-}
-
 object FileGlobal {
-    //
+
     const val MODE_READ_ONLY = "r"
     const val MODE_WRITE_ONLY_ERASING = "w"
     const val MODE_WRITE_ONLY_APPEND = "wa"
@@ -88,7 +68,6 @@ object FileGlobal {
     annotation class FileOpenMode
 
 
-    //
     const val MEDIA_TYPE_IMAGE = "image"
     const val MEDIA_TYPE_AUDIO = "audio"
     const val MEDIA_TYPE_VIDEO = "video"
@@ -97,22 +76,32 @@ object FileGlobal {
     @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
     annotation class FileMediaType
 
-    //
-    const val OVER_SIZE_LIMIT_ALL_DONT = 1                //超过限制大小全部不返回
-    const val OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART = 2    //超过限制大小去掉后面相同类型文件
+
+    /**
+     * 文件超过限制大小直接抛出移除走(onError)
+     */
+    const val OVER_SIZE_LIMIT_ALL_EXCEPT: Int = 1
+
+    /**
+     * 文件超过限制大小保留未超限制的文件并返回,剔除超出部分(onSuccess)
+     */
+    const val OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART: Int = 2
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(value = [OVER_SIZE_LIMIT_ALL_DONT, OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART])
+    @IntDef(value = [OVER_SIZE_LIMIT_ALL_EXCEPT, OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART])
     annotation class FileOverSizeStrategy
-
 
     /**
      * eg:
-     *      val queryStatement = buildQuerySelectionStatement(MEDIA_TYPE_VIDEO, null, null, null, null, null, false)
+     * ```kotlin
+     *      val queryStatement = buildQuerySelectionStatement(MEDIA_TYPE_VIDEO,
+     *          null, null, null, null, null, false)
+     *
      *      queryStatement.append(
      *          "${MediaStore.Video.Media.DURATION} >= ? ",
      *          noNull(TimeUnit.MILLISECONDS.convert(sourceDuration,sourceUnit).toString())
      *      )
+     * ```
      */
     data class QuerySelectionStatement(
         val selection: StringBuilder,
@@ -125,10 +114,9 @@ object FileGlobal {
         }
     }
 
-
     /**
-     * 加载媒体 单个媒体文件 👉 ContentResolver.openFileDescriptor
-     * <p>
+     * ### 加载媒体 单个媒体文件 👉 ContentResolver.openFileDescriptor
+     *
      * 根据文件描述符选择对应的打开方式。"r"表示读，"w"表示写
      */
     fun openFileDescriptor(
@@ -140,7 +128,6 @@ object FileGlobal {
         return FileOperator.getContext().contentResolver.openFileDescriptor(uri ?: return null, mode, cancellationSignal)
     }
 
-
     /**
      * 检查 uri 对应的文件是否存在
      */
@@ -148,12 +135,11 @@ object FileGlobal {
         val cursor = FileOperator.getContext().contentResolver.query(uri ?: return false, null, null, null, null)
         if (cursor == null || !cursor.moveToFirst()) {
             FileLogger.e("删除失败 -> 1.没有找到 Uri 对应的文件 ; 2.目录为空 ")
-            closeIO(cursor)
             return false
         }
+        cursor.close()
         return true
     }
-
 
     //dump
     //------------------------------------------------------------------------------------------------
@@ -169,9 +155,7 @@ object FileGlobal {
     /**
      * 获取文档元数据
      */
-    fun dumpMetaData(uri: Uri?) = dumpMetaData(uri) { _: String?, _: String? -> }
-
-    fun dumpMetaData(uri: Uri?, block: (displayName: String?, size: String?) -> Unit) {
+    fun dumpMetaData(uri: Uri?, block: ((displayName: String?, size: String?) -> Unit)? = null) {
         val cursor =
             FileOperator.getContext().contentResolver.query(uri ?: return, null, null, null, null)
 
@@ -183,7 +167,7 @@ object FileGlobal {
                 val size: String = if (!it.isNull(sizeIndex)) {
                     it.getString(sizeIndex)
                 } else "Unknown"
-                block.invoke(displayName, size)
+                block?.invoke(displayName, size)
                 FileLogger.i("文件名称 ：$displayName  Size：$size B")
             }
         }

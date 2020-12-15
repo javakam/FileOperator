@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.novoda.bintray-release'
+//apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.github.panpf.bintray-publish'
 
 android {
     compileSdkVersion 30
@@ -56,11 +56,11 @@ dependencies {
 }
 
 publish {
-    repoName = 'maven'
+    repoName = 'FileOperator'
     userOrg = 'javakam'
     groupId = 'ando.file'
     artifactId = 'compressor'
-    publishVersion = '1.0.1'
+    publishVersion = '1.0.2'
     desc = 'Ando File Helper Image Compressor.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true

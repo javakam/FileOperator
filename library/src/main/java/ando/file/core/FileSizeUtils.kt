@@ -10,10 +10,8 @@ import ando.file.core.FileSizeUtils.FileSizeType.*
 import ando.file.core.FileLogger.e
 import ando.file.core.FileLogger.i
 import ando.file.core.FileUri.getFilePathByUri
-import android.annotation.TargetApi
 import java.io.File
 import java.math.BigDecimal
-import java.net.URI
 
 /**
  * FileSizeUtils 计算文件大小 👉 BigDecimal
@@ -63,16 +61,7 @@ object FileSizeUtils {
      */
     fun calculateFileOrDirSize(path: String?, scale: Int = 2, sizeType: FileSizeType): Double {
         if (path.isNullOrBlank()) return 0.00
-
-        val file = File(path)
-        var blockSize = 0L
-        try {
-            blockSize = if (file.isDirectory) getFolderSize(file) else getFileSize(file)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            e("获取文件大小 获取失败!")
-        }
-        return formatSizeByTypeWithoutUnit(blockSize.toBigDecimal(), scale, sizeType).toDouble()
+        return formatSizeByTypeWithoutUnit(calculateFileOrDirSize(path).toBigDecimal(), scale, sizeType).toDouble()
     }
 
     /**
@@ -137,6 +126,9 @@ object FileSizeUtils {
     // format size
     //-----------------------------------------------------------------------
 
+    /**
+     * 保留两位小数, 不带单位
+     */
     fun formatFileSize(size: Long): String = formatFileSize(size, 2, true)
 
     /**
@@ -145,7 +137,7 @@ object FileSizeUtils {
     fun formatFileSize(size: Long, scale: Int, withUnit: Boolean = false): String {
         val divisor = 1024L
         //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
-        val kiloByte: BigDecimal = formatSizeByTypeWithDivisor(BigDecimal(size), scale, SIZE_TYPE_B, divisor)
+        val kiloByte: BigDecimal = formatSizeByTypeWithDivisor(BigDecimal.valueOf(size), scale, SIZE_TYPE_B, divisor)
         if (kiloByte.toDouble() < 1) {
             return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_B.unit else ""}"
         }
@@ -187,15 +179,13 @@ object FileSizeUtils {
      */
     fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSizeType): BigDecimal =
         size.divide(
-            BigDecimal(
-                when (sizeType) {
-                    SIZE_TYPE_B -> 1L
-                    SIZE_TYPE_KB -> 1024L
-                    SIZE_TYPE_MB -> 1024L * 1024L
-                    SIZE_TYPE_GB -> 1024L * 1024L * 1024L
-                    SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
-                }
-            ),
+            BigDecimal.valueOf(when (sizeType) {
+                SIZE_TYPE_B -> 1L
+                SIZE_TYPE_KB -> 1024L
+                SIZE_TYPE_MB -> 1024L * 1024L
+                SIZE_TYPE_GB -> 1024L * 1024L * 1024L
+                SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
+            }),
             scale,
             //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
             if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
@@ -203,7 +193,7 @@ object FileSizeUtils {
 
     fun formatSizeByTypeWithDivisor(size: BigDecimal, scale: Int, sizeType: FileSizeType, divisor: Long): BigDecimal =
         size.divide(
-            BigDecimal(divisor),
+            BigDecimal.valueOf(divisor),
             scale,
             //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
             if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
