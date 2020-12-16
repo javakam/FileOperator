@@ -10,7 +10,8 @@ import ando.file.core.FileType
  */
 class FileSelectOptions {
 
-    var maxCount: Int = Int.MAX_VALUE                  //可选文件最大数量
+    var minCount: Int = 0                              //选择文件最少数量
+    var maxCount: Int = Int.MAX_VALUE                  //选择文件最大数量
     var minCountTip: String? = ""
     var maxCountTip: String? = ""
 

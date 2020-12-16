@@ -71,13 +71,14 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             maxCount = 2
             minCountTip = "至少选择一张图片"
             maxCountTip = "最多选择两张图片"
-            singleFileMaxSize = 3145728
-            singleFileMaxSizeTip = "单张图片最大不超过3M！"
-            allFilesMaxSize = 5242880
-            allFilesMaxSizeTip = "图片总大小不超过5M！"
+            fileTypeMismatchTip = "文件类型不匹配"
+            singleFileMaxSize = 5242880
+            singleFileMaxSizeTip = "单张图片最大不超过5M！"
+            allFilesMaxSize = 10485760
+            allFilesMaxSizeTip = "图片总大小不超过10M！"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                    return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             }
         }
@@ -85,7 +86,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         //视频
         val optionsVideo = FileSelectOptions().apply {
             fileType = FileType.VIDEO
-            maxCount = 1
+            maxCount = 2
             minCountTip = "至少选择一个视频文件"
             maxCountTip = "最多选择一个视频文件"
             singleFileMaxSize = 20971520
@@ -108,14 +109,15 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
 
             // 优先使用自定义 FileSelectOptions 中设置的单文件大小限制,如果没有设置则采用该值
             .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
+            // 总大小限制
             .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
 
             // 超过限制大小两种返回策略: 1.OVER_SIZE_LIMIT_ALL_EXCEPT,超过限制大小全部不返回;2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART,超过限制大小去掉后面相同类型文件
             .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
-            .setMimeTypes(null)//默认为 null,*/* 即不做文件类型限定;MIME_MEDIA 媒体文件,不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
+            .setMimeTypes(null)//同"*/*",默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage, optionsVideo)
 
-            // 优先使用 FileSelectOptions 中设置的 FileSelectCondition,没有的情况下才使用通用的
+            // 优先使用 FileSelectOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
                     return when (fileType) {
@@ -146,7 +148,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
     private fun showSelectResult(results: List<FileSelectResult>) {
         mTvResult.text = ""
         results.forEach {
-            val info = "${it.toString()}格式化 : ${FileSizeUtils.formatFileSize(it.fileSize)}\n"
+            val info = "${it}格式化 : ${FileSizeUtils.formatFileSize(it.fileSize)}\n"
             FileLogger.w("FileOptions onSuccess  \n $info")
 
             mTvResult.text = mTvResult.text.toString().plus(
