@@ -19,6 +19,7 @@ import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileOpener.openFileBySystemChooser
 import ando.file.core.FileUri.getFilePathByUri
 import ando.file.selector.*
+import com.ando.file.sample.REQUEST_CHOOSE_FILE
 import com.ando.file.sample.getCompressedImageCacheDir
 import com.ando.file.sample.utils.PermissionManager
 import kotlinx.android.synthetic.main.activity_file_operator.*
@@ -39,34 +40,31 @@ import java.util.*
 @SuppressLint("SetTextI18n")
 class FileSelectMultiFilesActivity : AppCompatActivity() {
 
-    private val REQUEST_CHOOSE_FILE = 10
-
-    //文件选择
     private var mFileSelector: FileSelector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_operator)
-        PermissionManager.requestStoragePermission(this)
         title = "多选文件"
 
         mBtOpenMediaFile.visibility = View.VISIBLE
 
         mBtChooseMultiFiles.visibility = View.VISIBLE
         mBtChooseMultiFiles.setOnClickListener {
-            chooseFile()
+            PermissionManager.requestStoragePermission(this) {
+                if (it) chooseFile()
+            }
         }
-
     }
 
+    /*
+    字节码计算器 -> https://calc.itzmx.com/
+       3M  = 3145728  Byte
+       5M  = 5242880  Byte
+       10M = 10485760 Byte
+       20M = 20971520 Byte
+    */
     private fun chooseFile() {
-        /*
-       说明:
-           FileOptions T 为 String.filePath / Uri / File
-           3M 3145728 Byte ; 5M 5242880 Byte; 10M 10485760 ; 20M = 20971520 Byte
-           50M 52428800 Byte ; 80M 83886080 ; 100M = 104857600 Byte
-        */
-
         //图片
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
@@ -237,7 +235,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             })
             .setImageCompressListener(object : OnImageCompressListener {
                 override fun onStart() {}
-                override fun onSuccess(uri: Uri?) {
+                override fun onSuccess(index: Int, uri: Uri?) {
                     val path = "$cacheDir/image/"
                     FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
 

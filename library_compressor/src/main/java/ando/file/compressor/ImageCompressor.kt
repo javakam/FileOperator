@@ -30,7 +30,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
      */
     private fun getImageCacheFile(
         context: Context,
-        suffix: String
+        suffix: String,
     ): File {
         if (TextUtils.isEmpty(mCacheDir)) {
             mCacheDir = getImageCacheDir(context)?.absolutePath
@@ -58,16 +58,18 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
     private fun launch(context: Context) {
         if (mUriProviders == null || mUriProviders.isNullOrEmpty()) {
             mImageCompressListener?.onError(NullPointerException("image file cannot be null"))
+            return
         }
-        mUriProviders?.let {
+        var position = -1
+        mUriProviders.let {
             val iterator = it.iterator()
             while (iterator.hasNext()) {
-                val path = iterator.next()
+                val uri: Uri = iterator.next()
                 @Suppress("DEPRECATION")
                 AsyncTask.execute {
                     try {
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_START))
-                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_SUCCESS, compress(context, path)))
+                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_SUCCESS, ++position, -1, compress(context, uri)))
                     } catch (e: IOException) {
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_ERROR, e))
                     }
@@ -126,7 +128,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
         if (mImageCompressListener == null) return false
         when (msg.what) {
             MSG_COMPRESS_START -> mImageCompressListener.onStart()
-            MSG_COMPRESS_SUCCESS -> mImageCompressListener.onSuccess(msg.obj as? Uri)
+            MSG_COMPRESS_SUCCESS -> mImageCompressListener.onSuccess(msg.arg1, msg.obj as? Uri)
             MSG_COMPRESS_ERROR -> mImageCompressListener.onError(msg.obj as? Throwable)
         }
         return false

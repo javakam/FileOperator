@@ -7,12 +7,16 @@ import ando.file.core.FileSizeUtils
 import ando.file.selector.FileSelectResult
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Rect
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.ando.file.sample.R
 import com.ando.file.sample.getCompressedImageCacheDir
+import com.ando.file.sample.showAlert
 import java.io.File
 
 /**
@@ -25,9 +29,36 @@ import java.io.File
  */
 object ResultUtils {
 
-    private fun redBoldText(text: String?): String {
-        if (text.isNullOrBlank()) return ""
-        return "<span style='color:red;font-weight:bold'>$text</span>"
+    data class ResultShowBean(
+        var originResult: String = "",
+        var compressedResult: String = "",
+        var originUri: Uri? = null,
+        var compressedUri: Uri? = null,
+    )
+
+    fun RecyclerView.asVerticalList() {
+        setHasFixedSize(true)
+        itemAnimator = null
+        layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State,
+            ) {
+                super.getItemOffsets(outRect, view, parent, state)
+                outRect.set(0, 5, 0, 5)
+            }
+        })
+    }
+
+    fun setItemEvent(v: View, uri: Uri?, title: String) {
+        v.setOnClickListener {
+            showAlert(v.context, title) {
+                if (it) FileOpener.openFileBySystemChooser(v.context, uri, "image/*")
+            }
+        }
     }
 
     fun setErrorText(tvError: TextView, e: Throwable?) {
@@ -51,33 +82,44 @@ object ResultUtils {
 
     fun setFormattedResults(tvResult: TextView, results: List<FileSelectResult>?) {
         tvResult.text = ""
-        formatResults(results = results).forEach {
-            tvResult.text = tvResult.text.toString().plus(it)
+        formatResults(results = results, isMulti = false) { l ->
+            l.forEach {
+                tvResult.text = tvResult.text.toString().plus(it)
+            }
         }
     }
 
-    fun formatResults(results: List<FileSelectResult>?): List<String> {
-        if (results.isNullOrEmpty()) return emptyList()
-        val infoList = mutableListOf<String>()
-        results.forEach {
-            val info = "${it}格式化大小: ${FileSizeUtils.formatFileSize(it.fileSize)}\n" +
-                    " 格式化大小(不带单位, 保留三位小数): ${FileSizeUtils.formatFileSize(it.fileSize, 3)}\n" +
-                    " 格式化大小(自定义单位, 保留一位小数): ${FileSizeUtils.formatSizeByTypeWithUnit(it.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
-            dumpMetaData(uri = it.uri) { name: String?, _: String? ->
-                infoList.add(""" 选择结果:
+    fun formatResults(results: List<FileSelectResult>?, isMulti: Boolean, block: (resultsForShow: List<Pair<Uri, String>>) -> Unit) {
+        if (results.isNullOrEmpty()) return
+        val infoList = mutableListOf<Pair<Uri, String>>()
+        results.forEachIndexed { i, fsr ->
+            val info = "${fsr}格式化大小: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
+                    " 格式化大小(不带单位, 保留三位小数): ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
+                    " 格式化大小(自定义单位, 保留一位小数): ${FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
+            dumpMetaData(uri = fsr.uri) { name: String?, _: String? ->
+                infoList.add((fsr.uri ?: return@dumpMetaData) to if (isMulti) {
+                    """
+                    | 🍎压缩前 ($i)
+                    | 文件名: $name
+                    | $info
+                    """.trimMargin()
+                } else {
+                    """ 选择结果:
                     | ---------
                     | 🍎压缩前
                     | 文件名: $name
                     | $info
-                    | ---------${"\n\n"}""".trimMargin())
+                    | ---------${"\n\n"}""".trimMargin()
+                })
             }
         }
-        return infoList
+        block.invoke(infoList)
     }
 
-    fun formatCompressedImageInfo(uri: Uri?, block: (info: String) -> Unit) {
+    fun formatCompressedImageInfo(uri: Uri?, isMulti: Boolean, block: (info: String) -> Unit) {
         dumpMetaData(uri) { name: String?, size: String? ->
-            block.invoke("""${"\n\n"} ---------
+            block.invoke(if (isMulti) {
+                """
                 | 🍎压缩后
                 | 文件名: $name
                 | Uri: $uri 
@@ -85,7 +127,18 @@ object ResultUtils {
                 | 大小: $size
                 | 格式化(默认单位, 保留两位小数): ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}
                 | 压缩图片缓存目录总大小: ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}
-                | ---------${"\n"}""".trimMargin())
+                """.trimMargin()
+            } else {
+                """${"\n\n"} ---------
+                | 🍎压缩后
+                | 文件名: $name
+                | Uri: $uri 
+                | 路径: ${uri?.path} 
+                | 大小: $size
+                | 格式化(默认单位, 保留两位小数): ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}
+                | 压缩图片缓存目录总大小: ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}
+                | ---------${"\n"}""".trimMargin()
+            })
         }
     }
 

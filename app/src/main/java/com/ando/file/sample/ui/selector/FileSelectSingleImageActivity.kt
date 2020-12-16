@@ -1,6 +1,5 @@
 package com.ando.file.sample.ui.selector
 
-import ando.file.compressor.*
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,7 +15,6 @@ import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
 import java.io.File
-import java.util.*
 
 /**
  * Title: FileSelectSingleImageActivity
@@ -111,7 +109,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                 override fun onSuccess(results: List<FileSelectResult>?) {
                     ResultUtils.resetUI(mTvResult)
                     if (results.isNullOrEmpty()) {
-                        toastShort("没有选取文件")
+                        toastLong("没有选取文件")
                         return
                     }
                     showSelectResult(results)
@@ -129,33 +127,23 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         ResultUtils.setErrorText(mTvError, null)
         ResultUtils.setFormattedResults(tvResult = mTvResult, results = results)
 
-        val photos = mutableListOf<Uri>()
-        results.forEach {
-            val uri = it.uri ?: return@forEach
-            when (FileType.INSTANCE.typeByUri(uri)) {
-                FileType.IMAGE -> {
-                    //原图
-                    ResultUtils.setImageEvent(mIvOrigin, uri)
-                    //压缩
-                    photos.add(uri)
-                }
-                else -> {
-                }
-            }
-        }
+        val uri = results[0].uri
+        //原图
+        ResultUtils.setImageEvent(mIvOrigin, uri)
+        //压缩
+        val photos = listOf(uri)
 
         //or Engine.compress(uri,  100L)
-        compressImage(this, photos) { uri ->
-            FileLogger.i(
-                "compressImage onSuccess  uri=$uri  path=${uri?.path}  " +
-                        "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
+        compressImage(this, photos) { _, u ->
+            FileLogger.i("compressImage onSuccess uri=$u " +
+                    "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
             )
 
-            ResultUtils.formatCompressedImageInfo(uri) {
+            ResultUtils.formatCompressedImageInfo(u, false) {
                 mTvResult.text = mTvResult.text.toString().plus(it)
             }
 
-            ResultUtils.setImageEvent(mIvCompressed, uri)
+            ResultUtils.setImageEvent(mIvCompressed, u)
         }
     }
 

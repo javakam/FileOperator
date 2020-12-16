@@ -287,7 +287,7 @@ private fun <T> compressImage(photos: List<T>) {
         })
         .setImageCompressListener(object : OnImageCompressListener {
             override fun onStart() {}
-            override fun onSuccess(uri: Uri?) {
+            override fun onSuccess(index: Int,uri: Uri?) {
                 val path = "$cacheDir/image/"
                 FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
                 val bitmap = getBitmapFromUri(uri)
@@ -560,6 +560,8 @@ Fixed: `ando.file.core.FileOpener.createChooseIntent`
 ```kotlin
 把 Intent(Intent.ACTION_GET_CONTENT) 改为 Intent(Intent.ACTION_OPEN_DOCUMENT)
 ```
+9.多选图片改为列表展示
+10.
 
 ## 参考
 

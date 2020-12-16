@@ -241,7 +241,7 @@ public class MainActivity extends Activity {
                     }
 
                     @Override
-                    public void onSuccess(Uri uri) {
+                    public void onSuccess(int index,Uri uri) {
                         final String path = getCacheDir() + "/image/";
                         try {
                             FileLogger.INSTANCE.i("compress onSuccess  uri=" + uri + "  path= " + path

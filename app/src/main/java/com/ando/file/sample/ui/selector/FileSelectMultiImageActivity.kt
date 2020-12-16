@@ -1,6 +1,5 @@
 package com.ando.file.sample.ui.selector
 
-import ando.file.androidq.FileOperatorQ.getBitmapFromUri
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
@@ -10,13 +9,18 @@ import ando.file.core.*
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_EXCEPT
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
 import ando.file.selector.*
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.ando.file.sample.*
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
+import com.ando.file.sample.utils.ResultUtils.ResultShowBean
+import com.ando.file.sample.utils.ResultUtils.asVerticalList
 import java.io.File
 import java.util.*
 
@@ -28,27 +32,33 @@ import java.util.*
  * @author javakam
  * @date 2020/5/19  16:04
  */
-@SuppressLint("SetTextI18n")
 class FileSelectMultiImageActivity : AppCompatActivity() {
 
     private lateinit var mTvCurrStrategy: TextView
-    private lateinit var mTvResult: TextView
-    private lateinit var mTvError: TextView
     private lateinit var mRgStrategy: RadioGroup
+    private lateinit var mBtSelect: Button
+    private lateinit var mTvError: TextView
+    private lateinit var mRvResults: RecyclerView
 
     private var mFileSelector: FileSelector? = null
 
-    //返回值策略
     private var mOverSizeStrategy: Int = OVER_SIZE_LIMIT_ALL_EXCEPT
 
+    //Result
+    private var mResultShowList: MutableList<ResultShowBean>? = null
+    private val mAdapter: FileSelectResultAdapter by lazy { FileSelectResultAdapter() }
+
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_multi_image)
-        PermissionManager.requestStoragePermission(this)
-        mTvCurrStrategy= findViewById(R.id.tv_curr_strategy)
-        mTvResult = findViewById(R.id.tv_result)
+        mTvCurrStrategy = findViewById(R.id.tv_curr_strategy)
         mTvError = findViewById(R.id.tv_error)
         mRgStrategy = findViewById(R.id.rg_strategy)
+        mBtSelect = findViewById(R.id.bt_select_multi)
+        mRvResults = findViewById(R.id.rv_images)
+        mRvResults.asVerticalList()
+        mRvResults.adapter = mAdapter
 
         title = "多选图片"
 
@@ -57,27 +67,32 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             when (checkedId) {
                 R.id.rb_strategy1 -> {
                     this.mOverSizeStrategy = OVER_SIZE_LIMIT_ALL_EXCEPT
-                    mTvCurrStrategy.text="当前策略: OVER_SIZE_LIMIT_ALL_EXCEPT"
+                    mTvCurrStrategy.text = "当前策略: OVER_SIZE_LIMIT_ALL_EXCEPT"
                 }
                 R.id.rb_strategy2 -> {
                     this.mOverSizeStrategy = OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
-                    mTvCurrStrategy.text="当前策略: OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
+                    mTvCurrStrategy.text = "当前策略: OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
                 }
                 else -> {
                 }
             }
         }
-        mTvCurrStrategy.text="当前策略: OVER_SIZE_LIMIT_ALL_EXCEPT"
+        mTvCurrStrategy.text = "当前策略: ${
+            if (this.mOverSizeStrategy == OVER_SIZE_LIMIT_ALL_EXCEPT) "OVER_SIZE_LIMIT_ALL_EXCEPT"
+            else "OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
+        }"
 
-        findViewById<Button>(R.id.bt_select_multi).setOnClickListener {
-            chooseFile()
+        mBtSelect.setOnClickListener {
+            PermissionManager.requestStoragePermission(this) {
+                if (it) chooseFile()
+            }
         }
     }
 
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        ResultUtils.resetUI(mTvError, mTvResult)
+        ResultUtils.resetUI(mTvError)
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
@@ -128,55 +143,98 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             })
             .callback(object : FileSelectCallBack {
                 override fun onSuccess(results: List<FileSelectResult>?) {
-                    ResultUtils.resetUI(mTvResult)
+                    mAdapter.setData(null)
                     if (results.isNullOrEmpty()) {
-                        toastShort("没有选取文件")
+                        toastLong("没有选取文件")
                         return
                     }
-
                     showSelectResult(results)
                 }
 
                 override fun onError(e: Throwable?) {
                     FileLogger.e("FileSelectCallBack onError ${e?.message}")
                     ResultUtils.setErrorText(mTvError, e)
+
+                    mAdapter.setData(null)
+                    mBtSelect.text = "选择多张图片并压缩 (0)"
                 }
             })
             .choose()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showSelectResult(results: List<FileSelectResult>) {
         ResultUtils.setErrorText(mTvError, null)
-        ResultUtils.setFormattedResults(tvResult = mTvResult, results = results)
+        mBtSelect.text = "选择多张图片并压缩 (${results.size})"
+        ResultUtils.formatResults(results, true) { l ->
+            mResultShowList = l.map { p ->
+                ResultShowBean(originUri = p.first, originResult = p.second)
+            }.toMutableList()
+        }
 
-        val photos = mutableListOf<Uri>()
-        results.forEach {
-            val uri = it.uri ?: return@forEach
-            when (FileType.INSTANCE.typeByUri(uri)) {
-                FileType.IMAGE -> {
-                    //原图
-                    //val bitmap = getBitmapFromUri(uri)
-                    //mIvOrigin.setImageBitmap(bitmap)
-                    //压缩
-                    photos.add(uri)
+        //List<FileSelectResult> -> List<Uri>
+        val photos: List<Uri> = results
+            .filter { (it.uri != null) && (FileType.INSTANCE.typeByUri(it.uri) == FileType.IMAGE) }
+            .map {
+                it.uri!!
+            }
+
+        var count = 0
+        //or Engine.compress(uri,  100L)
+        compressImage(this, photos) { index, u ->
+            FileLogger.i("compressImage onSuccess index=$index uri=$u " +
+                    "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
+            )
+
+            ResultUtils.formatCompressedImageInfo(u, true) {
+                if (index != -1) {
+                    mResultShowList?.get(index)?.compressedResult = it
+                    mResultShowList?.get(index)?.compressedUri = u
+                    count++
                 }
-                else -> {
+            }
+
+            //建议加个加载中的弹窗
+            if (count == mResultShowList?.size ?: 0) {
+                mAdapter.setData(mResultShowList)
+            }
+        }
+    }
+
+    inner class FileSelectResultAdapter : RecyclerView.Adapter<FileSelectResultAdapter.SelectResultHolder>() {
+
+        private var mData: MutableList<ResultShowBean>? = null
+
+        fun setData(data: MutableList<ResultShowBean>?) {
+            if (this.mData?.isNotEmpty() == true) this.mData?.clear()
+            this.mData = data
+            notifyDataSetChanged()
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectResultHolder {
+            return SelectResultHolder(layoutInflater.inflate(R.layout.item_select_image_result, parent, false))
+        }
+
+        override fun onBindViewHolder(holder: SelectResultHolder, position: Int) {
+            mData?.get(position)?.let { b ->
+                holder.tvResult.text = b.originResult
+                holder.tvCompressedResult.text = b.compressedResult
+
+                //Event
+                holder.tvResult.setOnClickListener {
+                    ResultUtils.setItemEvent(holder.tvResult, b.originUri, "确定打开原图片?")
+                }
+                holder.tvCompressedResult.setOnClickListener {
+                    ResultUtils.setItemEvent(holder.tvCompressedResult, b.compressedUri, "确定打开压缩后的图片?")
                 }
             }
         }
 
-        //or Engine.compress(uri,  100L)
-        compressImage(this, photos) { uri ->
-            FileLogger.i(
-                "compressImage onSuccess  uri=$uri  path=${uri?.path}  " +
-                        "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
-            )
+        override fun getItemCount(): Int = mData?.size ?: 0
 
-            ResultUtils.formatCompressedImageInfo(uri) {
-                mTvResult.text = mTvResult.text.toString().plus(it)
-            }
-
-            //mIvCompressed.setImageBitmap(bitmap)
+        inner class SelectResultHolder(v: View) : RecyclerView.ViewHolder(v) {
+            var tvResult: TextView = v.findViewById(R.id.tv_result)
+            var tvCompressedResult: TextView = v.findViewById(R.id.tv_result_compressed)
         }
     }
 

@@ -7,8 +7,10 @@ import ando.file.compressor.OnImageRenameListener
 import ando.file.core.*
 import ando.file.core.FileDirectory.getCacheDir
 import android.content.Context
+import android.content.DialogInterface
 import android.net.Uri
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.ando.file.sample.utils.ClearCacheUtils
 import java.io.File
 import java.math.BigInteger
@@ -19,6 +21,8 @@ import java.security.NoSuchAlgorithmException
  * startActivityForResult -> requestCode
  */
 const val REQUEST_CHOOSE_FILE = 10
+
+var GLOBAL_DIALOG: AlertDialog? = null
 
 /**
  * 应用缓存目录 :
@@ -50,12 +54,29 @@ fun Context.toastLong(msg: String?) {
     }
 }
 
+fun showAlert(context: Context, title: String, block: (isPositive: Boolean) -> Unit) {
+    GLOBAL_DIALOG = if (GLOBAL_DIALOG != null) {
+        GLOBAL_DIALOG?.dismiss()
+        null
+    } else {
+        AlertDialog.Builder(context)
+            .setTitle(title)
+            .setPositiveButton("打开") { _, _ ->
+                block.invoke(true)
+            }
+            .setNegativeButton("取消") { _, _ ->
+                block.invoke(false)
+            }
+            .create()
+    }
+}
+
 /**
  * 压缩图片 1.Luban算法; 2.直接压缩 -> Engine.compress(uri,  100L)
  *
- * T 为 String.filePath / Uri / File
+ * T : String.filePath / Uri / File
  */
-fun <T> compressImage(context: Context, photos: List<T>, success: (uri: Uri?) -> Unit) {
+fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, uri: Uri?) -> Unit) {
     ImageCompressor
         .with(context)
         .load(photos)
@@ -84,8 +105,8 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (uri: Uri?) ->
         })
         .setImageCompressListener(object : OnImageCompressListener {
             override fun onStart() {}
-            override fun onSuccess(uri: Uri?) {
-                success.invoke(uri)
+            override fun onSuccess(index: Int, uri: Uri?) {
+                success.invoke(index, uri)
             }
 
             override fun onError(e: Throwable?) {
