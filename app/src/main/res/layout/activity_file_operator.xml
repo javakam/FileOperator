@@ -85,7 +85,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/ic_place_holder" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -98,7 +98,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/ic_place_holder" />
 
         <!--        <androidx.recyclerview.widget.RecyclerView-->
         <!--            android:id="@+id/recyclerView"-->
