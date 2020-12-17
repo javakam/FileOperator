@@ -2,6 +2,7 @@ package com.ando.file.sample.utils
 
 import ando.file.androidq.FileOperatorQ
 import ando.file.core.FileGlobal.dumpMetaData
+import ando.file.core.FileLogger
 import ando.file.core.FileOpener
 import ando.file.core.FileSizeUtils
 import ando.file.selector.FileSelectResult
@@ -53,9 +54,9 @@ object ResultUtils {
         })
     }
 
-    fun setItemEvent(v: View, uri: Uri?, title: String) {
-        v.setOnClickListener {
-            showAlert(v.context, title) {
+    fun setItemEvent(v: View?, uri: Uri?, title: String) {
+        v?.setOnClickListener {
+            showAlert(v.context, title, uri?.toString() ?: "") {
                 if (it) FileOpener.openFileBySystemChooser(v.context, uri, "image/*")
             }
         }
@@ -84,7 +85,7 @@ object ResultUtils {
         tvResult.text = ""
         formatResults(results = results, isMulti = false) { l ->
             l.forEach {
-                tvResult.text = tvResult.text.toString().plus(it)
+                tvResult.text = tvResult.text.toString().plus(it.second)
             }
         }
     }

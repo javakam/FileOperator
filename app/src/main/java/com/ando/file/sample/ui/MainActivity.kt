@@ -15,6 +15,14 @@ import com.ando.file.sample.ui.storage.StorageAccessFrameworkActivity
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (!this.isTaskRoot) {
+            intent?.apply {
+                if (hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN == action) {
+                    finish()
+                    return
+                }
+            }
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }

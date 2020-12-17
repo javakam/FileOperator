@@ -22,7 +22,6 @@ import com.ando.file.sample.utils.ResultUtils
 import com.ando.file.sample.utils.ResultUtils.ResultShowBean
 import com.ando.file.sample.utils.ResultUtils.asVerticalList
 import java.io.File
-import java.util.*
 
 /**
  * Title: FileSelectImageMultiActivity
@@ -44,14 +43,14 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
 
     private var mOverSizeStrategy: Int = OVER_SIZE_LIMIT_ALL_EXCEPT
 
-    //Result
+    //展示结果(Show results)
     private var mResultShowList: MutableList<ResultShowBean>? = null
     private val mAdapter: FileSelectResultAdapter by lazy { FileSelectResultAdapter() }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_select_multi_image)
+        setContentView(R.layout.activity_select_multi_files)
         mTvCurrStrategy = findViewById(R.id.tv_curr_strategy)
         mTvError = findViewById(R.id.tv_error)
         mRgStrategy = findViewById(R.id.rg_strategy)
@@ -116,14 +115,15 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setMultiSelect()//默认是单选 false
             .setMinCount(1, "至少选一个文件!")
-            .setMaxCount(10, "最多选十个文件!")
+            //.setMaxCount(10, "最多选十个文件!")
+            .setMaxCount(3, "最多选三个文件!")
 
             //优先使用 FileSelectOptions.singleFileMaxSize , 单位 Byte
             .setSingleFileMaxSize(3145728, "单个大小不能超过3M！")
             .setAllFilesMaxSize(20971520, "总文件大小不能超过20M！")
 
-            //1.OVER_SIZE_LIMIT_ALL_EXCEPT            文件超过限制大小直接返回失败(onError)
-            //2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  文件超过限制大小保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
+            //1.OVER_SIZE_LIMIT_ALL_EXCEPT            文件超过数量限制和大小限制直接返回失败(onError)
+            //2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  文件超过数量限制和大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
             .setOverSizeLimitStrategy(this.mOverSizeStrategy)
             .setMimeTypes("image/*")//默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage)
@@ -221,12 +221,8 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
                 holder.tvCompressedResult.text = b.compressedResult
 
                 //Event
-                holder.tvResult.setOnClickListener {
-                    ResultUtils.setItemEvent(holder.tvResult, b.originUri, "确定打开原图片?")
-                }
-                holder.tvCompressedResult.setOnClickListener {
-                    ResultUtils.setItemEvent(holder.tvCompressedResult, b.compressedUri, "确定打开压缩后的图片?")
-                }
+                ResultUtils.setItemEvent(holder.tvResult, b.originUri, "确定打开原图片?")
+                ResultUtils.setItemEvent(holder.tvCompressedResult, b.compressedUri, "确定打开压缩后的图片?")
             }
         }
 

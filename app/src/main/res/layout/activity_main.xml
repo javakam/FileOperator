@@ -74,7 +74,8 @@
         android:layout_marginTop="10dp"
         android:onClick="caseFragmentSimpleUsage"
         android:text="Fragment 简单使用"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:visibility="gone" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"

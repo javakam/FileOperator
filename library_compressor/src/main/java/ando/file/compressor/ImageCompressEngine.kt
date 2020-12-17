@@ -117,7 +117,7 @@ object ImageCompressEngine {
                 byteArrOps
             )
 
-            // 循环判断压缩后图片是否超过限制大小
+            // 循环判断压缩后图片是否超过数量限制和大小限制
             while (byteArrOps.toByteArray().size.div(256) > 512L) {
                 byteArrOps.reset()
                 tagBitmap?.compress(

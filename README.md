@@ -134,7 +134,7 @@ mFileSelector = FileSelector
     //优先以自定义的 optionsImage.mSingleFileMaxSize , 单位 Byte
     .setSingleFileMaxSize(2097152, "单个大小不能超过2M！")
     .setAllFilesMaxSize(20971520, "总文件大小不能超过20M！")
-    //1.OVER_SIZE_LIMIT_ALL_EXCEPT  超过限制大小全部不返回  ; 2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  超过限制大小去掉后面相同类型文件
+    //1.OVER_SIZE_LIMIT_ALL_EXCEPT  超过数量限制和大小限制全部不返回  ; 2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  超过数量限制和大小限制去掉后面相同类型文件
     .setOverSizeLimitStrategy(this.mOverSizeStrategy)
     .setMimeTypes(MIME_MEDIA)//默认全部文件, 不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
     .applyOptions(optionsImage)
@@ -219,7 +219,7 @@ mFileSelector = FileSelector
     // 优先使用自定义 FileSelectOptions 中设置的单文件大小限制,如果没有设置则采用该值
     .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
     .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
-    // 超过限制大小两种返回策略: 1.OVER_SIZE_LIMIT_ALL_EXCEPT,超过限制大小全部不返回;2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART,超过限制大小去掉后面相同类型文件
+    // 超过数量限制和大小限制两种返回策略: 1.OVER_SIZE_LIMIT_ALL_EXCEPT,超过数量限制和大小限制全部不返回;2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART,超过数量限制和大小限制去掉后面相同类型文件
     .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
     .setMimeTypes(null)//默认为 null,*/* 即不做文件类型限定;MIME_MEDIA 媒体文件,不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
     .applyOptions(optionsImage, optionsVideo)
@@ -501,7 +501,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
     - 1.当设置总文件大小限制时,有两种策略 OVER_SIZE_LIMIT_ALL_EXCEPT 只要有一个文件超出直接返回 onError
 
-    - 2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART 去掉超过限制大小的溢出部分的文件
+    - 2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART 去掉超过数量限制和大小限制的溢出部分的文件
 
 3. 选择文件数据:单选 Intent.getData ; 多选  Intent.getClipData
 
@@ -561,7 +561,8 @@ Fixed: `ando.file.core.FileOpener.createChooseIntent`
 把 Intent(Intent.ACTION_GET_CONTENT) 改为 Intent(Intent.ACTION_OPEN_DOCUMENT)
 ```
 9.多选图片改为列表展示
-10.
+10.增加数量限制, 最小数量处理,minCount最小为0,maxCount最小为1,minCount必须小于maxCount
+11.
 
 ## 参考
 

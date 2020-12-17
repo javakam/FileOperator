@@ -74,18 +74,19 @@ object FileGlobal {
     @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
     annotation class FileMediaType
 
-
+    //适用于单独文件大小和总文件大小的情况
     /**
-     * 文件超过限制大小直接返回失败(onError)
+     * 文件超过数量限制和大小限制直接返回失败(onError)
      */
     const val OVER_SIZE_LIMIT_ALL_EXCEPT: Int = 1
     /**
-     * 文件超过限制大小保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
+     * 文件超过数量限制和大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
      */
     const val OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART: Int = 2
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(value = [OVER_SIZE_LIMIT_ALL_EXCEPT, OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART])
     annotation class FileOverSizeStrategy
+
 
     /**
      * eg:

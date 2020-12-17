@@ -59,9 +59,9 @@ publish {
     repoName = 'FileOperator'
     userOrg = 'javakam'
     groupId = 'ando.file'
-    artifactId = 'compressor'
+    artifactId = 'FileOperatorCompressor'
     publishVersion = '1.0.2'
-    desc = 'Ando File Helper Image Compressor.'
+    desc = 'Android Image Compressor.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true
 }

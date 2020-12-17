@@ -104,17 +104,28 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setMultiSelect()//默认是单选 false
-            .setMinCount(1, "至少选一个文件!")
-            .setMaxCount(5, "最多选五个文件!")
 
-            // 优先使用自定义 FileSelectOptions 中设置的单文件大小限制,如果没有设置则采用该值
+            /*
+            实际最少数量限制为 setMinCount 和 (optionsImage.minCount + optionsVideo.minCount) 中的最小值
+            实际最大数量限制为 setMaxCount 和 (optionsImage.maxCount + optionsVideo.maxCount) 中的最大值
+             */
+            .setMinCount(1, "至少选一个文件!")
+            .setMaxCount(10, "最多选十个文件!")
+
+            /*
+            实际单文件大小限制为 setSingleFileMaxSize 和 (optionsImage.singleFileMaxSize + optionsVideo.singleFileMaxSize) 中的最小值
+            实际总大小限制为 setAllFilesMaxSize 和 (optionsImage.allFilesMaxSize + optionsVideo.allFilesMaxSize) 中的最大值
+             */
+            // 优先使用 `自定义FileSelectOptions` 中设置的单文件大小限制, 如果没有设置则采用该值
             .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
-            // 总大小限制
             .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
 
-            // 超过限制大小两种返回策略: 1.OVER_SIZE_LIMIT_ALL_EXCEPT,超过限制大小全部不返回;2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART,超过限制大小去掉后面相同类型文件
+            //Tip: 目前数量和大小限制都用的该策略,不好..后面会分别提供接口并改成设置布尔值的方式
+            //1.OVER_SIZE_LIMIT_ALL_EXCEPT            文件超过数量限制和大小限制直接返回失败(onError)
+            //2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  文件超过数量限制和大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
             .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
-            .setMimeTypes(null)//同"*/*",默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+
+            .setMimeTypes("*/*")//同"*/*",默认不做文件类型约束, 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage, optionsVideo)
 
             // 优先使用 FileSelectOptions 中设置的 FileSelectCondition

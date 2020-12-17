@@ -54,21 +54,20 @@ fun Context.toastLong(msg: String?) {
     }
 }
 
-fun showAlert(context: Context, title: String, block: (isPositive: Boolean) -> Unit) {
-    GLOBAL_DIALOG = if (GLOBAL_DIALOG != null) {
-        GLOBAL_DIALOG?.dismiss()
-        null
-    } else {
-        AlertDialog.Builder(context)
-            .setTitle(title)
-            .setPositiveButton("打开") { _, _ ->
-                block.invoke(true)
-            }
-            .setNegativeButton("取消") { _, _ ->
-                block.invoke(false)
-            }
-            .create()
-    }
+fun showAlert(context: Context, title: String, msg: String, block: (isPositive: Boolean) -> Unit) {
+    GLOBAL_DIALOG?.dismiss()
+    GLOBAL_DIALOG = AlertDialog.Builder(context)
+        .setTitle(title)
+        .setMessage(msg)
+        .setPositiveButton("打开") { _, _ ->
+            block.invoke(true)
+        }
+        .setNegativeButton("取消") { _, _ ->
+            block.invoke(false)
+        }
+        .create()
+
+    GLOBAL_DIALOG?.show()
 }
 
 /**

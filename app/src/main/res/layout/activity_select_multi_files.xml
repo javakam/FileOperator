@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/sel_strategy_change"
             android:checked="true"
-            android:text="👉超过限制大小直接返回失败 \n OVER_SIZE_LIMIT_ALL_EXCEPT"
+            android:text="👉超过数量限制和大小限制直接返回失败 \n OVER_SIZE_LIMIT_ALL_EXCEPT"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
 
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:background="@drawable/sel_strategy_change"
-            android:text="👉超过限制大小去掉后面溢出的部分 \n OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
+            android:text="👉超过数量限制和大小限制去掉后面溢出的部分 \n OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
 

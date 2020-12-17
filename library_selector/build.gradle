@@ -61,9 +61,9 @@ publish {
     repoName = 'FileOperator'
     userOrg = 'javakam'
     groupId = 'ando.file'
-    artifactId = 'selector'
+    artifactId = 'FileOperatorSelector'
     publishVersion = '1.0.2'
-    desc = 'Ando File Helper Selector.'
+    desc = 'Android File Selector.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true
 }
