@@ -62,6 +62,7 @@ object FileGlobal {
     const val MODE_WRITE_ONLY_APPEND = "wa"
     const val MODE_READ_WRITE_DATA = "rw"
     const val MODE_READ_WRITE_FILE = "rwt"
+
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MODE_READ_ONLY, MODE_WRITE_ONLY_ERASING, MODE_WRITE_ONLY_APPEND, MODE_READ_WRITE_DATA, MODE_READ_WRITE_FILE])
     annotation class FileOpenMode
@@ -70,6 +71,7 @@ object FileGlobal {
     const val MEDIA_TYPE_IMAGE = "image"
     const val MEDIA_TYPE_AUDIO = "audio"
     const val MEDIA_TYPE_VIDEO = "video"
+
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
     annotation class FileMediaType
@@ -79,10 +81,15 @@ object FileGlobal {
      * 文件超过数量限制和大小限制直接返回失败(onError)
      */
     const val OVER_SIZE_LIMIT_ALL_EXCEPT: Int = 1
+
     /**
      * 文件超过数量限制和大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
+     *
+     * @since v1.1.0
+     * 文件超过数量限制去掉数量错误的文件类型,大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
      */
     const val OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART: Int = 2
+
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(value = [OVER_SIZE_LIMIT_ALL_EXCEPT, OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART])
     annotation class FileOverSizeStrategy

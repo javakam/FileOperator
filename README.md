@@ -562,9 +562,12 @@ Fixed: `ando.file.core.FileOpener.createChooseIntent`
 ```
 9.多选图片改为列表展示
 10.增加数量限制, 最小数量处理,minCount最小为0,maxCount最小为1,minCount必须小于maxCount
-11.
+11.注释为汉英双译,增加更多注释
+12.todo 2020年12月21日 17:20:11 多选情形 , 单选问题
 
 ## 参考
+
+- Logo <https://www.easyicon.net/1293281-folders_icon.html>
 
 - Google
 

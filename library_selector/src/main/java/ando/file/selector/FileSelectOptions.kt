@@ -10,8 +10,8 @@ import ando.file.core.FileType
  */
 class FileSelectOptions {
 
-    ///////////////////// 建议在多选不同类型文件时再配置 /////////////////////
-    var minCount: Int = 0              //选择文件最少数量, 优先使用 FileSelector.setMinCount 进行判定 , 最小为 0
+    ///////////////////// 多选不同类型文件时配置 /////////////////////
+    var minCount: Int = 1              //选择文件最少数量, 优先使用 FileSelector.setMinCount 进行判定 , 最小为 1
     var maxCount: Int = Int.MAX_VALUE  //选择文件最大数量, 优先使用 FileSelector.setMaxCount 进行判定 , 最小为 1
     var minCountTip: String? = ""
     var maxCountTip: String? = ""

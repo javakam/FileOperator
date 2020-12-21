@@ -28,7 +28,6 @@
         tools:ignore="AllowBackup,LockedOrientationActivity">
         <activity
             android:name=".ui.MainActivity"
-            android:icon="@mipmap/ic_logo"
             android:screenOrientation="portrait"
             android:theme="@style/MainTheme">
             <intent-filter>

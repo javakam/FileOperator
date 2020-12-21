@@ -13,6 +13,7 @@ import ando.file.core.*
 import ando.file.compressor.OnImageCompressListener
 import ando.file.compressor.OnImageRenameListener
 import ando.file.compressor.ImageCompressor
+import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_EXCEPT
 import com.ando.file.sample.R
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
 import ando.file.core.FileGlobal.dumpMetaData
@@ -68,6 +69,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         //图片
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
+            minCount = 1
             maxCount = 2
             minCountTip = "至少选择一张图片"
             maxCountTip = "最多选择两张图片"
@@ -83,16 +85,17 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             }
         }
 
-        //视频
+        //音频
         val optionsVideo = FileSelectOptions().apply {
-            fileType = FileType.VIDEO
-            maxCount = 2
-            minCountTip = "至少选择一个视频文件"
-            maxCountTip = "最多选择一个视频文件"
+            fileType = FileType.AUDIO
+            minCount = 3
+            maxCount = 5
+            minCountTip = "至少选择三个音频文件"
+            maxCountTip = "最多选择五个音频文件"
             singleFileMaxSize = 20971520
-            singleFileMaxSizeTip = "单视频最大不超过20M！"
+            singleFileMaxSizeTip = "单音频最大不超过20M！"
             allFilesMaxSize = 31457280
-            allFilesMaxSizeTip = "视频总大小不超过30M！"
+            allFilesMaxSizeTip = "音频总大小不超过30M！"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
                     return (uri != null)
@@ -123,7 +126,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             //Tip: 目前数量和大小限制都用的该策略,不好..后面会分别提供接口并改成设置布尔值的方式
             //1.OVER_SIZE_LIMIT_ALL_EXCEPT            文件超过数量限制和大小限制直接返回失败(onError)
             //2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  文件超过数量限制和大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
-            .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
+            .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_ALL_EXCEPT)
 
             .setMimeTypes("*/*")//同"*/*",默认不做文件类型约束, 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage, optionsVideo)
@@ -170,7 +173,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
                     |""".trimMargin()
             )
         }
-        //测试打开音视频文件
+        //测试打开音音频文件
         mBtOpenMediaFile.setOnClickListener {
             openFileBySystemChooser(this, results[0].uri)
         }
