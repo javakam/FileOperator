@@ -3,6 +3,7 @@ package com.ando.file.sample.utils
 import ando.file.androidq.FileOperatorQ
 import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileLogger
+import ando.file.core.FileMimeType
 import ando.file.core.FileOpener
 import ando.file.core.FileSizeUtils
 import ando.file.selector.FileSelectResult
@@ -57,7 +58,7 @@ object ResultUtils {
     fun setItemEvent(v: View?, uri: Uri?, title: String) {
         v?.setOnClickListener {
             showAlert(v.context, title, uri?.toString() ?: "") {
-                if (it) FileOpener.openFileBySystemChooser(v.context, uri, "image/*")
+                if (it) FileOpener.openFileBySystemChooser(v.context, uri, FileMimeType.getMimeType(uri))
             }
         }
     }
@@ -119,6 +120,10 @@ object ResultUtils {
 
     fun formatCompressedImageInfo(uri: Uri?, isMulti: Boolean, block: (info: String) -> Unit) {
         dumpMetaData(uri) { name: String?, size: String? ->
+            if (name.isNullOrBlank() && uri == null) {
+                block.invoke("")
+                return@dumpMetaData
+            }
             block.invoke(if (isMulti) {
                 """
                 | 🍎压缩后

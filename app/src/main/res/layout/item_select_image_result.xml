@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/rectangle_select_result"
@@ -10,14 +11,15 @@
         android:id="@+id/tv_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="压缩前"
         android:padding="3dp"
         android:textColor="@color/color_font_black"
         android:textColorHint="@color/color_font_black"
         android:textSize="12sp"
-        android:visibility="visible" />
+        android:visibility="visible"
+        tools:hint="压缩前" />
 
     <View
+        android:id="@+id/line_result"
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:layout_marginTop="3dp"
@@ -28,11 +30,11 @@
         android:id="@+id/tv_result_compressed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="压缩后"
         android:padding="3dp"
         android:textColor="@color/color_font_black"
         android:textColorHint="@color/color_font_black"
         android:textSize="12sp"
-        android:visibility="visible" />
+        android:visibility="visible"
+        tools:hint="压缩后" />
 
 </LinearLayout>

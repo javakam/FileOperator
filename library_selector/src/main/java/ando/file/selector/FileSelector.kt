@@ -59,6 +59,10 @@ class FileSelector private constructor(builder: Builder) {
     private val mFileCountMap = ArrayMap<FileType, Int>()
     private val mFileSizeMap = ArrayMap<String, Long>()
 
+    //onActivityResult
+    var requestCode: Int? = -1
+    var resultCode: Int? = 0
+
     init {
         mRequestCode = builder.mRequestCode
         mMimeTypes = builder.mMimeTypes
@@ -84,15 +88,9 @@ class FileSelector private constructor(builder: Builder) {
         return this
     }
 
-    //onActivityResult
-    var requestCode: Int? = -1
-    var resultCode: Int? = 0
-    var intent: Intent? = null
-
     fun obtainResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         this.requestCode = requestCode
         this.resultCode = resultCode
-        this.intent = intent
 
         if (requestCode == -1 || requestCode != mRequestCode) return
 
@@ -171,7 +169,7 @@ class FileSelector private constructor(builder: Builder) {
                 if (uriList[o] == null) uriList[o] = SelectResult(checkPass = true)
                 val selectResult: SelectResult = uriList[o] ?: SelectResult(checkPass = true)
 
-                //FileType Mismatch -> onError
+                //文件类型不匹配(FileType Mismatch) -> onError
                 if (!tf) {
                     mFileSelectCallBack?.onError(Throwable(
                         if (o?.fileTypeMismatchTip?.isNotBlank() == true) o.fileTypeMismatchTip else mFileTypeMismatchTip
@@ -199,6 +197,7 @@ class FileSelector private constructor(builder: Builder) {
                     mFileCountMap[t] = 0
                 }
                 mFileCountMap[t] = mFileCountMap[t]?.plus(1)
+                val isMultiOneType: Boolean = (mFileOptions?.size ?: 0 == 1)
                 mFileOptions?.forEach { os: FileSelectOptions ->
                     val count: Int = mFileCountMap[os.fileType] ?: 0
                     //min
@@ -209,9 +208,13 @@ class FileSelector private constructor(builder: Builder) {
                             isNeedBreak = true
                             if (isStrictStrategy) {
                                 mFileSelectCallBack?.onError(Throwable(realMinCountTip(os)))
-                                isNeedBreak = true
+                                return@filterUri
+                            } else {
+                                //如果某个FileSelectOptions没通过限定条件, 则该FileSelectOptions不会返回
+                                //If a FileSelectOptions does not pass the qualification, the FileSelectOptions will not return
+                                if (!isMultiOneType) uriList[os]?.checkPass = false
+                                else return@filterUri
                             }
-                            return@filterUri
                         }
                     }
                     //max
@@ -220,9 +223,11 @@ class FileSelector private constructor(builder: Builder) {
                         isNeedBreak = true
                         if (isStrictStrategy) {
                             mFileSelectCallBack?.onError(Throwable(realMaxCountTip(os)))
-                            isNeedBreak = true
+                            return@filterUri
+                        } else {
+                            if (!isMultiOneType) uriList[os]?.checkPass = false
+                            else return@filterUri
                         }
-                        return@filterUri
                     }
                 }
 
@@ -255,6 +260,7 @@ class FileSelector private constructor(builder: Builder) {
                     FileLogger.i("Multi-> totalSize: $totalSize checkPass=${selectResult.checkPass} ")
                 }
 
+                //not mRealAllFilesMaxSize
                 if (totalSize > mAllFilesMaxSize) {//byte (B)
                     isFileSizeIllegal = true
                     isNeedBreak = true
@@ -325,9 +331,7 @@ class FileSelector private constructor(builder: Builder) {
                 OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART -> {
                     if (uriListAll.isNotEmpty()) uriListAll.clear()
 
-                    //todo 2020年12月22日11:28:57
-                    //.filter { it.value.checkPass }
-                    uriList.keys.forEach { op: FileSelectOptions ->
+                    uriList.filter { it.value.checkPass }.keys.forEach { op: FileSelectOptions ->
                         uriList.forEach { m: Map.Entry<FileSelectOptions, SelectResult> ->
                             if (m.key.fileType == op.fileType) {
                                 m.value.let { s: SelectResult ->
@@ -402,16 +406,24 @@ class FileSelector private constructor(builder: Builder) {
         }
 
     private fun realMaxCountLimit(option: FileSelectOptions?): Int {
-        val realGlobalMax = if (mMaxCount <= 0) Int.MAX_VALUE else mMaxCount
         return max(realMinCountLimit(option),
             if (option?.maxCount ?: Int.MAX_VALUE > 0)
-                min(option?.maxCount ?: Int.MAX_VALUE, realGlobalMax)
-            else realGlobalMax)
+                min(option?.maxCount ?: Int.MAX_VALUE, mRealMaxCount)
+            else mRealMaxCount)
+    }
+
+    private val mRealMaxCount: Int by lazy {
+        var shouldCount = 0
+        mFileOptions?.forEach { o: FileSelectOptions ->
+            shouldCount += o.maxCount
+        }
+        if (shouldCount == mMaxCount && mMaxCount == 0 || mMaxCount < 0) Int.MAX_VALUE
+        else max(shouldCount, mMaxCount)
     }
 
     private fun realSizeLimit(option: FileSelectOptions?): Long =
         if (option == null) {
-            if (mSingleFileMaxSize < 0) if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize
+            if (mSingleFileMaxSize < 0) mRealAllFilesMaxSize
             else mSingleFileMaxSize
         } else {
             if (option.singleFileMaxSize < 0) if (option.allFilesMaxSize < 0) realSizeLimit(null) else option.allFilesMaxSize
@@ -419,10 +431,20 @@ class FileSelector private constructor(builder: Builder) {
         }
 
     private fun realSizeLimitAll(option: FileSelectOptions?): Long =
-        if (option == null) Long.MAX_VALUE
-        else
-            if (option.allFilesMaxSize < 0) if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize
-            else option.allFilesMaxSize
+        when {
+            option == null -> Long.MAX_VALUE
+            option.allFilesMaxSize < 0 -> mRealAllFilesMaxSize
+            else -> option.allFilesMaxSize
+        }
+
+    private val mRealAllFilesMaxSize: Long by lazy {
+        var shouldSize = 0L
+        mFileOptions?.forEach { o: FileSelectOptions ->
+            shouldSize += o.allFilesMaxSize
+        }
+        if (shouldSize == mAllFilesMaxSize && mAllFilesMaxSize == 0L || mAllFilesMaxSize < 0L) Long.MAX_VALUE
+        else max(shouldSize, mAllFilesMaxSize)
+    }
 
     private fun limitFileSize(fileSize: Long, sizeThreshold: Long): Boolean {
         if (isDebug()) {

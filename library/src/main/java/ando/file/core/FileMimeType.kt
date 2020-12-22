@@ -46,6 +46,7 @@ object FileMimeType {
         if (dotIndex < 0) return type
         val end = fileName.substring(dotIndex).toLowerCase(Locale.getDefault())
         if (end.isBlank()) return type
+        FileLogger.i("getMimeTypeSupplement ：end=$end")
         for (mimeTypes in MIME_TABLES) {
             if (end.equals(mimeTypes[0], true)) {
                 type = mimeTypes[1]
@@ -54,7 +55,6 @@ object FileMimeType {
         }
         return type.toLowerCase(Locale.getDefault())
     }
-
 
     /**
      * 常见的文件 MimeType

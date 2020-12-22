@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/dp_40"
         android:layout_marginTop="@dimen/dp_3"
-        android:text="选择多张图片并压缩 (0)"
+        android:text="选择多个文件 (0)"
         android:textColor="@android:color/white"
         android:textSize="@dimen/font_11"
         android:textStyle="bold" />

@@ -9,8 +9,6 @@ import ando.file.core.*
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_EXCEPT
 import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
 import ando.file.selector.*
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -31,15 +29,15 @@ import java.io.File
  * @author javakam
  * @date 2020/5/19  16:04
  */
+@SuppressLint("SetTextI18n")
 class FileSelectMultiImageActivity : AppCompatActivity() {
 
+    private val mShowText: String = "选择多张图片并压缩"
     private lateinit var mTvCurrStrategy: TextView
     private lateinit var mRgStrategy: RadioGroup
     private lateinit var mBtSelect: Button
     private lateinit var mTvError: TextView
     private lateinit var mRvResults: RecyclerView
-
-    private var mFileSelector: FileSelector? = null
 
     private var mOverSizeStrategy: Int = OVER_SIZE_LIMIT_ALL_EXCEPT
 
@@ -47,7 +45,8 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
     private var mResultShowList: MutableList<ResultShowBean>? = null
     private val mAdapter: FileSelectResultAdapter by lazy { FileSelectResultAdapter() }
 
-    @SuppressLint("SetTextI18n")
+    private var mFileSelector: FileSelector? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_multi_files)
@@ -81,6 +80,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             else "OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
         }"
 
+        mBtSelect.text="$mShowText (0)"
         mBtSelect.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
                 if (it) chooseFile()
@@ -135,6 +135,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             })
             .callback(object : FileSelectCallBack {
                 override fun onSuccess(results: List<FileSelectResult>?) {
+                    FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
                     mAdapter.setData(null)
                     if (results.isNullOrEmpty()) {
                         toastLong("没有选取文件")
@@ -148,16 +149,15 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
                     ResultUtils.setErrorText(mTvError, e)
 
                     mAdapter.setData(null)
-                    mBtSelect.text = "选择多张图片并压缩 (0)"
+                    mBtSelect.text = "$mShowText (0)"
                 }
             })
             .choose()
     }
 
-    @SuppressLint("SetTextI18n")
     private fun showSelectResult(results: List<FileSelectResult>) {
         ResultUtils.setErrorText(mTvError, null)
-        mBtSelect.text = "选择多张图片并压缩 (${results.size})"
+        mBtSelect.text = "$mShowText (${results.size})"
         ResultUtils.formatResults(results, true) { l ->
             mResultShowList = l.map { p ->
                 ResultShowBean(originUri = p.first, originResult = p.second)
@@ -190,39 +190,6 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             if (count == mResultShowList?.size ?: 0) {
                 mAdapter.setData(mResultShowList)
             }
-        }
-    }
-
-    inner class FileSelectResultAdapter : RecyclerView.Adapter<FileSelectResultAdapter.SelectResultHolder>() {
-
-        private var mData: MutableList<ResultShowBean>? = null
-
-        fun setData(data: MutableList<ResultShowBean>?) {
-            if (this.mData?.isNotEmpty() == true) this.mData?.clear()
-            this.mData = data
-            notifyDataSetChanged()
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectResultHolder {
-            return SelectResultHolder(layoutInflater.inflate(R.layout.item_select_image_result, parent, false))
-        }
-
-        override fun onBindViewHolder(holder: SelectResultHolder, position: Int) {
-            mData?.get(position)?.let { b ->
-                holder.tvResult.text = b.originResult
-                holder.tvCompressedResult.text = b.compressedResult
-
-                //Event
-                ResultUtils.setItemEvent(holder.tvResult, b.originUri, "确定打开原图片?")
-                ResultUtils.setItemEvent(holder.tvCompressedResult, b.compressedUri, "确定打开压缩后的图片?")
-            }
-        }
-
-        override fun getItemCount(): Int = mData?.size ?: 0
-
-        inner class SelectResultHolder(v: View) : RecyclerView.ViewHolder(v) {
-            var tvResult: TextView = v.findViewById(R.id.tv_result)
-            var tvCompressedResult: TextView = v.findViewById(R.id.tv_result_compressed)
         }
     }
 

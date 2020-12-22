@@ -195,7 +195,7 @@ val optionsImage = FileSelectOptions().apply {
     }
 }
 //视频
-val optionsVideo = FileSelectOptions().apply {
+val optionsAudio = FileSelectOptions().apply {
     fileType = FileType.VIDEO
     maxCount = 1
     minCountTip = "至少选择一个视频文件"
@@ -222,7 +222,7 @@ mFileSelector = FileSelector
     // 超过数量限制和大小限制两种返回策略: 1.OVER_SIZE_LIMIT_ALL_EXCEPT,超过数量限制和大小限制全部不返回;2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART,超过数量限制和大小限制去掉后面相同类型文件
     .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
     .setMimeTypes(null)//默认为 null,*/* 即不做文件类型限定;MIME_MEDIA 媒体文件,不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
-    .applyOptions(optionsImage, optionsVideo)
+    .applyOptions(optionsImage, optionsAudio)
     // 优先使用 FileSelectOptions 中设置的 FileSelectCondition,没有的情况下才使用通用的
     .filter(object : FileSelectCondition {
         override fun accept(fileType: FileType, uri: Uri?): Boolean {
