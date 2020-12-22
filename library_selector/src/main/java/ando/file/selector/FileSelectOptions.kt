@@ -1,6 +1,8 @@
 package ando.file.selector
 
 import ando.file.core.FileType
+import ando.file.selector.FileSelector.Companion.TIP_COUNT_MAX
+import ando.file.selector.FileSelector.Companion.TIP_COUNT_MIN
 
 /**
  * Title: FileSelectOptions
@@ -11,18 +13,18 @@ import ando.file.core.FileType
 class FileSelectOptions {
 
     ///////////////////// 多选不同类型文件时配置 /////////////////////
-    var minCount: Int = 1              //选择文件最少数量, 优先使用 FileSelector.setMinCount 进行判定 , 最小为 1
-    var maxCount: Int = Int.MAX_VALUE  //选择文件最大数量, 优先使用 FileSelector.setMaxCount 进行判定 , 最小为 1
-    var minCountTip: String? = ""
-    var maxCountTip: String? = ""
+    var minCount: Int = 0             //选择文件最少数量, 优先使用 FileSelector.setMinCount 进行判定
+    var maxCount: Int = 0              //选择文件最大数量, 优先使用 FileSelector.setMaxCount 进行判定
+    var minCountTip: String? = TIP_COUNT_MIN
+    var maxCountTip: String? = TIP_COUNT_MAX
     ////////////////////////////////////////////////////////////////////
 
     var fileType: FileType? = null
-    var fileTypeMismatchTip: String? = FileSelector.DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD //文件类型不匹配提示
+    var fileTypeMismatchTip: String? = FileSelector.TIP_SINGLE_FILE_TYPE_MISMATCH //文件类型不匹配提示
     var singleFileMaxSize: Long = -1                   //单文件大小控制 Byte
     var allFilesMaxSize: Long = -1                     //总文件大小控制 Byte
-    var singleFileMaxSizeTip: String? = FileSelector.DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
-    var allFilesMaxSizeTip: String? = FileSelector.DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
+    var singleFileMaxSizeTip: String? = FileSelector.TIP_SINGLE_FILE_SIZE
+    var allFilesMaxSizeTip: String? = FileSelector.TIP_SINGLE_FILE_SIZE
 
     var fileCondition: FileSelectCondition? = null
 

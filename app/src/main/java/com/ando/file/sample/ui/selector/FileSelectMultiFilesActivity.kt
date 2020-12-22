@@ -58,6 +58,18 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         }
     }
 
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        mTvError.text = ""
+        mTvResult.text = ""
+        mIvOrigin.setImageBitmap(null)
+        mIvCompressed.setImageBitmap(null)
+
+        mFileSelector?.obtainResult(requestCode, resultCode, data)
+    }
+
     /*
     字节码计算器 -> https://calc.itzmx.com/
        3M  = 3145728  Byte
@@ -88,10 +100,10 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         //音频
         val optionsVideo = FileSelectOptions().apply {
             fileType = FileType.AUDIO
-            minCount = 3
-            maxCount = 5
-            minCountTip = "至少选择三个音频文件"
-            maxCountTip = "最多选择五个音频文件"
+            minCount = 2
+            maxCount = 3
+            minCountTip = "至少选择两个音频文件"
+            maxCountTip = "最多选择三个音频文件"
             singleFileMaxSize = 20971520
             singleFileMaxSizeTip = "单音频最大不超过20M！"
             allFilesMaxSize = 31457280
@@ -106,7 +118,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setMultiSelect()//默认是单选 false
+            .setMultiSelect()//默认是单选false, 当applyOptions>=2时,会按照多选处理
 
             /*
             实际最少数量限制为 setMinCount 和 (optionsImage.minCount + optionsVideo.minCount) 中的最小值
@@ -200,18 +212,6 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    @Suppress("DEPRECATION")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        mTvError.text = ""
-        mTvResult.text = ""
-        mIvOrigin.setImageBitmap(null)
-        mIvCompressed.setImageBitmap(null)
-
-        mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
     /**

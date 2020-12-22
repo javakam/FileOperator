@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ando_str_single_file_type_mismatch">文件类型不匹配</string>
+    <string name="ando_str_single_file_size">超过限定文件大小</string>
+    <string name="ando_str_all_file_size">超过限定文件总大小</string>
+    <string name="ando_str_count_min">设定类型文件至少选择一个</string>
+    <string name="ando_str_count_max">超过限定文件数量</string>
+
+</resources>

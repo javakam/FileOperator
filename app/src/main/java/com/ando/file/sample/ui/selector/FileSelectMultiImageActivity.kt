@@ -113,10 +113,9 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setMultiSelect()//默认是单选 false
+            .setMultiSelect()//默认是单选false, 当applyOptions>=2时,会按照多选处理
             .setMinCount(1, "至少选一个文件!")
-            //.setMaxCount(10, "最多选十个文件!")
-            .setMaxCount(3, "最多选三个文件!")
+            .setMaxCount(2, "最多选两个文件!")
 
             //优先使用 FileSelectOptions.singleFileMaxSize , 单位 Byte
             .setSingleFileMaxSize(3145728, "单个大小不能超过3M！")
@@ -131,14 +130,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             //优先使用 FileSelectOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    return when (fileType) {
-                        FileType.IMAGE -> {
-                            return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                        }
-                        FileType.VIDEO -> false
-                        FileType.AUDIO -> false
-                        else -> false
-                    }
+                    return (fileType == FileType.IMAGE) && (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             })
             .callback(object : FileSelectCallBack {

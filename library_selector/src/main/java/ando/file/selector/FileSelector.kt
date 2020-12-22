@@ -1,6 +1,6 @@
 package ando.file.selector
 
-import ando.file.FileOperator
+import ando.file.FileOperator.getContext
 import ando.file.FileOperator.isDebug
 import android.content.Context
 import android.content.Intent
@@ -13,6 +13,7 @@ import ando.file.core.FileOpener.createChooseIntent
 import ando.file.core.FileType.INSTANCE
 import android.content.ClipData
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Title: FileSelector
@@ -23,11 +24,11 @@ import kotlin.math.max
 class FileSelector private constructor(builder: Builder) {
 
     companion object {
-        const val DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD = "文件类型不匹配"
-        const val DEFAULT_SINGLE_FILE_SIZE_THRESHOLD = "超过限定文件大小"
-        const val DEFAULT_ALL_FILE_SIZE_THRESHOLD = "超过限定文件总大小"
-        const val DEFAULT_COUNT_ZERO_THRESHOLD = "设定类型文件至少选择一个"
-        const val DEFAULT_COUNT_MAX_THRESHOLD = "超过限定文件数量"
+        val TIP_SINGLE_FILE_TYPE_MISMATCH by lazy { getContext().getString(R.string.ando_str_single_file_type_mismatch) }
+        val TIP_SINGLE_FILE_SIZE by lazy { getContext().getString(R.string.ando_str_single_file_size) }
+        val TIP_ALL_FILE_SIZE by lazy { getContext().getString(R.string.ando_str_all_file_size) }
+        val TIP_COUNT_MIN by lazy { getContext().getString(R.string.ando_str_count_min) }
+        val TIP_COUNT_MAX by lazy { getContext().getString(R.string.ando_str_count_max) }
 
         fun with(context: Context): Builder {
             return Builder(context)
@@ -39,17 +40,17 @@ class FileSelector private constructor(builder: Builder) {
 
     private var mMimeTypes: Array<String>?
     private var mIsMultiSelect: Boolean = false
-    private var mMinCount: Int = 0                              //可选文件最小数量
-    private var mMaxCount: Int = Int.MAX_VALUE                  //可选文件最大数量
-    private var mMinCountTip: String = DEFAULT_COUNT_ZERO_THRESHOLD
-    private var mMaxCountTip: String = DEFAULT_COUNT_MAX_THRESHOLD
-    private var mSingleFileMaxSize: Long = -1                   //单文件大小控制 Byte
-    private var mAllFilesMaxSize: Long = -1                     //总文件大小控制 Byte
+    private var mMinCount: Int = 0                              //可选文件最小数量(Minimum number of optional files)
+    private var mMaxCount: Int = Int.MAX_VALUE                  //可选文件最大数量(Maximum number of optional files)
+    private var mMinCountTip: String = TIP_COUNT_MIN
+    private var mMaxCountTip: String = TIP_COUNT_MAX
+    private var mSingleFileMaxSize: Long = -1                   //单文件大小控制(Single file size) Byte
+    private var mAllFilesMaxSize: Long = -1                     //总文件大小控制(Total file size control) Byte
     private var mOverSizeLimitStrategy = OVER_SIZE_LIMIT_ALL_EXCEPT
 
-    private var mFileTypeMismatchTip: String = DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
-    private var mSingleFileMaxSizeTip: String = DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
-    private var mAllFilesMaxSizeTip: String = DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
+    private var mFileTypeMismatchTip: String = TIP_SINGLE_FILE_TYPE_MISMATCH
+    private var mSingleFileMaxSizeTip: String = TIP_SINGLE_FILE_SIZE
+    private var mAllFilesMaxSizeTip: String = TIP_SINGLE_FILE_SIZE
 
     private var mFileSelectCondition: FileSelectCondition? = null
     private var mFileSelectCallBack: FileSelectCallBack? = null
@@ -88,29 +89,40 @@ class FileSelector private constructor(builder: Builder) {
     var resultCode: Int? = 0
     var intent: Intent? = null
 
-    fun obtainResult(requestCode: Int, resultCode: Int, intent: Intent?): FileSelector {
+    fun obtainResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         this.requestCode = requestCode
         this.resultCode = resultCode
         this.intent = intent
 
-        if (requestCode == -1 || requestCode != mRequestCode) return this
+        if (requestCode == -1 || requestCode != mRequestCode) return
 
-        //单选 Intent.getData ; 多选 Intent.getClipData
-        return if (mIsMultiSelect) {
-            // Android 系统文件判断策略 : Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            // 开启多选条件下只选择一个文件时, 系统走的是单选逻辑... Σ( ° △ °|||)︴
-            if (intent?.clipData == null) handleSingleSelectCase(intent) else handleMultiSelectCase(intent)
-        } else {
-            handleSingleSelectCase(intent)
-        }
+        //单选(Single choice) Intent.getData; 多选(Multiple choice) Intent.getClipData
+        if (mIsMultiSelect) checkMultiCaseIllegal(intent) else handleSingleSelectCase(intent)
     }
 
-    private fun handleSingleSelectCase(intent: Intent?): FileSelector {
+    /**
+     * 开启多选条件下只选择一个文件时, 系统走的是单选逻辑... Σ( ° △ °|||)︴
+     *
+     * (When only one file is selected under the multi-select condition, the system uses single-select logic)
+     */
+    private fun checkMultiCaseIllegal(intent: Intent?) {
+        //默认是单选false, 当 applyOptions>=2时,会按照多选处理
+        //(The default is single selection false, when applyOptions>=2, it will be processed according to multiple selection)
+        val realMode = mIsMultiSelect && (mFileOptions?.size ?: 0 >= 2)
+
+        // Android系统文件判断策略(Android system file judgment strategy): Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
+        if (realMode && (intent?.clipData == null)) {
+            if (mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_EXCEPT) mFileSelectCallBack?.onError(Throwable(mMinCountTip))
+            else handleSingleSelectCase(intent)
+        } else handleMultiSelectCase(intent)
+    }
+
+    private fun handleSingleSelectCase(intent: Intent?) {
         this.mIsMultiSelect = false
         val intentData: Uri? = intent?.data
         if (intentData == null) {
             mFileSelectCallBack?.onError(Throwable(mMinCountTip))
-            return this
+            return
         }
 
         filterUri(intentData) { o: FileSelectOptions?, t: FileType, tf: Boolean, s: Long, sf: Boolean ->
@@ -129,13 +141,7 @@ class FileSelector private constructor(builder: Builder) {
                 }
             }
         }
-        return this
     }
-
-    internal data class SelectResult(
-        var uriList: MutableList<Uri>,
-        var checkPass: Boolean,
-    )
 
     private fun handleMultiSelectCase(intent: Intent?): FileSelector {
         this.mIsMultiSelect = true
@@ -154,7 +160,7 @@ class FileSelector private constructor(builder: Builder) {
         }
 
         //不同文件类型的结果集合(Result collection of different file types)
-        val uriList = ArrayMap<FileSelectOptions, MutableList<Uri>>()
+        val uriList = ArrayMap<FileSelectOptions, SelectResult>()
         //不同文件类型的结果集合的并集(Union of result sets of different file types)
         val uriListAll: MutableList<Uri> = mutableListOf()
 
@@ -163,7 +169,6 @@ class FileSelector private constructor(builder: Builder) {
         var isFileTypeIllegal = false
         var isFileCountIllegal = false  //文件数量(File Count): true 数量超限(Quantity exceeded)
         var isFileSizeIllegal = false   //文件大小(File Size): true 大小超限(Oversize)
-        val typeRelatedMap = ArrayMap<FileSelectOptions, Boolean>() //自定义FileSelectOptions是否通过(Custom FileSelectOptions Pass)
 
         (0 until itemCount).forEach { i ->
             if (isNeedBreak) return this
@@ -172,6 +177,9 @@ class FileSelector private constructor(builder: Builder) {
             filterUri(uri) { o: FileSelectOptions?, t: FileType, tf: Boolean, s: Long, sf: Boolean ->
                 val isCurrentType = (t == o?.fileType)
                 FileLogger.w("Multi-> filterUri: ${o?.fileType} isCurrentType=$isCurrentType sf=$sf")
+
+                if (uriList[o] == null) uriList[o] = SelectResult(checkPass = true)
+                val selectResult: SelectResult = uriList[o] ?: SelectResult(checkPass = true)
 
                 //FileType Mismatch -> onError
                 if (!tf) {
@@ -196,43 +204,43 @@ class FileSelector private constructor(builder: Builder) {
                     return@filterUri
                 }
 
-                if (!typeRelatedMap.contains(o)) {
-                    typeRelatedMap[o] = true
+                //File Count
+                if (!mFileCountMap.contains(t)) {
+                    mFileCountMap[t] = 0
+                }
+                mFileCountMap[t] = mFileCountMap[t]?.plus(1)
+                mFileOptions?.forEach { os: FileSelectOptions ->
+                    val count: Int = mFileCountMap[os.fileType] ?: 0
+                    //min
+                    //itemCount == (i + 1) 最后再判断最少数量(finally determine the minimum number)
+                    if (itemCount == (i + 1)) {
+                        if (count < realMinCountLimit(os)) {
+                            isFileCountIllegal = true
+                            isNeedBreak = true
+                            if (isStrictStrategy) {
+                                mFileSelectCallBack?.onError(Throwable(realMinCountTip(os)))
+                                isNeedBreak = true
+                            }
+                            return@filterUri
+                        }
+                    }
+                    //max
+                    if (count > realMaxCountLimit(os)) {
+                        isFileCountIllegal = true
+                        isNeedBreak = true
+                        if (isStrictStrategy) {
+                            mFileSelectCallBack?.onError(Throwable(realMaxCountTip(os)))
+                            isNeedBreak = true
+                        }
+                        return@filterUri
+                    }
                 }
 
-                //控制自定义选项数量和大小(Control Custom Option count and size)
+                //控制自定义选项大小(Control Custom Option size)
                 if (isCurrentType) {
-                    //File Count
-                    if (!mFileCountMap.contains(t)) {
-                        mFileCountMap[t] = 0
-                    }
-                    mFileCountMap[t] = mFileCountMap[t]?.plus(1)
-                    val currTypeCount: Int = mFileCountMap[t] ?: 0
                     if (isDebug()) {
-                        FileLogger.i("Multi-> Count: ${o?.fileType} currTypeCount=$currTypeCount isFinally=${itemCount == (i + 1)}")
-                    }
-
-                    //itemCount == (i + 1) 最后再判断最少数量(finally determine the minimum number)
-                    if (itemCount == (i + 1) && currTypeCount < realMinCountLimit(o)) {
-                        isFileCountIllegal = true
-                        if (isStrictStrategy) {
-                            mFileSelectCallBack?.onError(Throwable(realMinCountTip(o)))
-                            isNeedBreak = true
-                        } else {
-                            typeRelatedMap[o] = false
-                        }
-                        return@filterUri
-                    }
-
-                    if (currTypeCount > realMaxCountLimit(o)) {
-                        isFileCountIllegal = true
-                        if (isStrictStrategy) {
-                            mFileSelectCallBack?.onError(Throwable(realMaxCountTip(o)))
-                            isNeedBreak = true
-                        } else {
-                            typeRelatedMap[o] = false
-                        }
-                        return@filterUri
+                        FileLogger.i("Multi-> Count: ${o?.fileType} currTypeCount=${mFileCountMap[t] ?: 0} isFinally=${itemCount == (i + 1)} " +
+                                "realMinCountLimit=${realMinCountLimit(o)} realMaxCountLimit=${realMaxCountLimit(o)}")
                     }
 
                     //File Size
@@ -246,7 +254,7 @@ class FileSelector private constructor(builder: Builder) {
 
                     if (currTypeTotalSize > mAllMaxSize) {//byte (B)
                         isFileSizeIllegal = true
-                        typeRelatedMap[o] = false
+                        selectResult.checkPass = false
                         return@filterUri
                     }
                 }
@@ -254,7 +262,7 @@ class FileSelector private constructor(builder: Builder) {
                 //控制总大小(Control Total Size)
                 totalSize += s
                 if (isDebug()) {
-                    FileLogger.i("Multi-> totalSize: $totalSize  typeRelatedMap=${typeRelatedMap[o]} ")
+                    FileLogger.i("Multi-> totalSize: $totalSize checkPass=${selectResult.checkPass} ")
                 }
 
                 if (totalSize > mAllFilesMaxSize) {//byte (B)
@@ -267,24 +275,23 @@ class FileSelector private constructor(builder: Builder) {
                         }
                         OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART -> {
                             if (uriListAll.isNotEmpty()) uriListAll.clear()
-                            uriList.values.forEach { l -> uriListAll.addAll(l) }
+                            uriList.values.forEach { sr -> uriListAll.addAll(sr.uriList) }
                             mFileSelectCallBack?.onSuccess(createResult(uriListAll))
                         }
                     }
                     return@filterUri
                 }
 
-                //add to result list
-                if (typeRelatedMap[o] == true) {
-                    if (uriList[o].isNullOrEmpty()) uriList[o] = mutableListOf()
-                    uriList[o]?.add(uri)
+                //添加到结果列表(add to result list)
+                if (selectResult.checkPass) {
+                    selectResult.uriList.add(uri)
                     uriListAll.add(uri)
                 }
             }
         }
 
         //某些类型没有选(Some types are not selected)
-        val isOptionsSizeMatch = (mFileOptions?.size == typeRelatedMap.keys.size)
+        val isOptionsSizeMatch = (mFileOptions?.size == uriList.keys.size)
         FileLogger.w("Multi-> isFileTypeIllegal=$isFileTypeIllegal isFileSizeIllegal=$isFileSizeIllegal " +
                 "isFileCountIllegal=$isFileCountIllegal isOptionsSizeMatch=$isOptionsSizeMatch")
 
@@ -292,12 +299,12 @@ class FileSelector private constructor(builder: Builder) {
         if (isFileSizeIllegal || isFileCountIllegal || !isOptionsSizeMatch) {
             when (mOverSizeLimitStrategy) {
                 OVER_SIZE_LIMIT_ALL_EXCEPT -> {
-                    if (!isOptionsSizeMatch) {
+                    if (!isOptionsSizeMatch && !isNeedBreak) {
                         mFileSelectCallBack?.onError(Throwable(realMinCountTip(null)))
                         return this
                     }
 
-                    typeRelatedMap.filter { (_: FileSelectOptions, v: Boolean) ->
+                    uriList.filter { (_: FileSelectOptions, v: SelectResult) ->
 //                        val count = uriList[k]?.size ?: 0
 //                        if (count < realMinCountLimit(k)) {
 //                            mFileSelectCallBack?.onError(Throwable(realMinCountTip(k)))
@@ -305,19 +312,16 @@ class FileSelector private constructor(builder: Builder) {
 //                        if (count > realMaxCountLimit(k)) {
 //                            mFileSelectCallBack?.onError(Throwable(realMaxCountTip(k)))
 //                        }
-//                        if (v == false && count < realMaxCountLimit(k)) {
-//                            mFileSelectCallBack?.onError(Throwable(k.allFilesMaxSizeTip ?: mAllFilesMaxSizeTip))
-//                        }
 
-                        if (uriList.isNotEmpty()) uriList.clear()
+                        if (v.uriList.isNotEmpty()) v.uriList.clear()
                         if (uriListAll.isNotEmpty()) uriListAll.clear()
-                        v == false
+                        !v.checkPass
                     }.keys
                         .toMutableList()
                         .map { o: FileSelectOptions? -> o?.fileType }
                         .let { l: List<FileType?> ->
                             uriList.values.forEach { ls ->
-                                ls.filter {
+                                ls.uriList.filter {
                                     if (isDebug()) {
                                         FileLogger.e("Multi filter data -> $it ${INSTANCE.typeByUri(it)}  ${l.contains(INSTANCE.typeByUri(it))} ")
                                     }
@@ -330,12 +334,14 @@ class FileSelector private constructor(builder: Builder) {
                 }
                 OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART -> {
                     if (uriListAll.isNotEmpty()) uriListAll.clear()
-                    typeRelatedMap.filter { it.value == true }.keys.forEach { op: FileSelectOptions ->
-                        uriList.forEach { m: Map.Entry<FileSelectOptions, MutableList<Uri>> ->
+
+                    //todo 2020年12月22日11:28:57
+                    //.filter { it.value.checkPass }
+                    uriList.keys.forEach { op: FileSelectOptions ->
+                        uriList.forEach { m: Map.Entry<FileSelectOptions, SelectResult> ->
                             if (m.key.fileType == op.fileType) {
-                                m.value.let { l: List<Uri> ->
-                                    //uriListAll.addAll(l.take(realMaxCountLimit(m.key)))
-                                    uriListAll.addAll(l)
+                                m.value.let { s: SelectResult ->
+                                    uriListAll.addAll(s.uriList)
                                 }
                             }
                         }
@@ -350,13 +356,6 @@ class FileSelector private constructor(builder: Builder) {
 
         if (!isFileCountIllegal && !isFileTypeIllegal && !uriList.isNullOrEmpty()) mFileSelectCallBack?.onSuccess(createResult(uriListAll))
         return this
-    }
-
-    private fun filterCount(
-        clipData: ClipData,
-        block: (option: FileSelectOptions?, fileType: FileType, typeFit: Boolean, fileSize: Long, sizeFit: Boolean) -> Unit,
-    ) {
-
     }
 
     private fun filterUri(
@@ -378,14 +377,17 @@ class FileSelector private constructor(builder: Builder) {
         }
 
         if (isOptionsNullOrEmpty) {
-            //没有设置 FileOptions 时,使用通用的配置
+            //没有设置 FileSelectOptions 时,使用通用的配置 (When FileOptions is not set, the general configuration is used)
             val isAccept = (mFileSelectCondition != null) && mFileSelectCondition?.accept(fileType, uri) ?: false
             if (!isAccept) return
             block.invoke(null, fileType, true, fileSize, limitFileSize(fileSize, realSizeLimit(null)))
         } else {
             currentOption.forEach { o: FileSelectOptions ->
                 //获取 CallBack -> 优先使用 FileSelectOptions 中设置的 FileSelectCallBack
+                //Get CallBack -> Prefer to use FileSelectCallBack set in FileSelectOptions
+
                 //控制类型 -> 自定义规则 -> 优先使用 FileSelectOptions 中设置的 FileSelectCondition
+                //Control type -> Custom rule -> Preferentially use FileSelectCondition set in FileSelectOptions
                 val isAccept = mFileSelectCondition?.accept(fileType, uri) ?: true && o.fileCondition?.accept(fileType, uri) ?: true
                 if (!isAccept) {
                     block.invoke(o, fileType, true, fileSize, limitFileSize(fileSize, realSizeLimit(null)))
@@ -404,30 +406,32 @@ class FileSelector private constructor(builder: Builder) {
 
     private fun realMinCountLimit(option: FileSelectOptions?): Int =
         if (option == null) {
-            if (mMinCount < 0) 1 else mMinCount
+            if (mMinCount <= 0) 1 else mMinCount
         } else {
-            if (option.minCount < 0) 1 else option.minCount
+            if (option.minCount <= 0) 1 else option.minCount
         }
 
-    private fun realMaxCountLimit(option: FileSelectOptions?): Int =
-        max(realMinCountLimit(option), option?.maxCount ?: mMaxCount)
+    private fun realMaxCountLimit(option: FileSelectOptions?): Int {
+        val realGlobalMax = if (mMaxCount <= 0) Int.MAX_VALUE else mMaxCount
+        return max(realMinCountLimit(option),
+            if (option?.maxCount ?: Int.MAX_VALUE > 0)
+                min(option?.maxCount ?: Int.MAX_VALUE, realGlobalMax)
+            else realGlobalMax)
+    }
 
     private fun realSizeLimit(option: FileSelectOptions?): Long =
         if (option == null) {
-            if (mSingleFileMaxSize < 0)
-                if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize
+            if (mSingleFileMaxSize < 0) if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize
             else mSingleFileMaxSize
         } else {
-            if (option.singleFileMaxSize < 0)
-                if (option.allFilesMaxSize < 0) realSizeLimit(null) else option.allFilesMaxSize
+            if (option.singleFileMaxSize < 0) if (option.allFilesMaxSize < 0) realSizeLimit(null) else option.allFilesMaxSize
             else option.singleFileMaxSize
         }
 
     private fun realSizeLimitAll(option: FileSelectOptions?): Long =
         if (option == null) Long.MAX_VALUE
         else
-            if (option.allFilesMaxSize < 0)
-                if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize
+            if (option.allFilesMaxSize < 0) if (mAllFilesMaxSize < 0) Long.MAX_VALUE else mAllFilesMaxSize
             else option.allFilesMaxSize
 
     private fun limitFileSize(fileSize: Long, sizeThreshold: Long): Boolean {
@@ -465,20 +469,31 @@ class FileSelector private constructor(builder: Builder) {
             }
         }
 
+    internal data class SelectResult(
+        /**
+         * FileSelectOptions 对应的结果列表(FileSelectOptions corresponding result list)
+         */
+        var uriList: MutableList<Uri> = mutableListOf(),
+        /**
+         * 自定义FileSelectOptions是否通过(Custom FileSelectOptions Pass)
+         */
+        var checkPass: Boolean = false,
+    )
+
     class Builder internal constructor(private val context: Context) {
         var mRequestCode: Int = 0
 
         var mMimeTypes: Array<String>? = null
         var mIsMultiSelect: Boolean = false
-        var mMinCount: Int = 0                              //可选文件最小数量
-        var mMaxCount: Int = Int.MAX_VALUE                  //可选文件最大数量
-        var mMinCountTip: String = DEFAULT_COUNT_ZERO_THRESHOLD
-        var mMaxCountTip: String = DEFAULT_COUNT_MAX_THRESHOLD
-        var mSingleFileMaxSize: Long = -1                   //单文件大小控制 B
-        var mAllFilesMaxSize: Long = -1                     //总文件大小控制 B
-        var mFileTypeMismatchTip: String = DEFAULT_SINGLE_FILE_TYPE_MISMATCH_THRESHOLD
-        var mSingleFileMaxSizeTip: String = DEFAULT_SINGLE_FILE_SIZE_THRESHOLD
-        var mAllFilesMaxSizeTip: String = DEFAULT_ALL_FILE_SIZE_THRESHOLD
+        var mMinCount: Int = 0                              //可选文件最小数量(Minimum number of optional files)
+        var mMaxCount: Int = Int.MAX_VALUE                  //可选文件最大数量(Maximum number of optional files)
+        var mMinCountTip: String = TIP_COUNT_MIN
+        var mMaxCountTip: String = TIP_COUNT_MAX
+        var mSingleFileMaxSize: Long = -1                   //单文件大小控制 B (Single file size control)
+        var mAllFilesMaxSize: Long = -1                     //总文件大小控制 B (Total file size control)
+        var mFileTypeMismatchTip: String = TIP_SINGLE_FILE_TYPE_MISMATCH
+        var mSingleFileMaxSizeTip: String = TIP_SINGLE_FILE_SIZE
+        var mAllFilesMaxSizeTip: String = TIP_ALL_FILE_SIZE
         var mOverSizeLimitStrategy = OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
 
         var mFileSelectCondition: FileSelectCondition? = null
