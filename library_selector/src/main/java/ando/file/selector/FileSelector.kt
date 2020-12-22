@@ -97,24 +97,14 @@ class FileSelector private constructor(builder: Builder) {
         if (requestCode == -1 || requestCode != mRequestCode) return
 
         //单选(Single choice) Intent.getData; 多选(Multiple choice) Intent.getClipData
-        if (mIsMultiSelect) checkMultiCaseIllegal(intent) else handleSingleSelectCase(intent)
-    }
-
-    /**
-     * 开启多选条件下只选择一个文件时, 系统走的是单选逻辑... Σ( ° △ °|||)︴
-     *
-     * (When only one file is selected under the multi-select condition, the system uses single-select logic)
-     */
-    private fun checkMultiCaseIllegal(intent: Intent?) {
-        //默认是单选false, 当 applyOptions>=2时,会按照多选处理
-        //(The default is single selection false, when applyOptions>=2, it will be processed according to multiple selection)
-        val realMode = mIsMultiSelect && (mFileOptions?.size ?: 0 >= 2)
-
-        // Android系统文件判断策略(Android system file judgment strategy): Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true)
-        if (realMode && (intent?.clipData == null)) {
-            if (mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_EXCEPT) mFileSelectCallBack?.onError(Throwable(mMinCountTip))
-            else handleSingleSelectCase(intent)
-        } else handleMultiSelectCase(intent)
+        if (mIsMultiSelect) {
+            if (intent?.clipData == null)
+            //单一类型和多种类型(Single type and multiple types)
+                if ((mFileOptions?.size ?: 0 >= 2) && (mOverSizeLimitStrategy == OVER_SIZE_LIMIT_ALL_EXCEPT)) {
+                    mFileSelectCallBack?.onError(Throwable(mMinCountTip))
+                } else handleSingleSelectCase(intent)
+            else handleMultiSelectCase(intent)
+        } else handleSingleSelectCase(intent)
     }
 
     private fun handleSingleSelectCase(intent: Intent?) {

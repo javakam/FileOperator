@@ -113,7 +113,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setMultiSelect()//默认是单选false, 当applyOptions>=2时,会按照多选处理
+            .setMultiSelect()//默认是单选false
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(2, "最多选两个文件!")
 

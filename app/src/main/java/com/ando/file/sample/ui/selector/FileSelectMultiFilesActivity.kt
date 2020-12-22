@@ -118,14 +118,14 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setMultiSelect()//默认是单选false, 当applyOptions>=2时,会按照多选处理
+            .setMultiSelect()//默认是单选false
 
             /*
             实际最少数量限制为 setMinCount 和 (optionsImage.minCount + optionsVideo.minCount) 中的最小值
             实际最大数量限制为 setMaxCount 和 (optionsImage.maxCount + optionsVideo.maxCount) 中的最大值
              */
-            .setMinCount(1, "至少选一个文件!")
-            .setMaxCount(10, "最多选十个文件!")
+            .setMinCount(1, "设定类型文件至少选择一个!")
+            .setMaxCount(4, "最多选四个文件!")
 
             /*
             实际单文件大小限制为 setSingleFileMaxSize 和 (optionsImage.singleFileMaxSize + optionsVideo.singleFileMaxSize) 中的最小值
@@ -140,7 +140,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             //2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  文件超过数量限制和大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
             .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_ALL_EXCEPT)
 
-            .setMimeTypes("*/*")//同"*/*",默认不做文件类型约束, 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+            .setMimeTypes(arrayOf("audio/*","image/*"))//同"*/*",默认不做文件类型约束, 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage, optionsVideo)
 
             // 优先使用 FileSelectOptions 中设置的 FileSelectCondition
