@@ -625,6 +625,7 @@ Fixed: `ando.file.core.FileOpener.createChooseIntent`
 Logo <https://www.easyicon.net/1293281-folders_icon.html>
 
 Google
+
     - [Storage Samples Repository](https://github.com/android/storage-samples)
     - [SAF 使用存储访问框架打开文件](https://developer.android.google.cn/guide/topics/providers/document-provider)
     - [SAF API UseCase](https://developer.android.google.cn/training/data-storage/shared/documents-files)
