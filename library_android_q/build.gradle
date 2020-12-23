@@ -50,7 +50,8 @@ dependencies {
     implementation project(':library')
     //implementation 'ando.file:file-core:1.0.0'
 
-    implementation 'androidx.documentfile:documentfile:1.0.1'
+    compileOnly "androidx.exifinterface:exifinterface:1.3.2"
+    compileOnly 'androidx.documentfile:documentfile:1.0.1'
 }
 
 publish {
@@ -58,7 +59,7 @@ publish {
     userOrg = 'javakam'
     groupId = 'ando.file'
     artifactId = 'FileOperatorQ'
-    publishVersion = '1.0.2'
+    publishVersion = '1.1.0'
     desc = 'FileOperator Compatible with Android Q.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = false

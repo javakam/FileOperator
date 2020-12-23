@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ando.file.core
 
 import ando.file.FileOperator
@@ -13,7 +28,7 @@ import androidx.annotation.StringDef
 import androidx.fragment.app.Fragment
 
 /**
- * 文件的访问模式 mode :
+ * 文件的访问模式(File access mode) mode :
  *
  * 1. “r”表示只读访问，
  *
@@ -76,24 +91,30 @@ object FileGlobal {
     @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
     annotation class FileMediaType
 
-    //适用于单独文件大小和总文件大小的情况
     /**
-     * 文件超过数量限制和大小限制直接返回失败(onError)
+     * 1. 文件超过`数量或大小`限制直接返回失败
+     * 2. 回调 onError
+     *
+     * - The file exceeds the `number or size` limit and returns directly to failure
+     * - Callback onError
      */
-    const val OVER_SIZE_LIMIT_ALL_EXCEPT: Int = 1
+    const val OVER_LIMIT_EXCEPT_ALL: Int = 1
 
     /**
-     * 文件超过数量限制和大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
+     * 1. 文件超过数量限制或大小限制
+     * 2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
+     * 3. 回调 onSuccess
      *
-     * @since v1.1.0
-     * 文件超过数量限制去掉数量错误的文件类型,大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
+     * - The file exceeds the number limit or the size limit
+     * - 1. Single type: keep the file that is not over the limit and return, remove the overflow part;
+     *      2. Multiple types: keep the correct file, remove all files of the wrong type
+     * - Call back onSuccess
      */
-    const val OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART: Int = 2
+    const val OVER_LIMIT_EXCEPT_OVERFLOW: Int = 2
 
     @Retention(AnnotationRetention.SOURCE)
-    @IntDef(value = [OVER_SIZE_LIMIT_ALL_EXCEPT, OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART])
-    annotation class FileOverSizeStrategy
-
+    @IntDef(value = [OVER_LIMIT_EXCEPT_ALL, OVER_LIMIT_EXCEPT_OVERFLOW])
+    annotation class FileOverLimitStrategy
 
     /**
      * eg:
@@ -121,7 +142,11 @@ object FileGlobal {
     /**
      * ### 加载媒体 单个媒体文件 👉 ContentResolver.openFileDescriptor
      *
+     * Load media single media file
+     *
      * 根据文件描述符选择对应的打开方式。"r"表示读，"w"表示写
+     *
+     * Select the corresponding opening method according to the file descriptor. "r" means read, "w" means write
      */
     fun openFileDescriptor(
         uri: Uri?,
@@ -133,7 +158,7 @@ object FileGlobal {
     }
 
     /**
-     * 检查 uri 对应的文件是否存在
+     * 检查 uri 对应的文件是否存在(Check if the file corresponding to uri exists)
      */
     fun checkUriFileExit(uri: Uri?): Boolean {
         val cursor = FileOperator.getContext().contentResolver.query(uri ?: return false, null, null, null, null)
@@ -157,7 +182,7 @@ object FileGlobal {
         }
 
     /**
-     * 获取文档元数据
+     * 获取文档元数据(Get document metadata)
      */
     fun dumpMetaData(uri: Uri?, block: ((displayName: String?, size: String?) -> Unit)? = null) {
         val cursor =

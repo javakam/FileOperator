@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ando.file.sample.ui.selector
 
 import android.content.Intent
@@ -6,7 +21,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.*
-import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
+import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW
 import ando.file.selector.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -88,7 +103,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .setTypeMismatchTip("文件类型不匹配")
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(10, "最多选十个文件!")//单选条件下无效, 只做最少数量判断
-            .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
+            .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
             .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, FileSelectOptions.singleFileMaxSize
             .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
             .setMimeTypes("image/*")//默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")

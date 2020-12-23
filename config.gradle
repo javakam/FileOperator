@@ -64,7 +64,6 @@ ext {
             "room_rxjava2"                   : "androidx.room:room-rxjava2:${version.room}",
             "room_testing"                   : "androidx.room:room-testing:${version.room}",
 
-
             //base test
             "junit"                          : "junit:junit:4.12",
             "test_runner"                    : "com.android.support.test:runner:1.0.2",

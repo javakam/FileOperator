@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ando.file.core
 
 import ando.file.core.FileMimeType.getMimeType
@@ -10,15 +25,17 @@ import android.net.Uri
  *
  * Description: 打开该 Uri 对应文件类型的所有软件, 通常情况下是个部弹窗
  *
+ * Open all the software corresponding to the Uri file type, usually a pop-up window
+ *
  * @author javakam
  * @date 2020/8/24 11:20
  */
 object FileOpener {
 
     /**
-     * ### 直接打开 Url 对应的系统应用
+     * ### 直接打开 Url 对应的系统应用 (Open the system application corresponding to the URL directly)
      *
-     * eg: 如果url是视频地址,则直接用系统的播放器打开
+     * eg: 如果url是视频地址,则直接用系统的播放器打开 (If the url is the video address, open it directly with the system player)
      */
     fun openUrl(activity: Activity, url: String?) {
         try {
@@ -41,11 +58,13 @@ object FileOpener {
     /**
      * ### 根据 文件路径 和 类型(后缀判断) 显示支持该格式的程序
      *
+     * According to the file path and type (judging by suffix), show the programs that support the format
+     *
      * (√) /storage/emulated/0/Pictures/sl2/BitmapImage.png
      *
      * (X) /data/user/0/xxx.xxx.app/cache/documents/microMsg.15798.jpg
      *
-     * @param mimeType 指定打开文件的 MimeType 类型
+     * @param mimeType 指定打开文件的 MimeType 类型 (Specify the MimeType of the opened file)
      *
      */
     fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
@@ -56,13 +75,13 @@ object FileOpener {
         }
 
     /**
-     * ### 选择文件【调用系统的文件管理】
+     * ### 选择文件【调用系统的文件管理】 (Select file [call system file management])
      *
      * 注:
      *
-     * 1. Intent.setType 不能为空!
+     * 1. Intent.setType 不能为空(Can not be empty) !
      *
-     * 2. mimeTypes 会覆盖 mimeType
+     * 2. mimeTypes 会覆盖(Will overwrite) mimeType
      *
      * 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
      * ```
@@ -70,18 +89,14 @@ object FileOpener {
      *      you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
      * ```
      *
-     * 4. 开启多选 resultCode = -1
+     * 4. 开启多选(Open multiple selection) resultCode = -1
      */
     fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
         // Implicitly allow the user to select a particular kind of data. Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
             // The MIME data type filter
-            //intent.setType("image/*");    //选择图片
-            //intent.setType("audio/*");    //选择音频
-            //intent.setType("video/*");    //选择视频 （mp4 3gp 是 android支持的视频格式）
-            //intent.setType("file/*");     //比 */* 少了一些侧边栏选项
-            //intent.setType("video/*;image/*");//错误方式;同时选择视频和图片 ->  https://www.jianshu.com/p/e98c97669af0
+            // Tip: type = "file/*" 比 */* 少了一些侧边栏选项(There are fewer sidebar options than */*)
             if (mimeType.isNullOrBlank() && mimeTypes.isNullOrEmpty()) type = "*/*"
             else {
                 type = if (mimeType.isNullOrEmpty()) "*/*" else mimeType

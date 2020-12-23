@@ -5,68 +5,94 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:paddingLeft="@dimen/dp_15"
+    android:paddingTop="@dimen/dp_10"
+    android:paddingRight="@dimen/dp_15"
+    android:paddingBottom="@dimen/dp_10"
     tools:context=".ui.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="API" />
+        android:text="核心库(implementation 'ando.file:core:xxx')" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="caseAppSpecific"
-        android:text="App Specific"
-        android:textAllCaps="false" />
+        android:onClick="caseGetFileMimeType"
+        android:text="获取文件MimeType(FileMimeType)"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="caseMediaStore"
-        android:text="MediaStore"
-        android:textAllCaps="false" />
+        android:onClick="caseGetFileSize"
+        android:text="获取文件大小(FileSizeUtils)"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/SAF_Btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="caseSAF"
-        android:text="Storage Access Framework"
-        android:textAllCaps="false" />
+        android:onClick="caseGetFileUriOrPath"
+        android:text="获取文件Uri/Path(FileUri)"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="caseOpenFileByUri"
+        android:text="打开文件(FileOpener)"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12"
+        android:visibility="gone" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="caseFileUtils"
+        android:text="文件通用工具类(FileUtils)"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12"
+        android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/color_divider_gray" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="应用" />
+        android:text="文件选择器(implementation 'ando.file:selector:xxx')" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectSingleImageWithCompress"
         android:text="选择一张图片并压缩"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectMultiImageWithCompress"
         android:text="选择多张图片并压缩"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectMultiFilesWithCompress"
-        android:text="选择多个文件"
-        android:textAllCaps="false" />
+        android:text="选择多个不同类型文件"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
@@ -75,6 +101,7 @@
         android:onClick="caseFragmentSimpleUsage"
         android:text="Fragment 简单使用"
         android:textAllCaps="false"
+        android:textSize="@dimen/font_12"
         android:visibility="gone" />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -82,7 +109,45 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:onClick="caseClearCache"
-        android:text="缓存目录"
-        android:textAllCaps="false" />
+        android:text="获取应用目录信息"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/color_divider_gray" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="区别(Difference)" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="caseAppSpecific"
+        android:text="App Specific"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="caseMediaStore"
+        android:text="MediaStore"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/SAF_Btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="caseSAF"
+        android:text="Storage Access Framework"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
 
 </LinearLayout>

@@ -1,8 +1,22 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ando.file.sample.utils
 
 import ando.file.androidq.FileOperatorQ
 import ando.file.core.FileGlobal.dumpMetaData
-import ando.file.core.FileLogger
 import ando.file.core.FileMimeType
 import ando.file.core.FileOpener
 import ando.file.core.FileSizeUtils
@@ -79,6 +93,28 @@ object ResultUtils {
             BitmapFactory.decodeResource(context.resources, R.mipmap.ic_place_holder) else bitmap)
         imageView.setOnClickListener {
             FileOpener.openFileBySystemChooser(context, uri, "image/*")
+        }
+    }
+
+    /**
+     * mimeType, FileSize
+     */
+    fun setCoreResults(tvResult: TextView, results: List<FileSelectResult>?) {
+        tvResult.text = ""
+        if (results.isNullOrEmpty()) return
+        results.forEachIndexed { _, fsr ->
+            val info = "${fsr}格式化大小: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
+                    " 格式化大小(不带单位, 保留三位小数): ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
+                    " 格式化大小(自定义单位, 保留一位小数): ${FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
+
+            dumpMetaData(uri = fsr.uri) { name: String?, _: String? ->
+                val text = """
+                    | ------------------
+                    | 🍎文件名: $name
+                    | $info
+                    | ------------------${"\n\n\n"}""".trimMargin()
+                tvResult.text = tvResult.text.toString().plus(text)
+            }
         }
     }
 

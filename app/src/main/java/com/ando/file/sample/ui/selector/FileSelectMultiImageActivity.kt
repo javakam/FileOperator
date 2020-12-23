@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ando.file.sample.ui.selector
 
 import android.annotation.SuppressLint
@@ -6,8 +21,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.*
-import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_ALL_EXCEPT
-import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
+import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_ALL
+import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW
 import ando.file.selector.*
 import android.widget.Button
 import android.widget.RadioGroup
@@ -39,7 +54,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
     private lateinit var mTvError: TextView
     private lateinit var mRvResults: RecyclerView
 
-    private var mOverSizeStrategy: Int = OVER_SIZE_LIMIT_ALL_EXCEPT
+    private var mOverLimitStrategy: Int = OVER_LIMIT_EXCEPT_ALL
 
     //展示结果(Show results)
     private var mResultShowList: MutableList<ResultShowBean>? = null
@@ -64,20 +79,20 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mRgStrategy.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rb_strategy1 -> {
-                    this.mOverSizeStrategy = OVER_SIZE_LIMIT_ALL_EXCEPT
-                    mTvCurrStrategy.text = "当前策略: OVER_SIZE_LIMIT_ALL_EXCEPT"
+                    this.mOverLimitStrategy = OVER_LIMIT_EXCEPT_ALL
+                    mTvCurrStrategy.text = "当前策略: OVER_LIMIT_EXCEPT_ALL"
                 }
                 R.id.rb_strategy2 -> {
-                    this.mOverSizeStrategy = OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
-                    mTvCurrStrategy.text = "当前策略: OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
+                    this.mOverLimitStrategy = OVER_LIMIT_EXCEPT_OVERFLOW
+                    mTvCurrStrategy.text = "当前策略: OVER_LIMIT_EXCEPT_OVERFLOW"
                 }
                 else -> {
                 }
             }
         }
         mTvCurrStrategy.text = "当前策略: ${
-            if (this.mOverSizeStrategy == OVER_SIZE_LIMIT_ALL_EXCEPT) "OVER_SIZE_LIMIT_ALL_EXCEPT"
-            else "OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART"
+            if (this.mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL) "OVER_LIMIT_EXCEPT_ALL"
+            else "OVER_LIMIT_EXCEPT_OVERFLOW"
         }"
 
         mBtSelect.text="$mShowText (0)"
@@ -121,9 +136,9 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .setSingleFileMaxSize(3145728, "单个大小不能超过3M！")
             .setAllFilesMaxSize(20971520, "总文件大小不能超过20M！")
 
-            //1.OVER_SIZE_LIMIT_ALL_EXCEPT            文件超过数量限制和大小限制直接返回失败(onError)
-            //2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART  文件超过数量限制和大小限制保留未超限制的文件并返回,去掉后面溢出的部分(onSuccess)
-            .setOverSizeLimitStrategy(this.mOverSizeStrategy)
+            //1. 文件超过数量限制或大小限制
+            //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
+            .setOverLimitStrategy(this.mOverLimitStrategy)
             .setMimeTypes("image/*")//默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
             .applyOptions(optionsImage)
 

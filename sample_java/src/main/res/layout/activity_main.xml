@@ -54,7 +54,7 @@
         <ImageView
             android:id="@+id/mIvOrigin"
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
             android:src="@mipmap/ic_place_holder" />
@@ -67,7 +67,7 @@
         <ImageView
             android:id="@+id/mIvCompressed"
             android:layout_width="wrap_content"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
             android:src="@mipmap/ic_place_holder" />

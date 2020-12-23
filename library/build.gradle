@@ -53,7 +53,7 @@ publish {
     userOrg = 'javakam'
     groupId = 'ando.file'
     artifactId = 'FileOperatorCore'
-    publishVersion = '1.0.2'
+    publishVersion = '1.1.0'
     desc = 'FileOperator Core Library.'
     website = "https://github.com/javakam/${rootProject.name}"
     //true 上传前测试 ; false 正常上传

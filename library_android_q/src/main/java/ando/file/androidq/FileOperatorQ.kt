@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ando.file.androidq
 
 import ando.file.FileOperator.getContext
@@ -19,7 +34,6 @@ import android.content.*
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -32,6 +46,7 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.core.content.edit
 import androidx.documentfile.provider.DocumentFile
+import androidx.exifinterface.media.ExifInterface
 import java.io.*
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -308,11 +323,11 @@ object FileOperatorQ {
     ): QuerySelectionStatement {
         val symbol = if (isFuzzy) " like " else " = "
         val selection = StringBuilder()
-        val selectionArgs: MutableList<String> = mutableListOf<String>()
+        val selectionArgs: MutableList<String> = mutableListOf()
 
         var needAddPre = false
         if (isNotBlank(displayName)) {
-            val columnDisplayName: String? = when (mediaType) {
+            val columnDisplayName: String = when (mediaType) {
                 MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.DISPLAY_NAME
                 MEDIA_TYPE_AUDIO -> MediaStore.Audio.Media.DISPLAY_NAME
                 else -> MediaStore.Images.Media.DISPLAY_NAME
@@ -418,19 +433,25 @@ object FileOperatorQ {
             MEDIA_TYPE_VIDEO, null, null, null, null, null, false
         )
         // Show only videos that are at least 5 minutes in duration.
-        queryStatement.append(
-            "${MediaStore.Video.Media.DURATION} >= ? ", noNull(
-                TimeUnit.MILLISECONDS.convert(
-                    sourceDuration,
-                    sourceUnit
-                ).toString()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            queryStatement.append(
+                "${MediaStore.Video.Media.DURATION} >= ? ", noNull(
+                    TimeUnit.MILLISECONDS.convert(
+                        sourceDuration,
+                        sourceUnit
+                    ).toString()
+                )
             )
-        )
+        }
         getMediaCursor(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projectionArgs, sortOrder, queryStatement)?.use { cursor ->
             // Cache column indices.
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
             val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
-            val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)
+            val durationColumn = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                cursor.getColumnIndex(MediaStore.Video.Media.DURATION)
+            } else {
+                TODO("VERSION.SDK_INT < Q")
+            }
             val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
 
             while (cursor.moveToNext()) {
