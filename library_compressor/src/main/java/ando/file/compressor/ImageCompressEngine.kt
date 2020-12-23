@@ -1,12 +1,28 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ando.file.compressor
 
-import android.graphics.*
-import android.net.Uri
 import ando.file.FileOperator.getContext
 import ando.file.core.*
 import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.openFileDescriptor
 import ando.file.core.FileUri.getUriByFile
+import android.graphics.*
+import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
 import java.io.*
 import kotlin.math.ceil
 import kotlin.math.max
@@ -30,7 +46,7 @@ object ImageCompressEngine {
     fun calculateInSampleSize(
         options: BitmapFactory.Options,
         srcWidth: Int,
-        srcHeight: Int
+        srcHeight: Int,
     ): Int {
         if (srcWidth <= 0 || srcHeight <= 0) return 1
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
@@ -81,28 +97,34 @@ object ImageCompressEngine {
      * 图片尺寸压缩 + 质量压缩
      *
      * @param cache 是否将压缩后的图片写入本地 Pictures/xxx
-     * @param sizeLimit 单位KB , 限制图片压缩的大小,仅限于 Q 以下
      */
     @Throws(IOException::class, FileNotFoundException::class)
     fun compressCompat(uri: Uri?, targetFile: File, cache: Boolean, focusAlpha: Boolean): Uri? =
         BitmapFactory.Options().run {
             if (uri == null || !ImageChecker.isImage(uri)) return null
-            val fd: FileDescriptor? = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
+            val fd: FileDescriptor = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
 
             var tagBitmap: Bitmap? = BitmapFactory.Options().run {
                 inJustDecodeBounds = true
                 BitmapFactory.decodeFileDescriptor(fd, null, this)
                 inSampleSize = calculateInSampleSize(outWidth, outHeight)
                 inJustDecodeBounds = false
-                FileLogger.w("inSampleSize= $inSampleSize")
                 BitmapFactory.decodeFileDescriptor(fd, null, this)
             }
 
-            val ins: InputStream? = getContext().contentResolver.openInputStream(uri)
-            if (ImageChecker.isJPG(ins)) {
-                tagBitmap = rotatingImage(tagBitmap, ImageChecker.getOrientation(ins))
-            }
-            var quality = 50
+            val ins: InputStream = getContext().contentResolver.openInputStream(uri) ?: return null
+            val angle: Int = if (ImageChecker.isJPG(ins)) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    ImageChecker.getRotateDegree(ExifInterface(ins))
+                } else {
+                    ImageChecker.getOrientation(ins)
+                }
+            } else -1
+            if (angle != -1) tagBitmap = rotatingImage(tagBitmap, angle)
+
+            FileLogger.w("inSampleSize= $inSampleSize  angle=$angle")
+
+            var quality = 70
             val byteArrOps = ByteArrayOutputStream(1024)
             tagBitmap?.compress(
                 if (focusAlpha) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG,
@@ -110,7 +132,7 @@ object ImageCompressEngine {
                 byteArrOps
             )
 
-            // 循环判断压缩后图片是否超过限制大小
+            // 循环判断压缩后图片是否超过数量限制和大小限制
             while (byteArrOps.toByteArray().size.div(256) > 512L) {
                 byteArrOps.reset()
                 tagBitmap?.compress(
@@ -119,7 +141,7 @@ object ImageCompressEngine {
                     byteArrOps
                 )
                 // 最低限度
-                if (quality == 30) break
+                if (quality == 50) break
                 quality -= 10
             }
             val byteArray = byteArrOps.toByteArray()
@@ -132,10 +154,12 @@ object ImageCompressEngine {
                     it.write(byteArray)
                     it.flush()
                     byteArrOps.close()
+                    ins.close()
                     getUriByFile(targetFile)
                 }
             } else {
                 byteArrOps.close()
+                ins.close()
                 null
             }
         }

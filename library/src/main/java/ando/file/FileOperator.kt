@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ando.file
 
 import android.app.Application
@@ -11,9 +26,7 @@ import java.io.File
 
 /**
  * Title: FileOperator
- * <p>
- * Description:
- * </p>
+ *
  * @author javakam
  * @date 2020/5/9  14:16
  */
@@ -40,35 +53,34 @@ object FileOperator {
     //--------------------------------------------------------------------------
 
     /**
-     * 获取数据库存储路径/data/data/包名/databases/
+     * 获取数据库存储路径(Get the database storage path) /data/data/包名/databases/
      */
     fun getDatabasePath(context: Context, dirName: String): String? {
         val root = context.getDatabasePath(null)
-        if (root != null) {
+        return if (root != null) {
             val path = root.absolutePath + File.separator + dirName + File.separator
             val file = File(path)
             if (!file.exists() && !file.mkdirs()) {
-                //throw RuntimeException("can't make dirs in " + file.absolutePath)
+                throw RuntimeException("can't make dirs in " + file.absolutePath)
             }
-            return path
-        }
-        return null
+            path
+        } else root
     }
 
     //getCacheDir
     //--------------------------------------------------------------------------
 
     /**
-     * 获取数据库存储路径/SDCard/Android/data/包名/cache/
+     * 获取外部缓存存储路径(Get external cache storage path) /SDCard/Android/data/包名/cache/
      */
-    fun getCacheDir(): File? =
-        if (isDebug()) getExternalCacheDir() else context.cacheDir
+    fun getCacheDir(): File? = if (isDebug()) getExternalCacheDir() else context.cacheDir
 
     fun getCachePath(dirName: String): String? = getCachePath(getCacheDir(), dirName)
 
     /**
-     * 获取数据库存储路径/SDCard/Android/data/包名/cache/
-     * 设置：对应清除缓存
+     * 获取缓存存储路径(Get cache storage path) /SDCard/Android/data/包名/cache/
+     *
+     * 设置：对应清除缓存(Setting: corresponding to clear cache)
      */
     fun getCachePath(cacheDir: File?, dirName: String): String? {
         val root = cacheDir?.absolutePath
@@ -76,7 +88,7 @@ object FileOperator {
             val path = root + File.separator + dirName + File.separator
             val file = File(path)
             if (!file.exists() && !file.mkdirs()) {
-                //throw  RuntimeException("can't make dirs in " + file.absolutePath);
+                throw  RuntimeException("can't make dirs in " + file.absolutePath);
             }
             path
         } else root
@@ -85,14 +97,14 @@ object FileOperator {
     //getFileDir
     //--------------------------------------------------------------------------
 
-    fun getFileDir(): File? =
-        if (isDebug()) getExternalFilesDir() else getFilesDir()
+    fun getFileDir(): File? = if (isDebug()) getExternalFilesDir() else getFilesDir()
 
     fun getFilesPath(dirName: String): String? = getFilesPath(getFileDir(), dirName)
 
     /**
-     * 获取数据库存储路径/SDCard/Android/data/包名/files/
-     * 设置：对应清除数据
+     * 获取文件存储路径(Get file storage path) /SDCard/Android/data/包名/files/
+     *
+     * 设置：对应清除数据(Settings: corresponding to clear data)
      */
     fun getFilesPath(filesDir: File?, dirName: String): String? {
         val root = filesDir?.absolutePath
@@ -100,7 +112,7 @@ object FileOperator {
             val path = root + File.separator + dirName + File.separator
             val file = File(path)
             if (!file.exists() && !file.mkdirs()) {
-                //throw  RuntimeException("can't make dirs in " + file.absolutePath);
+                throw  RuntimeException("can't make dirs in " + file.absolutePath);
             }
             path
         } else root

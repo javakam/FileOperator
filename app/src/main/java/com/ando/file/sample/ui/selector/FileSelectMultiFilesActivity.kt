@@ -1,38 +1,43 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ando.file.sample.ui.selector
 
-import ando.file.androidq.FileOperatorQ.getBitmapFromUri
-import ando.file.androidq.FileOperatorQ.loadThumbnail
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import ando.file.compressor.ImageCompressPredicate
 import ando.file.core.*
-import ando.file.compressor.OnImageCompressListener
-import ando.file.compressor.OnImageRenameListener
-import ando.file.compressor.ImageCompressor
-import com.ando.file.sample.R
-import ando.file.core.FileGlobal.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART
-import ando.file.core.FileGlobal.dumpMetaData
-import ando.file.core.FileOpener.openFileBySystemChooser
-import ando.file.core.FileUri.getFilePathByUri
+import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_ALL
+import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW
 import ando.file.selector.*
-import com.ando.file.sample.getPathImageCache
+import android.widget.Button
+import android.widget.RadioGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.ando.file.sample.*
+import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
-import kotlinx.android.synthetic.main.activity_file_operator.*
-import java.io.File
-import java.math.BigInteger
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
-import java.util.*
+import com.ando.file.sample.utils.ResultUtils
+import com.ando.file.sample.utils.ResultUtils.asVerticalList
 
 /**
- * Title: FileSelectFilesMultiActivity
+ * Title: FileSelectMultiFilesActivity
  *
- * Description: 多选文件
+ * Description: 多选多类型文件
  *
  * @author javakam
  * @date 2020/5/19  16:04
@@ -40,149 +45,57 @@ import java.util.*
 @SuppressLint("SetTextI18n")
 class FileSelectMultiFilesActivity : AppCompatActivity() {
 
-    private val REQUEST_CHOOSE_FILE = 10
+    private val mShowText: String = "选择多个不同类型文件"
+    private lateinit var mTvCurrStrategy: TextView
+    private lateinit var mRgStrategy: RadioGroup
+    private lateinit var mBtSelect: Button
+    private lateinit var mTvError: TextView
+    private lateinit var mRvResults: RecyclerView
 
-    //文件选择
+    private var mOverLimitStrategy: Int = OVER_LIMIT_EXCEPT_ALL
+
+    //展示结果(Show results)
+    private var mResultShowList: MutableList<ResultUtils.ResultShowBean>? = null
+    private val mAdapter: FileSelectResultAdapter by lazy { FileSelectResultAdapter() }
+
     private var mFileSelector: FileSelector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_file_operator)
-        PermissionManager.verifyStoragePermissions(this)
+        setContentView(R.layout.activity_select_multi_files)
+        mTvCurrStrategy = findViewById(R.id.tv_curr_strategy)
+        mTvError = findViewById(R.id.tv_error)
+        mRgStrategy = findViewById(R.id.rg_strategy)
+        mBtSelect = findViewById(R.id.bt_select_multi)
+        mRvResults = findViewById(R.id.rv_images)
+        mRvResults.asVerticalList()
+        mRvResults.adapter = mAdapter
         title = "多选文件"
 
-        mBtOpenMediaFile.visibility = View.VISIBLE
-
-        mBtChooseMultiFiles.visibility = View.VISIBLE
-        mBtChooseMultiFiles.setOnClickListener {
-            chooseFile()
-        }
-
-    }
-
-    private fun chooseFile() {
-        /*
-       说明:
-           FileOptions T 为 String.filePath / Uri / File
-           3M 3145728 Byte ; 5M 5242880 Byte; 10M 10485760 ; 20M = 20971520 Byte
-           50M 52428800 Byte ; 80M 83886080 ; 100M = 104857600 Byte
-        */
-
-        //图片
-        val optionsImage = FileSelectOptions().apply {
-            fileType = FileType.IMAGE
-            maxCount = 2
-            minCountTip = "至少选择一张图片"
-            maxCountTip = "最多选择两张图片"
-            singleFileMaxSize = 3145728
-            singleFileMaxSizeTip = "单张图片最大不超过3M！"
-            allFilesMaxSize = 5242880
-            allFilesMaxSizeTip = "图片总大小不超过5M！"
-            fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    return (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+        //策略切换
+        mRgStrategy.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.rb_strategy1 -> {
+                    this.mOverLimitStrategy = OVER_LIMIT_EXCEPT_ALL
+                    mTvCurrStrategy.text = "当前策略: OVER_LIMIT_EXCEPT_ALL"
                 }
-            }
-        }
-
-        //视频
-        val optionsVideo = FileSelectOptions().apply {
-            fileType = FileType.VIDEO
-            maxCount = 1
-            minCountTip = "至少选择一个视频文件"
-            maxCountTip = "最多选择一个视频文件"
-            singleFileMaxSize = 20971520
-            singleFileMaxSizeTip = "单视频最大不超过20M！"
-            allFilesMaxSize = 31457280
-            allFilesMaxSizeTip = "视频总大小不超过30M！"
-            fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    return (uri != null)
+                R.id.rb_strategy2 -> {
+                    this.mOverLimitStrategy = OVER_LIMIT_EXCEPT_OVERFLOW
+                    mTvCurrStrategy.text = "当前策略: OVER_LIMIT_EXCEPT_OVERFLOW"
                 }
-            }
-        }
-
-        mFileSelector = FileSelector
-            .with(this)
-            .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setSelectMode(true)
-            .setMinCount(1, "至少选一个文件!")
-            .setMaxCount(5, "最多选五个文件!")
-
-            // 优先使用自定义 FileSelectOptions 中设置的单文件大小限制,如果没有设置则采用该值
-            .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
-            .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
-
-            // 超过限制大小两种返回策略: 1.OVER_SIZE_LIMIT_ALL_DONT,超过限制大小全部不返回;2.OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART,超过限制大小去掉后面相同类型文件
-            .setOverSizeLimitStrategy(OVER_SIZE_LIMIT_EXCEPT_OVERFLOW_PART)
-            .setMimeTypes(null)//默认为 null,*/* 即不做文件类型限定;MIME_MEDIA 媒体文件,不同类型系统提供的选择UI不一样 eg:  arrayOf("video/*","audio/*","image/*")
-            .applyOptions(optionsImage, optionsVideo)
-
-            // 优先使用 FileOptions 中设置的 FileSelectCondition,没有的情况下才使用通用的
-            .filter(object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
-                    return when (fileType) {
-                        FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                        FileType.VIDEO -> true
-                        FileType.AUDIO -> true
-                        else -> true
-                    }
-                }
-            })
-            .callback(object : FileSelectCallBack {
-                override fun onSuccess(results: List<FileSelectResult>?) {
-                    FileLogger.w("回调 onSuccess ${results?.size}")
-                    mTvResult.text = ""
-                    if (results.isNullOrEmpty()) return
-
-                    showSelectResult(results)
-                }
-
-                override fun onError(e: Throwable?) {
-                    FileLogger.e("回调 onError ${e?.message}")
-                    mTvResultError.text = mTvResultError.text.toString().plus(" 错误信息: ${e?.message} \n")
-                }
-            })
-            .choose()
-    }
-
-    private fun showSelectResult(results: List<FileSelectResult>) {
-        mTvResult.text = ""
-        results.forEach {
-            val info = "${it.toString()}格式化 : ${FileSizeUtils.formatFileSize(it.fileSize)}\n"
-            FileLogger.w("FileOptions onSuccess  \n $info")
-
-            mTvResult.text = mTvResult.text.toString().plus(
-                """选择结果 : ${FileType.INSTANCE.typeByUri(it.uri)} 
-                    |---------
-                    |👉原文件
-                    |$info
-                    |""".trimMargin()
-            )
-        }
-        //测试打开音视频文件
-        mBtOpenMediaFile.setOnClickListener {
-            openFileBySystemChooser(this, results[0].uri)
-        }
-
-        results.forEach {
-            val uri = it.uri ?: return@forEach
-            when (FileType.INSTANCE.typeByUri(uri)) {
-                FileType.IMAGE -> {
-                    //原图
-                    val bitmap = getBitmapFromUri(uri)
-                    mIvOrigin.setImageBitmap(bitmap)
-                    mIvOrigin.setOnClickListener {
-                        openFileBySystemChooser(this, uri)
-                    }
-                    //压缩(Luban)
-                    val photos = mutableListOf<Uri>()
-                    photos.add(uri)
-                    compressImage(photos) //or Engine.compress(uri,  100L)
-                }
-                FileType.VIDEO -> loadThumbnail(uri, 100, 200)?.let { b -> mIvOrigin.setImageBitmap(b) }
                 else -> {
                 }
+            }
+        }
+        mTvCurrStrategy.text = "当前策略: ${
+            if (this.mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL) "OVER_LIMIT_EXCEPT_ALL"
+            else "OVER_LIMIT_EXCEPT_OVERFLOW"
+        }"
+
+        mBtSelect.text = "$mShowText (0)"
+        mBtSelect.setOnClickListener {
+            PermissionManager.requestStoragePermission(this) {
+                if (it) chooseFile()
             }
         }
     }
@@ -190,72 +103,147 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        mTvResultError.text = ""
-        mTvResult.text = ""
-        mIvOrigin.setImageBitmap(null)
-        mIvCompressed.setImageBitmap(null)
-
+        ResultUtils.resetUI(mTvError)
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
-    /**
-     * 压缩图片 1.Luban算法; 2.直接压缩 -> Engine.compress(uri,  100L)
-     *
-     * T 为 String.filePath / Uri / File
-     */
-    private fun <T> compressImage(photos: List<T>) {
-        ImageCompressor
-            .with(this)
-            .load(photos)
-            .ignoreBy(100)//B
-            .setTargetDir(getPathImageCache())
-            .setFocusAlpha(false)
-            .enableCache(true)
-            .filter(object : ImageCompressPredicate {
-                override fun apply(uri: Uri?): Boolean {
-                    FileLogger.i("image predicate $uri  ${getFilePathByUri(uri)}")
-                    return if (uri != null) {
-                        val path = getFilePathByUri(uri)
-                        !(TextUtils.isEmpty(path) || (path?.toLowerCase(Locale.getDefault())?.endsWith(".gif") == true))
-                    } else false
+    /*
+    字节码计算器 -> https://calc.itzmx.com/
+       3M  = 3145728  Byte
+       5M  = 5242880  Byte
+       10M = 10485760 Byte
+       20M = 20971520 Byte
+    */
+    private fun chooseFile() {
+        //图片
+        val optionsImage = FileSelectOptions().apply {
+            fileType = FileType.IMAGE
+            minCount = 1
+            maxCount = 2
+            minCountTip = "至少选择一张图片"
+            maxCountTip = "最多选择两张图片"
+            singleFileMaxSize = 5242880
+            singleFileMaxSizeTip = "单张图片最大不超过5M！"
+            allFilesMaxSize = 10485760
+            allFilesMaxSizeTip = "图片总大小不超过10M！"
+            fileCondition = object : FileSelectCondition {
+                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                    return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
-            })
-            .setRenameListener(object : OnImageRenameListener {
-                override fun rename(uri: Uri?): String? {
-                    try {
-                        val filePath = getFilePathByUri(uri)
-                        val md = MessageDigest.getInstance("MD5")
-                        md.update(filePath?.toByteArray() ?: return "")
-                        return BigInteger(1, md.digest()).toString(32)
-                    } catch (e: NoSuchAlgorithmException) {
-                        e.printStackTrace()
-                    }
-                    return ""
-                }
-            })
-            .setImageCompressListener(object : OnImageCompressListener {
-                override fun onStart() {}
-                override fun onSuccess(uri: Uri?) {
-                    val path = "$cacheDir/image/"
-                    FileLogger.i("compress onSuccess  uri=$uri  path=${uri?.path}  缓存目录总大小=${FileSizeUtils.getFolderSize(File(path))}")
+            }
+        }
 
-                    val bitmap = getBitmapFromUri(uri)
-                    dumpMetaData(uri) { displayName: String?, size: String? ->
-                        runOnUiThread {
-                            mTvResult.text = mTvResult.text.toString().plus(
-                                "\n ---------\n👉压缩后 \n Uri : $uri \n 路径: ${uri?.path} \n 文件名称 ：$displayName \n 大小：$size B \n" +
-                                        "格式化 : ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}\n ---------"
-                            )
-                        }
+        //音频
+        val optionsAudio = FileSelectOptions().apply {
+            fileType = FileType.AUDIO
+            minCount = 2
+            maxCount = 3
+            minCountTip = "至少选择两个音频文件"
+            maxCountTip = "最多选择三个音频文件"
+            singleFileMaxSize = 20971520
+            singleFileMaxSizeTip = "单音频最大不超过20M！"
+            allFilesMaxSize = 31457280
+            allFilesMaxSizeTip = "音频总大小不超过30M！"
+            fileCondition = object : FileSelectCondition {
+                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                    return (uri != null)
+                }
+            }
+        }
+
+        //文本文件 txt
+        val optionsTxt = FileSelectOptions().apply {
+            fileType = FileType.TXT
+            minCount = 1
+            maxCount = 2
+            minCountTip = "至少选择一个文本文件"
+            maxCountTip = "最多选择两个文本文件"
+            singleFileMaxSize = 5242880
+            singleFileMaxSizeTip = "单文本文件最大不超过5M！"
+            allFilesMaxSize = 10485760
+            allFilesMaxSizeTip = "文本文件总大小不超过10M！"
+            fileCondition = object : FileSelectCondition {
+                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                    return (uri != null)
+                }
+            }
+        }
+
+        /*
+          注:如果某个FileSelectOptions没通过限定条件, 则该FileSelectOptions不会返回
+          eg: 采用上面的限制条件下,图片、音频、文本文件各选一个, 因为音频最小数量设定为`2`不满足设定条件则去除所有音频选择结果
+            , 所以返回结果中只有图片和文本文件(限于OVER_LIMIT_EXCEPT_OVERFLOW)
+         */
+        mFileSelector = FileSelector
+            .with(this)
+            .setRequestCode(REQUEST_CHOOSE_FILE)
+            .setMultiSelect()//默认是单选false
+
+            /*
+            实际最少数量限制为 setMinCount 和 (optionsImage.minCount + optionsAudio.minCount +...) 中的最小值
+            实际最大数量限制为 setMaxCount 和 (optionsImage.maxCount + optionsAudio.maxCount +...) 中的最大值, 所以此处的最大值限制是无效的
+             */
+            .setMinCount(1, "设定类型文件至少选择一个!")
+            .setMaxCount(4, "最多选四个文件!")
+
+            /*
+            实际单文件大小限制为 setSingleFileMaxSize 和 (optionsImage.singleFileMaxSize + optionsAudio.singleFileMaxSize +...) 中的最小值
+            实际总大小限制为 setAllFilesMaxSize 和 (optionsImage.allFilesMaxSize + optionsAudio.allFilesMaxSize +...) 中的最大值
+             */
+            // 优先使用 `自定义FileSelectOptions` 中设置的单文件大小限制, 如果没有设置则采用该值
+            .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
+            .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
+
+            //1. 文件超过数量限制或大小限制
+            //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
+            .setOverLimitStrategy(this.mOverLimitStrategy)
+            //eg: ando.file.core.FileMimeType
+            .setMimeTypes(arrayOf("audio/*", "image/*", "text/plain"))//同"*/*",默认不做文件类型约束, 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+            //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
+            .applyOptions(optionsImage, optionsAudio, optionsTxt)
+
+            //优先使用 FileSelectOptions 中设置的 FileSelectCondition
+            .filter(object : FileSelectCondition {
+                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                    return when (fileType) {
+                        FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                        FileType.AUDIO -> true
+                        FileType.TXT -> true
+                        else -> false
                     }
-                    mIvCompressed.setImageBitmap(bitmap)
+                }
+            })
+            .callback(object : FileSelectCallBack {
+                override fun onSuccess(results: List<FileSelectResult>?) {
+                    FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
+                    mAdapter.setData(null)
+                    if (results.isNullOrEmpty()) {
+                        toastLong("没有选取文件")
+                        return
+                    }
+                    showSelectResult(results)
                 }
 
                 override fun onError(e: Throwable?) {
-                    FileLogger.e("compress onError ${e?.message}")
+                    FileLogger.e("FileSelectCallBack onError ${e?.message}")
+                    ResultUtils.setErrorText(mTvError, e)
+
+                    mAdapter.setData(null)
+                    mBtSelect.text = "$mShowText (0)"
                 }
-            }).launch()
+            })
+            .choose()
+    }
+
+    private fun showSelectResult(results: List<FileSelectResult>) {
+        ResultUtils.setErrorText(mTvError, null)
+        mBtSelect.text = "$mShowText (${results.size})"
+        ResultUtils.formatResults(results, true) { l ->
+            mResultShowList = l.map { p ->
+                ResultUtils.ResultShowBean(originUri = p.first, originResult = p.second)
+            }.toMutableList()
+        }
+        mAdapter.setData(mResultShowList)
     }
 
 }

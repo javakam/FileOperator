@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ando_str_single_file_type_mismatch">File type mismatch</string>
+    <string name="ando_str_single_file_size">Exceed the limit file size</string>
+    <string name="ando_str_all_file_size">Exceeds the total file size limit</string>
+    <string name="ando_str_count_min">Select at least one set type file</string>
+    <string name="ando_str_count_max">Exceed the limited number of files</string>
+
+</resources>

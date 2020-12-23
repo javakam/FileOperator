@@ -1,11 +1,10 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.novoda.bintray-release'
+//apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.github.panpf.bintray-publish'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
 
     defaultConfig {
         minSdkVersion 21
@@ -16,21 +15,18 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
     }
+
     buildTypes {
         debug {}
-        stage {}
         release {
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    lintOptions {
-        abortOnError false
     }
 
     // For Kotlin projects
@@ -45,22 +41,21 @@ android {
 }
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
-    testImplementation 'junit:junit:4.13.1'
 
-    compileOnly 'androidx.core:core-ktx:1.3.2'
     compileOnly 'androidx.appcompat:appcompat:1.2.0'
     compileOnly 'androidx.annotation:annotation:1.1.0'
-
 }
 
 //https://github.com/novoda/bintray-release/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3HOME
+//https://github.com/panpf/bintray-publish
 publish {
-    repoName = 'maven'
+    repoName = 'FileOperator'
     userOrg = 'javakam'
     groupId = 'ando.file'
-    artifactId = 'core'
-    publishVersion = '1.0.1'
-    desc = 'Ando File Helper Core Library.'
+    artifactId = 'FileOperatorCore'
+    publishVersion = '1.1.0'
+    desc = 'FileOperator Core Library.'
     website = "https://github.com/javakam/${rootProject.name}"
+    //true 上传前测试 ; false 正常上传
     //dryRun = true
 }

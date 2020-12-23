@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorPrimary">#23ADE5</color>
+    <color name="colorPrimaryDark">#CC23ADE5</color>
     <color name="colorAccent">#03DAC5</color>
 
     <color name="color_divider_gray">#918D8D</color>
 
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <color name="color_main_theme">#23ADE5</color>
+    <color name="color_main_theme_dark">#CC23ADE5</color>
+    <color name="color_font_black">#323232</color>
+    <color name="color_font_gray">#A2A2A2</color>
+
+    <color name="color_container_bg">#F4F4F4</color>
+    <color name="color_container_bg2">#FAFAFA</color>
+    <color name="color_container_bg3">#C2C2C2</color>
 </resources>

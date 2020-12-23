@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.novoda.bintray-release'
+//apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'com.github.panpf.bintray-publish'
 
 android {
     compileSdkVersion 30
@@ -44,12 +44,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.3.2'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    testImplementation 'junit:junit:4.13.1'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compileOnly 'androidx.core:core-ktx:1.3.2'
+    compileOnly 'androidx.appcompat:appcompat:1.2.0'
+    //https://github.com/Curzibn/Luban/issues/337
+    compileOnly "androidx.exifinterface:exifinterface:1.3.2"
 
     implementation project(':library')
     // implementation 'ando.file:file-core:1.0.0'
@@ -57,12 +56,12 @@ dependencies {
 }
 
 publish {
-    repoName = 'maven'
+    repoName = 'FileOperator'
     userOrg = 'javakam'
     groupId = 'ando.file'
-    artifactId = 'compressor'
-    publishVersion = '1.0.1'
-    desc = 'Ando File Helper Image Compressor.'
+    artifactId = 'FileOperatorCompressor'
+    publishVersion = '1.1.0'
+    desc = 'Android Image Compressor.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true
 }

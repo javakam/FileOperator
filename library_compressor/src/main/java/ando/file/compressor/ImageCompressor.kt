@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ando.file.compressor
 
 import android.content.Context
@@ -30,7 +45,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
      */
     private fun getImageCacheFile(
         context: Context,
-        suffix: String
+        suffix: String,
     ): File {
         if (TextUtils.isEmpty(mCacheDir)) {
             mCacheDir = getImageCacheDir(context)?.absolutePath
@@ -58,16 +73,18 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
     private fun launch(context: Context) {
         if (mUriProviders == null || mUriProviders.isNullOrEmpty()) {
             mImageCompressListener?.onError(NullPointerException("image file cannot be null"))
+            return
         }
-        mUriProviders?.let {
+        var position = -1
+        mUriProviders.let {
             val iterator = it.iterator()
             while (iterator.hasNext()) {
-                val path = iterator.next()
+                val uri: Uri = iterator.next()
                 @Suppress("DEPRECATION")
                 AsyncTask.execute {
                     try {
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_START))
-                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_SUCCESS, compress(context, path)))
+                        mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_SUCCESS, ++position, -1, compress(context, uri)))
                     } catch (e: IOException) {
                         mHandler.sendMessage(mHandler.obtainMessage(MSG_COMPRESS_ERROR, e))
                     }
@@ -126,7 +143,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
         if (mImageCompressListener == null) return false
         when (msg.what) {
             MSG_COMPRESS_START -> mImageCompressListener.onStart()
-            MSG_COMPRESS_SUCCESS -> mImageCompressListener.onSuccess(msg.obj as? Uri)
+            MSG_COMPRESS_SUCCESS -> mImageCompressListener.onSuccess(msg.arg1, msg.obj as? Uri)
             MSG_COMPRESS_ERROR -> mImageCompressListener.onError(msg.obj as? Throwable)
         }
         return false

@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.ando.file.sample.ui
 
 import android.annotation.SuppressLint
@@ -6,9 +21,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.FileSizeUtils
 import ando.file.core.FileLogger
-import com.ando.file.sample.R
-import kotlinx.android.synthetic.main.activity_file_clear_cache.*
+import ando.file.core.FileUri
+import android.widget.Button
+import android.widget.TextView
+import com.ando.file.sample.*
 import java.io.File
+import kotlin.text.StringBuilder
 
 /**
  * Title: 清除缓存页面
@@ -21,14 +39,30 @@ import java.io.File
 @SuppressLint("SetTextI18n")
 class FileClearCacheActivity : AppCompatActivity() {
 
+    private lateinit var tvDataDir: TextView
+    private lateinit var tvFilesDir: TextView
+    private lateinit var tvCacheDir: TextView
+    private lateinit var tvCompressedImgCacheDir: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_clear_cache)
+        tvDataDir = findViewById(R.id.tvDataDir)
+        tvFilesDir = findViewById(R.id.tvFilesDir)
+        tvCacheDir = findViewById(R.id.tvCacheDir)
+        tvCompressedImgCacheDir = findViewById(R.id.tvCompressedImageCacheDir)
 
         //清除缓存
-        mBtClearCache.setOnClickListener {
-
+        findViewById<Button>(R.id.mBtClearCache).setOnClickListener {
+            val result = clearCompressedImageCacheDir()
+            toastLong(if (result) "清理压缩图片缓存成功!" else "清理压缩图片缓存失败!")
+            refresh()
         }
+
+        refresh()
+    }
+
+    private fun refresh() {
 
         fileList()?.forEach {
             FileLogger.i("fileList item: $it")
@@ -55,6 +89,40 @@ class FileClearCacheActivity : AppCompatActivity() {
         //getExternalMediaDirs
         //getDir(String name, int mode)
 
+        ///////////////////////
+        val compressedImageCacheDir: String = getCompressedImageCacheDir()
+        FileUri.getUriByPath(compressedImageCacheDir)?.let { uri ->
+
+            /*
+            3.4KB
+            /data/data/com.ando.file.sample/cache/image
+
+            75.8KB
+            /data/data/com.ando.file.sample/cache/image/12msj1phcou6hj27svdm4lco3
+             */
+            val fileList: List<File>? = File(compressedImageCacheDir).listFiles()?.asList()
+            val childFileSb = StringBuilder()
+            fileList?.forEachIndexed { i, f ->
+                childFileSb.append("\n $i -> ${f.name} 大小: ${FileSizeUtils.formatFileSize(FileSizeUtils.getFileSize(f))}")
+            }
+
+            val sizeTotal = FileSizeUtils.calculateFileOrDirSize(compressedImageCacheDir)
+            val sizeTotal2 = FileSizeUtils.calculateFileOrDirSize(FileUri.getFilePathByUri(uri))
+
+            tvCompressedImgCacheDir.text =
+                """🍎压缩图片的缓存目录: 
+                | ❎路径: ${FileUri.getFilePathByUri(uri)} 大小: $sizeTotal2
+                | ❎大小(OpenableColumns.SIZE): ${FileSizeUtils.getFileSize(uri)}
+                | ---
+                | ✅路径: $compressedImageCacheDir 大小: $sizeTotal
+                | 格式化: ${FileSizeUtils.formatFileSize(sizeTotal)}
+                | 🍎缓存图片列表(${fileList?.size}): $childFileSb
+                | """.trimMargin()
+            tvCompressedImgCacheDir.setOnClickListener {
+                //FileOpener.openFileBySystemChooser(this, u, "file/*")
+            }
+        }
+        ///////////////////////
 
     }
 

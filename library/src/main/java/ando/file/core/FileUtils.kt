@@ -1,3 +1,18 @@
+/**
+ * Copyright (C)  javakam, FileOperator Open Source Project
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package ando.file.core
 
 import ando.file.FileOperator
@@ -108,6 +123,8 @@ object FileUtils {
     /**
      * 删除文件或目录
      *
+     * Delete files or directories
+     *
      * @param file
      * @return 0 目录不存在 ; 返回删除的 文件/文件夹 数量
      */
@@ -115,6 +132,8 @@ object FileUtils {
 
     /**
      * 删除文件或目录
+     *
+     * Delete files or directories
      * <p>
      *     建议异步处理
      *
@@ -145,6 +164,10 @@ object FileUtils {
 
     /**
      * 只删除文件，不删除文件夹
+     *
+     * Only delete files, not folders
+     *
+     * @param dir 目录
      */
     fun deleteFileDir(dir: File?): Boolean {
         if (dir == null || !dir.exists() || !dir.isDirectory) return false
@@ -175,6 +198,8 @@ object FileUtils {
 
     /**
      * 读取文本文件中的内容
+     *
+     * Read the contents of the text file
      */
     fun readFileText(path: String?): String {
         if (TextUtils.isEmpty(path)) {
@@ -219,7 +244,7 @@ object FileUtils {
         } catch (e: IOException) {
             e("readFileBytes -> ${e.message}")
         } finally {
-            closeIO(fis)
+            fis?.close()
         }
         return bytesArray
     }
@@ -228,7 +253,7 @@ object FileUtils {
     //----------------------------------------------------------------
 
     /**
-     * 根据文件路径拷贝文件 java.nio
+     * 根据文件路径拷贝文件(Copy files according to file path)
      *
      * eg :
      * boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i, getExternalFilesDir(null).getPath());
@@ -241,7 +266,7 @@ object FileUtils {
     fun copyFile(
         src: File?,
         destFileName: String,
-        destPath: String?
+        destPath: String?,
     ): Boolean {
         if (src == null || !src.exists() || destPath.isNullOrBlank()) return false
         val dest = File(destPath + destFileName)
@@ -263,8 +288,8 @@ object FileUtils {
             e.printStackTrace()
             false
         } finally {
-            closeIO(srcChannel)
-            closeIO(dstChannel)
+            srcChannel?.close()
+            dstChannel?.close()
         }
     }
 
@@ -272,8 +297,9 @@ object FileUtils {
     //----------------------------------------------------------------
 
     /**
-     * Bitmap 保存为本地文件
-     * @param fileName  格式必须带有后缀 xxx.png
+     * Bitmap 保存为本地文件 (Save Bitmap as a local file)
+     *
+     * @param fileName  格式必须带有后缀 xxx.png (The format must have the suffix xxx.png)
      */
     fun write2File(bitmap: Bitmap, fileName: String?) {
         if (fileName.isNullOrBlank()) return
@@ -285,7 +311,7 @@ object FileUtils {
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         } finally {
-            closeIO(out)
+            out?.close()
         }
     }
 
@@ -310,8 +336,8 @@ object FileUtils {
         } catch (e: IOException) {
             e.printStackTrace()
         } finally {
-            closeIO(input)
-            closeIO(output)
+            input?.close()
+            output?.close()
         }
     }
 
