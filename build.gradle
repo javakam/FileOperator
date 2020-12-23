@@ -9,7 +9,7 @@ buildscript {
         maven { url "https://maven.google.com" }
         jcenter()
         maven { url "https://jitpack.io" }
-        maven { url 'https://dl.bintray.com/javakam/maven' }
+        maven { url 'https://dl.bintray.com/javakam/FileOperator' }
         maven { url 'https://dl.bintray.com/novoda-oss/snapshots/' }
 
     }
@@ -29,7 +29,7 @@ allprojects {
         maven { url "https://maven.google.com" }
         jcenter()
         maven { url "https://jitpack.io" }
-        maven { url 'https://dl.bintray.com/javakam/maven' }
+        maven { url 'https://dl.bintray.com/javakam/FileOperator' }
         maven { url 'https://dl.bintray.com/novoda-oss/snapshots/' }
 
     }
