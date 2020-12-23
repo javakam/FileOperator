@@ -572,9 +572,9 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 7.多选图片和多选文件改为RecyclerView进行结果展示
 8.增加数量限制
 9.增加更多注释, 重要注释为汉英双译
-10.修复了一些BUG
+10.增加 LICENSE
+11.修复了一些BUG
 ```
-
 ### Fiexd Bug
 #### Invalid image: ExifInterface got an unsupported image format
 ```
