@@ -2,7 +2,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/maven/core/1.0.1/link"><img src="https://api.bintray.com/packages/javakam/maven/core/images/download.svg?version=1.0.1"/></a>
+<a href="https://bintray.com/javakam/maven/core/1.1.0/link"><img src="https://api.bintray.com/packages/javakam/maven/core/images/download.svg?version=1.1.0"/></a>
 
 - 🚀[FileOperator GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理Android系统文件操作
@@ -20,10 +20,10 @@ repositories {
 > 推荐方式 :
 
 ```
-implementation 'ando.file:core:1.0.1'         //核心库必选
-implementation 'ando.file:android-q:1.0.1'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.0.1'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.0.1'     //文件选择器
+implementation 'ando.file:core:1.1.0'         //核心库必选
+implementation 'ando.file:android-q:1.1.0'    //AndroidQ & Android 11 兼容库
+implementation 'ando.file:compressor:1.1.0'   //图片压缩,核心算法采用 Luban
+implementation 'ando.file:selector:1.1.0'     //文件选择器
 ```
 整体引入(不推荐):
 ```
@@ -622,9 +622,9 @@ Fixed: `ando.file.core.FileOpener.createChooseIntent`
 
 ## 参考
 
-- Logo <https://www.easyicon.net/1293281-folders_icon.html>
+Logo <https://www.easyicon.net/1293281-folders_icon.html>
 
-- Google
+Google
     - [Storage Samples Repository](https://github.com/android/storage-samples)
     - [SAF 使用存储访问框架打开文件](https://developer.android.google.cn/guide/topics/providers/document-provider)
     - [SAF API UseCase](https://developer.android.google.cn/training/data-storage/shared/documents-files)
@@ -639,27 +639,27 @@ Fixed: `ando.file.core.FileOpener.createChooseIntent`
 
 [Android 10 中的隐私权](https://developer.android.google.cn/about/versions/10/privacy/changes#scoped-storage)
 
-- Other
+Other
 
-[github/scoped_storage_sample](https://github.com/songlongGithub/scoped_storage_sample)
+    - [github/scoped_storage_sample](https://github.com/songlongGithub/scoped_storage_sample)
 
-[掘金-Android Q 适配指南 让你少走一堆弯路](https://juejin.im/post/5cad5b7ce51d456e5a0728b0)
+    - [掘金-Android Q 适配指南 让你少走一堆弯路](https://juejin.im/post/5cad5b7ce51d456e5a0728b0)
 
-[Android Q 沙箱适配多媒体文件总结](https://segmentfault.com/a/1190000019224425)
+    - [Android Q 沙箱适配多媒体文件总结](https://segmentfault.com/a/1190000019224425)
 
-[oppo AndroidQ适配指导](https://open.oppomobile.com/wiki/doc#id=10432)
+    - [oppo AndroidQ适配指导](https://open.oppomobile.com/wiki/doc#id=10432)
 
-[huawei Google Q版本应用兼容性整改指导](https://developer.huawei.com/consumer/cn/doc/50127)
+    - [huawei Google Q版本应用兼容性整改指导](https://developer.huawei.com/consumer/cn/doc/50127)
 
-- 参考项目
+参考项目
 
-[MaterialFiles](https://github.com/zhanghai/MaterialFiles)
+    - [MaterialFiles](https://github.com/zhanghai/MaterialFiles)
 
-[Shelter](https://github.com/PeterCxy/Shelter)
+    - [Shelter](https://github.com/PeterCxy/Shelter)
 
-[FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
+    - [FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
 
-[cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
+    - [cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
 
 ## library_file_downloader
 
