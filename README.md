@@ -12,14 +12,14 @@
 - 🚀`Kotlin Sample` 👉 [app](https://github.com/javakam/FileOperator/tree/master/app)
 - 🚀`Java Sample` 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
 
-## Gradle:
-Project `build.gradle` :
+## 引入
+##### 1. Project `build.gradle`:
 ```
 repositories {
     maven { url 'https://dl.bintray.com/javakam/FileOperator' }
 }
 ```
-> 推荐方式 :
+##### 2. 引入
 
 ```
 implementation 'ando.file:core:1.1.0'         //核心库必选
@@ -27,12 +27,8 @@ implementation 'ando.file:android-q:1.1.0'    //AndroidQ & Android 11 兼容库
 implementation 'ando.file:compressor:1.1.0'   //图片压缩,核心算法采用 Luban
 implementation 'ando.file:selector:1.1.0'     //文件选择器
 ```
-整体引入(不推荐):
-```
-implementation 'ando.file:FileOperator:0.9.1'
-```
 
-`Application`中初始化:
+##### 3. `Application`中初始化:
 ```kotlin
 FileOperator.init(this,BuildConfig.DEBUG)
 ```
