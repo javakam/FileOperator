@@ -89,7 +89,7 @@ class FileClearCacheActivity : AppCompatActivity() {
         //getExternalMediaDirs
         //getDir(String name, int mode)
 
-        ///////////////////////
+        /////////////////////// ando.file.core.FileUri.getPath -> MediaStore (and general)
         val compressedImageCacheDir: String = getCompressedImageCacheDir()
         FileUri.getUriByPath(compressedImageCacheDir)?.let { uri ->
 

@@ -1,20 +1,22 @@
 > **上一篇** 👉 [Android Q & Android 11存储适配(一) 基础知识点梳理](https://juejin.im/post/6854573214447140871)
 
+
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/maven/core/1.1.0/link"><img src="https://api.bintray.com/packages/javakam/maven/core/images/download.svg?version=1.1.0"/></a>
+<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.1.0/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.1.0"/></a>
 
-- 🚀[FileOperator GitHub](https://github.com/javakam/FileOperator)
-- 🚀更简单的处理Android系统文件操作
-- 🚀适用于 Android 4.4 及以上系统 , 兼容AndroidQ新的存储策略
+- 🚀[GitHub](https://github.com/javakam/FileOperator)
+- 🚀更简单的处理`Android`系统文件操作
+- 🚀适用于`Android 4.4`及以上系统, 兼容`AndroidQ`新的存储策略
 - 🚀图片压缩算法参考 [Luban](https://github.com/Curzibn/Luban)
-- 🚀Kotlin 案例 👉 [app](https://github.com/javakam/FileOperator/tree/master/app) & Java 案例 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
+- 🚀`Kotlin Sample` 👉 [app](https://github.com/javakam/FileOperator/tree/master/app)
+- 🚀`Java Sample` 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
 
 ## Gradle:
 Project `build.gradle` :
 ```
 repositories {
-    maven { url 'https://dl.bintray.com/javakam/maven' }
+    maven { url 'https://dl.bintray.com/javakam/FileOperator' }
 }
 ```
 > 推荐方式 :
@@ -29,8 +31,9 @@ implementation 'ando.file:selector:1.1.0'     //文件选择器
 ```
 implementation 'ando.file:FileOperator:0.9.1'
 ```
+
 `Application`中初始化:
-```
+```kotlin
 FileOperator.init(this,BuildConfig.DEBUG)
 ```
 
@@ -514,24 +517,26 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 ```
 
 ### 5. 通用文件工具类👉[FileUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileUtils.kt)
-- getExtension 获取文件后缀 `jpg`
-- getExtensionFull 获取文件后缀 `.jpg`
-- getExtensionFromUri(uri: Uri?) 获取文件后缀 
-- deleteFile 删除文件或目录
-- deleteFilesButDir(file: File?, vararg excludeDirs: String?) 删除文件或目录 , `excludeDirs` 跳过指定名称的一些`目录/文件`
-- deleteFileDir 只删除文件，不删除文件夹
-- readFileText 读取文本文件中的内容 `String`
-- readFileBytes 读取文本文件中的内容 `ByteArray`
-- copyFile 根据文件路径拷贝文件 `java.nio`
+- `getExtension` 获取文件后缀 `jpg`
+- `getExtensionFull` 获取文件后缀 `.jpg`
+- `getExtensionFromUri(uri: Uri?)` 获取文件后缀
+- `deleteFile` 删除文件或目录
+- `deleteFilesButDir(file: File?, vararg excludeDirs: String?)` 删除文件或目录 , `excludeDirs` 跳过指定名称的一些`目录/文件`
+- `deleteFileDir` 只删除文件，不删除文件夹
+- `readFileText` 读取文本文件中的内容 `String`
+- `readFileBytes` 读取文本文件中的内容 `ByteArray`
+- `copyFile` 根据文件路径拷贝文件 `java.nio`
 
 ```kotlin
-eg :boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i, getExternalFilesDir(null).getPath());
+eg :boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i,
+    getExternalFilesDir(null).getPath());
+
 File fileNew =new File(getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 ```
-- write2File(bitmap: Bitmap, fileName: String?)
-- write2File(input: InputStream?, filePath: String?)
-- isLocal 检验是否为本地URI
-- isGif() 检验是否为 gif
+- `write2File(bitmap: Bitmap, fileName: String?)`
+- `write2File(input: InputStream?, filePath: String?)`
+- `isLocal` 检验是否为本地URI
+- `isGif()` 检验是否为 gif
 
 ## 注意
 
@@ -548,9 +553,9 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 2. 选择文件不满足预设条件时,有两种策略 : 
 
-    - 1. OVER_LIMIT_EXCEPT_ALL 文件超过`数量或大小`限制直接返回失败, 回调 onError
+    - OVER_LIMIT_EXCEPT_ALL 文件超过`数量或大小`限制直接返回失败, 回调 onError
 
-    - 2. OVER_LIMIT_EXCEPT_OVERFLOW ① 文件超过数量限制或大小限制;
+    - OVER_LIMIT_EXCEPT_OVERFLOW ① 文件超过数量限制或大小限制;
     ② 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件;
     ③ 回调 onSuccess
 
@@ -576,8 +581,8 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 11.修复了一些BUG
 ```
 ### Fiexd Bug
-#### Invalid image: ExifInterface got an unsupported image format
-```
+#### 1.Invalid image: ExifInterface got an unsupported image format
+```kotlin
 W/ExifInterface: Invalid image: ExifInterface got an unsupported image format
     file(ExifInterface supports JPEG and some RAW image formats only) or a corrupted JPEG file to ExifInterface.
      java.io.IOException: Invalid byte order: 0
@@ -596,22 +601,26 @@ Fixed :
 
     Then replace `android.media.ExifInterface` with `androidx.exifinterface.media.ExifInterface`
 ```
-#### ImageDecoder$DecodeException: Failed to create image decoder with message
-```
-Caused by: android.graphics.ImageDecoder$DecodeException: Failed to create image decoder with message 'unimplemented'Input contained an error.
+#### 2.ImageDecoder$DecodeException: Failed to create image decoder with message
+```kotlin
+Caused by: android.graphics.ImageDecoder$DecodeException:
+Failed to create image decoder with message 'unimplemented'Input contained an error.
 ```
 
 [What is new in Android P — ImageDecoder & AnimatedImageDrawable](https://medium.com/appnroll-publication/what-is-new-in-android-p-imagedecoder-animatedimagedrawable-a65744bec7c1)
 
-#### SecurityException... you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
-```
-java.lang.SecurityException: UID 10483 does not have permission to content://com.android.providers.media.documents/document/image%3A16012 [user 0];
-you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
-```
-Fixed: `ando.file.core.FileOpener.createChooseIntent`
+#### 3.SecurityException... you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
 ```kotlin
-把 Intent(Intent.ACTION_GET_CONTENT) 改为 Intent(Intent.ACTION_OPEN_DOCUMENT)
+java.lang.SecurityException: UID 10483 does not have permission to
+    content://com.android.providers.media.documents/document/image%3A16012 [user 0];
+    you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
 ```
+> Fixed: `ando.file.core.FileOpener.createChooseIntent`
+把 Intent(Intent.ACTION_GET_CONTENT) 改为 Intent(Intent.ACTION_OPEN_DOCUMENT)
+
+#### 4.IllegalArgumentException: column '_data' does not exist
+
+<https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist>
 
 ## TODO
 ```
@@ -622,13 +631,13 @@ Fixed: `ando.file.core.FileOpener.createChooseIntent`
 
 ## 参考
 
-Logo <https://www.easyicon.net/1293281-folders_icon.html>
+### Google
 
-Google
+[Storage Samples Repository](https://github.com/android/storage-samples)
 
-    - [Storage Samples Repository](https://github.com/android/storage-samples)
-    - [SAF 使用存储访问框架打开文件](https://developer.android.google.cn/guide/topics/providers/document-provider)
-    - [SAF API UseCase](https://developer.android.google.cn/training/data-storage/shared/documents-files)
+[SAF 使用存储访问框架打开文件](https://developer.android.google.cn/guide/topics/providers/document-provider)
+
+[SAF API UseCase](https://developer.android.google.cn/training/data-storage/shared/documents-files)
 
 [管理分区外部存储访问](https://developer.android.google.cn/training/data-storage/files/external-scoped)
 
@@ -640,45 +649,49 @@ Google
 
 [Android 10 中的隐私权](https://developer.android.google.cn/about/versions/10/privacy/changes#scoped-storage)
 
-Other
+### Thanks
 
-    - [github/scoped_storage_sample](https://github.com/songlongGithub/scoped_storage_sample)
+[FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
 
-    - [掘金-Android Q 适配指南 让你少走一堆弯路](https://juejin.im/post/5cad5b7ce51d456e5a0728b0)
+[AndroidFilePicker](https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md)
 
-    - [Android Q 沙箱适配多媒体文件总结](https://segmentfault.com/a/1190000019224425)
+[FilePicker](https://github.com/chsmy/FilePicker)
 
-    - [oppo AndroidQ适配指导](https://open.oppomobile.com/wiki/doc#id=10432)
+[MaterialFilePicker](https://github.com/nbsp-team/MaterialFilePicker)
 
-    - [huawei Google Q版本应用兼容性整改指导](https://developer.huawei.com/consumer/cn/doc/50127)
+[LFilePicker](https://github.com/leonHua/LFilePicker)
 
-参考项目
+[Android-FilePicker](https://github.com/DroidNinja/Android-FilePicker)
 
-    - [MaterialFiles](https://github.com/zhanghai/MaterialFiles)
+[MaterialFiles](https://github.com/zhanghai/MaterialFiles)
 
-    - [Shelter](https://github.com/PeterCxy/Shelter)
+[Shelter](https://github.com/PeterCxy/Shelter)
 
-    - [FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
+[cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
 
-    - [cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
+### Other
 
-## library_file_downloader
+[LOGO](https://www.easyicon.net/1293281-folders_icon.html)
 
-> 项目基于 [OkDownload](https://github.com/lingochamp/okdownload) 实现
+[github/scoped_storage_sample](https://github.com/songlongGithub/scoped_storage_sample)
 
-- 断点异常的BUG <https://github.com/lingochamp/okdownload/issues/39>
+[掘金-Android Q 适配指南 让你少走一堆弯路](https://juejin.im/post/5cad5b7ce51d456e5a0728b0)
 
-- 中文文档 <https://github.com/lingochamp/okdownload/blob/master/README-zh.md>
+[Android Q 沙箱适配多媒体文件总结](https://segmentfault.com/a/1190000019224425)
 
-- Simple <https://github.com/lingochamp/okdownload/wiki/Simple-Use-Guideline>
+[oppo AndroidQ适配指导](https://open.oppomobile.com/wiki/doc#id=10432)
 
-- Advanced <https://github.com/lingochamp/okdownload/wiki/Advanced-Use-Guideline>
+[huawei Google Q版本应用兼容性整改指导](https://developer.huawei.com/consumer/cn/doc/50127)
 
-- AndroidFilePicker <https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md>
+## 许可(LICENSE)
 
-- FilePicker <https://github.com/chsmy/FilePicker>
-
-## bintrayUpload
-[novoda](https://github.com/novoda/bintray-release)
-
-`gradlew clean build bintrayUpload -PbintrayUser=javakam -PbintrayKey=xxx -PdryRun=false`
+    Copyright (C)  javakam, FileOperator Open Source Project
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+        http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

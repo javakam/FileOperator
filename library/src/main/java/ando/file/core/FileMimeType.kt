@@ -37,9 +37,8 @@ object FileMimeType {
      * @return mineType  "application/x-flac" , "video/3gpp" ...
      */
     fun getMimeType(str: String?): String {
-        val type = "*/*"
+        val type = "application/octet-stream"
         if (str.isNullOrBlank()) return type
-
         val extension = MimeTypeMap.getFileExtensionFromUrl(str)
         val mimeType = if (extension.isNullOrBlank()) getMimeTypeSupplement(str)
         else MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: type
@@ -56,7 +55,7 @@ object FileMimeType {
      * MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
      */
     private fun getMimeTypeSupplement(fileName: String): String {
-        var type = "*/*"
+        var type = "application/octet-stream"
         val dotIndex = fileName.lastIndexOf(".")
         if (dotIndex < 0) return type
         val end = fileName.substring(dotIndex).toLowerCase(Locale.getDefault())

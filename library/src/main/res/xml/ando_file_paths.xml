@@ -2,28 +2,28 @@
 <paths>
     <!--context.getFilesDir()-->
     <files-path
-        name="ando_file_repo"
+        name="ando_files"
         path="." />
 
     <!--context.getCacheDir()-->
     <cache-path
-        name="ando_file_cache"
+        name="ando_cache"
         path="." />
 
     <!--context.getExternalFilesDirs()-->
     <external-files-path
-        name="ando_file_external_files"
+        name="ando_external_files"
         path="." />
 
     <!-- getExternalCacheDirs() 此标签需要 support 25.0.0以上才可以使用-->
     <external-cache-path
-        name="ando_file_external_cache"
+        name="ando_external_cache"
         path="." />
 
     <!-- Environment.getExternalStorageDirectory()-->
     <!--   path="Android/data/包名/"  -->
     <external-path
-        name="ando_file_external_storage"
+        name="ando_external_path"
         path="." />
 
 </paths>

@@ -46,7 +46,7 @@ import androidx.fragment.app.Fragment
  * See android.os.ParcelFileDescriptor#openInternal
  *  [https://www.man7.org/linux/man-pages/man2/open.2.html](https://www.man7.org/linux/man-pages/man2/open.2.html)
  */
-internal const val PATH_SUFFIX = ".andoFileProvider"
+internal const val AUTHORITY = ".andoFileProvider"
 internal const val HIDDEN_PREFIX = "."
 
 internal fun noNull(s: String?): String = if (s.isNullOrBlank()) "" else s

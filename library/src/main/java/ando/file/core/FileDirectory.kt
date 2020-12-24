@@ -1,6 +1,6 @@
 /**
  * Copyright (C)  javakam, FileOperator Open Source Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,16 +27,14 @@ object FileDirectory {
      * File (not directories) filter.
      */
     var sFileFilter = FileFilter { file: File ->
-        val fileName = file.name
-        file.isFile && !fileName.startsWith(HIDDEN_PREFIX)
+        file.isFile && !file.name.startsWith(HIDDEN_PREFIX)
     }
 
     /**
      * Folder (directories) filter.
      */
     var sDirFilter = FileFilter { file: File ->
-        val fileName = file.name
-        file.isDirectory && !fileName.startsWith(HIDDEN_PREFIX)
+        file.isDirectory && !file.name.startsWith(HIDDEN_PREFIX)
     }
 
     // Checks if a volume containing external storage is available for read and write.
