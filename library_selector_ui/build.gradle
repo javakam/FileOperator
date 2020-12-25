@@ -25,20 +25,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     lintOptions {
         abortOnError false
     }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
     packagingOptions {
         exclude 'META-INF/*.kotlin_module'
     }
@@ -48,21 +44,21 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compileOnly 'androidx.core:core-ktx:1.3.2'
     compileOnly 'androidx.appcompat:appcompat:1.2.0'
-    //https://github.com/Curzibn/Luban/issues/337
-    compileOnly "androidx.exifinterface:exifinterface:1.3.2"
+    compileOnly 'androidx.activity:activity-ktx:1.2.0-beta02'
+    compileOnly 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    implementation project(':library')
-    // implementation 'ando.file:file-core:1.0.0'
-
+    compileOnly project(':library')
+    compileOnly project(':library_selector')
+    //compileOnly 'ando.file:selector:1.1.0'
 }
 
 publish {
     repoName = 'FileOperator'
     userOrg = 'javakam'
     groupId = 'ando.file'
-    artifactId = 'FileOperatorCompressor'
+    artifactId = 'FileOperatorSelectorUI'
     publishVersion = '1.1.0'
-    desc = 'Android Image Compressor.'
+    desc = 'Android File Selector UI.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true
 }

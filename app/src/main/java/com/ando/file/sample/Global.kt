@@ -86,7 +86,7 @@ fun showAlert(context: Context, title: String, msg: String, block: (isPositive: 
 }
 
 /**
- * 压缩图片 1.Luban算法; 2.直接压缩 -> Engine.compress(uri,  100L)
+ * 压缩图片 1.Luban算法; 2.直接压缩 -> val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
  *
  * T : String.filePath / Uri / File
  */

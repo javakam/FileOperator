@@ -187,7 +187,6 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             }
 
         var count = 0
-        //or Engine.compress(uri,  100L)
         compressImage(this, photos) { index, u ->
             FileLogger.i("compressImage onSuccess index=$index uri=$u " +
                     "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"

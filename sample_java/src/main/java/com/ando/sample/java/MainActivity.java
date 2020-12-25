@@ -192,7 +192,7 @@ public class MainActivity extends Activity {
                             //压缩(Luban)
                             List<Uri> photos = new ArrayList<Uri>();
                             photos.add(result.getUri());
-                            //or Engine.compress(uri,  100L)
+                            //or val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
                             compressImage(photos);
                         } catch (IOException e) {
                             e.printStackTrace();
