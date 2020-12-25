@@ -1,6 +1,6 @@
 /**
  * Copyright (C)  javakam, FileOperator Open Source Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
  */
 package com.ando.file.sample.ui.selector
 
+import ando.file.compressor.ImageCompressEngine
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -148,7 +149,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         //压缩
         val photos = listOf(uri)
 
-        //or Engine.compress(uri,  100L)
+        //or val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
         compressImage(this, photos) { _, u ->
             FileLogger.i("compressImage onSuccess uri=$u " +
                     "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"

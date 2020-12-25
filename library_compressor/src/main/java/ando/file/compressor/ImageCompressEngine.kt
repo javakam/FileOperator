@@ -1,6 +1,6 @@
 /**
  * Copyright (C)  javakam, FileOperator Open Source Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -164,37 +164,36 @@ object ImageCompressEngine {
             }
         }
 
+    /**
+     * 图片尺寸压缩 + 质量压缩
+     */
     fun compressPure(uri: Uri?): Bitmap? {
         if (!ImageChecker.isImage(uri)) return null
-        val fd: FileDescriptor? = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
+        val fd: FileDescriptor = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
 
         val bitmap: Bitmap = BitmapFactory.Options().run {
             inJustDecodeBounds = true
             BitmapFactory.decodeFileDescriptor(fd, null, this)
-            inSampleSize =
-                calculateInSampleSize(
-                    outWidth,
-                    outHeight
-                )
+            inSampleSize = calculateInSampleSize(outWidth, outHeight)
 
             inJustDecodeBounds = false
-            FileLogger.w("inSampleSize= $inSampleSize")
+            FileLogger.w("compressPure inSampleSize= $inSampleSize")
             BitmapFactory.decodeFileDescriptor(fd, null, this)
         }
 
-        FileLogger.w("compressBitmap uri ----- $uri  bitmap=$bitmap")
-        val baos = ByteArrayOutputStream()
-        var quality = 50
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos)
+        val byteArrOps = ByteArrayOutputStream()
+        var quality = 70
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrOps)
         // 大小限制
-        while (baos.toByteArray().size / 1024 > 512L) {
-            baos.reset()
-            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos)
-            if (quality == 30) {
+        while (byteArrOps.toByteArray().size / 1024 > 512L) {
+            byteArrOps.reset()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrOps)
+            if (quality == 50) {
                 break
             }
             quality -= 10
         }
+        byteArrOps.close()
         return bitmap
     }
 

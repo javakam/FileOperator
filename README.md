@@ -280,9 +280,16 @@ mFileSelector = FileSelector
 ```
 
 ### 4.压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
+
+#### 方式一 直接压缩(No Cache)
+```kotlin
+val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
+```
+
+#### 方式二 压缩图片(Cache Compressed Image)
 ```kotlin
 /**
- * 压缩图片 1.Luban算法; 2.直接压缩 -> Engine.compress(uri,  100L)
+ * 压缩图片 1.Luban算法; 2.直接压缩 -> val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
  *
  * T : String.filePath / Uri / File
  */
