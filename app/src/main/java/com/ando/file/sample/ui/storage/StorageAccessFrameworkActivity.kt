@@ -1,6 +1,6 @@
 /**
  * Copyright (C)  javakam, FileOperator Open Source Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,17 +46,38 @@ import ando.file.androidq.FileOperatorQ.selectSingleImage
 import ando.file.core.FileGlobal.MODE_WRITE_ONLY_ERASING
 import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileGlobal.openFileDescriptor
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import com.ando.file.sample.R
-import kotlinx.android.synthetic.main.activity_storage_access_framework.*
 import java.io.*
 
 class StorageAccessFrameworkActivity : AppCompatActivity() {
+
+    private lateinit var safSelectSingleFile: Button
+    private lateinit var createFileBtn: Button
+    private lateinit var deleteFileBtn: Button
+    private lateinit var renameFileBtn: Button
+    private lateinit var editDocumentBtn: Button
+    private lateinit var getDocumentTreeBtn: Button
+    private lateinit var showIv: ImageView
+    private lateinit var createFileUriTv: TextView
+    private lateinit var tvDocumentTreeFiles: TextView
 
     private var mCreateFile: BaseMediaColumnsData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_storage_access_framework)
+        safSelectSingleFile = findViewById(R.id.safSelectSingleFile)
+        createFileBtn = findViewById(R.id.createFileBtn)
+        deleteFileBtn = findViewById(R.id.deleteFileBtn)
+        renameFileBtn = findViewById(R.id.renameFileBtn)
+        editDocumentBtn = findViewById(R.id.editDocumentBtn)
+        createFileUriTv = findViewById(R.id.createFileUriTv)
+        getDocumentTreeBtn = findViewById(R.id.getDocumentTreeBtn)
+        tvDocumentTreeFiles = findViewById(R.id.tvDocumentTreeFiles)
+        showIv = findViewById(R.id.showIv)
 
         title = "SAF - Storage Access Framework"
 

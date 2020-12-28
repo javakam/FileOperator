@@ -1,6 +1,6 @@
 /**
  * Copyright (C)  javakam, FileOperator Open Source Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,8 +26,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import ando.file.core.FileLogger
 import ando.file.core.FileUri.getUriByFile
+import android.widget.Button
+import android.widget.TextView
 import com.ando.file.sample.R
-import kotlinx.android.synthetic.main.activity_app_specific.*
 import java.io.File
 
 /**
@@ -45,13 +46,29 @@ import java.io.File
  */
 class AppSpecificActivity : AppCompatActivity() {
 
+    private lateinit var tvAppSpecificTip: TextView
+    private lateinit var tvDocumentsFilesInfo: TextView
+    private lateinit var tvAppSpecific: TextView
+    private lateinit var getDocuments: Button
+    private lateinit var createDocumentsDirs: Button
+    private lateinit var createFileInDocuments: Button
+    private lateinit var shareFileInDocuments: Button
+    private lateinit var deleteFileInDocuments: Button
+
     private var mJustCreatedFile: File? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_specific)
-
+        tvAppSpecific = findViewById(R.id.tvAppSpecific)
+        tvAppSpecificTip = findViewById(R.id.tvAppSpecificTip)
+        tvDocumentsFilesInfo = findViewById(R.id.tvDocumentsFilesInfo)
+        getDocuments = findViewById(R.id.getDocuments)
+        createDocumentsDirs = findViewById(R.id.createDocumentsDirs)
+        createFileInDocuments = findViewById(R.id.createFileInDocuments)
+        shareFileInDocuments = findViewById(R.id.shareFileInDocuments)
+        deleteFileInDocuments = findViewById(R.id.deleteFileInDocuments)
         title = "App Specific"
 
         tvAppSpecificTip.text = "⭐沙盒目录(AppSpecific)操作直接沿用旧的 File API操作"
