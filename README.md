@@ -3,7 +3,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.1.0/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.1.0"/></a>
+<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.2.0/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.2.0"/></a>
 
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
@@ -22,10 +22,10 @@ repositories {
 ##### 2. 引入
 
 ```
-implementation 'ando.file:core:1.1.0'         //核心库必选
-implementation 'ando.file:android-q:1.1.0'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.1.0'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.1.0'     //文件选择器
+implementation 'ando.file:core:1.2.0'         //核心库必选
+implementation 'ando.file:android-q:1.2.0'    //AndroidQ & Android 11 兼容库
+implementation 'ando.file:compressor:1.2.0'   //图片压缩,核心算法采用 Luban
+implementation 'ando.file:selector:1.2.0'     //文件选择器
 ```
 
 ##### 3. `Application`中初始化:

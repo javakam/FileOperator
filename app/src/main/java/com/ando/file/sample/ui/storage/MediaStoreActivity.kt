@@ -1,6 +1,6 @@
 /**
  * Copyright (C)  javakam, FileOperator Open Source Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,10 +49,11 @@ import ando.file.core.FileGlobal.MEDIA_TYPE_IMAGE
 import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.dumpParcelFileDescriptor
 import ando.file.core.FileGlobal.openFileDescriptor
+import android.widget.Button
+import android.widget.TextView
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
 import com.bumptech.glide.Glide
-import kotlinx.android.synthetic.main.activity_media_store.*
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
@@ -70,9 +71,21 @@ import java.util.concurrent.TimeUnit
 class MediaStoreActivity : AppCompatActivity() {
 
     companion object {
-        val REQUEST_CODE_SENDER = 0x10
+        const val REQUEST_CODE_SENDER = 0x10
         val RELATIVE_PATH = "${Environment.DIRECTORY_PICTURES}${File.separator}img"
     }
+
+    private lateinit var tvMediaStoreTip: TextView
+    private lateinit var insertBitmapToPictures: Button
+    private lateinit var queryFileByDisplayName: Button
+    private lateinit var updateFileByMediaStoreBtn: Button
+    private lateinit var deleteFileByUri: Button
+    private lateinit var deleteFileAll: Button
+    private lateinit var queryFileByAll: Button
+    private lateinit var imageIv: ImageView
+    private lateinit var imageIv1: ImageView
+    private lateinit var imageIv2: ImageView
+    private lateinit var rvMediaImages: RecyclerView
 
     private var mInsertUri: Uri? = null
     private var mQueryUri: Uri? = null
@@ -80,6 +93,17 @@ class MediaStoreActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_media_store)
+        tvMediaStoreTip = findViewById(R.id.tvMediaStoreTip)
+        insertBitmapToPictures = findViewById(R.id.insertBitmapToPictures)
+        queryFileByDisplayName = findViewById(R.id.queryFileByDisplayName)
+        imageIv = findViewById(R.id.imageIv)
+        imageIv1 = findViewById(R.id.imageIv1)
+        imageIv2 = findViewById(R.id.imageIv2)
+        updateFileByMediaStoreBtn = findViewById(R.id.updateFileByMediaStoreBtn)
+        deleteFileByUri = findViewById(R.id.deleteFileByUri)
+        deleteFileAll = findViewById(R.id.deleteFileAll)
+        queryFileByAll = findViewById(R.id.queryFileByAll)
+        rvMediaImages = findViewById(R.id.rvMediaImages)
 
         title = "MediaStore"
 

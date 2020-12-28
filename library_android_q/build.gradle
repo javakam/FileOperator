@@ -59,8 +59,8 @@ publish {
     repoName = 'FileOperator'
     userOrg = 'javakam'
     groupId = 'ando.file'
-    artifactId = 'FileOperatorQ'
-    publishVersion = '1.1.0'
+    artifactId = 'android-q'
+    publishVersion = '1.2.0'
     desc = 'FileOperator Compatible with Android Q.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = false

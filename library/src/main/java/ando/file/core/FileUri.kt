@@ -278,7 +278,7 @@ object FileUri {
             val sizeIndex: Int = c.getColumnIndex(OpenableColumns.SIZE)
             c.moveToFirst()
             val name: String = c.getString(nameIndex)
-            val size = c.getLong(sizeIndex).toString()
+            //val size = c.getLong(sizeIndex).toString()
             val file = File(context.cacheDir, name)
 
             var inputStream: InputStream? = null
