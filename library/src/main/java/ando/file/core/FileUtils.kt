@@ -1,6 +1,6 @@
 /**
  * Copyright (C)  javakam, FileOperator Open Source Project
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -313,6 +313,19 @@ object FileUtils {
         } finally {
             out?.close()
         }
+    }
+
+    fun write2File(input: InputStream?, fileParentPath: String?, filePath: String?) {
+        if (fileParentPath.isNullOrBlank() || filePath.isNullOrBlank()) return
+        val targetFile = File(fileParentPath, filePath)
+        if (targetFile.exists() && targetFile.isDirectory) targetFile.delete()
+        if (targetFile.parentFile?.exists() == false) {
+            targetFile.parentFile?.mkdirs()
+        }
+        if (!targetFile.exists()) {
+            targetFile.createNewFile()
+        }
+        write2File(input, targetFile.absolutePath)
     }
 
     fun write2File(input: InputStream?, filePath: String?) {
