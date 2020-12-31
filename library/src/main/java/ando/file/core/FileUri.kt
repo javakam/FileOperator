@@ -1,18 +1,3 @@
-/**
- * Copyright (C)  javakam, FileOperator Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ando.file.core
 
 import ando.file.FileOperator
@@ -33,7 +18,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
-
 /**
  * Title: FileUri
  * <p>
@@ -44,7 +28,7 @@ import java.io.InputStream
  */
 object FileUri {
 
-    //从 File Path 中获取 Uri
+    //从 FilePath 中获取 Uri (Get Uri from FilePath)
     //----------------------------------------------------------------
 
     fun getUriByPath(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path))
@@ -63,7 +47,7 @@ object FileUri {
             } else Uri.fromFile(file)
         }
 
-    //获取Uri对应的文件路径 兼容API 26
+    //获取Uri对应的文件路径 兼容API 26 (Get the file path corresponding to Uri Compatible with API 26)
     //----------------------------------------------------------------
 
     /**
@@ -88,13 +72,13 @@ object FileUri {
     fun getFilePathByUri(context: Context?, uri: Uri?): String? {
         if (context == null || uri == null) return null
         val scheme = uri.scheme
-        // 以 file:// 开头的使用第三方应用打开
+        // 以 file:// 开头的使用第三方应用打开 (open with third-party applications starting with file://)
         if (ContentResolver.SCHEME_FILE.equals(scheme, ignoreCase = true)) return uri.path
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) getPath(context, uri) else getPathKitkat(context, uri)
     }
 
     /**
-     * 4.4版本
+     * Android 4.4 , API 19
      */
     private fun getPathKitkat(context: Context, contentUri: Uri): String? =
         context.contentResolver.query(contentUri, null, null, null, null).use { c ->

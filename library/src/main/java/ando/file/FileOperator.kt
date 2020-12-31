@@ -1,18 +1,3 @@
-/**
- * Copyright (C)  javakam, FileOperator Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ando.file
 
 import android.app.Application
@@ -56,7 +41,7 @@ object FileOperator {
      * 获取数据库存储路径(Get the database storage path) /data/data/包名/databases/
      */
     fun getDatabasePath(context: Context, dirName: String): String? {
-        val root = context.getDatabasePath(null)
+        val root: File? = context.getDatabasePath(null)
         return if (root != null) {
             val path = root.absolutePath + File.separator + dirName + File.separator
             val file = File(path)

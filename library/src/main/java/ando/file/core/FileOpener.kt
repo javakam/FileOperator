@@ -1,18 +1,3 @@
-/**
- * Copyright (C)  javakam, FileOperator Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ando.file.core
 
 import ando.file.core.FileMimeType.getMimeType
@@ -64,12 +49,13 @@ object FileOpener {
      *
      * (X) /data/user/0/xxx.xxx.app/cache/documents/microMsg.15798.jpg
      *
+     * @param context  Activity/Fragment/Context
      * @param mimeType 指定打开文件的 MimeType 类型 (Specify the MimeType of the opened file)
      *
      */
-    fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
+    fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null, title: String? = "选择程序") =
         uri?.let { u ->
-            Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
+            Intent.createChooser(createOpenFileIntent(u, mimeType), title)?.let {
                 startActivity(context, it)
             }
         }
@@ -92,7 +78,11 @@ object FileOpener {
      * 4. 开启多选(Open multiple selection) resultCode = -1
      */
     fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
-        // Implicitly allow the user to select a particular kind of data. Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
+        /*
+         * 隐式允许用户选择一种特定类型的数据。 Implicitly allow the user to select a particular kind of data.
+         *
+         * Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
+         */
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
             // The MIME data type filter

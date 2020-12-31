@@ -12,14 +12,14 @@
 - 🚀`Kotlin Sample` 👉 [app](https://github.com/javakam/FileOperator/tree/master/app)
 - 🚀`Java Sample` 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
 
-## 引入
+## 使用(Usage)
 ##### 1. Project `build.gradle`:
 ```
 repositories {
     maven { url 'https://dl.bintray.com/javakam/FileOperator' }
 }
 ```
-##### 2. 引入
+##### 2. 依赖(dependencies)
 
 ```
 implementation 'ando.file:core:1.2.0'         //核心库必选
@@ -28,20 +28,20 @@ implementation 'ando.file:compressor:1.2.0'   //图片压缩,核心算法采用 
 implementation 'ando.file:selector:1.2.0'     //文件选择器
 ```
 
-##### 3. `Application`中初始化:
+##### 3. `Application`中初始化(Initialization in Application)
 ```kotlin
 FileOperator.init(this,BuildConfig.DEBUG)
 ```
 
-##### 4. 混淆
+##### 4. 混淆(Proguard)
 
 > 未用到反射, 不需要混淆。
 
-## 预览
+## 预览(Preview)
 
 | 功能列表 | 缓存目录 |
 |:---:|:---:|
-| <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/func.png" width="290" height="610"/> | <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache.png" width="290" height="610"/> |
+| <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/func.png" width="290" height="600"/> | <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache.png" width="290" height="600"/> |
 
 ### 文件选择
 
@@ -527,6 +527,8 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 - `getExtension` 获取文件后缀 `jpg`
 - `getExtensionFull` 获取文件后缀 `.jpg`
 - `getExtensionFromUri(uri: Uri?)` 获取文件后缀
+- `getFileNameFromPath(path: String?)` 通过`FilePath`获取文件名
+- `getFileNameFromUri(uri: Uri?)` 通过`Uri`获取文件名
 - `deleteFile` 删除文件或目录
 - `deleteFilesButDir(file: File?, vararg excludeDirs: String?)` 删除文件或目录 , `excludeDirs` 跳过指定名称的一些`目录/文件`
 - `deleteFileDir` 只删除文件，不删除文件夹
@@ -629,13 +631,6 @@ java.lang.SecurityException: UID 10483 does not have permission to
 
 <https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist>
 
-## TODO
-```
-1.自定义UI文件管理器
-2.视频压缩, 完备应用目录信息, 外置存储适配
-3.整理更详细的文档 配合 `com.liulishuo.okdownload` 做文件下载 👉 `library_file_downloader`
-```
-
 ## 参考
 
 ### Google
@@ -692,11 +687,14 @@ java.lang.SecurityException: UID 10483 does not have permission to
 
 ## 许可(LICENSE)
 
-    Copyright (C)  javakam, FileOperator Open Source Project
+    Copyright 2019 javakam, FileOperator Open Source Project
+
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
+
         http://www.apache.org/licenses/LICENSE-2.0
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.

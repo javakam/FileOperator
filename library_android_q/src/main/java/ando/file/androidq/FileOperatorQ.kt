@@ -1,18 +1,3 @@
-/**
- * Copyright (C)  javakam, FileOperator Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ando.file.androidq
 
 import ando.file.FileOperator.getContext
@@ -28,6 +13,7 @@ import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileGlobal.openFileDescriptor
 import android.Manifest.permission.ACCESS_MEDIA_LOCATION
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.RecoverableSecurityException
 import android.content.*
@@ -61,8 +47,7 @@ import java.util.concurrent.TimeUnit
  */
 object FileOperatorQ {
 
-    //todo 2020年5月28日 17:14:02 测试该方法
-    private fun getAppSpecificAlbumStorageDir(context: Context, albumName: String): File? {
+    private fun getAppSpecificAlbumStorageDir(context: Context, albumName: String): File {
         // Get the pictures directory that's inside the app-specific directory on  external storage.
         val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), albumName)
         if (!file.exists() && !file.mkdirs()) {
@@ -275,7 +260,6 @@ object FileOperatorQ {
         }
     }
 
-    //todo 2020年5月28日 17:14:02 测试该方法
     private fun insertAudio(displayName: String?) {
         val resolver = getContext().contentResolver
         //https://developer.android.google.cn/training/data-storage/shared/media#kotlin

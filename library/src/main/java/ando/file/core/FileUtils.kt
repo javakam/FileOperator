@@ -1,18 +1,3 @@
-/**
- * Copyright (C)  javakam, FileOperator Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ando.file.core
 
 import ando.file.FileOperator
@@ -31,8 +16,6 @@ import java.util.*
 /**
  * Title:FileUtils
  *
- * Description:
- *
  * @author javakam
  * @date 2019/11/15 14:37
  */
@@ -49,6 +32,8 @@ object FileUtils {
      * fileName : 1586267702635.gif
      *
      * @return 默认返回 gif ; substring 时不加1为 .gif , 即 fullExtension=true
+     *
+     * (The default returns gif; when substring does not add 1 to .gif, that is fullExtension=true)
      */
     fun getExtension(fileName: String?, split: Char, fullExtension: Boolean): String {
         if (fileName.isNullOrBlank()) return ""

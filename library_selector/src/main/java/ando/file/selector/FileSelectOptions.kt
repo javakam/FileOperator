@@ -1,18 +1,3 @@
-/**
- * Copyright (C)  javakam, FileOperator Open Source Project
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package ando.file.selector
 
 import ando.file.core.FileType
@@ -28,16 +13,36 @@ import ando.file.selector.FileSelector.Companion.TIP_COUNT_MIN
 class FileSelectOptions {
 
     ///////////////////// 多选不同类型文件时配置 /////////////////////
-    var minCount: Int = 0             //选择文件最少数量, 优先使用 FileSelector.setMinCount 进行判定
-    var maxCount: Int = 0              //选择文件最大数量, 优先使用 FileSelector.setMaxCount 进行判定
+    // Configure when multiple files of different types are selected)
+    /**
+     * 选择文件最少数量, 优先使用 FileSelector.setMinCount 进行判定
+     *
+     * Select the minimum number of files, and use FileSelector.setMinCount first for judgment
+     */
+    var minCount: Int = 0
+    /**
+     * 选择文件最大数量, 优先使用 FileSelector.setMaxCount 进行判定
+     *
+     * Select the maximum number of files, first use FileSelector.setMaxCount for judgment
+     */
+    var maxCount: Int = 0
     var minCountTip: String? = TIP_COUNT_MIN
     var maxCountTip: String? = TIP_COUNT_MAX
-    ////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
 
     var fileType: FileType? = null
-    var fileTypeMismatchTip: String? = FileSelector.TIP_SINGLE_FILE_TYPE_MISMATCH //文件类型不匹配提示
-    var singleFileMaxSize: Long = -1                   //单文件大小控制 Byte
-    var allFilesMaxSize: Long = -1                     //总文件大小控制 Byte
+    /**
+     * 文件类型不匹配提示(File type mismatch prompt)
+     */
+    var fileTypeMismatchTip: String? = FileSelector.TIP_SINGLE_FILE_TYPE_MISMATCH
+    /**
+     * 单文件大小控制(Single file size control) Byte
+     */
+    var singleFileMaxSize: Long = -1
+    /**
+     * 总文件大小控制(Total file size control) Byte
+     */
+    var allFilesMaxSize: Long = -1
     var singleFileMaxSizeTip: String? = FileSelector.TIP_SINGLE_FILE_SIZE
     var allFilesMaxSizeTip: String? = FileSelector.TIP_SINGLE_FILE_SIZE
 

@@ -11,6 +11,12 @@
 
 - Advanced <https://github.com/lingochamp/okdownload/wiki/Advanced-Use-Guideline>
 
+## TODO
+```
+1.自定义UI文件管理器
+2.视频压缩, 完备应用目录信息, 外置存储适配
+3.整理更详细的文档 配合 `com.liulishuo.okdownload` 做文件下载 👉 `library_file_downloader`
+```
 
 ## 更新版本
 https://github.com/novoda/bintray-release
@@ -18,3 +24,4 @@ https://github.com/novoda/bintray-release
 https://github.com/panpf/bintray-publish
 
 `gradlew clean build bintrayUpload -PbintrayUser=javakam -PbintrayKey=xxx -PdryRun=false`
+
