@@ -33,11 +33,15 @@ implementation 'ando.file:selector:1.2.0'     //文件选择器
 FileOperator.init(this,BuildConfig.DEBUG)
 ```
 
-## 演示
+##### 4. 混淆
+
+> 未用到反射, 不需要混淆。
+
+## 预览
 
 | 功能列表 | 缓存目录 |
 |:---:|:---:|
-| ![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/func.png) | ![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache.png) |
+| <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/func.png" width="290" height="610"/> | <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache.png" width="290" height="610"/> |
 
 ### 文件选择
 

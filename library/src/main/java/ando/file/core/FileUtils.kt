@@ -126,7 +126,7 @@ object FileUtils {
      * Delete files or directories
      *
      * @param file
-     * @return 0 目录不存在 ; 返回删除的 文件/文件夹 数量
+     * @return 删除`文件/文件夹`数量
      */
     fun deleteFile(file: File?): Int = deleteFilesButDir(file, null)
 
@@ -139,6 +139,7 @@ object FileUtils {
      *
      * @param file  目录
      * @param excludeDirs  跳过指定名称的一些`目录/文件`
+     * @return 删除`文件/文件夹`数量
      */
     fun deleteFilesButDir(file: File?, vararg excludeDirs: String?): Int {
         var count = 0
@@ -155,6 +156,8 @@ object FileUtils {
             excludeDirs.forEach {
                 if (it?.equals(file.name, true) == false) if (file.delete()) count++
             }
+        }else{
+            if (file.delete()) count++
         }
         return count
     }
