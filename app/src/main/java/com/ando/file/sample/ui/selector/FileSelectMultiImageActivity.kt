@@ -114,12 +114,12 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setMultiSelect()//默认是单选false
-            .setMinCount(1, "至少选一个文件!")
-            .setMaxCount(2, "最多选两个文件!")
+            .setMinCount(1, "至少选一张图片!")
+            .setMaxCount(10, "最多选十张图片!")
 
             //优先使用 FileSelectOptions.singleFileMaxSize , 单位 Byte
-            .setSingleFileMaxSize(3145728, "单个大小不能超过3M！")
-            .setAllFilesMaxSize(20971520, "总文件大小不能超过20M！")
+            .setSingleFileMaxSize(3145728, "单张图片大小不能超过3M！")
+            .setAllFilesMaxSize(20971520, "图片总大小不能超过20M！")
 
             //1. 文件超过数量限制或大小限制
             //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
