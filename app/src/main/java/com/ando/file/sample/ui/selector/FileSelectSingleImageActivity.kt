@@ -1,16 +1,16 @@
 package com.ando.file.sample.ui.selector
 
-import ando.file.compressor.ImageCompressEngine
-import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.*
 import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW
 import ando.file.selector.*
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.ando.file.sample.*
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
@@ -49,6 +49,30 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         mBtSelectSingle.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
                 if (it) chooseFile()
+
+                //测试分享
+                /*if (it){
+                    mFileSelector = FileSelector.with(this)
+                        .setMimeTypes("application/json")
+                        .callback(object : FileSelectCallBack {
+                            override fun onError(e: Throwable?) {
+                                Log.e("123", e?.toString())
+                            }
+                            override fun onSuccess(results: List<FileSelectResult>?) {
+                                results?.first()?.apply {
+                                    Log.e("123", "${this.uri} ${FileMimeType.getMimeType(uri)}")
+                                    showSelectResult(results)
+                                    mTvResult.setOnClickListener {
+                                        uri?.apply {
+                                            FileOpener.openShare(this@FileSelectSingleImageActivity,this)
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                        .choose()
+                }
+                */
             }
         }
     }

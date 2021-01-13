@@ -5,15 +5,16 @@ plugins {
     id 'com.github.panpf.bintray-publish'
 }
 
-android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+def config = rootProject.ext.android
 
+android {
+    compileSdkVersion config.compileSdkVersion
+    buildToolsVersion config.buildToolsVersion
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion config.minSdkVersion
+        targetSdkVersion config.targetSdkVersion
+        versionCode config.versionCode
+        versionName config.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -49,7 +50,7 @@ dependencies {
 
     compileOnly project(':library')
     compileOnly project(':library_selector')
-    //compileOnly 'ando.file:selector:1.2.0'
+    //compileOnly 'ando.file:selector:1.3.0'
 }
 
 publish {
@@ -57,7 +58,7 @@ publish {
     userOrg = 'javakam'
     groupId = 'ando.file'
     artifactId = 'FileOperatorSelectorUI'
-    publishVersion = '1.2.0'
+    publishVersion = '1.3.0'
     desc = 'Android File Selector UI.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true

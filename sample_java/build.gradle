@@ -2,16 +2,16 @@ plugins {
     id 'com.android.application'
 }
 
-android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+def config = rootProject.ext.android
 
+android {
+    compileSdkVersion config.compileSdkVersion
+    buildToolsVersion config.buildToolsVersion
     defaultConfig {
-        applicationId "com.ando.sample.java"
-        minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion config.minSdkVersion
+        targetSdkVersion config.targetSdkVersion
+        versionCode config.versionCode
+        versionName config.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

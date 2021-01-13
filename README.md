@@ -3,7 +3,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.2.0/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.2.0"/></a>
+<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.0/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.0"/></a>
 
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
@@ -22,10 +22,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.2.0'         //核心库必选
-implementation 'ando.file:android-q:1.2.0'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.2.0'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.2.0'     //文件选择器
+implementation 'ando.file:core:1.3.0'         //核心库必选
+implementation 'ando.file:android-q:1.3.0'    //AndroidQ & Android 11 兼容库
+implementation 'ando.file:compressor:1.3.0'   //图片压缩,核心算法采用 Luban
+implementation 'ando.file:selector:1.3.0'     //文件选择器
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -35,23 +35,23 @@ FileOperator.init(this,BuildConfig.DEBUG)
 
 ##### 4. 混淆(Proguard)
 
-> 未用到反射, 不需要混淆。
+> 未用到反射, 不需要混淆。(No reflection is used, no need to be confused.)
 
 ## 预览(Preview)
 
-| 功能列表 | 缓存目录 |
+| 功能列表(Function list) | 缓存目录(Cache directory) |
 |:---:|:---:|
 | <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/func.png" width="290" height="600"/> | <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache.png" width="290" height="600"/> |
 
 ### 文件选择
 
-| 单图 + 压缩 | 多图 + 压缩 | 多文件 + 多类型 |
+| 单图+压缩(Single Image+Compress) | 多图+压缩(Multiple images+Compress) | 多文件+多类型(Multiple files+Multiple types) |
 |:---:|:---:|:---:|
 |![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick1.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick2.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick3.png)|
 
 ## Usage:
 
-### 1. 单选图片
+### 1. 单选图片(Single selection picture)
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
@@ -106,6 +106,8 @@ mFileSelector = FileSelector
 ```
 
 ### 2. 多选图片(多选+单一类型)
+Multiple selection pictures (multiple selection + single type)
+
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
@@ -166,6 +168,8 @@ mFileSelector = FileSelector
 > 🌴适用于处理复杂文件选择情形, 如: 选取图片、音频文件、文本文件, 其中`图片`至少选择一张, 最多选择两张, 每张图片大小不超过5M, 全部图片大小不超过10M;
  `音频文件`至少选择两个, 最多选择三个, 每个音频大小不超过20M, 全部音频大小不超过30M;
  `文本文件`至少选择一个, 最多选择两个, 每个文本文件大小不超过5M, 全部文本文件大小不超过10M
+
+> 🌴It is suitable for processing complex file selection situations, such as: select pictures, audio files, text files, among which, select at least one picture and two at most. The size of each picture does not exceed 5M, and the size of all pictures does not exceed 10M; `audio File `Choose at least two and a maximum of three, each audio size does not exceed 20M, all audio size does not exceed 30M; `text file` select at least one, select at most two, each text file size does not exceed 5M, all The text file size does not exceed 10M
 
 ```kotlin
 //图片
@@ -285,12 +289,12 @@ mFileSelector = FileSelector
 
 ### 4.压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
 
-#### 方式一 直接压缩(No Cache)
+#### 方式一 直接压缩不缓存(Direct compression without caching)
 ```kotlin
 val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
 ```
 
-#### 方式二 压缩图片(Cache Compressed Image)
+#### 方式二 压缩图片并缓存(Compress pictures and cache)
 ```kotlin
 /**
  * 压缩图片 1.Luban算法; 2.直接压缩 -> val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
@@ -337,7 +341,7 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
 }
 ```
 
-## 文件操作工具类
+## 文件操作工具类(File operation tools)
 
 > ☘ `FileOperator`提供了`Android`开发常用的一些文件操作工具类,使用方式大多以静态方法为主,需要的同学可以直接CV需要的文件
 
@@ -354,7 +358,8 @@ fun getMimeTypeSupplement(fileName: String): String {...}
 ```
 
 ### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileSizeUtils.kt)
-#### 获取指定`文件/文件夹`大小
+#### 获取指定`文件/文件夹`大小(Get the size of the specified `file folder`)
+
 ```kotlin
 @Throws(Exception::class)
 fun getFolderSize(file: File?): Long {
@@ -368,18 +373,21 @@ fun getFolderSize(file: File?): Long {
     return size
 }
 ```
-#### 获取文件大小
+#### 获取文件大小(Get file size)
 ```kotlin
 fun getFileSize(file: File?): Long{...}
 
 fun getFileSize(uri: Uri?): Long{...}
 ```
-#### 自动计算指定`文件/文件夹`大小
+#### 自动计算指定`文件/文件夹`大小(Automatically calculate the size of the specified `file folder`)
 自动计算指定文件或指定文件夹的大小 , 返回值带 B、KB、M、GB、TB 单位的字符串
+
 ```kotlin
 fun getFileOrDirSizeFormatted(path: String?): String {}...}
 ```
 #### 格式化大小(`BigDecimal`实现)
+Format size (implemented by `Big Decimal`)
+
 ```kotlin
 /**
  * @param scale 精确到小数点以后几位 (Accurate to a few decimal places)
@@ -410,7 +418,7 @@ fun formatFileSize(size: Long, scale: Int, withUnit: Boolean = false): String {
     return "${teraBytes.toPlainString()}${if (withUnit) SIZE_TYPE_TB.unit else ""}"
 }
 ```
-转换文件大小,指定转换的类型:
+转换文件大小,指定转换的类型(Convert file size, specify the type of conversion):
 
 ```kotlin
 //scale 精确到小数点以后几位
@@ -429,7 +437,7 @@ fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSize
     )
 ```
 
-转换文件大小带单位:
+转换文件大小带单位(Convert file size with unit):
 ```kotlin
 fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): String {
     return "${formatSizeByTypeWithoutUnit(size.toBigDecimal(), scale, sizeType).toPlainString()}${sizeType.unit}"
@@ -438,6 +446,8 @@ fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): St
 
 ### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileOpener.kt)
 #### 直接打开`Url`对应的系统应用
+Directly open the system application corresponding to `Url`
+
 eg: 如果url是视频地址,则直接用系统的播放器打开
 
 ```kotlin
@@ -451,7 +461,9 @@ fun openUrl(activity: Activity, url: String?) {
     }
 }
 ```
-#### 根据 文件路径 和 类型(后缀判断) 显示支持该格式的程序
+#### 根据`文件路径`和`类型(后缀判断)`显示支持该格式的程序
+According to `file path` and `type (judgment by suffix)` show programs that support the format
+
 ```kotlin
 fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
     uri?.let { u ->
@@ -461,6 +473,8 @@ fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
     }
 ```
 #### 选择文件【调用系统的文件管理】
+Select file [call system file management]
+
 ```kotlin
 /**
  * ### 选择文件【调用系统的文件管理】 (Select file [call system file management])
@@ -498,6 +512,7 @@ fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect
 ### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileUri.kt)
 
 #### 从`File`路径中获取`Uri`
+Obtain `Uri` from `File` path
 
 ```kotlin
 fun getUriByPath(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path))
@@ -512,6 +527,7 @@ fun getUriByFile(file: File?): Uri? =
 ```
 
 #### 获取`Uri`对应的文件路径,兼容`API 26`
+Get the file path corresponding to `Uri`, compatible with `API 26`
 
 ```kotlin
 fun getFilePathByUri(context: Context?, uri: Uri?): String? {
@@ -547,7 +563,7 @@ File fileNew =new File(getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 - `isLocal` 检验是否为本地URI
 - `isGif()` 检验是否为 gif
 
-## 注意
+## 注意(Note)
 
 1. `onActivityResult` 中要把选择文件的结果交给`FileSelector`处理 :
 
@@ -631,7 +647,7 @@ java.lang.SecurityException: UID 10483 does not have permission to
 
 <https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist>
 
-## 参考
+## 参考(Reference)
 
 ### Google
 
@@ -651,7 +667,7 @@ java.lang.SecurityException: UID 10483 does not have permission to
 
 [Android 10 中的隐私权](https://developer.android.google.cn/about/versions/10/privacy/changes#scoped-storage)
 
-### Thanks
+### 感谢(Thanks)
 
 [FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
 
@@ -671,7 +687,7 @@ java.lang.SecurityException: UID 10483 does not have permission to
 
 [cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
 
-### Other
+### 其它(Other)
 
 [LOGO](https://www.easyicon.net/1293281-folders_icon.html)
 

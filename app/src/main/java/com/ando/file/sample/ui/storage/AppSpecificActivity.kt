@@ -3,13 +3,13 @@ package com.ando.file.sample.ui.storage
 import ando.file.androidq.FileOperatorQ.createFileInAppSpecific
 import ando.file.androidq.FileOperatorQ.readTextFromUri
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import ando.file.core.FileLogger
+import ando.file.core.FileOpener
 import ando.file.core.FileUri.getUriByFile
 import android.widget.Button
 import android.widget.TextView
@@ -135,13 +135,7 @@ class AppSpecificActivity : AppCompatActivity() {
             if (fileUri != null) {
                 FileLogger.i(fileUri.toString() + "  " + contentResolver.getType(fileUri))
 
-                val intent = Intent(Intent.ACTION_SEND)
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                // Put the Uri and MIME type in the result Intent
-                intent.setDataAndType(fileUri, contentResolver.getType(fileUri))
-                // Set the result
-                // setResult(RESULT_OK, intent)
-                startActivity(Intent.createChooser(intent, "分享文件"))
+                FileOpener.openShare(this, fileUri)
             }
         }
 
