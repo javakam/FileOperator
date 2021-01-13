@@ -48,22 +48,20 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
         mBtSelectSingle.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
-                //if (it) chooseFile()
+                if (it) chooseFile()
 
-                if (it){
+                //测试分享
+                /*if (it){
                     mFileSelector = FileSelector.with(this)
                         .setMimeTypes("application/json")
                         .callback(object : FileSelectCallBack {
                             override fun onError(e: Throwable?) {
                                 Log.e("123", e?.toString())
                             }
-
                             override fun onSuccess(results: List<FileSelectResult>?) {
                                 results?.first()?.apply {
                                     Log.e("123", "${this.uri} ${FileMimeType.getMimeType(uri)}")
-
                                     showSelectResult(results)
-
                                     mTvResult.setOnClickListener {
                                         uri?.apply {
                                             FileOpener.openShare(this@FileSelectSingleImageActivity,this)
@@ -74,6 +72,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                         })
                         .choose()
                 }
+                */
             }
         }
     }
