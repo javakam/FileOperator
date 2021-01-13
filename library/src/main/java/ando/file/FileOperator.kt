@@ -28,11 +28,20 @@ object FileOperator {
         FileLogger.init(isDebug)
     }
 
-    fun getContext(): Context = context
+    fun getContext(): Context {
+        checkContext()
+        return context
+    }
 
-    fun getApplication(): Application = application
+    fun getApplication(): Application {
+        checkContext()
+        return application
+    }
 
-    fun isDebug(): Boolean = isDebug
+    fun isDebug(): Boolean {
+        checkContext()
+        return isDebug
+    }
 
     //getDatabasePath
     //--------------------------------------------------------------------------
@@ -101,6 +110,13 @@ object FileOperator {
             }
             path
         } else root
+    }
+
+    private fun checkContext() {
+        if (!::context.isInitialized) {
+            throw java.lang.RuntimeException("Must be initialized in Application : " +
+                    "FileOperator.init(this,BuildConfig.DEBUG)")
+        }
     }
 
 }

@@ -61,7 +61,7 @@ class FileSelector private constructor(builder: Builder) {
      *
      * When the type is not limited, it will be regarded as not being type limited
      */
-    private var mFileOptions: MutableList<FileSelectOptions>? = null
+    private var mFileSelectOptions: MutableList<FileSelectOptions>? = null
 
     private val mFileCountMap = ArrayMap<FileType, Int>()
     private val mFileSizeMap = ArrayMap<FileType, Long>()
@@ -89,7 +89,7 @@ class FileSelector private constructor(builder: Builder) {
         mOverLimitStrategy = builder.mOverLimitStrategy
         mFileSelectCondition = builder.mFileSelectCondition
         mFileSelectCallBack = builder.mFileSelectCallBack
-        mFileOptions = builder.mFileOptions
+        mFileSelectOptions = builder.mFileSelectOptions
     }
 
     fun choose(context: Context, mimeType: String?): FileSelector {
@@ -106,15 +106,15 @@ class FileSelector private constructor(builder: Builder) {
         if (requestCode == -1 || requestCode != mRequestCode) return
 
         //没有设定 FileSelectOptions 的情况(When FileSelectOptions is not set)
-        isOptionsEmpty = mFileOptions.isNullOrEmpty()
-        if (mFileOptions == null) mFileOptions = mutableListOf()
-        if (isOptionsEmpty) mFileOptions?.add(optionUnknown)
+        isOptionsEmpty = mFileSelectOptions.isNullOrEmpty()
+        if (mFileSelectOptions == null) mFileSelectOptions = mutableListOf()
+        if (isOptionsEmpty) mFileSelectOptions?.add(optionUnknown)
 
         //单选(Single choice) Intent.getData; 多选(Multiple choice) Intent.getClipData
         if (mIsMultiSelect) {
             if (intent?.clipData == null) {
                 //单一类型和多种类型(Single type and multiple types)
-                if ((mFileOptions?.size ?: 0 >= 2) && (mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL))
+                if ((mFileSelectOptions?.size ?: 0 >= 2) && (mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL))
                     mFileSelectCallBack?.onError(Throwable(mMinCountTip))
                 else handleSingleSelectCase(intent)
             } else handleMultiSelectCase(intent)
@@ -205,7 +205,7 @@ class FileSelector private constructor(builder: Builder) {
                 }
 
                 //单一类型(Single type)
-                val isOnlyOneType: Boolean = (mFileOptions?.size ?: 0 == 1)
+                val isOnlyOneType: Boolean = (mFileSelectOptions?.size ?: 0 == 1)
 
                 //FileSize
                 if (!sf) {
@@ -227,7 +227,7 @@ class FileSelector private constructor(builder: Builder) {
                     mFileCountMap[realType] = 0
                 }
                 mFileCountMap[realType] = mFileCountMap[realType]?.plus(1)
-                mFileOptions?.forEach { os: FileSelectOptions ->
+                mFileSelectOptions?.forEach { os: FileSelectOptions ->
                     val count: Int = mFileCountMap[os.fileType] ?: 0
                     //min
                     //最后再判断最少数量(Finally determine the minimum number)
@@ -316,7 +316,7 @@ class FileSelector private constructor(builder: Builder) {
         }
 
         //某些类型没有选(Some types are not selected)
-        val isOptionsSizeMatch = (mFileOptions?.size == relationMap.keys.size)
+        val isOptionsSizeMatch = (mFileSelectOptions?.size == relationMap.keys.size)
         FileLogger.w("Multi-> isFileTypeIllegal=$isFileTypeIllegal isFileSizeIllegal=$isFileSizeIllegal " +
                 "isFileCountIllegal=$isFileCountIllegal isOptionsSizeMatch=$isOptionsSizeMatch")
 
@@ -380,10 +380,10 @@ class FileSelector private constructor(builder: Builder) {
         val fileType = INSTANCE.typeByUri(uri)
         val fileSize = FileSizeUtils.getFileSize(uri)
 
-        val currentOption: List<FileSelectOptions>? = mFileOptions?.filter { it.fileType == fileType }
+        val currentOption: List<FileSelectOptions>? = mFileSelectOptions?.filter { it.fileType == fileType }
         val isOptionsNullOrEmpty = isOptionsEmpty || currentOption.isNullOrEmpty()
         if (isDebug()) {
-            FileLogger.i("filterUri: $uri fileType=$fileType currentOption=${currentOption?.size} isFileOptionsNullOrEmpty=$isOptionsNullOrEmpty")
+            FileLogger.i("filterUri: $uri fileType=$fileType currentOption=${currentOption?.size} isOptionsNullOrEmpty=$isOptionsNullOrEmpty")
         }
 
         if (currentOption.isNullOrEmpty()) {
@@ -392,8 +392,9 @@ class FileSelector private constructor(builder: Builder) {
         }
 
         if (isOptionsNullOrEmpty) {
-            //没有设置 FileSelectOptions 时,使用通用的配置 (When FileOptions is not set, the general configuration is used)
-            val isAccept = (mFileSelectCondition != null) && mFileSelectCondition?.accept(fileType, uri) ?: false
+            //没有设置 FileSelectOptions 时,使用通用的配置
+            //When FileSelectOptions is not set, the general configuration is used
+            val isAccept = (mFileSelectCondition == null) || (mFileSelectCondition?.accept(fileType, uri) == true)
             if (!isAccept) return
             block.invoke(null, fileType, true, fileSize, limitFileSize(fileSize, realSizeLimit(null)))
         } else {
@@ -435,7 +436,7 @@ class FileSelector private constructor(builder: Builder) {
 
     private val mRealMaxCount: Int by lazy {
         var shouldCount = 0
-        mFileOptions?.forEach { o: FileSelectOptions ->
+        mFileSelectOptions?.forEach { o: FileSelectOptions ->
             shouldCount += o.maxCount
         }
         if (shouldCount == mMaxCount && mMaxCount == 0 || mMaxCount < 0) Int.MAX_VALUE
@@ -460,7 +461,7 @@ class FileSelector private constructor(builder: Builder) {
 
     private val mRealAllFilesMaxSize: Long by lazy {
         var shouldSize = 0L
-        mFileOptions?.forEach { o: FileSelectOptions ->
+        mFileSelectOptions?.forEach { o: FileSelectOptions ->
             shouldSize += o.allFilesMaxSize
         }
         if (shouldSize == mAllFilesMaxSize && mAllFilesMaxSize == 0L || mAllFilesMaxSize < 0L) Long.MAX_VALUE
@@ -532,7 +533,7 @@ class FileSelector private constructor(builder: Builder) {
 
         var mFileSelectCondition: FileSelectCondition? = null
         var mFileSelectCallBack: FileSelectCallBack? = null
-        var mFileOptions: MutableList<FileSelectOptions>? = null
+        var mFileSelectOptions: MutableList<FileSelectOptions>? = null
 
         private fun build(): FileSelector {
             return FileSelector(this)
@@ -603,7 +604,7 @@ class FileSelector private constructor(builder: Builder) {
         }
 
         fun applyOptions(vararg options: FileSelectOptions): Builder {
-            this.mFileOptions = options.toMutableList()
+            this.mFileSelectOptions = options.toMutableList()
             return this
         }
 

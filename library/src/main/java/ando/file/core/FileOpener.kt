@@ -1,7 +1,10 @@
 package ando.file.core
 
 import ando.file.core.FileMimeType.getMimeType
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 
@@ -29,6 +32,46 @@ object FileOpener {
             activity.startActivity(intent)
         } catch (e: Exception) {
             FileLogger.e("openUrl error : " + e.message)
+        }
+    }
+
+    /**
+     * 打开系统分享弹窗(Open the system sharing popup)
+     */
+    fun openShare(context: Context, uri: Uri, title: String = "分享文件") {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.putExtra(Intent.EXTRA_STREAM, uri)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        // Put the Uri and MIME type in the result Intent
+        intent.setDataAndType(uri, getMimeType(uri))
+        context.startActivity(Intent.createChooser(intent, title))
+    }
+
+    /**
+     * 打开浏览器(Open browser)
+     */
+    @SuppressLint("QueryPermissionsNeeded")
+    fun openBrowser(
+        context: Context, url: String, title: String = "请选择浏览器", newTask: Boolean = false,
+        block: ((result: Boolean, msg: String?) -> Unit)? = null,
+    ) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(url)
+            if (newTask) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            //startActivity(intent)
+            //https://developer.android.com/about/versions/11/privacy/package-visibility
+            if (intent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(Intent.createChooser(intent, title))
+                block?.invoke(true, null)
+            } else {
+                block?.invoke(true, "没有可用浏览器")
+            }
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+            block?.invoke(true, e.toString())
         }
     }
 
@@ -60,6 +103,9 @@ object FileOpener {
             }
         }
 
+    fun openFileBySystemChooser(context: Any, uri: Uri?, title: String? = "选择程序") =
+        openFileBySystemChooser(context, uri, getMimeType(uri), title)
+
     /**
      * ### 选择文件【调用系统的文件管理】 (Select file [call system file management])
      *
@@ -79,14 +125,15 @@ object FileOpener {
      */
     fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
         /*
-         * 隐式允许用户选择一种特定类型的数据。 Implicitly allow the user to select a particular kind of data.
+         * 隐式允许用户选择一种特定类型的数据。
+         * Implicitly allow the user to select a particular kind of data.
          *
          * Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
          */
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
-            // The MIME data type filter
-            // Tip: type = "file/*" 比 */* 少了一些侧边栏选项(There are fewer sidebar options than */*)
+            //"file/*"比"*/*"少了一些侧边栏选项
+            //"file" has fewer sidebar options than "*/*"
             if (mimeType.isNullOrBlank() && mimeTypes.isNullOrEmpty()) type = "*/*"
             else {
                 type = if (mimeType.isNullOrEmpty()) "*/*" else mimeType
