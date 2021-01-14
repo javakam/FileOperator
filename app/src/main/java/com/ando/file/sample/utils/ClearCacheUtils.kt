@@ -10,7 +10,7 @@ import ando.file.core.FileUtils.deleteFileDir
 import java.io.File
 
 /**
- * Title: ClearCacheUtils
+ * ClearCacheUtils
  *
  * Description:清除缓存工具类
  *

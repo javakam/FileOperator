@@ -19,10 +19,10 @@ import java.io.FileOutputStream
 import java.io.InputStream
 
 /**
- * Title: FileUri
+ * FileUri
  * <p>
- * Description: Uri 工具类
- * </p>
+ * Description: Uri/Path Tools
+ *
  * @author javakam
  * @date 2020/8/24  11:24
  */
@@ -47,7 +47,8 @@ object FileUri {
             } else Uri.fromFile(file)
         }
 
-    //获取Uri对应的文件路径 兼容API 26 (Get the file path corresponding to Uri Compatible with API 26)
+    //获取Uri对应的文件路径, 兼容API 26
+    //Get the file path corresponding to Uri, Compatible with API 26
     //----------------------------------------------------------------
 
     /**

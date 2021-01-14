@@ -8,7 +8,7 @@ import ando.file.downloader.view.FileRecyclerAdapter
 import com.liulishuo.okdownload.DownloadTask
 
 /**
- * Title: QueueTaskAdapter4WithSpeed
+ * QueueTaskAdapter4WithSpeed
  *
  * Description:
  *

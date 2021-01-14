@@ -14,7 +14,7 @@ import java.io.File
 import kotlin.text.StringBuilder
 
 /**
- * Title: 清除缓存页面
+ * 清除缓存页面
  * <p>
  * Description:
  * </p>

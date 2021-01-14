@@ -1,7 +1,7 @@
 package com.ando.file.downloader;
 
 /**
- * Title: TaskBean
+ * TaskBean
  * <p>
  * Description:
  * </p>

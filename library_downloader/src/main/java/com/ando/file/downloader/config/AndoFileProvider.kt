@@ -3,7 +3,7 @@ package ando.file.common
 import androidx.core.content.FileProvider
 
 /**
- * Title: AndoFileProvider
+ * AndoFileProvider
  * <p>
  * Description:
  * </p>

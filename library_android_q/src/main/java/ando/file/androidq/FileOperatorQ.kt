@@ -38,7 +38,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
- * Title: FileOperatorQ
+ * FileOperatorQ
  * <p>
  * Description:
  * </p>

@@ -62,7 +62,7 @@ publish {
     userOrg = 'javakam'
     groupId = 'ando.file'
     artifactId = 'compressor'
-    publishVersion = '1.3.0'
+    publishVersion = config.versionName
     desc = 'Android Image Compressor.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true

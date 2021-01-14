@@ -4,7 +4,7 @@ import android.net.Uri
 import java.util.*
 
 /**
- * Title: BaseMediaColumnsData
+ * BaseMediaColumnsData
  * <p>
  * Description: android.provider.MediaStore.MediaColumns 映射数据类 , 包含常用的字段
  * </p>

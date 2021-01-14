@@ -7,7 +7,7 @@ import ando.file.common.FileType
 import java.util.*
 
 /**
- * Title: FileChooserHelper
+ * FileChooserHelper
  *
  *
  * Description:

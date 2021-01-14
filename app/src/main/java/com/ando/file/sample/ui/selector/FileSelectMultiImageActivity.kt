@@ -22,7 +22,7 @@ import com.ando.file.sample.utils.ResultUtils.asVerticalList
 import java.io.File
 
 /**
- * Title: FileSelectImageMultiActivity
+ * FileSelectImageMultiActivity
  *
  * Description: 多选图片
  *

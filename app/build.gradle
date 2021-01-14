@@ -15,6 +15,8 @@ android {
         versionCode config.versionCode
         versionName config.versionName
 
+        applicationId config.applicationId
+
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

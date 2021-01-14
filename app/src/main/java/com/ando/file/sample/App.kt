@@ -6,7 +6,7 @@ import ando.file.core.FileDirectory.getExternalFilesDirDOCUMENTS
 import com.ando.file.sample.utils.CrashHandler
 
 /**
- * Title: App
+ * App
  *
  * Description:
  *
