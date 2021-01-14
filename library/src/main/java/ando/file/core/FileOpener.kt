@@ -9,7 +9,7 @@ import android.content.Intent
 import android.net.Uri
 
 /**
- * Title: FileOpener
+ * FileOpener
  *
  * Description: 打开该 Uri 对应文件类型的所有软件, 通常情况下是个部弹窗
  *

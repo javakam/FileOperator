@@ -50,7 +50,7 @@ dependencies {
 
     compileOnly project(':library')
     compileOnly project(':library_selector')
-    //compileOnly 'ando.file:selector:1.3.0'
+
 }
 
 publish {
@@ -58,7 +58,7 @@ publish {
     userOrg = 'javakam'
     groupId = 'ando.file'
     artifactId = 'FileOperatorSelectorUI'
-    publishVersion = '1.3.0'
+    publishVersion = config.versionName
     desc = 'Android File Selector UI.'
     website = "https://github.com/javakam/${rootProject.name}"
     //dryRun = true

@@ -17,7 +17,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Title: FileSelector
+ * FileSelector
  *
  * @author javakam
  * @date 2020/5/21  9:32
@@ -25,11 +25,11 @@ import kotlin.math.min
 class FileSelector private constructor(builder: Builder) {
 
     companion object {
-        val TIP_SINGLE_FILE_TYPE_MISMATCH by lazy { getContext().getString(R.string.ando_str_single_file_type_mismatch) }
-        val TIP_SINGLE_FILE_SIZE by lazy { getContext().getString(R.string.ando_str_single_file_size) }
-        val TIP_ALL_FILE_SIZE by lazy { getContext().getString(R.string.ando_str_all_file_size) }
-        val TIP_COUNT_MIN by lazy { getContext().getString(R.string.ando_str_count_min) }
-        val TIP_COUNT_MAX by lazy { getContext().getString(R.string.ando_str_count_max) }
+        val TIP_SINGLE_FILE_TYPE_MISMATCH: String by lazy { getContext().getString(R.string.ando_str_single_file_type_mismatch) }
+        val TIP_SINGLE_FILE_SIZE: String by lazy { getContext().getString(R.string.ando_str_single_file_size) }
+        val TIP_ALL_FILE_SIZE: String by lazy { getContext().getString(R.string.ando_str_all_file_size) }
+        val TIP_COUNT_MIN: String by lazy { getContext().getString(R.string.ando_str_count_min) }
+        val TIP_COUNT_MAX: String by lazy { getContext().getString(R.string.ando_str_count_max) }
 
         fun with(context: Context): Builder {
             return Builder(context)
@@ -125,7 +125,11 @@ class FileSelector private constructor(builder: Builder) {
         this.mIsMultiSelect = false
         val intentData: Uri? = intent?.data
         if (intentData == null) {
-            mFileSelectCallBack?.onError(Throwable(mMinCountTip))
+            if (mMinCount > 0) {
+                mFileSelectCallBack?.onError(Throwable(mMinCountTip))
+            } else {
+                mFileSelectCallBack?.onSuccess(emptyList())
+            }
             return
         }
 

@@ -46,7 +46,7 @@ import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
 /**
- * Title: MediaStoreActivity
+ * MediaStoreActivity
  * <p>
  * Description: 沙盒 -> APP卸载,数据删除
  * </p>

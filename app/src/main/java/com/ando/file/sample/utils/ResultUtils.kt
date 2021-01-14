@@ -21,7 +21,7 @@ import com.ando.file.sample.showAlert
 import java.io.File
 
 /**
- * Title: ResultUtils
+ * ResultUtils
  * <p>
  * Description:
  * </p>

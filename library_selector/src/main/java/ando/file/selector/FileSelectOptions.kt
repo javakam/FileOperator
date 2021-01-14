@@ -5,7 +5,7 @@ import ando.file.selector.FileSelector.Companion.TIP_COUNT_MAX
 import ando.file.selector.FileSelector.Companion.TIP_COUNT_MIN
 
 /**
- * Title: FileSelectOptions
+ * FileSelectOptions
  *
  * @author javakam
  * @date 2020/5/21  10:51

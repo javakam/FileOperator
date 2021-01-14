@@ -1,7 +1,7 @@
 package ando.file.downloader;
 
 /**
- * Title: DownloadListener1Status
+ * DownloadListener1Status
  * <p>
  * Description: DownloadListener1 的状态
  * </p>

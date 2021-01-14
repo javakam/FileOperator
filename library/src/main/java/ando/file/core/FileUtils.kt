@@ -4,9 +4,6 @@ import ando.file.FileOperator
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.OpenableColumns
-import android.text.TextUtils
-import ando.file.core.FileLogger.e
-import ando.file.core.FileLogger.w
 import ando.file.core.FileMimeType.getMimeType
 import ando.file.core.FileUri.getFilePathByUri
 import java.io.*
@@ -141,7 +138,7 @@ object FileUtils {
             excludeDirs.forEach {
                 if (it?.equals(file.name, true) == false) if (file.delete()) count++
             }
-        }else{
+        } else {
             if (file.delete()) count++
         }
         return count
@@ -189,53 +186,54 @@ object FileUtils {
      *
      * Read the contents of the text file
      */
-    fun readFileText(path: String?): String {
-        if (TextUtils.isEmpty(path)) {
-            return ""
-        }
-        val content = StringBuilder() //文件内容字符串
-        val file = File(path ?: return "")
-        if (file.isDirectory) {
-            w("The File doesn't not exist.")
-        } else {
-            try {
-                val ins: InputStream = FileInputStream(file)
-                val reader = InputStreamReader(ins)
-                val bufferedReader = BufferedReader(reader)
-                var line: String?
-                //分行读取
-                while (bufferedReader.readLine().also { line = it } != null) {
-                    content.append(line).append("\n")
-                }
-                ins.close()
-                reader.close()
-                bufferedReader.close()
-            } catch (e: FileNotFoundException) {
-                e("The File doesn't not exist.")
-            } catch (e: IOException) {
-                e(e.message)
+    fun readFileText(stream: InputStream?): String? {
+        if (stream == null) return null
+        val content = StringBuilder()
+        try {
+            val reader = InputStreamReader(stream)
+            val bufferedReader = BufferedReader(reader)
+            var line: String?
+            while (bufferedReader.readLine().also { line = it } != null) {
+                content.append(line).append("\n")
             }
+            bufferedReader.close()
+            reader.close()
+            stream.close()
+        } catch (e: Exception) {
+            FileLogger.e(e.message)
         }
         return content.toString()
     }
 
-    fun readFileBytes(filePath: String?): ByteArray? {
-        if (filePath.isNullOrBlank()) return null
-        var fis: FileInputStream? = null
-        var bytesArray: ByteArray? = null
-        try {
-            val file = File(filePath)
-            bytesArray = ByteArray(file.length().toInt())
-            //read file into bytes[]
-            fis = FileInputStream(file)
-            fis.read(bytesArray)
-        } catch (e: IOException) {
-            e("readFileBytes -> ${e.message}")
-        } finally {
-            fis?.close()
+    fun readFileText(uri: Uri?): String? =
+        uri?.run {
+            readFileText(FileOperator.getContext().contentResolver.openInputStream(this))
         }
-        return bytesArray
-    }
+
+    fun readFileBytes(stream: InputStream?): ByteArray? =
+        stream?.use {
+            var byteArray: ByteArray? = null
+            try {
+                val buffer = ByteArrayOutputStream()
+                var nRead: Int
+                val data = ByteArray(1024)
+                while (stream.read(data, 0, data.size).also { nRead = it } != -1) {
+                    buffer.write(data, 0, nRead)
+                }
+
+                buffer.flush()
+                byteArray = buffer.toByteArray()
+                buffer.close()
+            } catch (e: IOException) {
+                FileLogger.e("readFileBytes: ${e.message}")
+            }
+            return byteArray
+        }
+
+    fun readFileBytes(uri: Uri?): ByteArray? =
+        uri?.run {
+            readFileBytes(FileOperator.getContext().contentResolver.openInputStream(this))
+        }
 
     //File Copy
     //----------------------------------------------------------------
@@ -248,16 +246,15 @@ object FileUtils {
      * File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
      *
      * @param src      源文件
-     * @param destPath 目标文件路径
-     * @return boolean 成功true、失败false
+     * @param destFilePath 目标文件路径
      */
     fun copyFile(
-        src: File?,
+        src: File,
         destFileName: String,
-        destPath: String?,
+        destFilePath: String,
     ): Boolean {
-        if (src == null || !src.exists() || destPath.isNullOrBlank()) return false
-        val dest = File(destPath + destFileName)
+        if (!src.exists() || destFilePath.isBlank()) return false
+        val dest = File(destFilePath + destFileName)
         if (dest.exists()) dest.delete() // delete file
 
         try {
@@ -285,13 +282,33 @@ object FileUtils {
     //----------------------------------------------------------------
 
     /**
+     * 创建文件(Create a file)
+     *
+     * eg: filePath is getExternalCacheDir() , fileName is xxx.json
+     *
+     * System path: /mnt/sdcard/Android/data/ando.guard/cache/xxx.json
+     */
+    fun createFile(filePath: String?, fileName: String?): File? {
+        if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return null
+        val file = File(filePath, fileName)
+        if (file.exists() && file.isDirectory) file.delete()
+        if (file.parentFile?.exists() == false) {
+            file.parentFile?.mkdirs()
+        }
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        return file
+    }
+
+    /**
      * Bitmap 保存为本地文件 (Save Bitmap as a local file)
      *
-     * @param fileName  格式必须带有后缀 xxx.png (The format must have the suffix xxx.png)
+     * @param pathAndName  格式必须带有后缀 xxx.png (The format must have the suffix xxx.png)
      */
-    fun write2File(bitmap: Bitmap, fileName: String?) {
-        if (fileName.isNullOrBlank()) return
-        val file = File(fileName)
+    fun write2File(bitmap: Bitmap, pathAndName: String?) {
+        if (pathAndName.isNullOrBlank()) return
+        val file = File(pathAndName)
         var out: BufferedOutputStream? = null
         try {
             out = BufferedOutputStream(FileOutputStream(file))
@@ -303,24 +320,14 @@ object FileUtils {
         }
     }
 
-    fun write2File(input: InputStream?, fileParentPath: String?, filePath: String?) {
-        if (fileParentPath.isNullOrBlank() || filePath.isNullOrBlank()) return
-        val targetFile = File(fileParentPath, filePath)
-        if (targetFile.exists() && targetFile.isDirectory) targetFile.delete()
-        if (targetFile.parentFile?.exists() == false) {
-            targetFile.parentFile?.mkdirs()
-        }
-        if (!targetFile.exists()) {
-            targetFile.createNewFile()
-        }
-        write2File(input, targetFile.absolutePath)
-    }
+    fun write2File(input: InputStream, filePath: String?, fileName: String?) =
+        write2File(input, createFile(filePath, fileName)?.absolutePath)
 
-    fun write2File(input: InputStream?, filePath: String?) {
-        if (filePath.isNullOrBlank()) return
+    fun write2File(input: InputStream, pathAndName: String?) {
+        if (pathAndName.isNullOrBlank()) return
         var output: FileOutputStream? = null
         try {
-            val file = File(filePath)
+            val file = File(pathAndName)
             val dir = file.parentFile
             if (dir == null || !dir.exists()) {
                 dir?.mkdirs()
@@ -330,14 +337,14 @@ object FileUtils {
             output = FileOutputStream(file)
             val b = ByteArray(1024)
             var length: Int
-            while (input?.read(b).also { length = it ?: 0 } != -1) {
+            while (input.read(b).also { length = it } != -1) {
                 output.write(b, 0, length)
             }
             output.flush()
         } catch (e: IOException) {
             e.printStackTrace()
         } finally {
-            input?.close()
+            input.close()
             output?.close()
         }
     }

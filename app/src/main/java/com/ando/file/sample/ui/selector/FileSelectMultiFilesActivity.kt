@@ -20,7 +20,7 @@ import com.ando.file.sample.utils.ResultUtils
 import com.ando.file.sample.utils.ResultUtils.asVerticalList
 
 /**
- * Title: FileSelectMultiFilesActivity
+ * FileSelectMultiFilesActivity
  *
  * Description: 多选多类型文件
  *

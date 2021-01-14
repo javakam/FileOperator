@@ -17,7 +17,7 @@ import com.ando.file.sample.R
 import java.io.File
 
 /**
- * Title: AppSpecificActivity
+ * AppSpecificActivity
  * <p>
  * Description: 沙盒 -> APP卸载,数据删除
  * </p>

@@ -18,7 +18,7 @@ import com.liulishuo.okdownload.core.listener.assist.Listener4SpeedAssistExtend.
 import ando.file.common.FileLogger
 
 /**
- * Title: QueueDownloadListener4WithSpeed
+ * QueueDownloadListener4WithSpeed
  * <p>
  * Description:
  * </p>

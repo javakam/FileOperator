@@ -3,7 +3,7 @@ package ando.file.downloader
 import com.liulishuo.okdownload.OkDownload
 
 /**
- * Title: DownLoadManager
+ * DownLoadManager
  *
  *
  * Description:

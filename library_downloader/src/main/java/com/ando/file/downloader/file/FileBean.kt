@@ -7,7 +7,7 @@ import android.os.Parcelable
 import ando.file.common.FileType
 
 /**
- * Title: FileBean
+ * FileBean
  *
  * Description:
  *

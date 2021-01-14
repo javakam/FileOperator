@@ -14,7 +14,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Title: ImageCompressEngine
+ * ImageCompressEngine
  * <p>
  * Description: 图片压缩
  * </p>

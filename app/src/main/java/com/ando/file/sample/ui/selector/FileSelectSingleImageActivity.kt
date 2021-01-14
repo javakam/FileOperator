@@ -18,7 +18,7 @@ import com.ando.file.sample.utils.ResultUtils
 import java.io.File
 
 /**
- * Title: FileSelectSingleImageActivity
+ * FileSelectSingleImageActivity
  *
  * Description: 单选图片
  *
@@ -48,10 +48,10 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
         mBtSelectSingle.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
-                if (it) chooseFile()
+                //if (it) chooseFile()
 
                 //测试分享
-                /*if (it){
+                if (it){
                     mFileSelector = FileSelector.with(this)
                         .setMimeTypes("application/json")
                         .callback(object : FileSelectCallBack {
@@ -59,7 +59,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                                 Log.e("123", e?.toString())
                             }
                             override fun onSuccess(results: List<FileSelectResult>?) {
-                                results?.first()?.apply {
+                                results?.firstOrNull()?.apply {
                                     Log.e("123", "${this.uri} ${FileMimeType.getMimeType(uri)}")
                                     showSelectResult(results)
                                     mTvResult.setOnClickListener {
@@ -72,7 +72,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                         })
                         .choose()
                 }
-                */
+
             }
         }
     }
