@@ -445,6 +445,46 @@ fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): St
 ```
 
 ### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileOpener.kt)
+#### 打开系统分享弹窗(Open the system sharing popup)
+```kotlin
+fun openShare(context: Context, uri: Uri, title: String = "分享文件") {
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.putExtra(Intent.EXTRA_STREAM, uri)
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+    // Put the Uri and MIME type in the result Intent
+    intent.setDataAndType(uri, getMimeType(uri))
+    context.startActivity(Intent.createChooser(intent, title))
+}
+```
+
+#### 打开浏览器(Open browser)
+```kotlin
+@SuppressLint("QueryPermissionsNeeded")
+fun openBrowser(
+    context: Context, url: String, title: String = "请选择浏览器", newTask: Boolean = false,
+    block: ((result: Boolean, msg: String?) -> Unit)? = null,
+) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        if (newTask) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        //startActivity(intent)
+        //https://developer.android.com/about/versions/11/privacy/package-visibility
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(Intent.createChooser(intent, title))
+            block?.invoke(true, null)
+        } else {
+            block?.invoke(true, "没有可用浏览器")
+        }
+    } catch (e: ActivityNotFoundException) {
+        e.printStackTrace()
+        block?.invoke(true, e.toString())
+    }
+}
+```
+
 #### 直接打开`Url`对应的系统应用
 Directly open the system application corresponding to `Url`
 
@@ -461,6 +501,7 @@ fun openUrl(activity: Activity, url: String?) {
     }
 }
 ```
+
 #### 根据`文件路径`和`类型(后缀判断)`显示支持该格式的程序
 According to `file path` and `type (judgment by suffix)` show programs that support the format
 
@@ -494,11 +535,16 @@ Select file [call system file management]
  * 4. 开启多选(Open multiple selection) resultCode = -1
  */
 fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
-    // Implicitly allow the user to select a particular kind of data. Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
+    /*
+     * 隐式允许用户选择一种特定类型的数据。
+     * Implicitly allow the user to select a particular kind of data.
+     *
+     * Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
+     */
     Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
-        // The MIME data type filter
-        // Tip: type = "file/*" 比 */* 少了一些侧边栏选项(There are fewer sidebar options than */*)
+        //"file/*"比"*/*"少了一些侧边栏选项
+        //"file" has fewer sidebar options than "*/*"
         if (mimeType.isNullOrBlank() && mimeTypes.isNullOrEmpty()) type = "*/*"
         else {
             type = if (mimeType.isNullOrEmpty()) "*/*" else mimeType
@@ -548,8 +594,8 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 - `deleteFile` 删除文件或目录
 - `deleteFilesButDir(file: File?, vararg excludeDirs: String?)` 删除文件或目录 , `excludeDirs` 跳过指定名称的一些`目录/文件`
 - `deleteFileDir` 只删除文件，不删除文件夹
-- `readFileText` 读取文本文件中的内容 `String`
-- `readFileBytes` 读取文本文件中的内容 `ByteArray`
+- `readFileText(InputStream/Uri): String?` 读取文本文件中的内容(Read the contents of the text file)
+- `readFileBytes(InputStream/Uri): ByteArray?` 读取文件中的内容并返回`ByteArray`
 - `copyFile` 根据文件路径拷贝文件 `java.nio`
 
 ```kotlin
@@ -558,6 +604,7 @@ eg :boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i,
 
 File fileNew =new File(getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
 ```
+
 - `write2File(bitmap: Bitmap, fileName: String?)`
 - `write2File(input: InputStream?, filePath: String?)`
 - `isLocal` 检验是否为本地URI

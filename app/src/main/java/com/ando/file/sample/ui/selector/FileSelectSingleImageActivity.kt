@@ -48,10 +48,10 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
         mBtSelectSingle.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
-                //if (it) chooseFile()
+                if (it) chooseFile()
 
                 //测试分享
-                if (it){
+                /*if (it){
                     mFileSelector = FileSelector.with(this)
                         .setMimeTypes("application/json")
                         .callback(object : FileSelectCallBack {
@@ -71,7 +71,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                             }
                         })
                         .choose()
-                }
+                }*/
 
             }
         }
