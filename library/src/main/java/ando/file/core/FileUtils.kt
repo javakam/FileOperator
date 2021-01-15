@@ -119,42 +119,60 @@ object FileUtils {
      * <p>
      *     建议异步处理
      *
-     * @param file  目录
-     * @param excludeDirs  跳过指定名称的一些`目录/文件`
+     * @param file  `文件/文件夹`
+     * @param excludeFiles 指定名称的一些`文件`不做删除(Some `files` with specified names are not deleted)
      * @return 删除`文件/文件夹`数量
      */
-    fun deleteFilesButDir(file: File?, vararg excludeDirs: String?): Int {
+    fun deleteFilesButDir(file: File?, vararg excludeFiles: String?): Int {
         var count = 0
         if (file == null || !file.exists()) return count
         if (file.isDirectory) {
             val children = file.listFiles()
-            var i = 0
-            while (children != null && i < children.size) {
-                count += deleteFile(children[i])
-                i++
+            if (children.isNullOrEmpty() && shouldFileDelete(file, *excludeFiles)) {
+                if (file.delete()) count++ //delete directory
+            } else {
+                var i = 0
+                while (children != null && i < children.size) {
+                    count += deleteFilesButDir(children[i], null)
+                    i++
+                }
             }
         }
-        if (!excludeDirs.isNullOrEmpty()) {
-            excludeDirs.forEach {
-                if (it?.equals(file.name, true) == false) if (file.delete()) count++
-            }
-        } else {
+        if (excludeFiles.isNullOrEmpty()) {
             if (file.delete()) count++
+        } else {
+            if (shouldFileDelete(file, *excludeFiles)) if (file.delete()) count++
         }
         return count
     }
 
-    fun deleteFileDir(dirPath: String?): Boolean =
-        if (dirPath.isNullOrBlank()) false else deleteFileDir(File(dirPath))
+    private fun shouldFileDelete(file: File, vararg excludeFiles: String?): Boolean {
+        var shouldDelete = true
+        excludeFiles.forEach {
+            shouldDelete = (it?.equals(file.name, true) == true)
+            if (shouldDelete) return@forEach
+        }
+        return shouldDelete
+    }
+
+    /**
+     * 如果 `File(dirPath).isDirectory==false`, 那么将不做后续处理
+     *
+     * If `File(dirPath).isDirectory==false`, then no subsequent processing will be done
+     *
+     * @param dirPath directory path
+     */
+    fun deleteFilesButDir(dirPath: String?): Boolean =
+        if (dirPath.isNullOrBlank()) false else deleteFilesButDirs(File(dirPath))
 
     /**
      * 只删除文件，不删除文件夹
      *
      * Only delete files, not folders
      *
-     * @param dir 目录
+     * @param dir directory
      */
-    fun deleteFileDir(dir: File?): Boolean {
+    fun deleteFilesButDirs(dir: File?): Boolean {
         if (dir == null || !dir.exists() || !dir.isDirectory) return false
 
         val children = dir.list()
@@ -168,7 +186,7 @@ object FileUtils {
                 if (child.list() == null || child.list()?.isEmpty() == true) {
                     continue
                 }
-                deleteFileDir(child)
+                deleteFilesButDirs(child)
             } else {
                 child.delete()
             }
