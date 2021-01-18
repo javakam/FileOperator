@@ -3,7 +3,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.1/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.1"/></a>
+<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.2/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.2"/></a>
 
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
@@ -22,10 +22,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.1'         //核心库必选
-implementation 'ando.file:android-q:1.3.1'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.3.1'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.3.1'     //文件选择器
+implementation 'ando.file:core:1.3.2'         //核心库必选
+implementation 'ando.file:android-q:1.3.2'    //AndroidQ & Android 11 兼容库
+implementation 'ando.file:compressor:1.3.2'   //图片压缩,核心算法采用 Luban
+implementation 'ando.file:selector:1.3.2'     //文件选择器
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -649,7 +649,9 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 ---
 
-## v1.1.0
+## 更新日志
+
+### v1.1.0
 ```
 1.增加文件类型不匹配判断;
 2.开启多选: FileSelector.setSelectMode(true) 改为 setMultiSelect() , 默认为单选模式
@@ -663,6 +665,12 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 10.增加 LICENSE
 11.修复了一些BUG
 ```
+### v1.3.2
+```
+1.修复`FileOpener.createChooseIntent`问题
+2.更新`FileUtils`并上传相应的用法示例
+```
+
 ### Fiexd Bug
 #### 1.Invalid image: ExifInterface got an unsupported image format
 ```kotlin
@@ -704,6 +712,18 @@ java.lang.SecurityException: UID 10483 does not have permission to
 #### 4.IllegalArgumentException: column '_data' does not exist
 
 <https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist>
+
+#### 5.ActivityNotFoundException: No Activity found to handle Intent
+```kotlin
+android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.OPEN_DOCUMENT cat=[android.intent.category.OPENABLE] (has extras) }
+at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2105)
+```
+> Fixed: `ando.file.core.FileOpener.createChooseIntent`:
+
+```kotlin
+Intent.setType("image / *")
+Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
+```
 
 ## 参考(Reference)
 
