@@ -43,9 +43,7 @@ import ando.file.selector.FileSelectResult;
 import ando.file.selector.FileSelector;
 
 /**
- * Title:MainActivity
- * <p>
- * Description:
+ * # MainActivity
  *
  * @author javakam
  * @date 2020/8/6 16:42
@@ -240,7 +238,7 @@ public class MainActivity extends Activity {
                     }
 
                     @Override
-                    public void onSuccess(int index,Uri uri) {
+                    public void onSuccess(int index, Uri uri) {
                         final String path = getCacheDir() + "/image/";
                         try {
                             FileLogger.INSTANCE.i("compress onSuccess  uri=" + uri + "  path= " + path

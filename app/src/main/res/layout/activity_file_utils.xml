@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:overScrollMode="always"
-    android:padding="@dimen/dp_15">
+    android:paddingLeft="@dimen/dp_15"
+    android:paddingRight="@dimen/dp_15">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,23 +13,22 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/bt_file_select_single"
+            android:id="@+id/bt_file_select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="选择一个文件并获取测试用的Uri"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/font_12"
-            android:textStyle="bold" />
+            android:textSize="@dimen/font_11" />
 
         <TextView
             android:id="@+id/tv_file_select_uri"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_5"
-            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_3"
+            android:layout_marginBottom="@dimen/dp_3"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_13"
+            android:textSize="@dimen/font_12"
             android:visibility="gone"
             tools:text="xxx" />
 
@@ -36,10 +36,10 @@
             android:id="@+id/tv_file_utils3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_5"
-            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_3"
+            android:layout_marginBottom="@dimen/dp_3"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14"
+            android:textSize="@dimen/font_12"
             android:visibility="gone"
             tools:text="xxx" />
 
@@ -47,28 +47,28 @@
             android:id="@+id/tv_file_utils4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_5"
-            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_3"
+            android:layout_marginBottom="@dimen/dp_3"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14"
+            android:textSize="@dimen/font_12"
             android:visibility="gone"
             tools:text="xxx" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/dp_3"
+            android:layout_marginBottom="@dimen/dp_3"
             android:background="@color/color_divider_gray" />
 
         <TextView
             android:id="@+id/tv_file_utils_url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_5"
-            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_3"
+            android:layout_marginBottom="@dimen/dp_3"
             android:textColor="@color/color_main_theme_dark"
-            android:textSize="@dimen/font_14"
+            android:textSize="@dimen/font_12"
             android:textStyle="bold"
             tools:text="xxx" />
 
@@ -76,28 +76,116 @@
             android:id="@+id/tv_file_utils1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_5"
-            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_3"
+            android:layout_marginBottom="@dimen/dp_3"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14"
+            android:textSize="@dimen/font_12"
             tools:text="xxx" />
 
         <TextView
             android:id="@+id/tv_file_utils2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dp_5"
-            android:layout_marginBottom="@dimen/dp_5"
+            android:layout_marginTop="@dimen/dp_3"
+            android:layout_marginBottom="@dimen/dp_3"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14"
+            android:textSize="@dimen/font_12"
             tools:text="xxx" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="@dimen/dp_3"
+            android:layout_marginBottom="@dimen/dp_3"
             android:background="@color/color_divider_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FileUtils 演示操作文件"
+            android:textColor="@color/color_main_theme_dark"
+            android:textSize="@dimen/font_13"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_file_utils_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_11"
+            tools:text="文件信息" />
+
+        <Button
+            android:id="@+id/bt_file_utils_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="创建temp.html"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_11" />
+
+        <Button
+            android:id="@+id/bt_file_utils_open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="打开temp.html"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_11" />
+
+        <Button
+            android:id="@+id/bt_file_utils_write"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="向temp.html写入数据"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_11" />
+
+        <Button
+            android:id="@+id/bt_file_utils_read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="从temp.html读取数据"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_11" />
+
+        <TextView
+            android:id="@+id/tv_file_utils_read_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_11"
+            android:visibility="gone"
+            tools:text="xxx" />
+
+        <Button
+            android:id="@+id/bt_file_utils_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="复制temp.html到其他路径"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_11" />
+
+        <TextView
+            android:id="@+id/tv_file_utils_copy_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_11"
+            android:visibility="gone"
+            tools:text="xxx" />
+
+        <Button
+            android:id="@+id/bt_file_utils_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="删除temp.html"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_11" />
 
     </LinearLayout>
 

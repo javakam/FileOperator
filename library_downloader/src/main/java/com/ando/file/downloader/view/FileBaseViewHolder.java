@@ -24,11 +24,11 @@ import androidx.collection.ArraySet;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
- * Title:BaseVirtualViewHolder
+ * # FileBaseViewHolder
  * <p>
  * Description:  Joan Zapata  &  https://github.com/CymChad/BaseRecyclerViewAdapterHelper
- * </p>
- * Author javakam
+ *
+ * @author javakam
  * Date 2018/10/25 9:39
  */
 public class FileBaseViewHolder extends RecyclerView.ViewHolder {

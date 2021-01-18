@@ -1,10 +1,8 @@
 package com.ando.file.sample.utils
 
 import ando.file.androidq.FileOperatorQ
+import ando.file.core.*
 import ando.file.core.FileGlobal.dumpMetaData
-import ando.file.core.FileMimeType
-import ando.file.core.FileOpener
-import ando.file.core.FileSizeUtils
 import ando.file.selector.FileSelectResult
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -21,10 +19,8 @@ import com.ando.file.sample.showAlert
 import java.io.File
 
 /**
- * ResultUtils
- * <p>
- * Description:
- * </p>
+ * # ResultUtils
+ *
  * @author javakam
  * @date 2020/12/10  11:06
  */
@@ -78,6 +74,35 @@ object ResultUtils {
             BitmapFactory.decodeResource(context.resources, R.mipmap.ic_place_holder) else bitmap)
         imageView.setOnClickListener {
             FileOpener.openFileBySystemChooser(context, uri, "image/*")
+        }
+    }
+
+    fun setCoreResults(tvResult: TextView, file: File?) {
+        tvResult.text = ""
+        if (file == null || !file.exists()) {
+            tvResult.visibility = View.GONE
+            return
+        } else {
+            tvResult.visibility = View.VISIBLE
+        }
+        val uri: Uri = FileUri.getUriByFile(file) ?: return
+        val size: Long = FileSizeUtils.calculateFileOrDirSize(file.path)
+
+        val info = "格式化大小: ${FileSizeUtils.formatFileSize(size)}\n" +
+                " 格式化大小(不带单位, 保留三位小数): ${FileSizeUtils.formatFileSize(size, 3)}\n" +
+                " 格式化大小(自定义单位, 保留一位小数): ${FileSizeUtils.formatSizeByTypeWithUnit(size, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
+
+        dumpMetaData(uri = uri) { name: String?, _: String? ->
+            val text = """
+                    | ------------------
+                    | 🍎文件名: $name
+                    | 文件类型: ${FileType.INSTANCE.typeByFile(file)}
+                    | 路径: ${file.path}
+                    | MimeType: ${FileMimeType.getMimeType(uri)}
+                    | $info
+                    | 文件是否存在: ${file.exists()}
+                    | ------------------${"\n"}""".trimMargin()
+            tvResult.text = tvResult.text.toString().plus(text)
         }
     }
 

@@ -13,7 +13,6 @@ import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileGlobal.openFileDescriptor
 import android.Manifest.permission.ACCESS_MEDIA_LOCATION
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.RecoverableSecurityException
 import android.content.*
@@ -1025,7 +1024,7 @@ object FileOperatorQ {
         try {
             io?.close()
         } catch (e: IOException) {
-            e.printStackTrace()
+            FileLogger.e(e.message)
         }
     }
 

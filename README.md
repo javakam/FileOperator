@@ -598,24 +598,28 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 - `getExtensionFull` 获取文件完整后缀`.jpg`
 - `getFileNameFromPath(path: String?)` 通过`FilePath`获取文件名
 - `getFileNameFromUri(uri: Uri?)` 通过`Uri`获取文件名
+- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false)` 创建文件
 - `deleteFile` 删除文件或目录
-- `deleteFilesButDir(file: File?, vararg excludeDirs: String?)` 删除文件或目录 , `excludeDirs` 跳过指定名称的一些`目录/文件`
-- `deleteFileDir` 只删除文件，不删除文件夹
+- `deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
+- `deleteFilesNotDir` 只删除文件，不删除文件夹
 - `readFileText(InputStream/Uri): String?` 读取文本文件中的内容(Read the contents of the text file)
 - `readFileBytes(InputStream/Uri): ByteArray?` 读取文件中的内容并返回`ByteArray`
 - `copyFile` 根据文件路径拷贝文件 `java.nio`
-
-```kotlin
-eg :boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i,
-    getExternalFilesDir(null).getPath());
-
-File fileNew =new File(getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
-```
-
-- `write2File(bitmap: Bitmap, fileName: String?)`
-- `write2File(input: InputStream?, filePath: String?)`
+- `write2File(bitmap: Bitmap, pathAndName: String?)`
+- `write2File(input: InputStream?, pathAndName: String?)`
 - `isLocal` 检验是否为本地URI
 - `isGif()` 检验是否为 gif
+
+> `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
+
+```kotlin
+fun File.copyTo(target: File, overwrite: Boolean = false,bufferSize: Int = DEFAULT_BUFFER_SIZE): File
+```
+Usage:
+```kotlin
+boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPath(), "test.txt");
+File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
+```
 
 ## 注意(Note)
 
