@@ -3,7 +3,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.1/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.1"/></a>
+<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.2/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.2"/></a>
 
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
@@ -22,10 +22,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.1'         //核心库必选
-implementation 'ando.file:android-q:1.3.1'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.3.1'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.3.1'     //文件选择器
+implementation 'ando.file:core:1.3.2'         //核心库必选
+implementation 'ando.file:android-q:1.3.2'    //AndroidQ & Android 11 兼容库
+implementation 'ando.file:compressor:1.3.2'   //图片压缩,核心算法采用 Luban
+implementation 'ando.file:selector:1.3.2'     //文件选择器
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -49,9 +49,10 @@ FileOperator.init(this,BuildConfig.DEBUG)
 |:---:|:---:|:---:|
 |![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick1.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick2.png)|![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/pick3.png)|
 
-## Usage:
+## 用法(Usage)
 
 ### 1. 单选图片(Single selection picture)
+
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
@@ -75,7 +76,7 @@ mFileSelector = FileSelector
     .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
     .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, FileSelectOptions.singleFileMaxSize
     .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
-    .setMimeTypes("image/*")//默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+    .setMimeTypes("image/*")//默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
     .applyOptions(optionsImage)
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
@@ -135,7 +136,7 @@ mFileSelector = FileSelector
     //1. 文件超过数量限制或大小限制
     //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
     .setOverLimitStrategy(this.mOverLimitStrategy)
-    .setMimeTypes("image/*")//默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+    .setMimeTypes("image/*")
     .applyOptions(optionsImage)
 
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
@@ -252,7 +253,7 @@ mFileSelector = FileSelector
     //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
     .setOverLimitStrategy(this.mOverLimitStrategy)
     //eg: ando.file.core.FileMimeType
-    .setMimeTypes(arrayOf("audio/*", "image/*", "text/plain"))//同"*/*",默认不做文件类型约束, 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+    .setMimeTypes(arrayOf("audio/*", "image/*", "text/plain"))//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
     //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
     .applyOptions(optionsImage, optionsAudio, optionsTxt)
 
@@ -513,8 +514,8 @@ fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
         }
     }
 ```
-#### 选择文件【调用系统的文件管理】
-Select file [call system file management]
+#### 选择文件【使用系统的文件管理】
+Select file [Use system file management]
 
 ```kotlin
 /**
@@ -523,8 +524,18 @@ Select file [call system file management]
  * 注:
  *
  * 1. Intent.setType 不能为空(Can not be empty) !
+ * ```
+ * android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.OPEN_DOCUMENT cat=[android.intent.category.OPENABLE] (has extras) }
+ * at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2105)
+ * ```
  *
- * 2. mimeTypes 会覆盖(Will overwrite) mimeType
+ * 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
+ * ```
+ * eg:
+ *      Intent.setType("image / *")
+ *      Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
+ * 🍎 最终可选文件类型变为音频
+ * ```
  *
  * 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
  * ```
@@ -534,23 +545,20 @@ Select file [call system file management]
  *
  * 4. 开启多选(Open multiple selection) resultCode = -1
  */
-fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
+fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
     /*
-     * 隐式允许用户选择一种特定类型的数据。
+     * 隐式允许用户选择一种特定类型的数据
      * Implicitly allow the user to select a particular kind of data.
      *
      * Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
-     */
+    */
     Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+        FileLogger.d("mimeType=$mimeType mimeTypes=${mimeTypes?.size}")
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
-        //"file/*"比"*/*"少了一些侧边栏选项
-        //"file" has fewer sidebar options than "*/*"
-        if (mimeType.isNullOrBlank() && mimeTypes.isNullOrEmpty()) type = "*/*"
-        else {
-            type = if (mimeType.isNullOrEmpty()) "*/*" else mimeType
+        type = if (mimeType.isNullOrBlank()) "*/*" else mimeType
+        if (!mimeTypes.isNullOrEmpty()) {
             putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
         }
-        // Only return URIs that can be opened with ContentResolver
         addCategory(Intent.CATEGORY_OPENABLE)
     }
 ```
@@ -586,29 +594,32 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 ```
 
 ### 5. 通用文件工具类👉[FileUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileUtils.kt)
-- `getExtension` 获取文件后缀 `jpg`
-- `getExtensionFull` 获取文件后缀 `.jpg`
-- `getExtensionFromUri(uri: Uri?)` 获取文件后缀
+- `getExtension` 获取文件后缀`jpg`
+- `getExtensionFull` 获取文件完整后缀`.jpg`
 - `getFileNameFromPath(path: String?)` 通过`FilePath`获取文件名
 - `getFileNameFromUri(uri: Uri?)` 通过`Uri`获取文件名
+- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false)` 创建文件
 - `deleteFile` 删除文件或目录
-- `deleteFilesButDir(file: File?, vararg excludeDirs: String?)` 删除文件或目录 , `excludeDirs` 跳过指定名称的一些`目录/文件`
-- `deleteFileDir` 只删除文件，不删除文件夹
+- `deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
+- `deleteFilesNotDir` 只删除文件，不删除文件夹
 - `readFileText(InputStream/Uri): String?` 读取文本文件中的内容(Read the contents of the text file)
 - `readFileBytes(InputStream/Uri): ByteArray?` 读取文件中的内容并返回`ByteArray`
 - `copyFile` 根据文件路径拷贝文件 `java.nio`
-
-```kotlin
-eg :boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i,
-    getExternalFilesDir(null).getPath());
-
-File fileNew =new File(getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
-```
-
-- `write2File(bitmap: Bitmap, fileName: String?)`
-- `write2File(input: InputStream?, filePath: String?)`
+- `write2File(bitmap: Bitmap, pathAndName: String?)`
+- `write2File(input: InputStream?, pathAndName: String?)`
 - `isLocal` 检验是否为本地URI
 - `isGif()` 检验是否为 gif
+
+> `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
+
+```kotlin
+fun File.copyTo(target: File, overwrite: Boolean = false,bufferSize: Int = DEFAULT_BUFFER_SIZE): File
+```
+Usage:
+```kotlin
+boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPath(), "test.txt");
+File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
+```
 
 ## 注意(Note)
 
@@ -638,7 +649,9 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 ---
 
-## v1.1.0
+## 更新日志
+
+### v1.1.0
 ```
 1.增加文件类型不匹配判断;
 2.开启多选: FileSelector.setSelectMode(true) 改为 setMultiSelect() , 默认为单选模式
@@ -652,6 +665,12 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 10.增加 LICENSE
 11.修复了一些BUG
 ```
+### v1.3.2
+```
+1.修复`FileOpener.createChooseIntent`问题
+2.更新`FileUtils`并上传相应的用法示例
+```
+
 ### Fiexd Bug
 #### 1.Invalid image: ExifInterface got an unsupported image format
 ```kotlin
@@ -693,6 +712,18 @@ java.lang.SecurityException: UID 10483 does not have permission to
 #### 4.IllegalArgumentException: column '_data' does not exist
 
 <https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist>
+
+#### 5.ActivityNotFoundException: No Activity found to handle Intent
+```kotlin
+android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.OPEN_DOCUMENT cat=[android.intent.category.OPENABLE] (has extras) }
+at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2105)
+```
+> Fixed: `ando.file.core.FileOpener.createChooseIntent`:
+
+```kotlin
+Intent.setType("image / *")
+Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
+```
 
 ## 参考(Reference)
 

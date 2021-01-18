@@ -11,7 +11,7 @@ import java.nio.channels.FileChannel
 import java.util.*
 
 /**
- * Title:FileUtils
+ * # FileUtils
  *
  * @author javakam
  * @date 2019/11/15 14:37
@@ -21,51 +21,31 @@ object FileUtils {
     //File Extension
     //----------------------------------------------------------------
 
+    fun getExtension(uri: Uri?): String = if (uri != null) getExtension(getFilePathByUri(uri) ?: "") else ""
+
     /**
      * Gets the extension of a file name, like ".png" or ".jpg".
      * <p>
-     * url : https://app-xxx-oss.oss-cn-beijing.aliyuncs.com/serverData/discuss/2020-04-07/1586267702635.gif
+     * url : https://app-xxx-oss/xxx/1586267702635.gif
      * or
      * fileName : 1586267702635.gif
      *
      * @return 默认返回 gif ; substring 时不加1为 .gif , 即 fullExtension=true
      *
-     * (The default returns gif; when substring does not add 1 to .gif, that is fullExtension=true)
+     * The default returns gif; when substring does not add 1 to .gif, that is fullExtension=true
      */
-    fun getExtension(fileName: String?, split: Char, fullExtension: Boolean): String {
-        if (fileName.isNullOrBlank()) return ""
-        val dot = fileName.lastIndexOf(split)
-        return if (dot > 0) fileName.substring(if (fullExtension) dot else (dot + 1))
-            .toLowerCase(Locale.getDefault()) else "" // No extension.
+    fun getExtension(pathOrName: String?, split: Char, fullExtension: Boolean): String {
+        if (pathOrName.isNullOrBlank()) return ""
+        val dot = pathOrName.lastIndexOf(split)
+        return if (dot > 0) pathOrName.substring(
+            if (fullExtension) dot
+            else (dot + 1)).toLowerCase(Locale.getDefault())
+        else "" // No extension.
     }
 
-    fun getExtension(fileName: String): String = getExtension(fileName, '.', false)
+    fun getExtension(pathOrName: String): String = getExtension(pathOrName, '.', false)
 
-    fun getExtension(uri: Uri?): String =
-        if (uri != null) getExtension(getFilePathByUri(uri) ?: "") else ""
-
-    fun getExtension(file: File?): String = if (file != null) getExtension(file.name) else ""
-
-    fun getExtensionFull(fileName: String): String = getExtension(fileName, '.', true)
-
-    fun getExtensionFull(file: File?): String =
-        if (file != null) getExtensionFull(file.name) else ""
-
-    fun getExtensionFromUri(uri: Uri?): String {
-        FileOperator.getContext().contentResolver.query(uri ?: return "", null, null, null, null)
-            .use { cursor ->
-                if (cursor != null) {
-                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    FileLogger.i("getExtensionFromUri Display Name：$nameIndex")
-
-                    cursor.moveToFirst()
-                    val fileName = cursor.getString(nameIndex)
-                    // If the file's name contains extension , we cut it down for latter use (copy a new file).
-                    return getExtension(fileName)
-                }
-            }
-        return ""
-    }
+    fun getExtensionFull(pathOrName: String): String = getExtension(pathOrName, '.', true)
 
     //File Name
     //----------------------------------------------------------------
@@ -83,6 +63,9 @@ object FileUtils {
 
         val resolver = FileOperator.getContext().contentResolver
         val mimeType = resolver.getType(uri)
+        if (FileOperator.isDebug()) {
+            FileLogger.i("getFileNameFromUri: $mimeType")
+        }
         if (mimeType == null) {
             filename = getFileNameFromPath(getFilePathByUri(uri))
         } else {
@@ -102,15 +85,24 @@ object FileUtils {
     //File Delete
     //----------------------------------------------------------------
 
+    fun deleteFile(uri: Uri?): Int =
+        getFilePathByUri(uri)?.run {
+            deleteFileWithoutExcludeNames(File(this), null)
+        } ?: 0
+
+    fun deleteFile(pathAndName: String?): Int =
+        if (pathAndName.isNullOrBlank()) 0
+        else deleteFileWithoutExcludeNames(File(pathAndName), null)
+
     /**
      * 删除文件或目录
      *
      * Delete files or directories
      *
      * @param file
-     * @return 删除`文件/文件夹`数量
+     * @return Int 删除`文件/文件夹`数量 (Delete the number of `file folders`)
      */
-    fun deleteFile(file: File?): Int = deleteFilesButDir(file, null)
+    fun deleteFile(file: File?): Int = deleteFileWithoutExcludeNames(file, null)
 
     /**
      * 删除文件或目录
@@ -119,42 +111,64 @@ object FileUtils {
      * <p>
      *     建议异步处理
      *
-     * @param file  目录
-     * @param excludeDirs  跳过指定名称的一些`目录/文件`
-     * @return 删除`文件/文件夹`数量
+     * @param file  `文件/文件夹`
+     * @param excludeFiles 指定名称的一些`文件/文件夹`不做删除 (Some `files/directory` with specified names are not deleted)
+     * @return Int 删除`文件/文件夹`数量 (Delete the number of `file folders`)
      */
-    fun deleteFilesButDir(file: File?, vararg excludeDirs: String?): Int {
+    fun deleteFileWithoutExcludeNames(file: File?, vararg excludeFiles: String?): Int {
         var count = 0
         if (file == null || !file.exists()) return count
         if (file.isDirectory) {
             val children = file.listFiles()
-            var i = 0
-            while (children != null && i < children.size) {
-                count += deleteFile(children[i])
-                i++
+            if (children.isNullOrEmpty() && shouldFileDelete(file, *excludeFiles)) {
+                if (file.delete()) count++ //delete directory
+            } else {
+                var i = 0
+                while (children != null && i < children.size) {
+                    count += deleteFileWithoutExcludeNames(children[i], null)
+                    i++
+                }
             }
         }
-        if (!excludeDirs.isNullOrEmpty()) {
-            excludeDirs.forEach {
-                if (it?.equals(file.name, true) == false) if (file.delete()) count++
-            }
-        } else {
+        if (excludeFiles.isNullOrEmpty()) {
             if (file.delete()) count++
+        } else {
+            if (shouldFileDelete(file, *excludeFiles)) if (file.delete()) count++
         }
         return count
     }
 
-    fun deleteFileDir(dirPath: String?): Boolean =
-        if (dirPath.isNullOrBlank()) false else deleteFileDir(File(dirPath))
+    private fun shouldFileDelete(file: File, vararg excludeFiles: String?): Boolean {
+        var shouldDelete = true
+        excludeFiles.forEach {
+            shouldDelete = (it?.equals(file.name, true) != true)
+            if (shouldDelete) return@forEach
+        }
+        return shouldDelete
+    }
+
+    fun deleteFilesNotDir(uri: Uri?): Boolean =
+        getFilePathByUri(uri)?.run {
+            deleteFilesNotDir(File(this))
+        } ?: false
+
+    /**
+     * 如果 `File(dirPath).isDirectory==false`, 那么将不做后续处理
+     *
+     * If `File(dirPath).isDirectory==false`, then no subsequent processing will be done
+     *
+     * @param dirPath directory path
+     */
+    fun deleteFilesNotDir(dirPath: String?): Boolean = if (dirPath.isNullOrBlank()) false else deleteFilesNotDir(File(dirPath))
 
     /**
      * 只删除文件，不删除文件夹
      *
      * Only delete files, not folders
      *
-     * @param dir 目录
+     * @param dir directory
      */
-    fun deleteFileDir(dir: File?): Boolean {
+    fun deleteFilesNotDir(dir: File?): Boolean {
         if (dir == null || !dir.exists() || !dir.isDirectory) return false
 
         val children = dir.list()
@@ -168,7 +182,7 @@ object FileUtils {
                 if (child.list() == null || child.list()?.isEmpty() == true) {
                     continue
                 }
-                deleteFileDir(child)
+                deleteFilesNotDir(child)
             } else {
                 child.delete()
             }
@@ -239,22 +253,29 @@ object FileUtils {
     //----------------------------------------------------------------
 
     /**
-     * 根据文件路径拷贝文件(Copy files according to file path)
+     * ### 根据文件路径拷贝文件(Copy files according to file path)
      *
-     * eg :
-     * boolean copyFile = FileUtils.copyFile(fileOld, "/test_" + i, getExternalFilesDir(null).getPath());
-     * File fileNew =new File( getExternalFilesDir(null).getPath() +"/"+ "test_" + i);
+     * 效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当
+     * ```kotlin
+     * fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File
+     * ```
+     * Usage:
+     * ```kotlin
+     * boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPath(), "test.txt");
+     * File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
+     * ```
      *
-     * @param src      源文件
-     * @param destFilePath 目标文件路径
+     * @param src 源文件 Source File
+     * @param destFilePath 目标文件路径(Target file path)
+     * @param destFileName 目标文件名称(Target file name)
      */
     fun copyFile(
         src: File,
-        destFileName: String,
         destFilePath: String,
+        destFileName: String,
     ): Boolean {
-        if (!src.exists() || destFilePath.isBlank()) return false
-        val dest = File(destFilePath + destFileName)
+        if (!src.exists() || destFilePath.isBlank() || destFileName.isBlank()) return false
+        val dest = File(destFilePath + File.separator + destFileName)
         if (dest.exists()) dest.delete() // delete file
 
         try {
@@ -288,10 +309,15 @@ object FileUtils {
      *
      * System path: /mnt/sdcard/Android/data/ando.guard/cache/xxx.json
      */
-    fun createFile(filePath: String?, fileName: String?): File? {
+    fun createFile(filePath: String?, fileName: String?, overwrite: Boolean = false): File? {
         if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return null
         val file = File(filePath, fileName)
-        if (file.exists() && file.isDirectory) file.delete()
+        if (file.exists()) {
+            if (file.isDirectory) file.delete()
+
+            if (overwrite) file.delete()
+            else return file
+        }
         if (file.parentFile?.exists() == false) {
             file.parentFile?.mkdirs()
         }
@@ -308,13 +334,17 @@ object FileUtils {
      */
     fun write2File(bitmap: Bitmap, pathAndName: String?) {
         if (pathAndName.isNullOrBlank()) return
-        val file = File(pathAndName)
+        write2File(bitmap, File(pathAndName))
+    }
+
+    fun write2File(bitmap: Bitmap, file: File?) {
+        if (file == null || file.exists()) return
         var out: BufferedOutputStream? = null
         try {
             out = BufferedOutputStream(FileOutputStream(file))
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
         } catch (e: FileNotFoundException) {
-            e.printStackTrace()
+            FileLogger.e(e.message)
         } finally {
             out?.close()
         }
@@ -335,7 +365,7 @@ object FileUtils {
             if (!file.exists()) file.createNewFile()
 
             output = FileOutputStream(file)
-            val b = ByteArray(1024)
+            val b = ByteArray(8 * 1024)
             var length: Int
             while (input.read(b).also { length = it } != -1) {
                 output.write(b, 0, length)
@@ -368,8 +398,7 @@ object FileUtils {
      *
      * @param mimeType
      */
-    fun isGif(mimeType: String?): Boolean =
-        !mimeType.isNullOrBlank() && mimeType.equals("image/gif", true)
+    fun isGif(mimeType: String?): Boolean = !mimeType.isNullOrBlank() && mimeType.equals("image/gif", true)
 
     /**
      * File name/path/url

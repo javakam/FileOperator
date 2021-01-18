@@ -98,7 +98,6 @@ class FileSelector private constructor(builder: Builder) {
         return this
     }
 
-
     fun obtainResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         this.requestCode = requestCode
         this.resultCode = resultCode

@@ -252,7 +252,7 @@ class MediaStoreActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
-            val view = layoutInflater.inflate(R.layout.layout_gallery, parent, false)
+            val view = layoutInflater.inflate(R.layout.layout_media_store_gallery, parent, false)
             return ImageViewHolder(view, onClick)
         }
 

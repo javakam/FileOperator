@@ -1,12 +1,13 @@
 package ando.file.core
 
 import android.net.Uri
-import android.text.TextUtils
 import java.io.File
 import java.util.*
 
 /**
  * 常用的文件类型 -> FileMimeType.kt
+ *
+ * @author javakam
  */
 enum class FileType {
 
@@ -17,7 +18,7 @@ enum class FileType {
     APK, ZIP;
 
     /**
-     * url : https://app-xxx-oss.oss-cn-beijing.aliyuncs.com/xxx/xxxx/2020-04-07/1586267702635.gif
+     * url : https://app-xxx-oss/xxx/1586267702635.gif
      * or
      * fileName : 1586267702635.gif
      */
@@ -36,12 +37,12 @@ enum class FileType {
     fun typeByUri(uri: Uri?): FileType = typeByFileSuffix(FileUtils.getExtension(uri))
 
     fun typeByFilePath(filePath: String?): FileType {
-        if (TextUtils.isEmpty(filePath)) UNKNOWN
+        if (filePath.isNullOrBlank()) UNKNOWN
         val file = File(filePath ?: return UNKNOWN)
         return if (!file.exists()) UNKNOWN else typeByFile(file)
     }
 
-    fun typeByFile(file: File): FileType = typeByFileSuffix(FileUtils.getExtension(file))
+    fun typeByFile(file: File): FileType = typeByFileSuffix(FileUtils.getExtension(file.name))
 
     /**
      * 依据扩展名的类型决定 MimeType
@@ -50,7 +51,7 @@ enum class FileType {
         when (end.toLowerCase(Locale.getDefault())) {
             "jpg", "gif", "png", "jpeg", "bmp", "webp" -> IMAGE
             "3gp", "flv", "mp4", "m3u8", "avi", "asf", "m4u", "m4v", "mov", "mpe", "mpeg", "mpg", "mpg4" -> VIDEO
-            "mp2", "mp3", "m3u", "m4a", "m4b", "m4p", "mpga", "flac", "rmvb", "mid", "xmf", "ogg", "wav", "wma", "wmv", "ape", "wavpack", "tak", "tta" -> AUDIO
+            "mp2", "mp3", "m3u", "m4a", "m4b", "m4p", "mpga", "flac", "rmvb", "mid", "ogg", "wav", "wma", "wmv", "tta" -> AUDIO
             "apk" -> APK
             "ppt", "pptx", "pps" -> PPT
             "xls", "xlsx" -> EXCEL

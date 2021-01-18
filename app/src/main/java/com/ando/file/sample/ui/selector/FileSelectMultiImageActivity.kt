@@ -124,7 +124,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             //1. 文件超过数量限制或大小限制
             //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
             .setOverLimitStrategy(this.mOverLimitStrategy)
-            .setMimeTypes("image/*")//默认不做文件类型约束,不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+            .setMimeTypes("image/*")
             .applyOptions(optionsImage)
 
             //优先使用 FileSelectOptions 中设置的 FileSelectCondition

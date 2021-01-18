@@ -6,7 +6,7 @@ import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
 import ando.file.core.FileSizeUtils.formatFileSize
 import ando.file.core.FileSizeUtils.getFolderSize
-import ando.file.core.FileUtils.deleteFileDir
+import ando.file.core.FileUtils.deleteFilesNotDir
 import java.io.File
 
 /**
@@ -58,14 +58,14 @@ object ClearCacheUtils {
         if (path.isNullOrBlank()) return false
         val file = File(path)
         if (!file.exists()) file.mkdirs()
-        return deleteFileDir(file)
+        return deleteFilesNotDir(file)
     }
 
     /**
      * 清除缓存
      */
     fun clearAllCache(dir: File?): Boolean {
-        return deleteFileDir(dir)
+        return deleteFilesNotDir(dir)
     }
 
 }

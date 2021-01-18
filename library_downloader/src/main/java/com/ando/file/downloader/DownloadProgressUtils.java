@@ -4,10 +4,9 @@ import android.os.Build;
 import android.widget.ProgressBar;
 
 /**
- * Title:ProgressUtils
+ * # DownloadProgressUtils
  * <p>
  * Description: 进度辅助工具
- * </p>
  *
  * @author javakam
  * @date 2020/1/17 16:36
