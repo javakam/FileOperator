@@ -43,7 +43,7 @@ class FileCoreActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_core_mime_type)
+        setContentView(R.layout.activity_file_core)
         mBtSelectSingle = findViewById(R.id.bt_select_single)
         mTvError = findViewById(R.id.tv_error)
         mTvResult = findViewById(R.id.tv_result)

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:overScrollMode="always"
+    android:padding="@dimen/dp_15">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/bt_file_select_single"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择一个文件并获取测试用的Uri"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_12"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_file_select_uri"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_13"
+            android:visibility="gone"
+            tools:text="xxx" />
+
+        <TextView
+            android:id="@+id/tv_file_utils3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_14"
+            android:visibility="gone"
+            tools:text="xxx" />
+
+        <TextView
+            android:id="@+id/tv_file_utils4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_14"
+            android:visibility="gone"
+            tools:text="xxx" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/color_divider_gray" />
+
+        <TextView
+            android:id="@+id/tv_file_utils_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:textColor="@color/color_main_theme_dark"
+            android:textSize="@dimen/font_14"
+            android:textStyle="bold"
+            tools:text="xxx" />
+
+        <TextView
+            android:id="@+id/tv_file_utils1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_14"
+            tools:text="xxx" />
+
+        <TextView
+            android:id="@+id/tv_file_utils2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_5"
+            android:layout_marginBottom="@dimen/dp_5"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_14"
+            tools:text="xxx" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/color_divider_gray" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -6,6 +6,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.ando.file.sample.R
 import com.ando.file.sample.ui.core.FileCoreActivity
+import com.ando.file.sample.ui.core.FileUtilsActivity
 import com.ando.file.sample.ui.selector.FileSelectMultiFilesActivity
 import com.ando.file.sample.ui.selector.FileSelectMultiImageActivity
 import com.ando.file.sample.ui.selector.FileSelectSingleImageActivity
@@ -26,7 +27,10 @@ class MainActivity : AppCompatActivity() {
     fun caseGetFileUriOrPath(view: View) = FileCoreActivity.openFileUriAndPath(this)
 
     fun caseOpenFileByUri(view: View) {}
-    fun caseFileUtils(view: View) {}
+
+    fun caseFileUtils(view: View) {
+        startActivity(Intent(this, FileUtilsActivity::class.java))
+    }
 
     /////////////////////////////// 文件选择器(SELECTOR) ///////////////////////////////////////
 

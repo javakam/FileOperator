@@ -7,9 +7,11 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.NonNull
+import androidx.annotation.Nullable
 
 /**
- * FileOpener
+ * # FileOpener
  *
  * Description: 打开该 Uri 对应文件类型的所有软件, 通常情况下是个部弹窗
  *
@@ -112,8 +114,18 @@ object FileOpener {
      * 注:
      *
      * 1. Intent.setType 不能为空(Can not be empty) !
+     * ```
+     * android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.OPEN_DOCUMENT cat=[android.intent.category.OPENABLE] (has extras) }
+     * at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2105)
+     * ```
      *
-     * 2. mimeTypes 会覆盖(Will overwrite) mimeType
+     * 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
+     * ```
+     * eg:
+     *      Intent.setType("image / *")
+     *      Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
+     * 🍎 最终可选文件类型变为音频
+     * ```
      *
      * 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
      * ```
@@ -123,23 +135,19 @@ object FileOpener {
      *
      * 4. 开启多选(Open multiple selection) resultCode = -1
      */
-    fun createChooseIntent(mimeType: String?, mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
+    fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
         /*
-         * 隐式允许用户选择一种特定类型的数据。
+         * 隐式允许用户选择一种特定类型的数据
          * Implicitly allow the user to select a particular kind of data.
          *
          * Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
-         */
+        */
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
-            //"file/*"比"*/*"少了一些侧边栏选项
-            //"file" has fewer sidebar options than "*/*"
-            if (mimeType.isNullOrBlank() && mimeTypes.isNullOrEmpty()) type = "*/*"
-            else {
-                type = if (mimeType.isNullOrEmpty()) "*/*" else mimeType
+            type = if (mimeType.isNullOrBlank()) "*/*" else mimeType
+            if (!mimeTypes.isNullOrEmpty()) {
                 putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
             }
-            // Only return URIs that can be opened with ContentResolver
             addCategory(Intent.CATEGORY_OPENABLE)
         }
 

@@ -183,7 +183,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
             .setOverLimitStrategy(this.mOverLimitStrategy)
             //eg: ando.file.core.FileMimeType
-            .setMimeTypes(arrayOf("audio/*", "image/*", "text/plain"))//同"*/*",默认不做文件类型约束, 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+            .setMimeTypes(arrayOf("audio/*", "image/*", "text/plain"))//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
             //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
             .applyOptions(optionsImage, optionsAudio, optionsTxt)
 

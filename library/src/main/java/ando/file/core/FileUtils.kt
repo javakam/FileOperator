@@ -21,51 +21,31 @@ object FileUtils {
     //File Extension
     //----------------------------------------------------------------
 
+    fun getExtension(uri: Uri?): String = if (uri != null) getExtension(getFilePathByUri(uri) ?: "") else ""
+
     /**
      * Gets the extension of a file name, like ".png" or ".jpg".
      * <p>
-     * url : https://app-xxx-oss.oss-cn-beijing.aliyuncs.com/serverData/discuss/2020-04-07/1586267702635.gif
+     * url : https://app-xxx-oss/xxx/1586267702635.gif
      * or
      * fileName : 1586267702635.gif
      *
      * @return 默认返回 gif ; substring 时不加1为 .gif , 即 fullExtension=true
      *
-     * (The default returns gif; when substring does not add 1 to .gif, that is fullExtension=true)
+     * The default returns gif; when substring does not add 1 to .gif, that is fullExtension=true
      */
-    fun getExtension(fileName: String?, split: Char, fullExtension: Boolean): String {
-        if (fileName.isNullOrBlank()) return ""
-        val dot = fileName.lastIndexOf(split)
-        return if (dot > 0) fileName.substring(if (fullExtension) dot else (dot + 1))
-            .toLowerCase(Locale.getDefault()) else "" // No extension.
+    fun getExtension(pathOrName: String?, split: Char, fullExtension: Boolean): String {
+        if (pathOrName.isNullOrBlank()) return ""
+        val dot = pathOrName.lastIndexOf(split)
+        return if (dot > 0) pathOrName.substring(
+            if (fullExtension) dot
+            else (dot + 1)).toLowerCase(Locale.getDefault())
+        else "" // No extension.
     }
 
-    fun getExtension(fileName: String): String = getExtension(fileName, '.', false)
+    fun getExtension(pathOrName: String): String = getExtension(pathOrName, '.', false)
 
-    fun getExtension(uri: Uri?): String =
-        if (uri != null) getExtension(getFilePathByUri(uri) ?: "") else ""
-
-    fun getExtension(file: File?): String = if (file != null) getExtension(file.name) else ""
-
-    fun getExtensionFull(fileName: String): String = getExtension(fileName, '.', true)
-
-    fun getExtensionFull(file: File?): String =
-        if (file != null) getExtensionFull(file.name) else ""
-
-    fun getExtensionFromUri(uri: Uri?): String {
-        FileOperator.getContext().contentResolver.query(uri ?: return "", null, null, null, null)
-            .use { cursor ->
-                if (cursor != null) {
-                    val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    FileLogger.i("getExtensionFromUri Display Name：$nameIndex")
-
-                    cursor.moveToFirst()
-                    val fileName = cursor.getString(nameIndex)
-                    // If the file's name contains extension , we cut it down for latter use (copy a new file).
-                    return getExtension(fileName)
-                }
-            }
-        return ""
-    }
+    fun getExtensionFull(pathOrName: String): String = getExtension(pathOrName, '.', true)
 
     //File Name
     //----------------------------------------------------------------
@@ -83,6 +63,9 @@ object FileUtils {
 
         val resolver = FileOperator.getContext().contentResolver
         val mimeType = resolver.getType(uri)
+        if (FileOperator.isDebug()) {
+            FileLogger.i("getFileNameFromUri: $mimeType")
+        }
         if (mimeType == null) {
             filename = getFileNameFromPath(getFilePathByUri(uri))
         } else {
@@ -386,8 +369,7 @@ object FileUtils {
      *
      * @param mimeType
      */
-    fun isGif(mimeType: String?): Boolean =
-        !mimeType.isNullOrBlank() && mimeType.equals("image/gif", true)
+    fun isGif(mimeType: String?): Boolean = !mimeType.isNullOrBlank() && mimeType.equals("image/gif", true)
 
     /**
      * File name/path/url

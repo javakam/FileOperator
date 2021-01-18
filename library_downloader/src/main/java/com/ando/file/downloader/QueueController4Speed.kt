@@ -259,16 +259,6 @@ class QueueController4Speed {
 
         // 删除
         flDelete.setOnClickListener {
-//            var intent = Intent(Intent.ACTION_GET_CONTENT)
-//            //intent.setType(“image/*”);//选择图片
-//            //intent.setType(“audio/*”); //选择音频
-//            //intent.setType(“video/*”); //选择视频 （mp4 3gp 是android支持的视频格式）
-//            //intent.setType(“video/*;image/*”);//同时选择视频和图片
-//            intent.setType("*/*");//无类型限制
-//            intent.addCategory(Intent.CATEGORY_OPENABLE);
-//            (flDelete.context as Activity).startActivityForResult(intent, 1)
-//            return@setOnClickListener
-
             val status = ando.file.downloader.QueueTagUtils.getStatus(task)
             if (status == DownloadListener1Status.PROGRESS) {
                 task.cancel()

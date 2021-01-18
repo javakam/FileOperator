@@ -38,6 +38,9 @@
             android:name=".ui.core.FileCoreActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.core.FileUtilsActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.storage.AppSpecificActivity"
             android:screenOrientation="portrait" />
         <activity
