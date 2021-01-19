@@ -3,7 +3,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.2/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.2"/></a>
+<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.3/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.3"/></a>
 
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
@@ -22,10 +22,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.2'         //核心库必选
-implementation 'ando.file:android-q:1.3.2'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.3.2'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.3.2'     //文件选择器
+implementation 'ando.file:core:1.3.3'         //核心库必选
+implementation 'ando.file:android-q:1.3.3'    //AndroidQ & Android 11 兼容库
+implementation 'ando.file:compressor:1.3.3'   //图片压缩,核心算法采用 Luban
+implementation 'ando.file:selector:1.3.3'     //文件选择器
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -669,6 +669,10 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 ```
 1.修复`FileOpener.createChooseIntent`问题
 2.更新`FileUtils`并上传相应的用法示例
+```
+### v1.3.3
+```
+1.
 ```
 
 ### Fiexd Bug

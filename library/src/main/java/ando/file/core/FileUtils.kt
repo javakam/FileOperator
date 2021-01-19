@@ -95,7 +95,7 @@ object FileUtils {
         else deleteFileWithoutExcludeNames(File(pathAndName), null)
 
     /**
-     * 删除文件或目录
+     * 删除文件或文件夹
      *
      * Delete files or directories
      *
@@ -105,7 +105,7 @@ object FileUtils {
     fun deleteFile(file: File?): Int = deleteFileWithoutExcludeNames(file, null)
 
     /**
-     * 删除文件或目录
+     * 删除文件或文件夹
      *
      * Delete files or directories
      * <p>
@@ -153,6 +153,8 @@ object FileUtils {
         } ?: false
 
     /**
+     * 只删除文件，不删除文件夹 (Only delete files, not folders)
+     *
      * 如果 `File(dirPath).isDirectory==false`, 那么将不做后续处理
      *
      * If `File(dirPath).isDirectory==false`, then no subsequent processing will be done
@@ -162,9 +164,7 @@ object FileUtils {
     fun deleteFilesNotDir(dirPath: String?): Boolean = if (dirPath.isNullOrBlank()) false else deleteFilesNotDir(File(dirPath))
 
     /**
-     * 只删除文件，不删除文件夹
-     *
-     * Only delete files, not folders
+     * 只删除文件，不删除文件夹 (Only delete files, not folders)
      *
      * @param dir directory
      */
@@ -253,7 +253,7 @@ object FileUtils {
     //----------------------------------------------------------------
 
     /**
-     * ### 根据文件路径拷贝文件(Copy files according to file path)
+     * ### 拷贝文件到指定路径和名称 (Copy the file to the specified path and name)
      *
      * 效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当
      * ```kotlin
@@ -303,7 +303,7 @@ object FileUtils {
     //----------------------------------------------------------------
 
     /**
-     * 创建文件(Create a file)
+     * 创建文件 (Create a file)
      *
      * eg: filePath is getExternalCacheDir() , fileName is xxx.json
      *
@@ -379,30 +379,12 @@ object FileUtils {
         }
     }
 
-    //File isLocal
     //----------------------------------------------------------------
 
-    /**
-     * 检验是否为本地URI
-     *
-     * @return Whether the URI is a local one.
-     */
-    fun isLocal(url: String?): Boolean =
-        url != null && url.isNotBlank() && !url.startsWith("http://") && !url.startsWith("https://")
+    fun isLocal(url: String?): Boolean = !url.isNullOrBlank() && !url.startsWith("http") && !url.startsWith("https")
 
-    //File Gif
-    //----------------------------------------------------------------
-
-    /**
-     * gif
-     *
-     * @param mimeType
-     */
     fun isGif(mimeType: String?): Boolean = !mimeType.isNullOrBlank() && mimeType.equals("image/gif", true)
 
-    /**
-     * File name/path/url
-     */
     fun isGif(uri: Uri?): Boolean = if (uri == null) false else isGif(getMimeType(uri))
 
 }

@@ -37,6 +37,7 @@ class FileClearCacheActivity : AppCompatActivity() {
         tvCacheDir = findViewById(R.id.tvCacheDir)
         tvCompressedImgCacheDir = findViewById(R.id.tvCompressedImageCacheDir)
 
+        title = "File Directory"
         //清除缓存
         findViewById<Button>(R.id.mBtClearCache).setOnClickListener {
             val result = clearCompressedImageCacheDir()
