@@ -105,7 +105,7 @@ class FileClearCacheActivity : AppCompatActivity() {
                 | 🍎缓存图片列表(${fileList?.size}): $childFileSb
                 | """.trimMargin()
             tvCompressedImgCacheDir.setOnClickListener {
-                //FileOpener.openFileBySystemChooser(this, u, "file/*")
+                //FileOpener.openFile(this, u, "file/*")
             }
         }
         ///////////////////////

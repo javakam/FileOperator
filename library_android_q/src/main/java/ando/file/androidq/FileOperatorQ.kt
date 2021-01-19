@@ -37,10 +37,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
- * FileOperatorQ
+ * # FileOperatorQ
  * <p>
- * Description:
- * </p>
+ *
  * @author javakam
  * @date 2020/5/22  16:16
  */
@@ -664,7 +663,7 @@ object FileOperatorQ {
      * </pre>
      */
     //todo 2020年5月28日 17:14:02 测试该方法
-    private fun openDirectorySAF(activity: Activity, pickerInitialUri: Uri?, requestCode: Int) {
+    fun openDirectorySAF(activity: Activity, pickerInitialUri: Uri?, requestCode: Int) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

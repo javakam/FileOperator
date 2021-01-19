@@ -328,6 +328,19 @@ object FileUtils {
     }
 
     /**
+     * 创建目录 (Create a directory)
+     */
+    fun createDirectory(filePath: String?): Boolean {
+        if (filePath.isNullOrBlank()) return false
+        val file = File(filePath)
+        if (file.exists()) {
+            if (!file.isDirectory) file.delete() else return true
+        }
+        file.mkdirs()
+        return true
+    }
+
+    /**
      * Bitmap 保存为本地文件 (Save Bitmap as a local file)
      *
      * @param pathAndName  格式必须带有后缀 xxx.png (The format must have the suffix xxx.png)
@@ -351,7 +364,7 @@ object FileUtils {
     }
 
     fun write2File(input: InputStream, filePath: String?, fileName: String?) =
-        write2File(input, createFile(filePath, fileName)?.absolutePath)
+        write2File(input, createFile(filePath, fileName)?.path)
 
     fun write2File(input: InputStream, pathAndName: String?) {
         if (pathAndName.isNullOrBlank()) return

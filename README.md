@@ -22,10 +22,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.3'         //核心库必选
-implementation 'ando.file:android-q:1.3.3'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.3.3'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.3.3'     //文件选择器
+implementation 'ando.file:core:1.3.3'       //核心库必选
+implementation 'ando.file:selector:1.3.3'   //文件选择器
+implementation 'ando.file:compressor:1.3.3' //图片压缩, 核心算法采用 Luban
+implementation 'ando.file:android-q:1.3.3'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -507,7 +507,7 @@ fun openUrl(activity: Activity, url: String?) {
 According to `file path` and `type (judgment by suffix)` show programs that support the format
 
 ```kotlin
-fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
+fun openFile(context: Any, uri: Uri?, mimeType: String? = null) =
     uri?.let { u ->
         Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
             startActivity(context, it)
@@ -523,13 +523,13 @@ Select file [Use system file management]
  *
  * 注:
  *
- * 1. Intent.setType 不能为空(Can not be empty) !
+ * #### 1. Intent.setType 不能为空(Can not be empty) !
  * ```
  * android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.OPEN_DOCUMENT cat=[android.intent.category.OPENABLE] (has extras) }
  * at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2105)
  * ```
  *
- * 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
+ * #### 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
  * ```
  * eg:
  *      Intent.setType("image / *")
@@ -537,23 +537,20 @@ Select file [Use system file management]
  * 🍎 最终可选文件类型变为音频
  * ```
  *
- * 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
+ * #### 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
  * ```
  *      java.lang.SecurityException: UID 10483 does not have permission to content://com.android.providers.media.documents/document/image%3A16012 [user 0];
  *      you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
  * ```
  *
- * 4. 开启多选(Open multiple selection) resultCode = -1
+ * #### 4. 开启多选(Open multiple selection) resultCode = -1
+ *
+ * #### 5. 无论是`ACTION_OPEN_DOCUMENT`还是`ACTION_GET_CONTENT`都只是负责打开和选择,
+ * 具体的文件操作如查看文件内容,删除,分享,复制,重命名等操作需要在`onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)`中的`data:Intent`中提取
+ *
  */
 fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
-    /*
-     * 隐式允许用户选择一种特定类型的数据
-     * Implicitly allow the user to select a particular kind of data.
-     *
-     * Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
-    */
     Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-        FileLogger.d("mimeType=$mimeType mimeTypes=${mimeTypes?.size}")
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
         type = if (mimeType.isNullOrBlank()) "*/*" else mimeType
         if (!mimeTypes.isNullOrEmpty()) {
@@ -598,7 +595,8 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 - `getExtensionFull` 获取文件完整后缀`.jpg`
 - `getFileNameFromPath(path: String?)` 通过`FilePath`获取文件名
 - `getFileNameFromUri(uri: Uri?)` 通过`Uri`获取文件名
-- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false)` 创建文件
+- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` 创建文件
+- `createDirectory(filePath: String?): Boolean` 创建目录
 - `deleteFile` 删除文件或目录
 - `deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
 - `deleteFilesNotDir` 只删除文件，不删除文件夹
@@ -669,10 +667,14 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 ```
 1.修复`FileOpener.createChooseIntent`问题
 2.更新`FileUtils`并上传相应的用法示例
+3.优化了一些方法
 ```
 ### v1.3.3
 ```
-1.
+1.FileOpener.openFileBySystemChooser 改名为 FileOpener.openFile, 语义更明确
+2.如果筛选`txt`文本文件,`MimeType`建议设置为`text/*`相较于`text/plain`在系统文件管理器页面多一个`文档`字样的筛选更好一些,
+  eg: setMimeTypes(arrayOf("audio/*", "image/*", "text/*"))
+3.
 ```
 
 ### Fiexd Bug
@@ -728,6 +730,8 @@ at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:210
 Intent.setType("image / *")
 Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
 ```
+#### 6.android.os.FileUriExposedException: file:///storage/emulated/0/Android/data/com.ando.file.sample/cache exposed beyond app through Intent.getData()
+> Fixed: `AndroidManifest.xml`没配置`FileProvider`
 
 ## 参考(Reference)
 

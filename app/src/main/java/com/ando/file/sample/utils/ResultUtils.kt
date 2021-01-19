@@ -53,7 +53,7 @@ object ResultUtils {
     fun setItemEvent(v: View?, uri: Uri?, title: String) {
         v?.setOnClickListener {
             showAlert(v.context, title, uri?.toString() ?: "") {
-                if (it) FileOpener.openFileBySystemChooser(v.context, uri, FileMimeType.getMimeType(uri))
+                if (it) FileOpener.openFile(v.context, uri, FileMimeType.getMimeType(uri))
             }
         }
     }
@@ -73,7 +73,7 @@ object ResultUtils {
         imageView.setImageBitmap(if (bitmap == null || bitmap.isRecycled)
             BitmapFactory.decodeResource(context.resources, R.mipmap.ic_place_holder) else bitmap)
         imageView.setOnClickListener {
-            FileOpener.openFileBySystemChooser(context, uri, "image/*")
+            FileOpener.openFile(context, uri, "image/*")
         }
     }
 

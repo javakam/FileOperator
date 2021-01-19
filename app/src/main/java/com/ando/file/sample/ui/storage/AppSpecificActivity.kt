@@ -60,14 +60,20 @@ class AppSpecificActivity : AppCompatActivity() {
 
         //批量创建目录
         createDocumentsDirs.setOnClickListener {
-            getExternalFilesDirs(Environment.DIRECTORY_MUSIC)
-            getExternalFilesDirs(Environment.DIRECTORY_PODCASTS)
-            getExternalFilesDirs(Environment.DIRECTORY_RINGTONES)
             getExternalFilesDirs(Environment.DIRECTORY_ALARMS)
+            getExternalFilesDirs(Environment.DIRECTORY_DCIM)
+            getExternalFilesDirs(Environment.DIRECTORY_DOCUMENTS)
+            getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)
+            getExternalFilesDirs(Environment.DIRECTORY_MOVIES)
+            getExternalFilesDirs(Environment.DIRECTORY_MUSIC)
             getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)
             getExternalFilesDirs(Environment.DIRECTORY_PICTURES)
-            getExternalFilesDirs(Environment.DIRECTORY_MOVIES)
-            getExternalFilesDirs(Environment.DIRECTORY_DOCUMENTS)
+            getExternalFilesDirs(Environment.DIRECTORY_PODCASTS)
+            getExternalFilesDirs(Environment.DIRECTORY_RINGTONES)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                getExternalFilesDirs(Environment.DIRECTORY_AUDIOBOOKS)
+            }
 
             Toast.makeText(this, "创建目录成功", Toast.LENGTH_SHORT).show()
         }

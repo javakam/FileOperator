@@ -42,6 +42,7 @@ class FileUtilsActivity : AppCompatActivity() {
     private val mBtFileWrite: Button by lazy { findViewById(R.id.bt_file_utils_write) }
     private val mBtFileRead: Button by lazy { findViewById(R.id.bt_file_utils_read) }
     private val mBtFileCopy: Button by lazy { findViewById(R.id.bt_file_utils_copy) }
+    private val mBtFileCopyOpen: Button by lazy { findViewById(R.id.bt_file_utils_copy_open) }
     private val mBtFileDelete: Button by lazy { findViewById(R.id.bt_file_utils_delete) }
     private val mTvFileContent: TextView by lazy { findViewById(R.id.tv_file_utils_read_content) }
     private val mTvFileInfo: TextView by lazy { findViewById(R.id.tv_file_utils_info) }
@@ -95,11 +96,11 @@ class FileUtilsActivity : AppCompatActivity() {
                 refreshFileInfo()
                 return@setOnClickListener
             }
-            FileOpener.openFileBySystemChooser(this, FileUri.getUriByFile(file), "选择打开程序")
+            FileOpener.openFile(this, FileUri.getUriByFile(file), "选择打开程序")
         }
         mBtFileCreate.setOnClickListener {
             if (file.exists()) {
-                toastLong("${fileName}已存在!")
+                toastShort("${fileName}已存在!")
                 refreshFileInfo()
                 return@setOnClickListener
             }
@@ -136,13 +137,13 @@ class FileUtilsActivity : AppCompatActivity() {
                 refreshFileInfo()
                 return@setOnClickListener
             }
-            FileLogger.d("destFilePath=$destFilePath destFileName=$destFileName")
 
             val start = SystemClock.elapsedRealtimeNanos()
 
-            file.copyTo(target = destFile, overwrite = true, bufferSize = DEFAULT_BUFFER_SIZE)
-            //val copyResult: Boolean = FileUtils.copyFile(file, destFilePath, destFileName)
-            //FileLogger.w("copyResult=$copyResult")
+            //kotlin.io.FilesKt__UtilsKt.copyTo
+            //file.copyTo(target = destFile, overwrite = true, bufferSize = DEFAULT_BUFFER_SIZE)
+            val copyResult: Boolean = FileUtils.copyFile(file, destFilePath, destFileName)
+            FileLogger.w("copyResult= $copyResult")
 
             FileLogger.w("时间差: ${SystemClock.elapsedRealtimeNanos() - start}")
 
@@ -153,6 +154,15 @@ class FileUtilsActivity : AppCompatActivity() {
             }
 
             refreshFileInfo()
+        }
+        //Open Copied File
+        mBtFileCopyOpen.setOnClickListener {
+            if (!destFile.exists()) {
+                refreshFileInfo()
+                toastLong("${destFileName}不存在, 需先创建再复制")
+                return@setOnClickListener
+            }
+            FileOpener.openFile(this, FileUri.getUriByFile(destFile), "选择打开程序")
         }
         //Delete
         mBtFileDelete.setOnClickListener {

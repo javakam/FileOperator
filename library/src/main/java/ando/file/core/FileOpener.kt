@@ -98,28 +98,28 @@ object FileOpener {
      * @param mimeType 指定打开文件的 MimeType 类型 (Specify the MimeType of the opened file)
      *
      */
-    fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null, title: String? = "选择程序") =
+    fun openFile(context: Any, uri: Uri?, mimeType: String? = null, title: String? = "选择程序") =
         uri?.let { u ->
             Intent.createChooser(createOpenFileIntent(u, mimeType), title)?.let {
                 startActivity(context, it)
             }
         }
 
-    fun openFileBySystemChooser(context: Any, uri: Uri?, title: String? = "选择程序") =
-        openFileBySystemChooser(context, uri, getMimeType(uri), title)
+    fun openFile(context: Any, uri: Uri?, title: String? = "选择程序") =
+        openFile(context, uri, getMimeType(uri), title)
 
     /**
      * ### 选择文件【调用系统的文件管理】 (Select file [call system file management])
      *
      * 注:
      *
-     * 1. Intent.setType 不能为空(Can not be empty) !
+     * #### 1. Intent.setType 不能为空(Can not be empty) !
      * ```
      * android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.OPEN_DOCUMENT cat=[android.intent.category.OPENABLE] (has extras) }
      * at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2105)
      * ```
      *
-     * 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
+     * #### 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
      * ```
      * eg:
      *      Intent.setType("image / *")
@@ -127,21 +127,19 @@ object FileOpener {
      * 🍎 最终可选文件类型变为音频
      * ```
      *
-     * 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
+     * #### 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
      * ```
      *      java.lang.SecurityException: UID 10483 does not have permission to content://com.android.providers.media.documents/document/image%3A16012 [user 0];
      *      you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
      * ```
      *
-     * 4. 开启多选(Open multiple selection) resultCode = -1
+     * #### 4. 开启多选(Open multiple selection) resultCode = -1
+     *
+     * #### 5. 无论是`ACTION_OPEN_DOCUMENT`还是`ACTION_GET_CONTENT`都只是负责打开和选择,
+     * 具体的文件操作如查看文件内容,删除,分享,复制,重命名等操作需要在`onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)`中的`data:Intent`中提取
+     *
      */
     fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
-        /*
-         * 隐式允许用户选择一种特定类型的数据
-         * Implicitly allow the user to select a particular kind of data.
-         *
-         * Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
-        */
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
             type = if (mimeType.isNullOrBlank()) "*/*" else mimeType
