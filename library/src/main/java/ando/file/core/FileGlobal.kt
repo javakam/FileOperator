@@ -55,13 +55,13 @@ internal fun startActivity(context: Any, intent: Intent) {
 }
 
 object FileGlobal {
+    interface IFileType{}
 
     const val MODE_READ_ONLY = "r"
     const val MODE_WRITE_ONLY_ERASING = "w"
     const val MODE_WRITE_ONLY_APPEND = "wa"
     const val MODE_READ_WRITE_DATA = "rw"
     const val MODE_READ_WRITE_FILE = "rwt"
-
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MODE_READ_ONLY, MODE_WRITE_ONLY_ERASING, MODE_WRITE_ONLY_APPEND, MODE_READ_WRITE_DATA, MODE_READ_WRITE_FILE])
     annotation class FileOpenMode
@@ -70,7 +70,6 @@ object FileGlobal {
     const val MEDIA_TYPE_IMAGE = "image"
     const val MEDIA_TYPE_AUDIO = "audio"
     const val MEDIA_TYPE_VIDEO = "video"
-
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
     annotation class FileMediaType
@@ -83,7 +82,6 @@ object FileGlobal {
      * - Callback onError
      */
     const val OVER_LIMIT_EXCEPT_ALL: Int = 1
-
     /**
      * 1. 文件超过数量限制或大小限制
      * 2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
@@ -95,7 +93,6 @@ object FileGlobal {
      * - Call back onSuccess
      */
     const val OVER_LIMIT_EXCEPT_OVERFLOW: Int = 2
-
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(value = [OVER_LIMIT_EXCEPT_ALL, OVER_LIMIT_EXCEPT_OVERFLOW])
     annotation class FileOverLimitStrategy

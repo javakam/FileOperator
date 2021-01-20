@@ -42,6 +42,23 @@ object FileOperator {
         return isDebug
     }
 
+    private fun checkContext() {
+        if (!FileOperator::context.isInitialized) {
+            throw java.lang.RuntimeException("Must be initialized in Application : " +
+                    "FileOperator.init(this,BuildConfig.DEBUG)")
+        }
+    }
+
+    //FileType Builder
+    //--------------------------------------------------------------------------
+
+    //todo 2021年1月20日 17:11:33
+    fun buildFileType(mime: String): FileGlobal.IFileType {
+        return object : FileGlobal.IFileType {
+
+        }
+    }
+
     //getDatabasePath
     //--------------------------------------------------------------------------
 
@@ -109,13 +126,6 @@ object FileOperator {
             }
             path
         } else root
-    }
-
-    private fun checkContext() {
-        if (!FileOperator::context.isInitialized) {
-            throw java.lang.RuntimeException("Must be initialized in Application : " +
-                    "FileOperator.init(this,BuildConfig.DEBUG)")
-        }
     }
 
 }

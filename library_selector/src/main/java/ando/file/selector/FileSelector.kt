@@ -17,7 +17,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * FileSelector
+ * # FileSelector
  *
  * @author javakam
  * @date 2020/5/21  9:32
@@ -109,10 +109,10 @@ class FileSelector private constructor(builder: Builder) {
         if (mFileSelectOptions == null) mFileSelectOptions = mutableListOf()
         if (isOptionsEmpty) mFileSelectOptions?.add(optionUnknown)
 
-        //单选(Single choice) Intent.getData; 多选(Multiple choice) Intent.getClipData
+        //Single choice(Intent.getData); Multiple choice(Intent.getClipData)
         if (mIsMultiSelect) {
             if (intent?.clipData == null) {
-                //单一类型和多种类型(Single type and multiple types)
+                //Single type and Multiple types
                 if ((mFileSelectOptions?.size ?: 0 >= 2) && (mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL))
                     mFileSelectCallBack?.onError(Throwable(mMinCountTip))
                 else handleSingleSelectCase(intent)
@@ -156,7 +156,7 @@ class FileSelector private constructor(builder: Builder) {
         this.mIsMultiSelect = true
         val clipData: ClipData = intent?.clipData ?: return this
 
-        //clipData.itemCount 最小值为2(The minimum value of clipData.itemCount is 2)
+        //clipData.itemCount minimum is 2
         val itemCount = clipData.itemCount
         val isStrictStrategy = (mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL)
         if (isStrictStrategy && itemCount < realMinCountLimit(null)) {
@@ -176,8 +176,8 @@ class FileSelector private constructor(builder: Builder) {
         var totalSize = 0L
         var isNeedBreak = false
         var isFileTypeIllegal = false
-        var isFileCountIllegal = false  //文件数量(File Count): true 数量超限(Quantity exceeded)
-        var isFileSizeIllegal = false   //文件大小(File Size): true 大小超限(Oversize)
+        var isFileCountIllegal = false  //File Count: true 数量超限(Quantity exceeded)
+        var isFileSizeIllegal = false   //File Size: true 大小超限(Oversize)
 
         (0 until itemCount).forEach { i ->
             if (isNeedBreak) return this
@@ -194,7 +194,7 @@ class FileSelector private constructor(builder: Builder) {
                 if (relationMap[realOption] == null) relationMap[realOption] = SelectResult(checkPass = true)
                 val selectResult: SelectResult = relationMap[realOption] ?: SelectResult(checkPass = true)
 
-                //文件类型不匹配(FileType Mismatch) -> onError
+                //FileType Mismatch -> onError
                 if (!(tf || isOptionsEmpty)) {
                     mFileSelectCallBack?.onError(Throwable(
                         if (realOption.fileTypeMismatchTip?.isNotBlank() == true) realOption.fileTypeMismatchTip else mFileTypeMismatchTip
@@ -207,7 +207,7 @@ class FileSelector private constructor(builder: Builder) {
                     return@filterUri
                 }
 
-                //单一类型(Single type)
+                //Single type
                 val isOnlyOneType: Boolean = (mFileSelectOptions?.size ?: 0 == 1)
 
                 //FileSize

@@ -5,11 +5,13 @@ import java.io.File
 import java.util.*
 
 /**
- * 常用的文件类型 -> FileMimeType.kt
+ * 常用的文件类型
+ *
+ * {@link ando.file.core.FileMimeType}
  *
  * @author javakam
  */
-enum class FileType {
+enum class FileType : FileGlobal.IFileType {
 
     INSTANCE, UNKNOWN,
     AUDIO, VIDEO, IMAGE,
