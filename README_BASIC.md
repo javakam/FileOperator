@@ -44,7 +44,7 @@
 
 ## App Specific 沙盒目录
 
-- 如果配置了 `FileProvider` 并且配置了`external-files-path`和`external-cache-path`,应用会在启动时自动创建 `cache`和`files`目录:
+- 如果配置了 `FileProvider` 并且配置了`external-files-path`和`external-cache-path`, 应用会在启动时自动创建 `cache`和`files`目录:
 
 ```
  <!--context.getExternalFilesDirs()-->
@@ -68,7 +68,6 @@
         android:resource="@xml/file_paths" />
 </provider>
 ```
-
 
 ## MediaStore
 
@@ -115,7 +114,6 @@ table. <em>This table isn&#39;t available on Android 9 (API level 28) and lower.
 **不要为运行Android 10或更高版本的设备不必要地请求与存储相关的权限。** 您的应用程序可以参与定义明确的媒体集合，包括MediaStore.Downloads集合，而无需请求任何与存储相关的权限。 例如，如果您正在开发相机应用程序，则无需请求与存储相关的权限，因为您的应用程序拥有您要写入媒体存储区的图像。
 
 
-
 - MediaStore API 提供访问以下类型的媒体文件的接口：
 
 ```
@@ -136,8 +134,7 @@ MediaStore 还包含一个名为 MediaStore.Files 的集合，该集合提供访
 - 🌰查询一个媒体文件集合
 
 ```
-// Need the READ_EXTERNAL_STORAGE permission if accessing video files that your
-// app didnt create.
+// Need the READ_EXTERNAL_STORAGE permission if accessing video files that your app didnt create.
 
 // Container for information about each video.
 data class Video(val uri: Uri,
@@ -197,8 +194,6 @@ query?.use { cursor ->
     }
 }
 ```
-
-
 
 - 媒体文件的挂起状态
 
@@ -307,7 +302,6 @@ Android 7.0 在存储访问框架中加入了虚拟文件的概念。即使虚�
     - [把数据分享给其它应用](https://developer.android.google.cn/training/data-storage/shared/media#companion-apps)
 
 
-
 - 查看剩余空间
 
 如果您提前知道要存储多少数据，则可以通过调用getAllocatableBytes（）找出设备可以为应用程序提供多少空间。 getAllocatableBytes（）的返回值可能大于设备上当前的可用空间量。 这是因为系统已识别出可以从其他应用程序的缓存目录中删除的文件。
@@ -331,19 +325,20 @@ if (availableBytes >= NUM_BYTES_NEEDED_FOR_MY_APP) {
 ```
 > ⭐ 保存文件之前，不需要检查可用空间量。 相反，您可以尝试立即写入文件，然后在发生异常时捕获IOException。
 
-
-
-
 ![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8353bae487d74141b7d0c865b8144cce~tplv-k3u1fbpfcp-zoom-1.image)
 
-
 #### 卸载应用
-AndroidManifest.xml中声明：android:hasFragileUserData="true"，卸载应用会有提示是否保留 APP数据。默认应用卸载时App-specific目录下的数据被删除，但用户可以选择保留。
 
-#### 分享 App-specific 目录下文件👉 [FileProvider](https://developer.android.com/training/secure-file-sharing/setup-sharing)
+`AndroidManifest.xml`中声明：`android:hasFragileUserData="true"`, 卸载应用会有提示是否保留APP数据。默认应用卸载时`Appspecific`目录下的数据被删除，但用户可以选择保留。
 
+#### 共享文件 👉 https://developer.android.com/training/secure-file-sharing/share-file
+
+#### 分享文件 👉 https://developer.android.com/training/secure-file-sharing/setup-sharing
+
+#### FileProvider 👉 https://developer.android.google.cn/reference/androidx/core/content/FileProvider
 
 ### 参考资料
+
 #### 文档
 [ContentProvider官方文档](https://developer.android.google.cn/guide/topics/providers/content-providers)
 
@@ -356,4 +351,3 @@ AndroidManifest.xml中声明：android:hasFragileUserData="true"，卸载应用�
 Youtube 👉 <https://www.youtube.com/watch?v=UnJ3amzJM94>
 
 Bilibili 👉 <https://www.bilibili.com/video/BV1NE41117eR>
-

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import ando.file.core.FileSizeUtils
 import ando.file.core.FileLogger
 import ando.file.core.FileUri
+import android.os.Environment
 import android.widget.Button
 import android.widget.TextView
 import com.ando.file.sample.*
@@ -14,15 +15,13 @@ import java.io.File
 import kotlin.text.StringBuilder
 
 /**
- * 清除缓存页面
- * <p>
- * Description:
- * </p>
+ * # Android目录信息和清除缓存
+ *
  * @author javakam
  * @date 2020/6/10  10:03
  */
 @SuppressLint("SetTextI18n")
-class FileClearCacheActivity : AppCompatActivity() {
+class FileInfoActivity : AppCompatActivity() {
 
     private lateinit var tvDataDir: TextView
     private lateinit var tvFilesDir: TextView
@@ -31,7 +30,7 @@ class FileClearCacheActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_file_clear_cache)
+        setContentView(R.layout.activity_file_info)
         tvDataDir = findViewById(R.id.tvDataDir)
         tvFilesDir = findViewById(R.id.tvFilesDir)
         tvCacheDir = findViewById(R.id.tvCacheDir)
@@ -56,6 +55,22 @@ class FileClearCacheActivity : AppCompatActivity() {
         databaseList()?.forEach {
             FileLogger.i("databaseList item: $it")
         }
+
+        //系统会直接创建相应的目录
+        getExternalFilesDirs(Environment.DIRECTORY_ALARMS)
+        getExternalFilesDirs(Environment.DIRECTORY_DCIM)
+        getExternalFilesDirs(Environment.DIRECTORY_DOCUMENTS)
+        getExternalFilesDirs(Environment.DIRECTORY_DOWNLOADS)
+        getExternalFilesDirs(Environment.DIRECTORY_MOVIES)
+        getExternalFilesDirs(Environment.DIRECTORY_MUSIC)
+        getExternalFilesDirs(Environment.DIRECTORY_NOTIFICATIONS)
+        getExternalFilesDirs(Environment.DIRECTORY_PICTURES)
+        getExternalFilesDirs(Environment.DIRECTORY_PODCASTS)
+        getExternalFilesDirs(Environment.DIRECTORY_RINGTONES)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getExternalFilesDirs(Environment.DIRECTORY_AUDIOBOOKS)
+        }
+        //etc
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             tvDataDir.text = "👉Activity.getDataDir :  ${getFileInfo(dataDir)}"

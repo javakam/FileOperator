@@ -13,7 +13,7 @@ import androidx.annotation.Nullable
 /**
  * # FileOpener
  *
- * Description: 打开该 Uri 对应文件类型的所有软件, 通常情况下是个部弹窗
+ * 打开该 Uri 对应文件类型的所有软件, 通常情况下是个部弹窗
  *
  * Open all the software corresponding to the Uri file type, usually a pop-up window
  *
@@ -30,6 +30,9 @@ object FileOpener {
     fun openUrl(activity: Activity, url: String?) {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             intent.setDataAndType(Uri.parse(url), getMimeType(url))
             activity.startActivity(intent)
         } catch (e: Exception) {
@@ -38,19 +41,25 @@ object FileOpener {
     }
 
     /**
-     * 打开系统分享弹窗(Open the system sharing popup)
+     * 打开系统分享弹窗 (Open the system sharing popup)
      */
     fun openShare(context: Context, uri: Uri, title: String = "分享文件") {
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_STREAM, uri)
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         // Put the Uri and MIME type in the result Intent
         intent.setDataAndType(uri, getMimeType(uri))
-        context.startActivity(Intent.createChooser(intent, title))
+
+        //https://stackoverflow.com/questions/3918517/calling-startactivity-from-outside-of-an-activity-context
+        val chooserIntent: Intent = Intent.createChooser(intent, title)
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(chooserIntent)
     }
 
     /**
-     * 打开浏览器(Open browser)
+     * 打开浏览器 (Open browser)
      */
     @SuppressLint("QueryPermissionsNeeded")
     fun openBrowser(
@@ -66,7 +75,11 @@ object FileOpener {
             //startActivity(intent)
             //https://developer.android.com/about/versions/11/privacy/package-visibility
             if (intent.resolveActivity(context.packageManager) != null) {
-                context.startActivity(Intent.createChooser(intent, title))
+                val chooserIntent: Intent = Intent.createChooser(intent, title)
+                if (newTask) {
+                    chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(chooserIntent)
                 block?.invoke(true, null)
             } else {
                 block?.invoke(true, "没有可用浏览器")
@@ -101,6 +114,7 @@ object FileOpener {
     fun openFile(context: Any, uri: Uri?, mimeType: String? = null, title: String? = "选择程序") =
         uri?.let { u ->
             Intent.createChooser(createOpenFileIntent(u, mimeType), title)?.let {
+                it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(context, it)
             }
         }

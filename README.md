@@ -603,8 +603,8 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 - `readFileText(InputStream/Uri): String?` 读取文本文件中的内容(Read the contents of the text file)
 - `readFileBytes(InputStream/Uri): ByteArray?` 读取文件中的内容并返回`ByteArray`
 - `copyFile` 根据文件路径拷贝文件 `java.nio`
-- `write2File(bitmap: Bitmap, pathAndName: String?)`
-- `write2File(input: InputStream?, pathAndName: String?)`
+- `write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
+- `write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` 向文件中写入数据
 - `isLocal` 检验是否为本地URI
 - `isGif()` 检验是否为 gif
 
@@ -619,7 +619,7 @@ boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPa
 File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
 ```
 
-## 注意(Note)
+## 总结(Summary)
 
 1. `onActivityResult` 中要把选择文件的结果交给`FileSelector`处理 :
 
@@ -645,6 +645,14 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 4. Android 系统问题 : Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 开启多选条件下只选择一个文件时,系统是按照单选逻辑走的... Σ( ° △ °|||)︴
 
+5. `Activity`中执行`getExternalFilesDirs(Environment.DIRECTORY_XXX)`和其它获取目录地址的方法时,都会自动创建相应的目录
+
+![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/img1.png)
+
+6. `Uri.fromFile(file)`生成的`file:///...`是不能分享的,所以需要使用`FileProvider`将`App Specific`目录下的文件分享给其他APP读写,
+需要通过`FileProvider`解析出的可用于分享的路径: `ando.file.core.FileUri.getUriByFile(file)`
+
+7. 
 ---
 
 ## 更新日志
@@ -671,10 +679,13 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 ```
 ### v1.3.3
 ```
-1.FileOpener.openFileBySystemChooser 改名为 FileOpener.openFile, 语义更明确
-2.如果筛选`txt`文本文件,`MimeType`建议设置为`text/*`相较于`text/plain`在系统文件管理器页面多一个`文档`字样的筛选更好一些,
-  eg: setMimeTypes(arrayOf("audio/*", "image/*", "text/*"))
+1.移除AppSpecific(沙盒)演示Demo AppSpecificActivity,因为沙盒目录(AppSpecific)操作直接沿用旧的 File API操作,
+    所以直接可以用 ando.file.core.FileUtils 替代,详见: FileUtilsActivity
+2.FileOpener.openFileBySystemChooser 改名为 FileOpener.openFile, 语义更明确
 3.
+3.如果筛选`txt`文本文件,`MimeType`建议设置为`text/*`相较于`text/plain`在系统文件管理器页面多一个`文档`字样的筛选更好一些,
+  eg: setMimeTypes(arrayOf("audio/*", "image/*", "text/*"))
+4.
 ```
 
 ### Fiexd Bug
@@ -733,9 +744,24 @@ Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
 #### 6.android.os.FileUriExposedException: file:///storage/emulated/0/Android/data/com.ando.file.sample/cache exposed beyond app through Intent.getData()
 > Fixed: `AndroidManifest.xml`没配置`FileProvider`
 
-## 参考(Reference)
+#### 7.Calling startActivity() from outside of an Activity
+<https://stackoverflow.com/questions/3918517/calling-startactivity-from-outside-of-an-activity-context>
 
-### Google
+> Fixed: `Intent.createChooser`要添加两次`FLAG_ACTIVITY_NEW_TASK`:
+
+```kotlin
+val intent = Intent(Intent.ACTION_SEND)
+intent.putExtra(Intent.EXTRA_STREAM, uri)
+intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+val chooserIntent: Intent = Intent.createChooser(intent, title)
+chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+context.startActivity(chooserIntent)
+```
+
+### 感谢(Thanks)
+
+#### Google
 
 [Storage Samples Repository](https://github.com/android/storage-samples)
 
@@ -753,27 +779,19 @@ Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
 
 [Android 10 中的隐私权](https://developer.android.google.cn/about/versions/10/privacy/changes#scoped-storage)
 
-### 感谢(Thanks)
+#### GitHub
 
 [FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
 
-[AndroidFilePicker](https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md)
-
 [FilePicker](https://github.com/chsmy/FilePicker)
 
-[MaterialFilePicker](https://github.com/nbsp-team/MaterialFilePicker)
-
-[LFilePicker](https://github.com/leonHua/LFilePicker)
+[AndroidFilePicker](https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md)
 
 [Android-FilePicker](https://github.com/DroidNinja/Android-FilePicker)
 
 [MaterialFiles](https://github.com/zhanghai/MaterialFiles)
 
-[Shelter](https://github.com/PeterCxy/Shelter)
-
-[cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
-
-### 其它(Other)
+#### Blog
 
 [LOGO](https://www.easyicon.net/1293281-folders_icon.html)
 

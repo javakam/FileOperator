@@ -12,7 +12,9 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28"
-        tools:ignore="ScopedStorage" /> <!-- 照片的位置信息 -->
+        tools:ignore="ScopedStorage" />
+
+    <!-- 照片的位置信息 -->
     <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
 
     <application
@@ -41,9 +43,6 @@
             android:name=".ui.core.FileUtilsActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.storage.AppSpecificActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.storage.MediaStoreActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -59,7 +58,7 @@
             android:name=".ui.selector.FileSelectMultiFilesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.FileClearCacheActivity"
+            android:name=".ui.FileInfoActivity"
             android:screenOrientation="portrait" />
     </application>
 

@@ -1,7 +1,7 @@
 package ando.file.selector
 
-import ando.file.FileOperator.getContext
-import ando.file.FileOperator.isDebug
+import ando.file.core.FileOperator.getContext
+import ando.file.core.FileOperator.isDebug
 import android.content.Context
 import android.content.Intent
 import android.net.Uri

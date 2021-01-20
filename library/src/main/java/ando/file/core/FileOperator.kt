@@ -1,9 +1,8 @@
-package ando.file
+package ando.file.core
 
 import android.app.Application
 import android.content.Context
 import android.text.TextUtils
-import ando.file.core.FileLogger
 import ando.file.core.FileDirectory.getExternalCacheDir
 import ando.file.core.FileDirectory.getExternalFilesDir
 import ando.file.core.FileDirectory.getFilesDir
@@ -113,7 +112,7 @@ object FileOperator {
     }
 
     private fun checkContext() {
-        if (!::context.isInitialized) {
+        if (!FileOperator::context.isInitialized) {
             throw java.lang.RuntimeException("Must be initialized in Application : " +
                     "FileOperator.init(this,BuildConfig.DEBUG)")
         }

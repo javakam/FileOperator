@@ -1,6 +1,6 @@
 package ando.file.compressor
 
-import ando.file.FileOperator.getContext
+import ando.file.core.FileOperator.getContext
 import ando.file.core.*
 import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.openFileDescriptor

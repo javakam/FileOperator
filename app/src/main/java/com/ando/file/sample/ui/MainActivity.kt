@@ -10,7 +10,6 @@ import com.ando.file.sample.ui.core.FileUtilsActivity
 import com.ando.file.sample.ui.selector.FileSelectMultiFilesActivity
 import com.ando.file.sample.ui.selector.FileSelectMultiImageActivity
 import com.ando.file.sample.ui.selector.FileSelectSingleImageActivity
-import com.ando.file.sample.ui.storage.AppSpecificActivity
 import com.ando.file.sample.ui.storage.MediaStoreActivity
 import com.ando.file.sample.ui.storage.StorageAccessFrameworkActivity
 
@@ -53,16 +52,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun caseClearCache(view: View) {
-        startActivity(Intent(this, FileClearCacheActivity::class.java))
+        startActivity(Intent(this, FileInfoActivity::class.java))
     }
 
     /////////////////////////////// 区别 ///////////////////////////////////////
 
-    //AppSpecific
-    fun caseAppSpecific(view: View) {
-        val intent = Intent(this, AppSpecificActivity::class.java)
-        startActivity(intent)
-    }
+    //AppSpecific(沙盒)
+    //@see FileUtilsActivity
 
     //MediaStore
     fun caseMediaStore(view: View) {

@@ -10,6 +10,7 @@ buildscript {
         jcenter()
         maven { url "https://maven.google.com" }
         maven { url "https://jitpack.io" }
+        maven { url "https://dl.bintray.com/javakam/AndoDialog" }
         maven { url 'https://dl.bintray.com/javakam/FileOperator' }
         maven { url 'https://dl.bintray.com/novoda-oss/snapshots/' }
 
@@ -31,6 +32,7 @@ allprojects {
         jcenter()
         maven { url "https://maven.google.com" }
         maven { url "https://jitpack.io" }
+        maven { url "https://dl.bintray.com/javakam/AndoDialog" }
         maven { url 'https://dl.bintray.com/javakam/FileOperator' }
         maven { url 'https://dl.bintray.com/novoda-oss/snapshots/' }
 

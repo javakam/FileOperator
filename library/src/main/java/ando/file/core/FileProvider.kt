@@ -1,4 +1,4 @@
-package ando.file
+package ando.file.core
 
 import androidx.core.content.FileProvider
 

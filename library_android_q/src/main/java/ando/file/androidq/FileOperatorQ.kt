@@ -1,6 +1,6 @@
 package ando.file.androidq
 
-import ando.file.FileOperator.getContext
+import ando.file.core.FileOperator.getContext
 import ando.file.core.*
 import ando.file.core.FileGlobal.MEDIA_TYPE_AUDIO
 import ando.file.core.FileGlobal.MEDIA_TYPE_IMAGE
@@ -22,7 +22,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.os.SystemClock
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
@@ -38,63 +37,11 @@ import java.util.concurrent.TimeUnit
 
 /**
  * # FileOperatorQ
- * <p>
  *
  * @author javakam
  * @date 2020/5/22  16:16
  */
 object FileOperatorQ {
-
-    private fun getAppSpecificAlbumStorageDir(context: Context, albumName: String): File {
-        // Get the pictures directory that's inside the app-specific directory on  external storage.
-        val file = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), albumName)
-        if (!file.exists() && !file.mkdirs()) {
-            FileLogger.e("Directory not created")
-        }
-        FileLogger.i("Directory created")
-        return file
-    }
-
-    //App-Specific getExternalFilesDirs
-    //------------------------------------------------------------------------------------------------
-
-    /**
-     * 1.异步执行
-     * 2.重复创建同名文件旧的会被覆盖 , 需要防抖处理
-     *
-     * @param type The type of files directory to return. May be {@code null}
-     * for the root of the files directory or one of the following
-     * constants for a subdirectory:
-     *      {@link android.os.Environment#DIRECTORY_MUSIC},
-     *      {@link android.os.Environment#DIRECTORY_PODCASTS},
-     *      {@link android.os.Environment#DIRECTORY_RINGTONES},
-     *      {@link android.os.Environment#DIRECTORY_ALARMS},
-     *      {@link android.os.Environment#DIRECTORY_NOTIFICATIONS},
-     *      {@link android.os.Environment#DIRECTORY_PICTURES}, or
-     *      {@link android.os.Environment#DIRECTORY_MOVIES}.
-     */
-    fun createFileInAppSpecific(type: String, displayName: String?, text: String?, block: (file: File?) -> Unit) {
-        // val fileDir = getContext().getExternalFilesDirs(type)
-        // 或者
-        val fileDir = getContext().getExternalFilesDir(type)
-        if (fileDir != null && fileDir.exists()) {
-            try {
-                val newFile = File(fileDir.absolutePath,
-                    if (displayName == null || displayName.isBlank()) SystemClock.currentThreadTimeMillis().toString() else displayName)
-
-                FileOutputStream(newFile).use {
-                    it.write((if (text == null || text.isBlank()) "" else text).toByteArray(Charsets.UTF_8))
-                    it.flush()
-
-                    FileLogger.d("创建成功")
-                    block.invoke(newFile)
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-                FileLogger.d("创建失败")
-            }
-        }
-    }
 
     //MediaStore
     //------------------------------------------------------------------------------------------------
@@ -127,7 +74,6 @@ object FileOperatorQ {
             }
         }
     }
-
 
     /**
      * ContentResolver的insert方法 , 将多媒体文件保存到多媒体的公共集合目录
@@ -308,56 +254,56 @@ object FileOperatorQ {
         val selectionArgs: MutableList<String> = mutableListOf()
 
         var needAddPre = false
-        if (isNotBlank(displayName)) {
+        if (!displayName.isNullOrBlank()) {
             val columnDisplayName: String = when (mediaType) {
                 MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.DISPLAY_NAME
                 MEDIA_TYPE_AUDIO -> MediaStore.Audio.Media.DISPLAY_NAME
                 else -> MediaStore.Images.Media.DISPLAY_NAME
             }
             selection.append(" $columnDisplayName $symbol ? ")
-            selectionArgs.add(noNull(displayName))
+            selectionArgs.add(displayName)
             needAddPre = true
         }
-        if (isNotBlank(description) && mediaType != MEDIA_TYPE_AUDIO) {// MediaStore.Audio 没有 DESCRIPTION 字段
-            val columnDescription: String? = when (mediaType) {
+        if (!description.isNullOrBlank() && mediaType != MEDIA_TYPE_AUDIO) {// MediaStore.Audio 没有 DESCRIPTION 字段
+            val columnDescription: String = when (mediaType) {
                 MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.DESCRIPTION
                 else -> MediaStore.Images.Media.DESCRIPTION
             }
 
             selection.append("${if (needAddPre) " and " else " "} $columnDescription $symbol ? ")
-            selectionArgs.add(noNull(description))
+            selectionArgs.add(description)
             needAddPre = true
         }
-        if (isNotBlank(title)) {
-            val columnTitle: String? = when (mediaType) {
+        if (!title.isNullOrBlank()) {
+            val columnTitle: String = when (mediaType) {
                 MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.TITLE
                 MEDIA_TYPE_AUDIO -> MediaStore.Audio.Media.TITLE
                 else -> MediaStore.Images.Media.TITLE
             }
 
             selection.append("${if (needAddPre) " and " else " "} $columnTitle $symbol ? ")
-            selectionArgs.add(noNull(title))
+            selectionArgs.add(title)
             needAddPre = true
         }
-        if (isNotBlank(mimeType)) {
-            val columnMimeType: String? = when (mediaType) {
+        if (!mimeType.isNullOrBlank()) {
+            val columnMimeType: String = when (mediaType) {
                 MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.MIME_TYPE
                 MEDIA_TYPE_AUDIO -> MediaStore.Audio.Media.MIME_TYPE
                 else -> MediaStore.Images.Media.MIME_TYPE
             }
             selection.append("${if (needAddPre) " and " else " "} $columnMimeType $symbol ? ")
-            selectionArgs.add(noNull(mimeType))
+            selectionArgs.add(mimeType)
             needAddPre = true
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (isNotBlank(relativePath)) {
-                val columnRelativePath: String? = when (mediaType) {
+            if (!relativePath.isNullOrBlank()) {
+                val columnRelativePath: String = when (mediaType) {
                     MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.RELATIVE_PATH
                     MEDIA_TYPE_AUDIO -> MediaStore.Audio.Media.RELATIVE_PATH
                     else -> MediaStore.Images.Media.RELATIVE_PATH
                 }
                 selection.append("${if (needAddPre) " and " else " "} $columnRelativePath $symbol ? ")
-                selectionArgs.add(noNull(relativePath))
+                selectionArgs.add(relativePath)
                 needAddPre = true
             }
         }
@@ -384,6 +330,7 @@ object FileOperatorQ {
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     @RequiresPermission(value = READ_EXTERNAL_STORAGE)
     fun testQueryMediaVideoByUri() {
         val projectionArgs =
@@ -417,12 +364,8 @@ object FileOperatorQ {
         // Show only videos that are at least 5 minutes in duration.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             queryStatement.append(
-                "${MediaStore.Video.Media.DURATION} >= ? ", noNull(
-                    TimeUnit.MILLISECONDS.convert(
-                        sourceDuration,
-                        sourceUnit
-                    ).toString()
-                )
+                "${MediaStore.Video.Media.DURATION} >= ? ",
+                TimeUnit.MILLISECONDS.convert(sourceDuration, sourceUnit).toString()
             )
         }
         getMediaCursor(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projectionArgs, sortOrder, queryStatement)?.use { cursor ->
@@ -432,7 +375,8 @@ object FileOperatorQ {
             val durationColumn = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 cursor.getColumnIndex(MediaStore.Video.Media.DURATION)
             } else {
-                TODO("VERSION.SDK_INT < Q")
+                //VERSION.SDK_INT < Q)
+                0
             }
             val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE)
 
@@ -586,6 +530,7 @@ object FileOperatorQ {
 
     /**
      * 新建一个文件
+     *
      * <pre>
      *   mimeType 和 fileName 传反了引发的血案 👇
      *   android.content.ActivityNotFoundException: No Activity found to handle Intent
@@ -704,8 +649,7 @@ object FileOperatorQ {
     fun checkUriFlagSAF(uri: Uri, flag: Int): Boolean {
         val cursor = getContext().contentResolver.query(uri, null, null, null, null)
         if (cursor != null && cursor.moveToFirst()) {
-            val columnFlags =
-                cursor.getInt(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS))
+            val columnFlags = cursor.getInt(cursor.getColumnIndex(DocumentsContract.Document.COLUMN_FLAGS))
             FileLogger.i("Column Flags：$columnFlags  Flag：$flag")
             if (columnFlags >= flag) {
                 return true
@@ -990,18 +934,6 @@ object FileOperatorQ {
 
     fun deleteUriMediaStoreImage(activity: Activity, mediaImage: MediaStoreImage, requestCode: Int): Boolean =
         deleteUri(activity, mediaImage.uri, "${MediaStore.Images.Media._ID} = ?", arrayOf(mediaImage.id.toString()), requestCode)
-
-    // String Empty checks
-    //-----------------------------------------------------------------------
-
-    private fun noNull(any: Any?): String =
-        when (any) {
-            is String -> (any as? String ?: "")
-            is Int -> (any as? Int ?: "").toString()
-            else -> any.toString()
-        }
-
-    private fun isNotBlank(cs: CharSequence?): Boolean = (!(cs.isNullOrBlank()))
 
     //Dump
     //------------------------------------------------------------------------------------------------

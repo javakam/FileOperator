@@ -10,7 +10,7 @@
 
     <application>
         <provider
-            android:name=".FileProvider"
+            android:name=".core.FileProvider"
             android:authorities="${applicationId}.andoFileProvider"
             android:exported="false"
             android:grantUriPermissions="true">

@@ -1,6 +1,5 @@
 package ando.file.core
 
-import ando.file.FileOperator
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.OpenableColumns
@@ -80,6 +79,226 @@ object FileUtils {
             }
         }
         return filename
+    }
+
+    //File Read
+    //----------------------------------------------------------------
+
+    /**
+     * 读取文本文件中的内容
+     *
+     * Read the contents of the text file
+     */
+    fun readFileText(stream: InputStream?): String? {
+        if (stream == null) return null
+        val content = StringBuilder()
+        try {
+            val reader = InputStreamReader(stream)
+            val bufferedReader = BufferedReader(reader)
+            var line: String?
+            while (bufferedReader.readLine().also { line = it } != null) {
+                content.append(line).append("\n")
+            }
+            bufferedReader.close()
+            reader.close()
+            stream.close()
+        } catch (e: Exception) {
+            FileLogger.e(e.message)
+        }
+        return content.toString()
+    }
+
+    fun readFileText(uri: Uri?): String? =
+        uri?.run {
+            readFileText(FileOperator.getContext().contentResolver.openInputStream(this))
+        }
+
+    fun readFileBytes(stream: InputStream?): ByteArray? =
+        stream?.use {
+            var byteArray: ByteArray? = null
+            try {
+                val buffer = ByteArrayOutputStream()
+                var nRead: Int
+                val data = ByteArray(1024)
+                while (stream.read(data, 0, data.size).also { nRead = it } != -1) {
+                    buffer.write(data, 0, nRead)
+                }
+
+                buffer.flush()
+                byteArray = buffer.toByteArray()
+                buffer.close()
+            } catch (e: IOException) {
+                FileLogger.e("readFileBytes: ${e.message}")
+            }
+            return byteArray
+        }
+
+    fun readFileBytes(uri: Uri?): ByteArray? =
+        uri?.run {
+            readFileBytes(FileOperator.getContext().contentResolver.openInputStream(this))
+        }
+
+    //File Write
+    //----------------------------------------------------------------
+
+    /**
+     * 创建文件 (Create a file)
+     *
+     * eg: filePath is getExternalCacheDir() , fileName is xxx.json
+     *
+     * System path: /mnt/sdcard/Android/data/ando.guard/cache/xxx.json
+     */
+    fun createFile(filePath: String?, fileName: String?, overwrite: Boolean = false): File? {
+        if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return null
+        val file = File(filePath, fileName)
+        if (file.exists()) {
+            if (file.isDirectory) file.delete()
+
+            if (overwrite) file.delete()
+            else return file
+        }
+        if (file.parentFile?.exists() == false) {
+            file.parentFile?.mkdirs()
+        }
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        return file
+    }
+
+    /**
+     * 创建目录 (Create a directory)
+     */
+    fun createDirectory(filePath: String?): Boolean {
+        if (filePath.isNullOrBlank()) return false
+        val file = File(filePath)
+        if (file.exists()) {
+            if (!file.isDirectory) file.delete() else return true
+        }
+        file.mkdirs()
+        return true
+    }
+
+    fun write2File(bitmap: Bitmap, pathAndName: String?, overwrite: Boolean = false) {
+        if (pathAndName.isNullOrBlank()) return
+        write2File(bitmap, File(pathAndName), overwrite)
+    }
+
+    fun write2File(bitmap: Bitmap, filePath: String?, fileName: String?, overwrite: Boolean = false) {
+        if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return
+        write2File(bitmap, File(filePath, fileName), overwrite)
+    }
+
+    /**
+     * Bitmap保存为本地文件 (Save Bitmap as a local file)
+     */
+    fun write2File(bitmap: Bitmap, file: File?, overwrite: Boolean = false) {
+        if (file == null) return
+        if (file.exists()) {
+            if (file.isDirectory) file.delete()
+            if (overwrite) file.delete() else return
+        }
+        var out: BufferedOutputStream? = null
+        try {
+            out = BufferedOutputStream(FileOutputStream(file))
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        } catch (e: FileNotFoundException) {
+            FileLogger.e(e.message)
+        } finally {
+            out?.close()
+        }
+    }
+
+    fun write2File(input: InputStream, pathAndName: String?, overwrite: Boolean = false) {
+        if (pathAndName.isNullOrBlank()) return
+        write2File(input, File(pathAndName), overwrite)
+    }
+
+    fun write2File(input: InputStream, filePath: String?, fileName: String?, overwrite: Boolean = false) {
+        if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return
+        write2File(input, File(filePath, fileName), overwrite)
+    }
+
+    fun write2File(input: InputStream, file: File?, overwrite: Boolean = false) {
+        if (file == null) return
+        var output: FileOutputStream? = null
+        try {
+            val dir = file.parentFile
+            if (dir == null || !dir.exists()) {
+                dir?.mkdirs()
+            }
+
+            if (file.exists() && file.isDirectory) file.delete()
+
+            if (!file.exists()) {
+                file.createNewFile()
+            } else {
+                if (overwrite) file.delete() else return
+            }
+
+            output = FileOutputStream(file)
+            val b = ByteArray(8 * 1024)
+            var length: Int
+            while (input.read(b).also { length = it } != -1) {
+                output.write(b, 0, length)
+            }
+            output.flush()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } finally {
+            input.close()
+            output?.close()
+        }
+    }
+
+    //File Copy
+    //----------------------------------------------------------------
+
+    /**
+     * ### 拷贝文件到指定路径和名称 (Copy the file to the specified path and name)
+     *
+     * 效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当
+     * ```kotlin
+     * fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File
+     * ```
+     * Usage:
+     * ```kotlin
+     * boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPath(), "test.txt");
+     * File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
+     * ```
+     *
+     * @param src 源文件 Source File
+     * @param destFilePath 目标文件路径(Target file path)
+     * @param destFileName 目标文件名称(Target file name)
+     */
+    fun copyFile(
+        src: File,
+        destFilePath: String,
+        destFileName: String,
+    ): Boolean {
+        if (!src.exists() || destFilePath.isBlank() || destFileName.isBlank()) return false
+        val dest = File(destFilePath + File.separator + destFileName)
+        if (dest.exists()) dest.delete() // delete file
+
+        try {
+            dest.createNewFile()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        var srcChannel: FileChannel? = null
+        var dstChannel: FileChannel? = null
+        return try {
+            srcChannel = FileInputStream(src).channel
+            dstChannel = FileOutputStream(dest).channel
+            srcChannel.transferTo(0, srcChannel.size(), dstChannel)
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        } finally {
+            srcChannel?.close()
+            dstChannel?.close()
+        }
     }
 
     //File Delete
@@ -190,206 +409,6 @@ object FileUtils {
             if (i == len - 1) return true
         }
         return false
-    }
-
-    //File Read
-    //----------------------------------------------------------------
-
-    /**
-     * 读取文本文件中的内容
-     *
-     * Read the contents of the text file
-     */
-    fun readFileText(stream: InputStream?): String? {
-        if (stream == null) return null
-        val content = StringBuilder()
-        try {
-            val reader = InputStreamReader(stream)
-            val bufferedReader = BufferedReader(reader)
-            var line: String?
-            while (bufferedReader.readLine().also { line = it } != null) {
-                content.append(line).append("\n")
-            }
-            bufferedReader.close()
-            reader.close()
-            stream.close()
-        } catch (e: Exception) {
-            FileLogger.e(e.message)
-        }
-        return content.toString()
-    }
-
-    fun readFileText(uri: Uri?): String? =
-        uri?.run {
-            readFileText(FileOperator.getContext().contentResolver.openInputStream(this))
-        }
-
-    fun readFileBytes(stream: InputStream?): ByteArray? =
-        stream?.use {
-            var byteArray: ByteArray? = null
-            try {
-                val buffer = ByteArrayOutputStream()
-                var nRead: Int
-                val data = ByteArray(1024)
-                while (stream.read(data, 0, data.size).also { nRead = it } != -1) {
-                    buffer.write(data, 0, nRead)
-                }
-
-                buffer.flush()
-                byteArray = buffer.toByteArray()
-                buffer.close()
-            } catch (e: IOException) {
-                FileLogger.e("readFileBytes: ${e.message}")
-            }
-            return byteArray
-        }
-
-    fun readFileBytes(uri: Uri?): ByteArray? =
-        uri?.run {
-            readFileBytes(FileOperator.getContext().contentResolver.openInputStream(this))
-        }
-
-    //File Copy
-    //----------------------------------------------------------------
-
-    /**
-     * ### 拷贝文件到指定路径和名称 (Copy the file to the specified path and name)
-     *
-     * 效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当
-     * ```kotlin
-     * fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File
-     * ```
-     * Usage:
-     * ```kotlin
-     * boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPath(), "test.txt");
-     * File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
-     * ```
-     *
-     * @param src 源文件 Source File
-     * @param destFilePath 目标文件路径(Target file path)
-     * @param destFileName 目标文件名称(Target file name)
-     */
-    fun copyFile(
-        src: File,
-        destFilePath: String,
-        destFileName: String,
-    ): Boolean {
-        if (!src.exists() || destFilePath.isBlank() || destFileName.isBlank()) return false
-        val dest = File(destFilePath + File.separator + destFileName)
-        if (dest.exists()) dest.delete() // delete file
-
-        try {
-            dest.createNewFile()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        var srcChannel: FileChannel? = null
-        var dstChannel: FileChannel? = null
-        return try {
-            srcChannel = FileInputStream(src).channel
-            dstChannel = FileOutputStream(dest).channel
-            srcChannel.transferTo(0, srcChannel.size(), dstChannel)
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        } finally {
-            srcChannel?.close()
-            dstChannel?.close()
-        }
-    }
-
-    //File Write
-    //----------------------------------------------------------------
-
-    /**
-     * 创建文件 (Create a file)
-     *
-     * eg: filePath is getExternalCacheDir() , fileName is xxx.json
-     *
-     * System path: /mnt/sdcard/Android/data/ando.guard/cache/xxx.json
-     */
-    fun createFile(filePath: String?, fileName: String?, overwrite: Boolean = false): File? {
-        if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return null
-        val file = File(filePath, fileName)
-        if (file.exists()) {
-            if (file.isDirectory) file.delete()
-
-            if (overwrite) file.delete()
-            else return file
-        }
-        if (file.parentFile?.exists() == false) {
-            file.parentFile?.mkdirs()
-        }
-        if (!file.exists()) {
-            file.createNewFile()
-        }
-        return file
-    }
-
-    /**
-     * 创建目录 (Create a directory)
-     */
-    fun createDirectory(filePath: String?): Boolean {
-        if (filePath.isNullOrBlank()) return false
-        val file = File(filePath)
-        if (file.exists()) {
-            if (!file.isDirectory) file.delete() else return true
-        }
-        file.mkdirs()
-        return true
-    }
-
-    /**
-     * Bitmap 保存为本地文件 (Save Bitmap as a local file)
-     *
-     * @param pathAndName  格式必须带有后缀 xxx.png (The format must have the suffix xxx.png)
-     */
-    fun write2File(bitmap: Bitmap, pathAndName: String?) {
-        if (pathAndName.isNullOrBlank()) return
-        write2File(bitmap, File(pathAndName))
-    }
-
-    fun write2File(bitmap: Bitmap, file: File?) {
-        if (file == null || file.exists()) return
-        var out: BufferedOutputStream? = null
-        try {
-            out = BufferedOutputStream(FileOutputStream(file))
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
-        } catch (e: FileNotFoundException) {
-            FileLogger.e(e.message)
-        } finally {
-            out?.close()
-        }
-    }
-
-    fun write2File(input: InputStream, filePath: String?, fileName: String?) =
-        write2File(input, createFile(filePath, fileName)?.path)
-
-    fun write2File(input: InputStream, pathAndName: String?) {
-        if (pathAndName.isNullOrBlank()) return
-        var output: FileOutputStream? = null
-        try {
-            val file = File(pathAndName)
-            val dir = file.parentFile
-            if (dir == null || !dir.exists()) {
-                dir?.mkdirs()
-            }
-            if (!file.exists()) file.createNewFile()
-
-            output = FileOutputStream(file)
-            val b = ByteArray(8 * 1024)
-            var length: Int
-            while (input.read(b).also { length = it } != -1) {
-                output.write(b, 0, length)
-            }
-            output.flush()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            input.close()
-            output?.close()
-        }
     }
 
     //----------------------------------------------------------------

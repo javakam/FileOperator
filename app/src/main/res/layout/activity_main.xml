@@ -128,14 +128,6 @@
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="caseAppSpecific"
-        android:text="App Specific"
-        android:textAllCaps="false"
-        android:textSize="@dimen/font_12" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:onClick="caseMediaStore"
         android:text="MediaStore"
         android:textAllCaps="false"

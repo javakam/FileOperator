@@ -2,7 +2,7 @@ package ando.file.core
 
 import android.net.Uri
 import android.webkit.MimeTypeMap
-import ando.file.FileOperator.getContext
+import ando.file.core.FileOperator.getContext
 import ando.file.core.FileUri.getFilePathByUri
 import java.util.*
 
