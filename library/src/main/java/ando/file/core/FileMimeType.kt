@@ -7,14 +7,18 @@ import ando.file.core.FileUri.getFilePathByUri
 import java.util.*
 
 /**
- * 文件 MimeType 工具类
+ * # File MimeType Utils
  *
- * 1. getMimeType(str: String?) 先用`android.webkit.MimeTypeMap`获取`mimeType`, 如果为空再去`MIME_TABLES`中找
+ *      - 1. getMimeType(str: String?) 先用`android.webkit.MimeTypeMap`获取`mimeType`, 如果为空再去`MIME_TABLES`中找
  *
- * 2. getMimeType(uri: Uri?) 先用`android.content.Context.getContentResolver`获取`mimeType`,
- *   如果结果为空则借助`getFilePathByUri(uri)`将`uri`转换为`path`, 执行`getMimeType(str: String?)`
+ *      - 2. getMimeType(uri: Uri?) 先用`android.content.Context.getContentResolver`获取`mimeType`,
+ *          如果结果为空则借助`getFilePathByUri(uri)`将`uri`转换为`path`, 执行`getMimeType(str: String?)`
  */
 object FileMimeType {
+
+    fun getMimeType(uri: Uri?): String =
+        if (uri != null) getContext().contentResolver.getType(uri)?.toLowerCase(Locale.getDefault()) ?: getMimeType(getFilePathByUri(uri))
+        else getMimeType(getFilePathByUri(uri))
 
     /**
      * 根据 File Name/Path/Url 获取相应的 MimeType
@@ -28,13 +32,9 @@ object FileMimeType {
         val mimeType = if (extension.isNullOrBlank()) getMimeTypeSupplement(str)
         else MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: type
 
-        FileLogger.i("FileMimeType ：extension=$extension  mimeType=$mimeType")
+        FileLogger.i("FileMimeType：extension=$extension  mimeType=$mimeType")
         return mimeType.toLowerCase(Locale.getDefault())
     }
-
-    fun getMimeType(uri: Uri?): String =
-        if (uri != null) getContext().contentResolver.getType(uri)?.toLowerCase(Locale.getDefault()) ?: getMimeType(getFilePathByUri(uri))
-        else getMimeType(getFilePathByUri(uri))
 
     /**
      * MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
@@ -45,7 +45,7 @@ object FileMimeType {
         if (dotIndex < 0) return type
         val end = fileName.substring(dotIndex).toLowerCase(Locale.getDefault())
         if (end.isBlank()) return type
-        FileLogger.i("getMimeTypeSupplement ：end=$end")
+        FileLogger.i("getMimeTypeSupplement：end=$end")
         for (mimeTypes in MIME_TABLES) {
             if (end.equals(mimeTypes[0], true)) {
                 type = mimeTypes[1]
@@ -83,6 +83,7 @@ object FileMimeType {
             arrayOf(".bz", "application/x-bzip"),
             arrayOf(".bz2", "application/x-bzip2"),
             arrayOf(".c", "text/plain"),
+            arrayOf(".chm", "application/x-chm"),
             arrayOf(".class", "application/octet-stream"),
             arrayOf(".conf", "text/plain"),
             arrayOf(".cpp", "text/x-c"),

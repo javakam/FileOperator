@@ -62,7 +62,7 @@ val optionsImage = FileSelectOptions().apply {
     allFilesMaxSize = 10485760
     allFilesMaxSizeTip = "总图片大小不超过10M！"//单选条件下无效,只做单个图片大小判断
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     }
@@ -80,7 +80,7 @@ mFileSelector = FileSelector
     .applyOptions(optionsImage)
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return when (fileType) {
                 FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 FileType.VIDEO -> false
@@ -118,7 +118,7 @@ val optionsImage = FileSelectOptions().apply {
     allFilesMaxSize = 10485760
     allFilesMaxSizeTip = "图片总大小不超过10M！"
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     }
@@ -141,7 +141,7 @@ mFileSelector = FileSelector
 
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE) && (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     })
@@ -185,7 +185,7 @@ val optionsImage = FileSelectOptions().apply {
     allFilesMaxSize = 10485760
     allFilesMaxSizeTip = "图片总大小不超过10M！"
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     }
@@ -202,7 +202,7 @@ val optionsAudio = FileSelectOptions().apply {
     allFilesMaxSize = 31457280
     allFilesMaxSizeTip = "音频总大小不超过30M！"
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (uri != null)
         }
     }
@@ -219,7 +219,7 @@ val optionsTxt = FileSelectOptions().apply {
     allFilesMaxSize = 10485760
     allFilesMaxSizeTip = "文本文件总大小不超过10M！"
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (uri != null)
         }
     }
@@ -253,13 +253,13 @@ mFileSelector = FileSelector
     //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
     .setOverLimitStrategy(this.mOverLimitStrategy)
     //eg: ando.file.core.FileMimeType
-    .setMimeTypes(arrayOf("audio/*", "image/*", "text/plain"))//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+    .setMimeTypes("audio/*", "image/*", "text/plain")//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
     //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
     .applyOptions(optionsImage, optionsAudio, optionsTxt)
 
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return when (fileType) {
                 FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 FileType.AUDIO -> true
@@ -684,7 +684,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 2.FileOpener.openFileBySystemChooser 改名为 FileOpener.openFile, 语义更明确
 3.
 3.如果筛选`txt`文本文件,`MimeType`建议设置为`text/*`相较于`text/plain`在系统文件管理器页面多一个`文档`字样的筛选更好一些,
-  eg: setMimeTypes(arrayOf("audio/*", "image/*", "text/*"))
+  eg: setMimeTypes("audio/*", "image/*", "text/*")
 4.
 ```
 

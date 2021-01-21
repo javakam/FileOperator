@@ -33,7 +33,6 @@ import ando.file.compressor.OnImageCompressListener;
 import ando.file.compressor.OnImageRenameListener;
 import ando.file.core.FileLogger;
 import ando.file.core.FileSizeUtils;
-import ando.file.core.FileType;
 import ando.file.core.FileUri;
 import ando.file.core.FileUtils;
 import ando.file.selector.FileSelectCallBack;
@@ -41,6 +40,8 @@ import ando.file.selector.FileSelectCondition;
 import ando.file.selector.FileSelectOptions;
 import ando.file.selector.FileSelectResult;
 import ando.file.selector.FileSelector;
+import ando.file.selector.FileType;
+import ando.file.selector.IFileType;
 
 /**
  * # MainActivity
@@ -104,7 +105,7 @@ public class MainActivity extends Activity {
         options.setAllFilesMaxSizeTip("总图片大小不超过5M！");
         options.setFileCondition(new FileSelectCondition() {
             @Override
-            public boolean accept(@NonNull FileType fileType, Uri uri) {
+            public boolean accept(@NonNull IFileType fileType, Uri uri) {
                 return (uri != null && !TextUtils.isEmpty(uri.getPath()) && !FileUtils.INSTANCE.isGif(uri));
             }
         });
@@ -122,8 +123,8 @@ public class MainActivity extends Activity {
                 //优先使用 FileSelectOptions 中设置的 FileSelectCondition
                 .filter(new FileSelectCondition() {
                     @Override
-                    public boolean accept(@NonNull FileType fileType, Uri uri) {
-                        switch (fileType) {
+                    public boolean accept(@NonNull IFileType fileType, Uri uri) {
+                        switch ((FileType)fileType) {
                             case IMAGE:
                                 return (uri != null && !TextUtils.isEmpty(uri.getPath()) && !FileUtils.INSTANCE.isGif(uri));
                             case VIDEO:
@@ -161,10 +162,10 @@ public class MainActivity extends Activity {
             final String info = result.toString() + "  格式化 :  " + FileSizeUtils.INSTANCE.formatFileSize(result.getFileSize()) + " \n";
             FileLogger.INSTANCE.w("FileOptions onSuccess  " + info);
             mTvResult.setText(String.format("%s选择结果 : %s |--------- \n\uD83D\uDC49压缩前 \n%s",
-                    mTvResult.getText().toString(), FileType.INSTANCE.typeByUri(result.getUri()), info));
+                    mTvResult.getText().toString(), FileType.INSTANCE.fromFileUri(result.getUri()), info));
 
             //2.压缩图片
-            final FileType fileType = result.getFileType();
+            final FileType fileType = (FileType) result.getFileType();
             if (fileType != null) {
                 switch (fileType) {
                     case IMAGE:

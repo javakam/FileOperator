@@ -100,7 +100,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             allFilesMaxSize = 10485760
             allFilesMaxSizeTip = "总图片大小不超过10M！"//单选条件下无效,只做单个图片大小判断
             fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    //筛除 gif
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             }
@@ -120,7 +121,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
             //优先使用 FileSelectOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return when (fileType) {
                         FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                         FileType.VIDEO -> false

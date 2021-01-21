@@ -2,8 +2,8 @@ package ando.file.selector
 
 import android.net.Uri
 import android.os.Parcelable
-import ando.file.core.FileType
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 /**
  * ### 选择结果
@@ -13,7 +13,7 @@ import kotlinx.parcelize.Parcelize
  */
 @Parcelize
 data class FileSelectResult(
-    var fileType: FileType?,
+    var fileType: @RawValue IFileType?,
     var mimeType: String?,
     var uri: Uri?,
     var filePath: String?,

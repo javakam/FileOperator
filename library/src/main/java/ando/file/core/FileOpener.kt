@@ -153,7 +153,7 @@ object FileOpener {
      * 具体的文件操作如查看文件内容,删除,分享,复制,重命名等操作需要在`onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)`中的`data:Intent`中提取
      *
      */
-    fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
+    fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<out String>?, multiSelect: Boolean): Intent =
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
             type = if (mimeType.isNullOrBlank()) "*/*" else mimeType

@@ -52,12 +52,14 @@ object FileOperator {
     //FileType Builder
     //--------------------------------------------------------------------------
 
-    //todo 2021年1月20日 17:11:33
-    fun buildFileType(mime: String): FileGlobal.IFileType {
-        return object : FileGlobal.IFileType {
-
-        }
-    }
+    //todo 2021年1月20日 17:11:33 补充 supplement
+//    fun buildFileType(supplement: String): IFileType {
+//        return object : IFileType {
+//            override fun build(): Array<String> {
+//                return emptyArray()
+//            }
+//        }
+//    }
 
     //getDatabasePath
     //--------------------------------------------------------------------------

@@ -96,11 +96,11 @@ object ResultUtils {
             val text = """
                     | ------------------
                     | 🍎文件名: $name
-                    | 文件类型: ${FileType.INSTANCE.typeByFile(file)}
                     | 路径: ${file.path}
+                    | 后缀: ${FileUtils.getExtension(file.name)}
                     | MimeType: ${FileMimeType.getMimeType(uri)}
                     | $info
-                    | 文件是否存在: ${file.exists()}
+                    | 是否存在: ${file.exists()}
                     | ------------------${"\n"}""".trimMargin()
             tvResult.text = tvResult.text.toString().plus(text)
         }

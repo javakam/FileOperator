@@ -55,7 +55,6 @@ internal fun startActivity(context: Any, intent: Intent) {
 }
 
 object FileGlobal {
-    interface IFileType{}
 
     const val MODE_READ_ONLY = "r"
     const val MODE_WRITE_ONLY_ERASING = "w"
@@ -73,6 +72,7 @@ object FileGlobal {
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
     annotation class FileMediaType
+
 
     /**
      * 1. 文件超过`数量或大小`限制直接返回失败
@@ -96,6 +96,7 @@ object FileGlobal {
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(value = [OVER_LIMIT_EXCEPT_ALL, OVER_LIMIT_EXCEPT_OVERFLOW])
     annotation class FileOverLimitStrategy
+
 
     /**
      * eg:

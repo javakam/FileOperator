@@ -29,7 +29,7 @@ class QueueTaskAdapter4Speed(private val controller: QueueController4Speed) :
 
             //下载的文件显示对应的图标
             if (FileTransformHelper.isHttp(bean.url)) {
-                val fileType = FileType.INSTANCE.typeByFileName(bean.url)
+                val fileType = FileType.INSTANCE.fromFileName(bean.url)
                 if (fileType != FileType.UNKNOWN) {
                     holder.setImageResource(
                         R.id.iv_detail_icon,

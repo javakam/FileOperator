@@ -9,6 +9,8 @@ import ando.file.core.*
 import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_ALL
 import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW
 import ando.file.selector.*
+import ando.file.selector.FileType.Companion.dump
+import ando.file.selector.FileType.Companion.supplement
 import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -18,6 +20,7 @@ import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
 import com.ando.file.sample.utils.ResultUtils.asVerticalList
+import java.io.File
 
 /**
  * FileSelectMultiFilesActivity
@@ -92,6 +95,21 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
+    //自定义 IFileType  todo 2021年1月21日 17:36:23 优化&文档
+    /*class FileTypeJson : IFileType {
+        override fun fromUri(uri: Uri?): IFileType {
+            return if (parseSuffix(uri).equals("json", true)) FileTypeJson() else FileType.UNKNOWN
+        }
+    }*/
+    //or
+    enum class FileTypeJson : IFileType {
+        JSON;
+
+        override fun fromFileUri(uri: Uri?): IFileType {
+            return if (parseSuffix(uri).equals("json", true)) JSON else FileType.UNKNOWN
+        }
+    }
+
     /*
     字节码计算器 -> https://calc.itzmx.com/
        3M  = 3145728  Byte
@@ -112,7 +130,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             allFilesMaxSize = 10485760
             allFilesMaxSizeTip = "图片总大小不超过10M！"
             fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             }
@@ -130,7 +148,7 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             allFilesMaxSize = 31457280
             allFilesMaxSizeTip = "音频总大小不超过30M！"
             fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (uri != null)
                 }
             }
@@ -148,10 +166,22 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             allFilesMaxSize = 10485760
             allFilesMaxSizeTip = "文本文件总大小不超过10M！"
             fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (uri != null)
                 }
             }
+        }
+
+        //FileType.TXT.supplement("xxx")
+        //FileType.IMAGE.supplement("json", "txt")
+        //FileType.IMAGE.dump()
+
+        val optionsJsonFile = FileSelectOptions().apply {
+            fileType = FileTypeJson.JSON
+            minCount = 1
+            maxCount = 2
+            minCountTip = "至少选择一个JSON文件"
+            maxCountTip = "最多选择两个JSON文件"
         }
 
         /*
@@ -183,13 +213,13 @@ class FileSelectMultiFilesActivity : AppCompatActivity() {
             //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
             .setOverLimitStrategy(this.mOverLimitStrategy)
             //eg: ando.file.core.FileMimeType
-            .setMimeTypes(arrayOf("audio/*", "image/*", "text/*"))//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+            .setMimeTypes("audio/*", "image/*", "text/*", "application/json")//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
             //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
-            .applyOptions(optionsImage, optionsAudio, optionsTxt)
+            .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
 
             //优先使用 FileSelectOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return when (fileType) {
                         FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                         FileType.AUDIO -> true

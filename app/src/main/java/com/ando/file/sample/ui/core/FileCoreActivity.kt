@@ -85,7 +85,7 @@ class FileCoreActivity : AppCompatActivity() {
             .setMimeTypes("*/*")
 
             .filter(object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return true
                 }
             })

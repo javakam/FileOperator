@@ -104,7 +104,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             allFilesMaxSize = 10485760
             allFilesMaxSizeTip = "图片总大小不超过10M！"
             fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             }
@@ -129,7 +129,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
 
             //优先使用 FileSelectOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (fileType == FileType.IMAGE) && (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             })
@@ -166,7 +166,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
 
         //List<FileSelectResult> -> List<Uri>
         val photos: List<Uri> = results
-            .filter { (it.uri != null) && (FileType.INSTANCE.typeByUri(it.uri) == FileType.IMAGE) }
+            .filter { (it.uri != null) && (FileType.INSTANCE.fromFileUri(it.uri) == FileType.IMAGE) }
             .map {
                 it.uri!!
             }
