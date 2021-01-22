@@ -7,10 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ando.file.sample.R
 import com.ando.file.sample.ui.core.FileCoreActivity
 import com.ando.file.sample.ui.core.FileUtilsActivity
+import com.ando.file.sample.ui.selector.FileSelectCustomFileTypeActivity
 import com.ando.file.sample.ui.selector.FileSelectMultiFilesActivity
 import com.ando.file.sample.ui.selector.FileSelectMultiImageActivity
 import com.ando.file.sample.ui.selector.FileSelectSingleImageActivity
-import com.ando.file.sample.ui.storage.AppSpecificActivity
 import com.ando.file.sample.ui.storage.MediaStoreActivity
 import com.ando.file.sample.ui.storage.StorageAccessFrameworkActivity
 
@@ -49,20 +49,22 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, FileSelectMultiFilesActivity::class.java))
     }
 
+    //自定义文件类型
+    fun caseSelectCustomFileType(view: View) {
+        startActivity(Intent(this, FileSelectCustomFileTypeActivity::class.java))
+    }
+
     fun caseFragmentSimpleUsage(view: View) {
     }
 
     fun caseClearCache(view: View) {
-        startActivity(Intent(this, FileClearCacheActivity::class.java))
+        startActivity(Intent(this, FileInfoActivity::class.java))
     }
 
     /////////////////////////////// 区别 ///////////////////////////////////////
 
-    //AppSpecific
-    fun caseAppSpecific(view: View) {
-        val intent = Intent(this, AppSpecificActivity::class.java)
-        startActivity(intent)
-    }
+    //AppSpecific(沙盒)
+    //@see FileUtilsActivity
 
     //MediaStore
     fun caseMediaStore(view: View) {

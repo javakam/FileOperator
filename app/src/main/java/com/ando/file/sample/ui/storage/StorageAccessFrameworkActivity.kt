@@ -121,6 +121,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
     /**
      * 如果您获得了文档的 URI，并且文档的 Document.COLUMN_FLAGS 包含 FLAG_SUPPORTS_DELETE，则便可删除该文档
      */
+    @SuppressLint("SetTextI18n")
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private fun deleteFile() {
         deleteFileBtn.setOnClickListener {

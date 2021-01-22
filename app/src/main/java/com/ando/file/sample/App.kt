@@ -1,8 +1,9 @@
 package com.ando.file.sample
 
 import android.app.Application
-import ando.file.FileOperator
+import ando.file.core.FileOperator
 import com.ando.file.sample.utils.CrashHandler
+import com.ando.file.sample.utils.MethodSignKotlinUtils
 
 /**
  * # App
@@ -15,7 +16,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         FileOperator.init(this, true)
-        CrashHandler.init(this, "${cacheDir?.absolutePath}/Crash/")
+        CrashHandler.init(this, "${externalCacheDir?.path}/Crash/")
+        MethodSignKotlinUtils.dumpMethods(this)
     }
 
 }

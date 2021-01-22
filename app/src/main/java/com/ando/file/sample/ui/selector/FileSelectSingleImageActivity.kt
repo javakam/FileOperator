@@ -6,7 +6,6 @@ import ando.file.selector.*
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -101,7 +100,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             allFilesMaxSize = 10485760
             allFilesMaxSizeTip = "总图片大小不超过10M！"//单选条件下无效,只做单个图片大小判断
             fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    //筛除 gif
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             }
@@ -114,14 +114,14 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(10, "最多选十个文件!")//单选条件下无效, 只做最少数量判断
             .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, FileSelectOptions.singleFileMaxSize
-            .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
+            .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, 使用 FileSelectOptions.singleFileMaxSize
+            .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效, 只做单个图片大小判断 setSingleFileMaxSize
             .setMimeTypes("image/*")
             .applyOptions(optionsImage)
 
             //优先使用 FileSelectOptions 中设置的 FileSelectCondition
             .filter(object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return when (fileType) {
                         FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                         FileType.VIDEO -> false

@@ -80,12 +80,12 @@ class FileCoreActivity : AppCompatActivity() {
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(10, "最多选十个文件!")
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(5242880, "大小不能超过5M！")
-            .setAllFilesMaxSize(20971520, "总大小不能超过20M！")
+            .setSingleFileMaxSize(10485760, "大小不能超过10M！")
+            .setAllFilesMaxSize(104857600, "总大小不能超过100M！")
             .setMimeTypes("*/*")
 
             .filter(object : FileSelectCondition {
-                override fun accept(fileType: FileType, uri: Uri?): Boolean {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return true
                 }
             })

@@ -53,7 +53,7 @@ object ResultUtils {
     fun setItemEvent(v: View?, uri: Uri?, title: String) {
         v?.setOnClickListener {
             showAlert(v.context, title, uri?.toString() ?: "") {
-                if (it) FileOpener.openFileBySystemChooser(v.context, uri, FileMimeType.getMimeType(uri))
+                if (it) FileOpener.openFile(v.context, uri, FileMimeType.getMimeType(uri))
             }
         }
     }
@@ -73,7 +73,7 @@ object ResultUtils {
         imageView.setImageBitmap(if (bitmap == null || bitmap.isRecycled)
             BitmapFactory.decodeResource(context.resources, R.mipmap.ic_place_holder) else bitmap)
         imageView.setOnClickListener {
-            FileOpener.openFileBySystemChooser(context, uri, "image/*")
+            FileOpener.openFile(context, uri, "image/*")
         }
     }
 
@@ -96,11 +96,11 @@ object ResultUtils {
             val text = """
                     | ------------------
                     | 🍎文件名: $name
-                    | 文件类型: ${FileType.INSTANCE.typeByFile(file)}
                     | 路径: ${file.path}
+                    | 后缀: ${FileUtils.getExtension(file.name)}
                     | MimeType: ${FileMimeType.getMimeType(uri)}
                     | $info
-                    | 文件是否存在: ${file.exists()}
+                    | 是否存在: ${file.exists()}
                     | ------------------${"\n"}""".trimMargin()
             tvResult.text = tvResult.text.toString().plus(text)
         }

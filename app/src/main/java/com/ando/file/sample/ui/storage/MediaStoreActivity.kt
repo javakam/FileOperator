@@ -75,6 +75,7 @@ class MediaStoreActivity : AppCompatActivity() {
     private var mInsertUri: Uri? = null
     private var mQueryUri: Uri? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_media_store)

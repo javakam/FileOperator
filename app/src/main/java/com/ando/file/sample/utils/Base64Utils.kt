@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import ando.file.FileOperator.getContext
+import ando.file.core.FileOperator.getContext
 import ando.file.core.FileLogger.e
 import ando.file.core.FileUri.getFilePathByUri
 import ando.file.core.FileUri.getUriByPath

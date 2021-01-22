@@ -1,6 +1,6 @@
 package ando.file.core
 
-import ando.file.FileOperator.getContext
+import ando.file.core.FileOperator.getContext
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
@@ -14,14 +14,14 @@ import java.io.File
 import java.math.BigDecimal
 
 /**
- * FileSizeUtils 计算文件大小 👉 BigDecimal
- * <p>
- * https://developer.android.com/training/secure-file-sharing/setup-sharing
- * <pre>
- *      获取文件大小的方法只有两种(There are only two ways to get the file size):
- *          1.File.length
- *          2.ContentResolver.query()
- * </pre>
+ * # FileSizeUtils
+ *
+ * - 1.计算文件大小: BigDecimal
+ *
+ * - 2.获取文件大小的方法只有两种(There are only two ways to get the file size):
+ *
+ *      - File.length
+ *      - ContentResolver.query()
  */
 object FileSizeUtils {
 
@@ -38,6 +38,8 @@ object FileSizeUtils {
 
     /**
      * 获取指定 `文件/文件夹` 大小
+     *
+     * Get the size of the specified `file folder`
      */
     @Throws(Exception::class)
     fun getFolderSize(file: File?): Long {
@@ -102,7 +104,7 @@ object FileSizeUtils {
     /**
      * ContentResolver.query 获取 `文件/文件夹` 大小 (Get the size of `file folder`)
      *
-     * @return 文件大小, 单位 Byte
+     * @return File Size, Unit Byte
      */
     private fun getFileSize(context: Context, uri: Uri?): Long? =
         uri?.let {
@@ -124,7 +126,7 @@ object FileSizeUtils {
     //-----------------------------------------------------------------------
 
     /**
-     * 保留两位小数, 不带单位(Keep two decimal places, no unit)
+     * 保留两位小数, 不带单位 (Keep two decimal places, no unit)
      */
     fun formatFileSize(size: Long): String = formatFileSize(size, 2, true)
 
@@ -160,7 +162,7 @@ object FileSizeUtils {
     /**
      * ### 转换文件大小不带单位, 注:没有单位,可自定义. 如: sizeType为`FileSizeType.SIZE_TYPE_MB`则返回`2.383`, 即`2.383M`
      *
-     * > The converted file size does not have a unit. Note: There is no unit and can be customized.
+     *  The converted file size does not have a unit. Note: There is no unit and can be customized.
      *  For example: sizeType is `FileSizeType.SIZE_TYPE_MB` then returns `2.383`, that is, `2.383M`
      *
      * - BigDecimal 实现提供（相对）精确的除法运算。当发生除不尽的情况时(ArithmeticException)，由scale参数指定精度，以后的数字四舍五入

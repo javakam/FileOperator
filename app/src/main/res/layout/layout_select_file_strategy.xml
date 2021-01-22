@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RadioGroup
+        android:id="@+id/rg_strategy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rb_strategy1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sel_select_strategy_change"
+            android:checked="true"
+            android:text="🍎超过限制数量或大小『直接返回失败』\n OVER_LIMIT_EXCEPT_ALL"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_10" />
+
+        <RadioButton
+            android:id="@+id/rb_strategy2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/sel_select_strategy_change"
+            android:paddingTop="@dimen/dp_3"
+            android:paddingBottom="@dimen/dp_3"
+            android:text="🍎超过限制数量或大小\n『单一类型』: 保留未超限制的文件并返回, 去掉后面溢出的部分; \n『多种类型』: 保留选择正确的文件, 去掉错误类型的所有文件 \n OVER_LIMIT_EXCEPT_OVERFLOW"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_10" />
+
+    </RadioGroup>
+
+</merge>

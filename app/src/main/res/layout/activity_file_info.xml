@@ -13,35 +13,35 @@
             android:id="@+id/mBtClearCache"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="3dp"
             android:text="清除缓存"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/font_14" />
+            android:textSize="@dimen/font_13" />
 
         <TextView
             android:id="@+id/tvDataDir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="3dp"
             android:textColor="@color/color_font_black" />
 
         <TextView
             android:id="@+id/tvFilesDir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="3dp"
             android:textColor="@color/color_font_black" />
 
         <TextView
             android:id="@+id/tvCacheDir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
+            android:padding="3dp"
             android:textColor="@color/color_font_black" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="0.3dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@color/black" />
@@ -50,13 +50,13 @@
             android:id="@+id/tvCompressedImageCacheDir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
             android:textColor="@color/color_font_black" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.5dp"
+            android:layout_height="0.3dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="@color/black" />

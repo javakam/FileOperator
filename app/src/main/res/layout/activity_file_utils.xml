@@ -102,7 +102,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FileUtils 演示操作文件"
+            android:text="FileUtils 演示操作文件\n注: SAF方式操作文件👉StorageAccessFrameworkActivity"
             android:textColor="@color/color_main_theme_dark"
             android:textSize="@dimen/font_13"
             android:textStyle="bold" />
@@ -164,7 +164,7 @@
             android:id="@+id/bt_file_utils_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="复制temp.html到其他路径"
+            android:text="复制temp.html到其他路径并重命名为tempCopy.html"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
@@ -177,6 +177,16 @@
             android:textSize="@dimen/font_11"
             android:visibility="gone"
             tools:text="xxx" />
+
+
+        <Button
+            android:id="@+id/bt_file_utils_copy_open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="打开复制后的文件tempCopy.html"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_11" />
 
         <Button
             android:id="@+id/bt_file_utils_delete"

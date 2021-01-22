@@ -3,7 +3,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.2/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.2"/></a>
+<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.5/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.5"/></a>
 
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
@@ -22,10 +22,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.2'         //核心库必选
-implementation 'ando.file:android-q:1.3.2'    //AndroidQ & Android 11 兼容库
-implementation 'ando.file:compressor:1.3.2'   //图片压缩,核心算法采用 Luban
-implementation 'ando.file:selector:1.3.2'     //文件选择器
+implementation 'ando.file:core:1.3.5'       //核心库必选
+implementation 'ando.file:selector:1.3.5'   //文件选择器
+implementation 'ando.file:compressor:1.3.5' //图片压缩, 核心算法采用 Luban
+implementation 'ando.file:android-q:1.3.5'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -62,7 +62,7 @@ val optionsImage = FileSelectOptions().apply {
     allFilesMaxSize = 10485760
     allFilesMaxSizeTip = "总图片大小不超过10M！"//单选条件下无效,只做单个图片大小判断
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     }
@@ -80,7 +80,7 @@ mFileSelector = FileSelector
     .applyOptions(optionsImage)
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return when (fileType) {
                 FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 FileType.VIDEO -> false
@@ -118,7 +118,7 @@ val optionsImage = FileSelectOptions().apply {
     allFilesMaxSize = 10485760
     allFilesMaxSizeTip = "图片总大小不超过10M！"
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     }
@@ -141,7 +141,7 @@ mFileSelector = FileSelector
 
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE) && (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     })
@@ -185,7 +185,7 @@ val optionsImage = FileSelectOptions().apply {
     allFilesMaxSize = 10485760
     allFilesMaxSizeTip = "图片总大小不超过10M！"
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     }
@@ -202,7 +202,7 @@ val optionsAudio = FileSelectOptions().apply {
     allFilesMaxSize = 31457280
     allFilesMaxSizeTip = "音频总大小不超过30M！"
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (uri != null)
         }
     }
@@ -219,7 +219,7 @@ val optionsTxt = FileSelectOptions().apply {
     allFilesMaxSize = 10485760
     allFilesMaxSizeTip = "文本文件总大小不超过10M！"
     fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (uri != null)
         }
     }
@@ -253,13 +253,13 @@ mFileSelector = FileSelector
     //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
     .setOverLimitStrategy(this.mOverLimitStrategy)
     //eg: ando.file.core.FileMimeType
-    .setMimeTypes(arrayOf("audio/*", "image/*", "text/plain"))//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+    .setMimeTypes("audio/*", "image/*", "text/plain")//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
     //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
     .applyOptions(optionsImage, optionsAudio, optionsTxt)
 
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
-        override fun accept(fileType: FileType, uri: Uri?): Boolean {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return when (fileType) {
                 FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 FileType.AUDIO -> true
@@ -288,7 +288,73 @@ mFileSelector = FileSelector
     .choose()
 ```
 
-### 4.压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
+### 4. 自定义FileType
+#### ①扩展已有的FileType
+```kotlin
+eg: 
+内置: TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
+
+增加: FileType.TXT.supplement("gradle","kt")
+结果: TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc","gradle","kt"))
+
+移除: FileType.TXT.remove("txt","ini")
+结果: TXT(mutableListOf("conf", "iml", log", "prop", "rc"))
+
+替换: FileType.XML.replace("xxx")
+调试: FileType.TXT.dump()
+```
+
+#### ②通过`IFileType`自定义文件类型
+
+> 🍎下面提供了两种实现的方式:
+
+```kotlin
+//1.
+object FileTypePhp : IFileType {
+    override fun fromUri(uri: Uri?): IFileType {
+        return if (parseSuffix(uri).equals("php", true)) FileTypePhp else FileType.UNKNOWN
+    }
+}
+//2.推荐方式
+enum class FileTypeJson : IFileType {
+    JSON;
+    override fun fromUri(uri: Uri?): IFileType {
+        return resolveFileMatch(uri, "json", JSON)
+    }
+}
+```
+用法:
+```kotlin
+val optionsJsonFile = FileSelectOptions().apply {
+    fileType = FileTypeJson.JSON
+    minCount = 1
+    maxCount = 2
+    minCountTip = "至少选择一个JSON文件"
+    maxCountTip = "最多选择两个JSON文件"
+}
+
+FileSelector.with(this)
+    ...
+    .setMimeTypes("audio/*", "image/*", "text/*", "application/json")
+    .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
+    .filter(object : FileSelectCondition {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+            return when (fileType) {
+                FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                FileType.AUDIO -> true
+                FileType.TXT -> true
+                FileTypeJson.JSON -> true
+                else -> false
+            }
+        }
+    })
+    .choose()
+
+```
+
+> 注意: `json`文件无法用`text/*`打开, 对应的`mimeType`为`application/json`
+
+### 5. 压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
 
 #### 方式一 直接压缩不缓存(Direct compression without caching)
 ```kotlin
@@ -507,7 +573,7 @@ fun openUrl(activity: Activity, url: String?) {
 According to `file path` and `type (judgment by suffix)` show programs that support the format
 
 ```kotlin
-fun openFileBySystemChooser(context: Any, uri: Uri?, mimeType: String? = null) =
+fun openFile(context: Any, uri: Uri?, mimeType: String? = null) =
     uri?.let { u ->
         Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
             startActivity(context, it)
@@ -523,13 +589,13 @@ Select file [Use system file management]
  *
  * 注:
  *
- * 1. Intent.setType 不能为空(Can not be empty) !
+ * #### 1. Intent.setType 不能为空(Can not be empty) !
  * ```
  * android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.OPEN_DOCUMENT cat=[android.intent.category.OPENABLE] (has extras) }
  * at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2105)
  * ```
  *
- * 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
+ * #### 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
  * ```
  * eg:
  *      Intent.setType("image / *")
@@ -537,23 +603,20 @@ Select file [Use system file management]
  * 🍎 最终可选文件类型变为音频
  * ```
  *
- * 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
+ * #### 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
  * ```
  *      java.lang.SecurityException: UID 10483 does not have permission to content://com.android.providers.media.documents/document/image%3A16012 [user 0];
  *      you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
  * ```
  *
- * 4. 开启多选(Open multiple selection) resultCode = -1
+ * #### 4. 开启多选(Open multiple selection) resultCode = -1
+ *
+ * #### 5. 无论是`ACTION_OPEN_DOCUMENT`还是`ACTION_GET_CONTENT`都只是负责打开和选择,
+ * 具体的文件操作如查看文件内容,删除,分享,复制,重命名等操作需要在`onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)`中的`data:Intent`中提取
+ *
  */
 fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
-    /*
-     * 隐式允许用户选择一种特定类型的数据
-     * Implicitly allow the user to select a particular kind of data.
-     *
-     * Same as : ACTION_GET_CONTENT , ACTION_OPEN_DOCUMENT
-    */
     Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-        FileLogger.d("mimeType=$mimeType mimeTypes=${mimeTypes?.size}")
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
         type = if (mimeType.isNullOrBlank()) "*/*" else mimeType
         if (!mimeTypes.isNullOrEmpty()) {
@@ -596,17 +659,19 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 ### 5. 通用文件工具类👉[FileUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileUtils.kt)
 - `getExtension` 获取文件后缀`jpg`
 - `getExtensionFull` 获取文件完整后缀`.jpg`
+- `splitFilePath()` 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
 - `getFileNameFromPath(path: String?)` 通过`FilePath`获取文件名
 - `getFileNameFromUri(uri: Uri?)` 通过`Uri`获取文件名
-- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false)` 创建文件
+- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` 创建文件, 同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
+- `createDirectory(filePath: String?): Boolean` 创建目录
 - `deleteFile` 删除文件或目录
 - `deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
 - `deleteFilesNotDir` 只删除文件，不删除文件夹
 - `readFileText(InputStream/Uri): String?` 读取文本文件中的内容(Read the contents of the text file)
 - `readFileBytes(InputStream/Uri): ByteArray?` 读取文件中的内容并返回`ByteArray`
 - `copyFile` 根据文件路径拷贝文件 `java.nio`
-- `write2File(bitmap: Bitmap, pathAndName: String?)`
-- `write2File(input: InputStream?, pathAndName: String?)`
+- `write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
+- `write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` 向文件中写入数据
 - `isLocal` 检验是否为本地URI
 - `isGif()` 检验是否为 gif
 
@@ -621,7 +686,7 @@ boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPa
 File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
 ```
 
-## 注意(Note)
+## 总结(Summary)
 
 1. `onActivityResult` 中要把选择文件的结果交给`FileSelector`处理 :
 
@@ -647,31 +712,21 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 4. Android 系统问题 : Intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
 开启多选条件下只选择一个文件时,系统是按照单选逻辑走的... Σ( ° △ °|||)︴
 
+5. `Activity`中执行`getExternalFilesDirs(Environment.DIRECTORY_XXX)`和其它获取目录地址的方法时,都会自动创建相应的目录
+
+![](https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/img1.png)
+
+6. `Uri.fromFile(file)`生成的`file:///...`是不能分享的,所以需要使用`FileProvider`将`App Specific`目录下的文件分享给其他APP读写,
+需要通过`FileProvider`解析出的可用于分享的路径: `ando.file.core.FileUri.getUriByFile(file)`
+
+7. 
 ---
 
-## 更新日志
+## 更新日志 (Update log)
 
-### v1.1.0
-```
-1.增加文件类型不匹配判断;
-2.开启多选: FileSelector.setSelectMode(true) 改为 setMultiSelect() , 默认为单选模式
-3.增加清理压缩图片缓存方法
-4.单选 setMinCount 提示问题
-5.修改`FileSizeUtils.kt`算法
-6.FileSelectResult 加入MimeType
-7.多选图片和多选文件改为RecyclerView进行结果展示
-8.增加数量限制
-9.增加更多注释, 重要注释为汉英双译
-10.增加 LICENSE
-11.修复了一些BUG
-```
-### v1.3.2
-```
-1.修复`FileOpener.createChooseIntent`问题
-2.更新`FileUtils`并上传相应的用法示例
-```
+<a href="https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md</a>
 
-### Fiexd Bug
+### Fixed Bug
 #### 1.Invalid image: ExifInterface got an unsupported image format
 ```kotlin
 W/ExifInterface: Invalid image: ExifInterface got an unsupported image format
@@ -724,10 +779,27 @@ at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:210
 Intent.setType("image / *")
 Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
 ```
+#### 6.android.os.FileUriExposedException: file:///storage/emulated/0/Android/data/com.ando.file.sample/cache exposed beyond app through Intent.getData()
+> Fixed: `AndroidManifest.xml`没配置`FileProvider`
 
-## 参考(Reference)
+#### 7.Calling startActivity() from outside of an Activity
+<https://stackoverflow.com/questions/3918517/calling-startactivity-from-outside-of-an-activity-context>
 
-### Google
+> Fixed: `Intent.createChooser`要添加两次`FLAG_ACTIVITY_NEW_TASK`:
+
+```kotlin
+val intent = Intent(Intent.ACTION_SEND)
+intent.putExtra(Intent.EXTRA_STREAM, uri)
+intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+val chooserIntent: Intent = Intent.createChooser(intent, title)
+chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+context.startActivity(chooserIntent)
+```
+
+### 感谢(Thanks)
+
+#### Google
 
 [Storage Samples Repository](https://github.com/android/storage-samples)
 
@@ -745,27 +817,19 @@ Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
 
 [Android 10 中的隐私权](https://developer.android.google.cn/about/versions/10/privacy/changes#scoped-storage)
 
-### 感谢(Thanks)
+#### GitHub
 
 [FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
 
-[AndroidFilePicker](https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md)
-
 [FilePicker](https://github.com/chsmy/FilePicker)
 
-[MaterialFilePicker](https://github.com/nbsp-team/MaterialFilePicker)
-
-[LFilePicker](https://github.com/leonHua/LFilePicker)
+[AndroidFilePicker](https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md)
 
 [Android-FilePicker](https://github.com/DroidNinja/Android-FilePicker)
 
 [MaterialFiles](https://github.com/zhanghai/MaterialFiles)
 
-[Shelter](https://github.com/PeterCxy/Shelter)
-
-[cloud-player-android-sdk](https://github.com/codeages/cloud-player-android-sdk/blob/master/app/src/main/java/com/edusoho/playerdemo/util/FileUtils.java)
-
-### 其它(Other)
+#### Blog
 
 [LOGO](https://www.easyicon.net/1293281-folders_icon.html)
 

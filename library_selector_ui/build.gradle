@@ -57,7 +57,7 @@ publish {
     repoName = 'FileOperator'
     userOrg = 'javakam'
     groupId = 'ando.file'
-    artifactId = 'FileOperatorSelectorUI'
+    artifactId = 'ui'
     publishVersion = config.versionName
     desc = 'Android File Selector UI.'
     website = "https://github.com/javakam/${rootProject.name}"

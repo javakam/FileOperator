@@ -1,6 +1,5 @@
 package ando.file.selector
 
-import ando.file.core.FileType
 import ando.file.selector.FileSelector.Companion.TIP_COUNT_MAX
 import ando.file.selector.FileSelector.Companion.TIP_COUNT_MIN
 
@@ -30,7 +29,7 @@ class FileSelectOptions {
     var maxCountTip: String? = TIP_COUNT_MAX
     //////////////////////////////////////////////////////////////
 
-    var fileType: FileType? = null
+    var fileType: IFileType? = null
     /**
      * 文件类型不匹配提示(File type mismatch prompt)
      */
