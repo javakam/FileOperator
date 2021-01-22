@@ -1,10 +1,11 @@
 package ando.file.core
 
+import ando.file.core.FileMimeType.getMimeType
+import ando.file.core.FileUri.getFilePathByUri
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.OpenableColumns
-import ando.file.core.FileMimeType.getMimeType
-import ando.file.core.FileUri.getFilePathByUri
 import java.io.*
 import java.nio.channels.FileChannel
 import java.util.*
@@ -25,18 +26,18 @@ object FileUtils {
     /**
      * Gets the extension of a file name, like ".png" or ".jpg".
      * <p>
-     * url : https://app-xxx-oss/xxx/1586267702635.gif
-     * or
-     * fileName : 1586267702635.gif
+     * url : https://app-xxx-oss/xxx.gif
+     *  or
+     * fileName : xxx.gif
      *
-     * @return 默认返回 gif ; substring 时不加1为 .gif , 即 fullExtension=true
+     * @return 默认返回gif, fullExtension=false ;
+     *         substring时不加1为 .gif, fullExtension=true
      *
-     * The default returns gif; when substring does not add 1 to .gif, that is fullExtension=true
      */
-    fun getExtension(pathOrName: String?, split: Char, fullExtension: Boolean): String {
+    fun getExtension(pathOrName: String?, split: Char, fullExtension: Boolean = false): String {
         if (pathOrName.isNullOrBlank()) return ""
         val dot = pathOrName.lastIndexOf(split)
-        return if (dot > 0) pathOrName.substring(
+        return if (dot != -1) pathOrName.substring(
             if (fullExtension) dot
             else (dot + 1)).toLowerCase(Locale.getDefault())
         else "" // No extension.
@@ -49,9 +50,36 @@ object FileUtils {
     //File Name
     //----------------------------------------------------------------
 
-    fun getFileNameFromPath(path: String?): String? {
+    /**
+     * /xxx/xxx/note.txt -> path: /xxx/xxx   name: note   suffix: txt
+     * ///note.txt       -> path: ///        name: note   suffix: txt
+     * /note.txt         -> path: ""         name: note   suffix: txt
+     * note.txt          -> path: ""         name: note   suffix: txt
+     */
+    fun splitFilePath(
+        srcPath: String?,
+        nameSplit: Char = '/',
+        suffixSplit: Char = '.',
+        block: ((path: String, name: String, suffix: String, nameSuffix: String) -> Unit)? = null,
+    ) {
+        if (srcPath.isNullOrBlank()) return
+        val cut = srcPath.lastIndexOf(nameSplit)
+        // /xxx/xxx/note.txt +0: /xxx/xxx +1: /xxx/xxx/
+        val path = if (cut == -1) "" else srcPath.substring(0, cut)
+        val nameSuffix = if (cut == -1) srcPath else srcPath.substring(cut + 1)
+
+        val dot = nameSuffix.lastIndexOf(suffixSplit)
+        if (dot != -1) {
+            val suffix = nameSuffix.substring((dot + 1)).toLowerCase(Locale.getDefault())
+            val name = nameSuffix.substring(0, dot)
+            FileLogger.d("srcPath=$srcPath path=$path  name=$name  suffix=$suffix nameSuffix=$nameSuffix")
+            block?.invoke(path, name, suffix, nameSuffix)
+        }
+    }
+
+    fun getFileNameFromPath(path: String?, split: Char = '/'): String? {
         if (path.isNullOrBlank()) return null
-        val cut = path.lastIndexOf('/')
+        val cut = path.lastIndexOf(split)
         if (cut != -1) return path.substring(cut + 1)
         return path
     }
@@ -62,21 +90,18 @@ object FileUtils {
 
         val resolver = FileOperator.getContext().contentResolver
         val mimeType = resolver.getType(uri)
-        if (FileOperator.isDebug()) {
-            FileLogger.i("getFileNameFromUri: $mimeType")
-        }
+
         if (mimeType == null) {
             filename = getFileNameFromPath(getFilePathByUri(uri))
         } else {
-            val cursor = resolver.query(
-                uri, null, null, null, null
-            )
-            if (cursor != null) {
-                val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                cursor.moveToFirst()
-                filename = cursor.getString(nameIndex)
-                cursor.close()
+            resolver.query(uri, null, null, null, null)?.use { c: Cursor ->
+                val nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                c.moveToFirst()
+                filename = c.getString(nameIndex)
             }
+        }
+        if (FileOperator.isDebug()) {
+            FileLogger.i("getFileNameFromUri: $mimeType $filename")
         }
         return filename
     }
@@ -141,6 +166,8 @@ object FileUtils {
     //File Write
     //----------------------------------------------------------------
 
+    fun createFile(file: File?, overwrite: Boolean = false): File? = createFile(file?.parent, file?.name, overwrite)
+
     /**
      * 创建文件 (Create a file)
      *
@@ -150,18 +177,28 @@ object FileUtils {
      */
     fun createFile(filePath: String?, fileName: String?, overwrite: Boolean = false): File? {
         if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return null
-        val file = File(filePath, fileName)
+        if (!createDirectory(filePath)) return null
+
+        var file = File(filePath, fileName)
         if (file.exists()) {
             if (file.isDirectory) file.delete()
-
-            if (overwrite) file.delete()
-            else return file
+            if (!overwrite) {
+                splitFilePath(fileName) { _, name, suffix, _ ->
+                    var index = 0
+                    while (file.exists()) {
+                        index++
+                        file = File(filePath, "$name($index).$suffix")
+                        //FileLogger.w("createFile ${file.path} exist=${file.exists()} ")
+                    }
+                }
+            } else file.delete()
         }
-        if (file.parentFile?.exists() == false) {
-            file.parentFile?.mkdirs()
-        }
-        if (!file.exists()) {
-            file.createNewFile()
+        try {
+            if (!file.exists()) {
+                file.createNewFile()
+            }
+        } catch (e: IOException) {
+            FileLogger.e(e.toString())
         }
         return file
     }
@@ -175,8 +212,7 @@ object FileUtils {
         if (file.exists()) {
             if (!file.isDirectory) file.delete() else return true
         }
-        file.mkdirs()
-        return true
+        return file.mkdirs()
     }
 
     fun write2File(bitmap: Bitmap, pathAndName: String?, overwrite: Boolean = false) {
@@ -209,18 +245,19 @@ object FileUtils {
         }
     }
 
-    fun write2File(input: InputStream, pathAndName: String?, overwrite: Boolean = false) {
-        if (pathAndName.isNullOrBlank()) return
-        write2File(input, File(pathAndName), overwrite)
+    fun write2File(input: InputStream, pathAndName: String?, overwrite: Boolean = false): File? {
+        if (pathAndName.isNullOrBlank()) return null
+        return write2File(input, File(pathAndName), overwrite)
     }
 
-    fun write2File(input: InputStream, filePath: String?, fileName: String?, overwrite: Boolean = false) {
-        if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return
-        write2File(input, File(filePath, fileName), overwrite)
+    fun write2File(input: InputStream, filePath: String?, fileName: String?, overwrite: Boolean = false): File? {
+        if (filePath.isNullOrBlank() || fileName.isNullOrBlank()) return null
+        return write2File(input, File(filePath, fileName), overwrite)
     }
 
-    fun write2File(input: InputStream, file: File?, overwrite: Boolean = false) {
-        if (file == null) return
+    fun write2File(input: InputStream, file: File?, overwrite: Boolean = false): File? {
+        if (file == null) return null
+        var target: File? = null
         var output: FileOutputStream? = null
         try {
             val dir = file.parentFile
@@ -232,11 +269,17 @@ object FileUtils {
 
             if (!file.exists()) {
                 file.createNewFile()
-            } else {
-                if (overwrite) file.delete() else return
+            } else {//Exist
+                if (overwrite) file.delete()
+                else {
+                    if (file.exists()) {
+                        target = createFile(file, false)
+                    }
+                }
             }
+            output = if (!overwrite && target != null) FileOutputStream(target)
+            else FileOutputStream(file)
 
-            output = FileOutputStream(file)
             val b = ByteArray(8 * 1024)
             var length: Int
             while (input.read(b).also { length = it } != -1) {
@@ -246,9 +289,14 @@ object FileUtils {
         } catch (e: IOException) {
             e.printStackTrace()
         } finally {
-            input.close()
-            output?.close()
+            try {
+                input.close()
+                output?.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
+        return target ?: file
     }
 
     //File Copy
@@ -270,35 +318,41 @@ object FileUtils {
      * @param src 源文件 Source File
      * @param destFilePath 目标文件路径(Target file path)
      * @param destFileName 目标文件名称(Target file name)
+     * @param overwrite 覆盖目标文件
      */
     fun copyFile(
         src: File,
         destFilePath: String,
         destFileName: String,
-    ): Boolean {
-        if (!src.exists() || destFilePath.isBlank() || destFileName.isBlank()) return false
-        val dest = File(destFilePath + File.separator + destFileName)
-        if (dest.exists()) dest.delete() // delete file
+        overwrite: Boolean = false,
+    ): File? {
+        if (!src.exists() || destFilePath.isBlank() || destFileName.isBlank()) return null
+        val dest: File?
+        if (overwrite) {
+            dest = File(destFilePath + File.separator + destFileName)
+            if (dest.exists()) dest.delete() // delete file
+        } else {
+            dest = createFile(destFilePath, destFileName, false)
+        }
 
         try {
-            dest.createNewFile()
+            dest?.createNewFile()
         } catch (e: IOException) {
-            e.printStackTrace()
+            FileLogger.e(e.toString())
         }
         var srcChannel: FileChannel? = null
         var dstChannel: FileChannel? = null
-        return try {
+        try {
             srcChannel = FileInputStream(src).channel
             dstChannel = FileOutputStream(dest).channel
             srcChannel.transferTo(0, srcChannel.size(), dstChannel)
-            true
         } catch (e: Exception) {
             e.printStackTrace()
-            false
         } finally {
             srcChannel?.close()
             dstChannel?.close()
         }
+        return dest
     }
 
     //File Delete

@@ -14,9 +14,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="核心库(implementation 'ando.file:core:xxx')" />
+        android:text="Core Library"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_12"
+        android:textStyle="bold" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseGetFileMimeType"
@@ -24,7 +27,7 @@
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseGetFileSize"
@@ -32,7 +35,7 @@
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseGetFileUriOrPath"
@@ -40,7 +43,7 @@
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseOpenFileByUri"
@@ -49,7 +52,7 @@
         android:textSize="@dimen/font_12"
         android:visibility="gone" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseFileUtils"
@@ -68,9 +71,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="文件选择器(implementation 'ando.file:selector:xxx')" />
+        android:text="File Selector"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_12"
+        android:textStyle="bold" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectSingleImageWithCompress"
@@ -78,7 +84,7 @@
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectMultiImageWithCompress"
@@ -86,7 +92,7 @@
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectMultiFilesWithCompress"
@@ -94,7 +100,15 @@
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="caseSelectCustomFileType"
+        android:text="自定义 FileTye"
+        android:textAllCaps="false"
+        android:textSize="@dimen/font_12" />
+
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -104,7 +118,7 @@
         android:textSize="@dimen/font_12"
         android:visibility="gone" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -123,9 +137,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="区别(Difference)" />
+        android:text="区别(Difference)"
+        android:textColor="@color/black"
+        android:textSize="@dimen/font_12"
+        android:textStyle="bold" />
 
-    <androidx.appcompat.widget.AppCompatButton
+
+    <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseMediaStore"
@@ -133,7 +151,7 @@
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <Button
         android:id="@+id/SAF_Btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

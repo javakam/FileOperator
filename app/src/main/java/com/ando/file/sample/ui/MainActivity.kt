@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.ando.file.sample.R
 import com.ando.file.sample.ui.core.FileCoreActivity
 import com.ando.file.sample.ui.core.FileUtilsActivity
+import com.ando.file.sample.ui.selector.FileSelectCustomFileTypeActivity
 import com.ando.file.sample.ui.selector.FileSelectMultiFilesActivity
 import com.ando.file.sample.ui.selector.FileSelectMultiImageActivity
 import com.ando.file.sample.ui.selector.FileSelectSingleImageActivity
@@ -46,6 +47,11 @@ class MainActivity : AppCompatActivity() {
     //选择多个文件
     fun caseSelectMultiFilesWithCompress(view: View) {
         startActivity(Intent(this, FileSelectMultiFilesActivity::class.java))
+    }
+
+    //自定义文件类型
+    fun caseSelectCustomFileType(view: View) {
+        startActivity(Intent(this, FileSelectCustomFileTypeActivity::class.java))
     }
 
     fun caseFragmentSimpleUsage(view: View) {

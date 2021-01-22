@@ -1,8 +1,8 @@
 package ando.file.selector
 
+import ando.file.core.FileLogger
 import ando.file.core.FileUtils
 import android.net.Uri
-import android.util.Log
 import java.io.File
 import java.util.*
 
@@ -24,11 +24,11 @@ enum class FileType : IFileType {
     AUDIO(mutableListOf("mp3", "flac", "ogg", "tta", "wav", "wma", "wmv", "m3u", "m4a", "m4b", "m4p", "mid", "mp2", "mpga", "rmvb")),
     VIDEO(mutableListOf("mp4", "m3u8", "avi", "flv", "3gp", "asf", "m4u", "m4v", "mov", "mpe", "mpeg", "mpg", "mpg4")),
     IMAGE(mutableListOf("jpg", "gif", "png", "jpeg", "bmp", "webp")),
+    TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc")),
     HTML(mutableListOf("html", "htm", "htmls", "md")),
     PPT(mutableListOf("ppt", "pptx", "pps")),
     EXCEL(mutableListOf("xls", "xlsx")),
     WORD(mutableListOf("doc", "docx")),
-    TXT(mutableListOf("txt", "c", "conf", "cpp", "iml", "ini", "kt", "log", "py", "php", "prop", "rc", "sh")),
     PDF("pdf"),
     CHM("chm"),
     XML("xml"),
@@ -64,29 +64,29 @@ enum class FileType : IFileType {
 
         fun FileType.dump() {
             mimeArray?.forEach {
-                Log.e("123", "$this : $it")
+                FileLogger.e("$this : $it")
             }
         }
     }
 
     /**
-     * url : https://app-xxx-oss/xxx/1586267702635.gif
-     * or
-     * fileName : 1586267702635.gif
+     * url:  https://app-xxx-oss/xxx.gif
+     *  or
+     * fileName:  xxx.gif
      */
-    override fun fromFileName(fileName: String?): IFileType {
+    override fun fromName(fileName: String?): IFileType {
         return fromSuffix(
             FileUtils.getExtension(fileName ?: return UNKNOWN)
         )
     }
 
-    override fun fromFileName(fileName: String?, split: Char): IFileType {
+    override fun fromName(fileName: String?, split: Char): IFileType {
         return fromSuffix(
             FileUtils.getExtension(fileName ?: return UNKNOWN, split, false)
         )
     }
 
-    override fun fromFilePath(filePath: String?): IFileType {
+    override fun fromPath(filePath: String?): IFileType {
         if (filePath.isNullOrBlank()) UNKNOWN
         val file = File(filePath ?: return UNKNOWN)
         return if (!file.exists()) UNKNOWN else fromFile(file)
@@ -94,7 +94,7 @@ enum class FileType : IFileType {
 
     override fun fromFile(file: File): IFileType = fromSuffix(FileUtils.getExtension(file.name))
 
-    override fun fromFileUri(uri: Uri?): IFileType = fromSuffix(FileUtils.getExtension(uri))
+    override fun fromUri(uri: Uri?): IFileType = fromSuffix(FileUtils.getExtension(uri))
 
     /**
      * 依据文件扩展名的类型确定相应的MimeType

@@ -21,7 +21,7 @@ class FileSelectResultAdapter : RecyclerView.Adapter<FileSelectResultAdapter.Sel
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectResultHolder {
-        return SelectResultHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_select_image_result, parent, false))
+        return SelectResultHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_select_file_result, parent, false))
     }
 
     override fun onBindViewHolder(holder: SelectResultHolder, position: Int) {

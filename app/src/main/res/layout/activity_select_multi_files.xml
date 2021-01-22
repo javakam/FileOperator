@@ -19,38 +19,12 @@
         android:textSize="@dimen/font_10"
         android:textStyle="bold" />
 
-    <RadioGroup
-        android:id="@+id/rg_strategy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RadioButton
-            android:id="@+id/rb_strategy1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/sel_strategy_change"
-            android:checked="true"
-            android:text="👉超过数量限制和大小限制直接返回失败 \n OVER_LIMIT_EXCEPT_ALL"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_11" />
-
-        <RadioButton
-            android:id="@+id/rb_strategy2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/sel_strategy_change"
-            android:text="👉超过数量限制或大小限制\n 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; \n 多种类型: 保留正确的文件, 去掉错误类型的所有文件 \n OVER_LIMIT_EXCEPT_OVERFLOW"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/font_11" />
-
-    </RadioGroup>
+    <include layout="@layout/layout_select_file_strategy" />
 
     <Button
         android:id="@+id/bt_select_multi"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/dp_40"
+        android:layout_height="@dimen/dp_38"
         android:layout_marginTop="@dimen/dp_3"
         android:text="选择多个文件 (0)"
         android:textColor="@android:color/white"

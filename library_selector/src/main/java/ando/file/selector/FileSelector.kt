@@ -104,7 +104,7 @@ class FileSelector private constructor(builder: Builder) {
     private fun checkParams() {
         //FileSelectOptions Check
         mFileSelectOptions?.firstOrNull { it.fileType == null || it.fileType == INSTANCE }?.apply {
-            throw RuntimeException("FileSelectOptions.fileType must not be FileType.INSTANCE")
+            throw RuntimeException("$this fileType must not be FileType.INSTANCE")
         }
     }
 
@@ -400,7 +400,7 @@ class FileSelector private constructor(builder: Builder) {
         mFileTypeComposite.apply {
             if (isEmpty()) return@apply
             forEach {
-                fileType = it.fromFileUri(uri)
+                fileType = it.fromUri(uri)
                 if (fileType != UNKNOWN) return@apply
             }
         }
@@ -518,7 +518,7 @@ class FileSelector private constructor(builder: Builder) {
         mutableListOf<FileSelectResult>().apply {
             add(FileSelectResult().apply {
                 this.uri = uri
-                this.filePath = uri.path
+                this.filePath = FileUri.getFilePathByUri(uri)
                 this.mimeType = FileMimeType.getMimeType(uri)
                 this.fileType = fileType
                 this.fileSize = fileSize
@@ -530,7 +530,7 @@ class FileSelector private constructor(builder: Builder) {
             uriList?.forEach { u ->
                 add(FileSelectResult().apply {
                     this.uri = u
-                    this.filePath = u.path
+                    this.filePath = FileUri.getFilePathByUri(uri)
                     this.mimeType = FileMimeType.getMimeType(u)
                     this.fileType = findFileType(u)
                     this.fileSize = FileSizeUtils.getFileSize(u)

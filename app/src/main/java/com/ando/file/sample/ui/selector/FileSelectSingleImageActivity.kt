@@ -114,8 +114,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .setMinCount(1, "至少选一个文件!")
             .setMaxCount(10, "最多选十个文件!")//单选条件下无效, 只做最少数量判断
             .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, FileSelectOptions.singleFileMaxSize
-            .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
+            .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, 使用 FileSelectOptions.singleFileMaxSize
+            .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效, 只做单个图片大小判断 setSingleFileMaxSize
             .setMimeTypes("image/*")
             .applyOptions(optionsImage)
 

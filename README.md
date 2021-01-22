@@ -3,7 +3,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.3/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.3"/></a>
+<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.5/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.5"/></a>
 
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
@@ -22,10 +22,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.3'       //核心库必选
-implementation 'ando.file:selector:1.3.3'   //文件选择器
-implementation 'ando.file:compressor:1.3.3' //图片压缩, 核心算法采用 Luban
-implementation 'ando.file:android-q:1.3.3'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
+implementation 'ando.file:core:1.3.5'       //核心库必选
+implementation 'ando.file:selector:1.3.5'   //文件选择器
+implementation 'ando.file:compressor:1.3.5' //图片压缩, 核心算法采用 Luban
+implementation 'ando.file:android-q:1.3.5'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -288,7 +288,73 @@ mFileSelector = FileSelector
     .choose()
 ```
 
-### 4.压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
+### 4. 自定义FileType
+#### ①扩展已有的FileType
+```kotlin
+eg: 
+内置: TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
+
+增加: FileType.TXT.supplement("gradle","kt")
+结果: TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc","gradle","kt"))
+
+移除: FileType.TXT.remove("txt","ini")
+结果: TXT(mutableListOf("conf", "iml", log", "prop", "rc"))
+
+替换: FileType.XML.replace("xxx")
+调试: FileType.TXT.dump()
+```
+
+#### ②通过`IFileType`自定义文件类型
+
+> 🍎下面提供了两种实现的方式:
+
+```kotlin
+//1.
+object FileTypePhp : IFileType {
+    override fun fromUri(uri: Uri?): IFileType {
+        return if (parseSuffix(uri).equals("php", true)) FileTypePhp else FileType.UNKNOWN
+    }
+}
+//2.推荐方式
+enum class FileTypeJson : IFileType {
+    JSON;
+    override fun fromUri(uri: Uri?): IFileType {
+        return resolveFileMatch(uri, "json", JSON)
+    }
+}
+```
+用法:
+```kotlin
+val optionsJsonFile = FileSelectOptions().apply {
+    fileType = FileTypeJson.JSON
+    minCount = 1
+    maxCount = 2
+    minCountTip = "至少选择一个JSON文件"
+    maxCountTip = "最多选择两个JSON文件"
+}
+
+FileSelector.with(this)
+    ...
+    .setMimeTypes("audio/*", "image/*", "text/*", "application/json")
+    .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
+    .filter(object : FileSelectCondition {
+        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+            return when (fileType) {
+                FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                FileType.AUDIO -> true
+                FileType.TXT -> true
+                FileTypeJson.JSON -> true
+                else -> false
+            }
+        }
+    })
+    .choose()
+
+```
+
+> 注意: `json`文件无法用`text/*`打开, 对应的`mimeType`为`application/json`
+
+### 5. 压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
 
 #### 方式一 直接压缩不缓存(Direct compression without caching)
 ```kotlin
@@ -593,9 +659,10 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 ### 5. 通用文件工具类👉[FileUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileUtils.kt)
 - `getExtension` 获取文件后缀`jpg`
 - `getExtensionFull` 获取文件完整后缀`.jpg`
+- `splitFilePath()` 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
 - `getFileNameFromPath(path: String?)` 通过`FilePath`获取文件名
 - `getFileNameFromUri(uri: Uri?)` 通过`Uri`获取文件名
-- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` 创建文件
+- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` 创建文件, 同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
 - `createDirectory(filePath: String?): Boolean` 创建目录
 - `deleteFile` 删除文件或目录
 - `deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
@@ -655,40 +722,11 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 7. 
 ---
 
-## 更新日志
+## 更新日志 (Update log)
 
-### v1.1.0
-```
-1.增加文件类型不匹配判断;
-2.开启多选: FileSelector.setSelectMode(true) 改为 setMultiSelect() , 默认为单选模式
-3.增加清理压缩图片缓存方法
-4.单选 setMinCount 提示问题
-5.修改`FileSizeUtils.kt`算法
-6.FileSelectResult 加入MimeType
-7.多选图片和多选文件改为RecyclerView进行结果展示
-8.增加数量限制
-9.增加更多注释, 重要注释为汉英双译
-10.增加 LICENSE
-11.修复了一些BUG
-```
-### v1.3.2
-```
-1.修复`FileOpener.createChooseIntent`问题
-2.更新`FileUtils`并上传相应的用法示例
-3.优化了一些方法
-```
-### v1.3.3
-```
-1.移除AppSpecific(沙盒)演示Demo AppSpecificActivity,因为沙盒目录(AppSpecific)操作直接沿用旧的 File API操作,
-    所以直接可以用 ando.file.core.FileUtils 替代,详见: FileUtilsActivity
-2.FileOpener.openFileBySystemChooser 改名为 FileOpener.openFile, 语义更明确
-3.
-3.如果筛选`txt`文本文件,`MimeType`建议设置为`text/*`相较于`text/plain`在系统文件管理器页面多一个`文档`字样的筛选更好一些,
-  eg: setMimeTypes("audio/*", "image/*", "text/*")
-4.
-```
+<a href="https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md</a>
 
-### Fiexd Bug
+### Fixed Bug
 #### 1.Invalid image: ExifInterface got an unsupported image format
 ```kotlin
 W/ExifInterface: Invalid image: ExifInterface got an unsupported image format

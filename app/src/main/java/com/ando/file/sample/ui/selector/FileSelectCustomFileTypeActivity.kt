@@ -17,22 +17,20 @@ import com.ando.file.sample.*
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
-import com.ando.file.sample.utils.ResultUtils.ResultShowBean
 import com.ando.file.sample.utils.ResultUtils.asVerticalList
-import java.io.File
 
 /**
- * FileSelectImageMultiActivity
+ * FileSelectCustomFileTypeActivity
  *
- * Description: 多选图片
+ * Description: 自定义文件类型
  *
  * @author javakam
- * @date 2020/5/19  16:04
+ * @date 2021-01-22
  */
 @SuppressLint("SetTextI18n")
-class FileSelectMultiImageActivity : AppCompatActivity() {
+class FileSelectCustomFileTypeActivity : AppCompatActivity() {
 
-    private val mShowText: String = "选择多张图片并压缩"
+    private val mShowText: String = "选择多个不同类型文件"
     private lateinit var mTvCurrStrategy: TextView
     private lateinit var mRgStrategy: RadioGroup
     private lateinit var mBtSelect: Button
@@ -42,7 +40,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
     private var mOverLimitStrategy: Int = OVER_LIMIT_EXCEPT_ALL
 
     //展示结果(Show results)
-    private var mResultShowList: MutableList<ResultShowBean>? = null
+    private var mResultShowList: MutableList<ResultUtils.ResultShowBean>? = null
     private val mAdapter: FileSelectResultAdapter by lazy { FileSelectResultAdapter() }
 
     private var mFileSelector: FileSelector? = null
@@ -57,8 +55,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mRvResults = findViewById(R.id.rv_images)
         mRvResults.asVerticalList()
         mRvResults.adapter = mAdapter
-
-        title = "多选图片"
+        title = "多选文件"
 
         //策略切换
         mRgStrategy.setOnCheckedChangeListener { _, checkedId ->
@@ -80,7 +77,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             else "OVER_LIMIT_EXCEPT_OVERFLOW"
         }"
 
-        mBtSelect.text="$mShowText (0)"
+        mBtSelect.text = "$mShowText (0)"
         mBtSelect.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
                 if (it) chooseFile()
@@ -95,10 +92,37 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
+    //自定义 IFileType
+    object FileTypePhp : IFileType {
+        override fun fromUri(uri: Uri?): IFileType {
+            return if (parseSuffix(uri).equals("json", true)) FileTypePhp else FileType.UNKNOWN
+        }
+    }
+
+    //or
+    enum class FileTypeJson : IFileType {
+        JSON;
+
+        override fun fromUri(uri: Uri?): IFileType {
+            return resolveFileMatch(uri, "json", JSON)
+        }
+    }
+
+    /*
+    字节码计算器 -> https://calc.itzmx.com/
+       3M  = 3145728  Byte
+       5M  = 5242880  Byte
+       10M = 10485760 Byte
+       20M = 20971520 Byte
+    */
     private fun chooseFile() {
+        //图片
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
-            fileTypeMismatchTip = "文件类型不匹配"
+            minCount = 1
+            maxCount = 2
+            minCountTip = "至少选择一张图片"
+            maxCountTip = "最多选择两张图片"
             singleFileMaxSize = 5242880
             singleFileMaxSizeTip = "单张图片最大不超过5M！"
             allFilesMaxSize = 10485760
@@ -110,20 +134,74 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             }
         }
 
+        //音频
+        val optionsAudio = FileSelectOptions().apply {
+            fileType = FileType.AUDIO
+            minCount = 2
+            maxCount = 3
+            minCountTip = "至少选择两个音频文件"
+            maxCountTip = "最多选择三个音频文件"
+            singleFileMaxSize = 20971520
+            singleFileMaxSizeTip = "单音频最大不超过20M！"
+            allFilesMaxSize = 31457280
+            allFilesMaxSizeTip = "音频总大小不超过30M！"
+            fileCondition = object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    return (uri != null)
+                }
+            }
+        }
+
+        //文本文件 txt
+        val optionsTxt = FileSelectOptions().apply {
+            fileType = FileType.TXT
+            minCount = 1
+            maxCount = 2
+            minCountTip = "至少选择一个文本文件"
+            maxCountTip = "最多选择两个文本文件"
+            singleFileMaxSize = 5242880
+            singleFileMaxSizeTip = "单文本文件最大不超过5M！"
+            allFilesMaxSize = 10485760
+            allFilesMaxSizeTip = "文本文件总大小不超过10M！"
+            fileCondition = object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    return (uri != null)
+                }
+            }
+        }
+
+        //FileType.TXT.supplement("xxx")
+        //FileType.IMAGE.supplement("json", "txt")
+        //FileType.IMAGE.dump()
+
+        val optionsJsonFile = FileSelectOptions().apply {
+            fileType = FileTypeJson.JSON
+            minCount = 1
+            maxCount = 2
+            minCountTip = "至少选择一个JSON文件"
+            maxCountTip = "最多选择两个JSON文件"
+        }
+
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setMultiSelect()
-            .setMinCount(1, "至少选一张图片!")
-            .setMaxCount(10, "最多选十张图片!")
-            .setSingleFileMaxSize(3145728, "单张图片大小不能超过3M！")
-            .setAllFilesMaxSize(20971520, "图片总大小不能超过20M！")
+            .setMultiSelect()//默认是单选false
+            .setMinCount(1, "设定类型文件至少选择一个!")
+            .setMaxCount(4, "最多选四个文件!")
+            .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
+            .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
             .setOverLimitStrategy(this.mOverLimitStrategy)
-            .setMimeTypes("image/*")
-            .applyOptions(optionsImage)
+            .setMimeTypes("audio/*", "image/*", "text/*", "application/json")
+            .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-                    return (fileType == FileType.IMAGE) && (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                    return when (fileType) {
+                        FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                        FileType.AUDIO -> true
+                        FileType.TXT -> true
+                        FileTypeJson.JSON -> true
+                        else -> false
+                    }
                 }
             })
             .callback(object : FileSelectCallBack {
@@ -153,36 +231,10 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mBtSelect.text = "$mShowText (${results.size})"
         ResultUtils.formatResults(results, true) { l ->
             mResultShowList = l.map { p ->
-                ResultShowBean(originUri = p.first, originResult = p.second)
+                ResultUtils.ResultShowBean(originUri = p.first, originResult = p.second)
             }.toMutableList()
         }
-
-        //List<FileSelectResult> -> List<Uri>
-        val photos: List<Uri> = results
-            .filter { (it.uri != null) && (FileType.INSTANCE.fromUri(it.uri) == FileType.IMAGE) }
-            .map {
-                it.uri!!
-            }
-
-        var count = 0
-        compressImage(this, photos) { index, u ->
-            FileLogger.i("compressImage onSuccess index=$index uri=$u " +
-                    "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
-            )
-
-            ResultUtils.formatCompressedImageInfo(u, true) {
-                if (index != -1) {
-                    mResultShowList?.get(index)?.compressedResult = it
-                    mResultShowList?.get(index)?.compressedUri = u
-                    count++
-                }
-            }
-
-            //建议加个加载中的弹窗
-            if (count == mResultShowList?.size ?: 0) {
-                mAdapter.setData(mResultShowList)
-            }
-        }
+        mAdapter.setData(mResultShowList)
     }
 
 }

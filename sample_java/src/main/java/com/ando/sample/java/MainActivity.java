@@ -162,7 +162,7 @@ public class MainActivity extends Activity {
             final String info = result.toString() + "  格式化 :  " + FileSizeUtils.INSTANCE.formatFileSize(result.getFileSize()) + " \n";
             FileLogger.INSTANCE.w("FileOptions onSuccess  " + info);
             mTvResult.setText(String.format("%s选择结果 : %s |--------- \n\uD83D\uDC49压缩前 \n%s",
-                    mTvResult.getText().toString(), FileType.INSTANCE.fromFileUri(result.getUri()), info));
+                    mTvResult.getText().toString(), FileType.INSTANCE.fromUri(result.getUri()), info));
 
             //2.压缩图片
             final FileType fileType = (FileType) result.getFileType();

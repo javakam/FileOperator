@@ -13,14 +13,12 @@ import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.core.content.FileProvider
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
+import java.io.*
 
 /**
- * FileUri
- * <p>
- * Description: Uri/Path Tools
+ * # FileUri
+ *
+ * - File Uri/Path Tools
  *
  * @author javakam
  * @date 2020/8/24  11:24
@@ -100,11 +98,7 @@ object FileUri {
      * Callers should check whether the path is local before assuming it
      * represents a local file.
      *
-     * - 错误的方式: 采用复制文件的方式重新写入再获取路径, 很多项目里都是用的这种方式很坑...
-     *
-     *      https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist
-     *
-     * - Changed From: https://github.com/coltoscosmin/FileUtils/blob/42050f5791331bec2a888dc1d368aef128e98a3e/FileUtils.java#L113
+     * - Changed From: https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java
      *
      * @param context Context
      * @param uri     要查询的Uri(The Uri to query)
@@ -152,20 +146,23 @@ object FileUri {
                 if (id != null && id.startsWith("raw:")) {
                     return id.substring(4)
                 }
-                val contentUriPrefixesToTry = arrayOf(
-                    "content://downloads/public_downloads",
-                    "content://downloads/my_downloads",
-                    "content://downloads/all_downloads"
-                )
-                for (contentUriPrefix in contentUriPrefixesToTry) {
-                    val contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), id.toLong())
-                    try {
-                        val path = getDataColumn(context, contentUri, null, null)
-                        if (!path.isNullOrBlank()) return path
-                    } catch (e: Exception) {
+
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    val contentUriPrefixesToTry = arrayOf(
+                        "content://downloads/public_downloads",
+                        "content://downloads/my_downloads",
+                        "content://downloads/all_downloads"
+                    )
+                    for (contentUriPrefix in contentUriPrefixesToTry) {
+                        val contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), id.toLong())
+                        try {
+                            val path = getDataColumn(context, contentUri, null, null)
+                            if (!path.isNullOrBlank()) return path
+                        } catch (e: Exception) {
+                            FileLogger.e(e.toString())
+                        }
                     }
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) return uri.path
+                } else return getDownloadsPathQ(context, uri)
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
@@ -216,14 +213,12 @@ object FileUri {
     }
 
     /**
-     * BUG :
-     *      1.Android 10 闪退问题
-     *      2.部分机型进入"文件管理器" 执行到  cursor.getColumnIndexOrThrow(column);出现
-     *          Caused by: java.lang.IllegalArgumentException: column '_data' does not exist. Available columns: []
+     * BUG : 部分机型进入"文件管理器" 执行到  cursor.getColumnIndexOrThrow(column);出现
+     *       Caused by: java.lang.IllegalArgumentException: column '_data' does not exist. Available columns: []
+     *
      * Fixed :
-     *      FileChooserPathUtils 注释
-     *      &
      *      https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist
+     *
      */
     private fun getDataColumn(
         context: Context,
@@ -234,18 +229,33 @@ object FileUri {
         @Suppress("DEPRECATION")
         val column = MediaStore.Files.FileColumns.DATA
         val projection = arrayOf(column)
-        context.contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use {
+        context.contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use { c: Cursor ->
             try {
-                if (it.moveToFirst()) {
-                    //if (isDebug()) DatabaseUtils.dumpCursor(it)
-                    val columnIndex = it.getColumnIndex(column)
-                    return it.getString(columnIndex)
+                if (c.moveToFirst()) {
+                    val columnIndex = c.getColumnIndex(column)
+                    return c.getString(columnIndex)
                 } else uri.path
             } catch (e: Throwable) {
                 FileLogger.e("getDataColumn -> ${e.message}")
             }
         }
         return uri.path
+    }
+
+    private fun getDownloadsPathQ(context: Context, uri: Uri): String? {
+        // path could not be retrieved using ContentResolver, therefore copy file to accessible cache using streams
+        var destinationPath: String? = uri.path
+        val fileName: String? = FileUtils.getFileNameFromUri(uri)
+        if (fileName.isNullOrBlank()) return destinationPath
+
+        val filePath = "${context.externalCacheDir}${File.separator}documents"
+        var file: File? = File(filePath, fileName)
+        context.contentResolver.openInputStream(uri)?.use {
+            file = FileUtils.write2File(it, file, true)
+            destinationPath = file?.path
+        }
+        //FileLogger.i("getDownloadsPathQ -> $destinationPath")
+        return destinationPath
     }
 
     //The Uri to check
