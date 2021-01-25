@@ -55,7 +55,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
         mRvResults = findViewById(R.id.rv_images)
         mRvResults.asVerticalList()
         mRvResults.adapter = mAdapter
-        title = "多选文件"
+        title = "Custom File Type"
 
         //策略切换
         mRgStrategy.setOnCheckedChangeListener { _, checkedId ->

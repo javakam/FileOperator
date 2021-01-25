@@ -65,6 +65,9 @@
             android:name=".ui.selector.FileSelectCustomFileTypeActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.selector.fragment.FileSelectFragmentUsageActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.FileInfoActivity"
             android:screenOrientation="portrait" />
     </application>

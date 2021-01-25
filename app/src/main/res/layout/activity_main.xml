@@ -113,10 +113,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:onClick="caseFragmentSimpleUsage"
-        android:text="Fragment 简单使用"
+        android:text="Fragment Usage"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <Button
         android:layout_width="match_parent"
