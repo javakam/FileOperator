@@ -48,10 +48,10 @@ class FileUtilsActivity : AppCompatActivity() {
     private val mTvFileInfo: TextView by lazy { findViewById(R.id.tv_file_utils_info) }
     private val mTvFileCopy: TextView by lazy { findViewById(R.id.tv_file_utils_copy_path) }
 
-    private val filePath: String by lazy { getExternalFilesDir(null).absolutePath }
+    private val filePath: String by lazy { getExternalFilesDir(null)?.absolutePath?:"" }
     private val fileName: String = "temp.html"
     private val file: File by lazy { File("$filePath${File.separator}$fileName") }
-    private val destFilePath: String by lazy { externalCacheDir.absolutePath }
+    private val destFilePath: String by lazy { externalCacheDir?.absolutePath?:"" }
     private val destFileName: String = "tempCopy.html"
     private val destFile: File by lazy { File("$destFilePath${File.separator}$destFileName") }
 

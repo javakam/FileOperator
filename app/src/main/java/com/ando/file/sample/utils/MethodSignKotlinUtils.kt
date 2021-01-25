@@ -39,7 +39,7 @@ object MethodSignKotlinUtils {
 
     private fun dumpMethodSignInfo(context: Context, clazz: KClass<*>) {
         val handler = object : Handler(Looper.getMainLooper()) {
-            override fun handleMessage(msg: Message?) {
+            override fun handleMessage(msg: Message) {
                 super.handleMessage(msg)
                 shareFile(context, printMethodSignForKotlin(clazz), "MethodInfo_${clazz.simpleName}.txt")
             }
@@ -93,7 +93,7 @@ object MethodSignKotlinUtils {
     }
 
     private fun shareFile(context: Context, info: String, fileName: String) {
-        val filePath = context.externalCacheDir.path
+        val filePath = context.externalCacheDir?.path
         //val filePathAndName="$filePath${File.separator}$fileName"
         val file = File(filePath, fileName)
         FileUtils.write2File(info.byteInputStream(Charsets.UTF_8), file.path)
@@ -106,7 +106,7 @@ object MethodSignKotlinUtils {
         val cm: ClipboardManager? = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager?
         if (cm != null) {
             //参数一：标签，可为空，参数二：要复制到剪贴板的文本
-            cm.primaryClip = ClipData.newPlainText(null, text)
+            cm.setPrimaryClip(ClipData.newPlainText(null, text))
             if (cm.hasPrimaryClip()) {
                 cm.primaryClip?.getItemAt(0)?.text
             }
