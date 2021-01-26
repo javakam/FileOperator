@@ -1,14 +1,11 @@
 > **上一篇** 👉 [Android Q & Android 11存储适配(一) 基础知识点梳理](https://juejin.im/post/6854573214447140871)
 
-
 # [FileOperator](https://github.com/javakam/FileOperator)
-
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.5/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.5"/></a>
 
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
 - 🚀适用于`Android 4.4`及以上系统, 兼容`AndroidQ`新的存储策略
-- 🚀图片压缩算法参考 [Luban](https://github.com/Curzibn/Luban)
+- 🚀图片压缩算法参考 👉 [Luban](https://github.com/Curzibn/Luban)
 - 🚀`Kotlin Sample` 👉 [app](https://github.com/javakam/FileOperator/tree/master/app)
 - 🚀`Java Sample` 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
 
@@ -22,10 +19,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.5'       //核心库必选
-implementation 'ando.file:selector:1.3.5'   //文件选择器
-implementation 'ando.file:compressor:1.3.5' //图片压缩, 核心算法采用 Luban
-implementation 'ando.file:android-q:1.3.5'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
+implementation 'ando.file:core:1.3.6'       //核心库必选(Core library required)
+implementation 'ando.file:selector:1.3.6'   //文件选择器(File selector)
+implementation 'ando.file:compressor:1.3.6' //图片压缩, 核心算法采用 Luban
+implementation 'ando.file:android-q:1.3.6'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -43,7 +40,7 @@ FileOperator.init(this,BuildConfig.DEBUG)
 |:---:|:---:|
 | <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/func.png" width="290" height="600"/> | <img src="https://raw.githubusercontent.com/javakam/FileOperator/master/screenshot/cache.png" width="290" height="600"/> |
 
-### 文件选择
+### 文件选择(File selection)
 
 | 单图+压缩(Single Image+Compress) | 多图+压缩(Multiple images+Compress) | 多文件+多类型(Multiple files+Multiple types) |
 |:---:|:---:|:---:|
@@ -56,11 +53,11 @@ FileOperator.init(this,BuildConfig.DEBUG)
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
-    fileTypeMismatchTip = "文件类型不匹配"
+    fileTypeMismatchTip = "File type mismatch !"
     singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "图片最大不超过5M！"
+    singleFileMaxSizeTip = "图片最大不超过5M !"
     allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "总图片大小不超过10M！"//单选条件下无效,只做单个图片大小判断
+    allFilesMaxSizeTip = "总图片大小不超过10M !"//单选条件下无效,只做单个图片大小判断
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -70,15 +67,14 @@ val optionsImage = FileSelectOptions().apply {
 mFileSelector = FileSelector
     .with(this)
     .setRequestCode(REQUEST_CHOOSE_FILE)
-    .setTypeMismatchTip("文件类型不匹配")
-    .setMinCount(1, "至少选一个文件!")
-    .setMaxCount(10, "最多选十个文件!")//单选条件下无效, 只做最少数量判断
+    .setTypeMismatchTip("File type mismatch !")
+    .setMinCount(1, "Choose at least one file !!")
+    .setMaxCount(10, "Choose up to ten files !")    //单选条件下无效, 只做最少数量判断
     .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-    .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, FileSelectOptions.singleFileMaxSize
-    .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
-    .setMimeTypes("image/*")//默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+    .setSingleFileMaxSize(1048576, "大小不能超过1M !") //单选条件下无效, FileSelectOptions.singleFileMaxSize
+    .setAllFilesMaxSize(10485760, "总The size cannot exceed 10M !") //单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
+    .setMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
     .applyOptions(optionsImage)
-    //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return when (fileType) {
@@ -112,11 +108,11 @@ Multiple selection pictures (multiple selection + single type)
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
-    fileTypeMismatchTip = "文件类型不匹配"
+    fileTypeMismatchTip = "File type mismatch !"
     singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "单张图片最大不超过5M！"
+    singleFileMaxSizeTip = "A single picture does not exceed 5M !"
     allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "图片总大小不超过10M！"
+    allFilesMaxSizeTip = "The total size of the picture does not exceed 10M !"
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -126,20 +122,14 @@ val optionsImage = FileSelectOptions().apply {
 mFileSelector = FileSelector
     .with(this)
     .setRequestCode(REQUEST_CHOOSE_FILE)
-    .setMultiSelect()//默认是单选false
-    .setMinCount(1, "至少选一个文件!")
+    .setMultiSelect()
+    .setMinCount(1, "Choose at least one file !")
     .setMaxCount(2, "最多选两个文件!")
-    //优先使用 FileSelectOptions.singleFileMaxSize , 单位 Byte
-    .setSingleFileMaxSize(3145728, "单个大小不能超过3M！")
-    .setAllFilesMaxSize(20971520, "总文件大小不能超过20M！")
-
-    //1. 文件超过数量限制或大小限制
-    //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
+    .setSingleFileMaxSize(3145728, "单个大小不能超过3M !")
+    .setAllFilesMaxSize(20971520, "总文件大小不能超过20M !")
     .setOverLimitStrategy(this.mOverLimitStrategy)
     .setMimeTypes("image/*")
     .applyOptions(optionsImage)
-
-    //优先使用 FileSelectOptions 中设置的 FileSelectCondition
     .filter(object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE) && (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -166,6 +156,8 @@ mFileSelector = FileSelector
 ```
 
 ### 3. 多选文件(多选+多种类型)
+Multiple files (multi-select multiple types)
+
 > 🌴适用于处理复杂文件选择情形, 如: 选取图片、音频文件、文本文件, 其中`图片`至少选择一张, 最多选择两张, 每张图片大小不超过5M, 全部图片大小不超过10M;
  `音频文件`至少选择两个, 最多选择三个, 每个音频大小不超过20M, 全部音频大小不超过30M;
  `文本文件`至少选择一个, 最多选择两个, 每个文本文件大小不超过5M, 全部文本文件大小不超过10M
@@ -173,34 +165,34 @@ mFileSelector = FileSelector
 > 🌴It is suitable for processing complex file selection situations, such as: select pictures, audio files, text files, among which, select at least one picture and two at most. The size of each picture does not exceed 5M, and the size of all pictures does not exceed 10M; `audio File `Choose at least two and a maximum of three, each audio size does not exceed 20M, all audio size does not exceed 30M; `text file` select at least one, select at most two, each text file size does not exceed 5M, all The text file size does not exceed 10M
 
 ```kotlin
-//图片
+//图片 Image
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
     minCount = 1
     maxCount = 2
-    minCountTip = "至少选择一张图片"
-    maxCountTip = "最多选择两张图片"
+    minCountTip = "至少选择一张图片" //Select at least one picture
+    maxCountTip = "最多选择两张图片" //Select up to two pictures
     singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "单张图片最大不超过5M！"
+    singleFileMaxSizeTip = "单张图片最大不超过5M !" //A single picture does not exceed 5M !
     allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "图片总大小不超过10M！"
+    allFilesMaxSizeTip = "图片总大小不超过10M !" //The total size of the picture does not exceed 10M !
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
         }
     }
 }
-//音频
+//音频 Audio
 val optionsAudio = FileSelectOptions().apply {
     fileType = FileType.AUDIO
     minCount = 2
     maxCount = 3
-    minCountTip = "至少选择两个音频文件"
-    maxCountTip = "最多选择三个音频文件"
+    minCountTip = "至少选择两个音频文件" //Select at least two audio files
+    maxCountTip = "最多选择三个音频文件" //Select up to three audio files
     singleFileMaxSize = 20971520
-    singleFileMaxSizeTip = "单音频最大不超过20M！"
+    singleFileMaxSizeTip = "单音频最大不超过20M !" //Maximum single audio does not exceed 20M !
     allFilesMaxSize = 31457280
-    allFilesMaxSizeTip = "音频总大小不超过30M！"
+    allFilesMaxSizeTip = "音频总大小不超过30M !" //The total audio size does not exceed 30M !
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (uri != null)
@@ -212,12 +204,12 @@ val optionsTxt = FileSelectOptions().apply {
     fileType = FileType.TXT
     minCount = 1
     maxCount = 2
-    minCountTip = "至少选择一个文本文件"
-    maxCountTip = "最多选择两个文本文件"
+    minCountTip = "至少选择一个文本文件" //Select at least one text file
+    maxCountTip = "最多选择两个文本文件" //Select at most two text files
     singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "单文本文件最大不超过5M！"
+    singleFileMaxSizeTip = "单文本文件最大不超过5M !" //The single biggest text file no more than 5M
     allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "文本文件总大小不超过10M！"
+    allFilesMaxSizeTip = "文本文件总大小不超过10M !" //Total size not more than 10M text file
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (uri != null)
@@ -228,36 +220,57 @@ val optionsTxt = FileSelectOptions().apply {
  注:如果某个FileSelectOptions没通过限定条件, 则该FileSelectOptions不会返回
  eg: 采用上面的限制条件下,图片、音频、文本文件各选一个, 因为音频最小数量设定为`2`不满足设定条件则去除所有音频选择结果
     , 所以返回结果中只有图片和文本文件(限于OVER_LIMIT_EXCEPT_OVERFLOW)
+
+ EN:
+ Note: if a FileSelectOptions failed the qualification, then the FileSelectOptions will not return,
+ Eg: using the restriction conditions, images, audio, text files, each choose a, because audio set the minimum amount as ` 2 ` set does not meet the conditions the choice of the results to remove all audio
+    , Only pictures and text files, so return result (limited to OVER_LIMIT_EXCEPT_OVERFLOW);
  */
 mFileSelector = FileSelector
     .with(this)
     .setRequestCode(REQUEST_CHOOSE_FILE)
-    .setMultiSelect()//默认是单选false
+    .setMultiSelect() //默认是单选false (The default is radio false)
 
     /*
     实际最少数量限制为 setMinCount 和 (optionsImage.minCount + optionsAudio.minCount +...) 中的最小值
     实际最大数量限制为 setMaxCount 和 (optionsImage.maxCount + optionsAudio.maxCount +...) 中的最大值, 所以此处的最大值限制是无效的
+    EN:
+    Actual minimum limit for setMinCount and (optionsImage minCount optionsAudio. MinCount... The lowest value of),
+    Actual maximum limit for setMaxCount and (optionsImage maxCount optionsAudio. MaxCount... ) the maximum, so the maximum limit here is invalid;
      */
-    .setMinCount(1, "设定类型文件至少选择一个!")
-    .setMaxCount(4, "最多选四个文件!")
+    .setMinCount(1, "设定类型文件至少选择一个!") //Select at least one set type file
+    .setMaxCount(4, "最多选四个文件!") //Most alternative four files
 
     /*
     实际单文件大小限制为 setSingleFileMaxSize 和 (optionsImage.singleFileMaxSize + optionsAudio.singleFileMaxSize +...) 中的最小值
     实际总大小限制为 setAllFilesMaxSize 和 (optionsImage.allFilesMaxSize + optionsAudio.allFilesMaxSize +...) 中的最大值
+    EN:
+    Actual single file size limit for setSingleFileMaxSize and (optionsImage. SingleFileMaxSize optionsAudio. SingleFileMaxSize... The lowest value of),
+    Actual total size limit for setAllFilesMaxSize and (optionsImage allFilesMaxSize optionsAudio. AllFilesMaxSize... The highest value in);
      */
-    // 优先使用 `自定义FileSelectOptions` 中设置的单文件大小限制, 如果没有设置则采用该值
-    .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
-    .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
+    //优先使用 `自定义FileSelectOptions` 中设置的单文件大小限制, 如果没有设置则采用该值
+    //Prefer using ` custom FileSelectOptions ` set in single file size limit, if the value is not set is used
+    .setSingleFileMaxSize(2097152, "单文件大小不能超过2M !") //The size of a single file cannot exceed 2M !
+    .setAllFilesMaxSize(52428800, "总文件大小不能超过50M !") //The total file size cannot exceed 50M !
 
     //1. 文件超过数量限制或大小限制
     //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
+    //EN:
+    //1. Documents more than limit or size limit
+    //2. Single type: keep not ultra limit file and return, get rid of the overflow part; Multiple types: keep the right file, get rid of the wrong type of all documents
     .setOverLimitStrategy(this.mOverLimitStrategy)
+
     //eg: ando.file.core.FileMimeType
-    .setMimeTypes("audio/*", "image/*", "text/plain")//默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
+    //默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
+    //Default do not file type constraints for "/", is not the same as the choice of different types of the system to provide the UI eg: "video/"," audio/", "image/"
+    .setMimeTypes("audio/*", "image/*", "text/plain")
+
     //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
+    //If setMimeTypes and applyOptions no corresponding will appear `file type mismatch problems`
     .applyOptions(optionsImage, optionsAudio, optionsTxt)
 
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
+    //Priority in use FileSelectOptions FileSelectCondition Settings
     .filter(object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return when (fileType) {
@@ -273,7 +286,7 @@ mFileSelector = FileSelector
             FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
             mAdapter.setData(null)
             if (results.isNullOrEmpty()) {
-                toastLong("没有选取文件")
+                toastLong("没有选取文件") //No files selected
                 return
             }
             showSelectResult(results)
@@ -288,25 +301,31 @@ mFileSelector = FileSelector
     .choose()
 ```
 
-### 4. 自定义FileType
+### 4. 自定义FileType(Custom FileType)
+
 #### ①扩展已有的FileType
+
+Extend existing FileType
+
 ```kotlin
 eg: 
-内置: TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
+内置(built-in): TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
 
-增加: FileType.TXT.supplement("gradle","kt")
-结果: TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc","gradle","kt"))
+增加(increase): FileType.TXT.supplement("gradle","kt")
+结果(result): TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc","gradle","kt"))
 
-移除: FileType.TXT.remove("txt","ini")
-结果: TXT(mutableListOf("conf", "iml", log", "prop", "rc"))
+移除(remove): FileType.TXT.remove("txt","ini")
+结果(result): TXT(mutableListOf("conf", "iml", log", "prop", "rc"))
 
-替换: FileType.XML.replace("xxx")
-调试: FileType.TXT.dump()
+替换(replace): FileType.XML.replace("xxx")
+调试(debugging): FileType.TXT.dump()
 ```
 
 #### ②通过`IFileType`自定义文件类型
 
-> 🍎下面提供了两种实现的方式:
+Through ` IFileType ` custom file type
+
+> 🍎下面提供了两种实现的方式 (The following provides two ways):
 
 ```kotlin
 //1.
@@ -315,7 +334,7 @@ object FileTypePhp : IFileType {
         return if (parseSuffix(uri).equals("php", true)) FileTypePhp else FileType.UNKNOWN
     }
 }
-//2.推荐方式
+//2.推荐方式 (Recommend ways)
 enum class FileTypeJson : IFileType {
     JSON;
     override fun fromUri(uri: Uri?): IFileType {
@@ -323,14 +342,14 @@ enum class FileTypeJson : IFileType {
     }
 }
 ```
-用法:
+Usage :
 ```kotlin
 val optionsJsonFile = FileSelectOptions().apply {
     fileType = FileTypeJson.JSON
     minCount = 1
     maxCount = 2
-    minCountTip = "至少选择一个JSON文件"
-    maxCountTip = "最多选择两个JSON文件"
+    minCountTip = "至少选择一个JSON文件" //Choose at least one JSON file
+    maxCountTip = "最多选择两个JSON文件" //Choose up to two JSON files
 }
 
 FileSelector.with(this)

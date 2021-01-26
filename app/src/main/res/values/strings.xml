@@ -1,4 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FileOperator</string>
+
+    <string name="str_ando_file_title_core">Core Library</string>
+    <string name="str_ando_file_title_selector">File Selector</string>
+    <string name="str_ando_file_title_fragment">Fragment Usage</string>
+    <string name="str_ando_file_title_media_store">MediaStore</string>
+    <string name="str_ando_file_title_saf">Storage Access Framework</string>
+    <string name="str_ando_file_get_mime">获取文件MimeType(FileMimeType)</string>
+    <string name="str_ando_file_get_size">获取文件大小(FileSizeUtils)</string>
+    <string name="str_ando_file_get_uri_path">获取文件Uri/Path(FileUri)</string>
+    <string name="str_ando_file_open">打开文件(FileOpener)</string>
+    <string name="str_ando_file_common_utils">文件通用工具类(FileUtils)</string>
+    <string name="str_ando_file_select_one_and_compress">选择一张图片并压缩</string>
+    <string name="str_ando_file_select_multiple_and_compress">选择多张图片并压缩</string>
+    <string name="str_ando_file_select_multiple_diff">选择多个不同类型文件</string>
+    <string name="str_ando_file_select_multiple_get_info">选择多个文件并获取相应信息</string>
+    <string name="str_ando_file_select_custom_type">自定义 FileTye</string>
+    <string name="str_ando_file_select_get_directory_info">获取应用目录信息</string>
+    <string name="str_ando_file_select_diff">区别(Difference)</string>
+
+    <string name="str_ando_file_utils_get_uri">选择一个文件并获取测试用的Uri</string>
+    <string name="str_ando_file_utils_show">FileUtils 演示操作文件\n注: SAF方式操作文件👉StorageAccessFrameworkActivity</string>
+    <string name="str_ando_file_utils_write_data">向temp.html写入数据</string>
+    <string name="str_ando_file_utils_read_data">从temp.html读取数据</string>
+    <string name="str_ando_file_utils_copy">复制temp.html到其他路径并重命名为tempCopy.html</string>
+    <string name="str_ando_file_utils_copy_open">打开复制后的文件tempCopy.html</string>
+
+    <string name="str_ando_file_current_strategy">当前策略:</string>
+    <string name="str_ando_file_strategy_all">🍎超过限制数量或大小『直接返回失败』\n OVER_LIMIT_EXCEPT_ALL</string>
+    <string name="str_ando_file_strategy_over">🍎超过限制数量或大小\n『单一类型』: 保留未超限制的文件并返回, 去掉后面溢出的部分; \n『多种类型』: 保留选择正确的文件, 去掉错误类型的所有文件 \n OVER_LIMIT_EXCEPT_OVERFLOW</string>
+    <string name="str_ando_file_select_multiple">选择多个文件 (0)</string>
+    <string name="str_ando_file_info">文件信息</string>
+    <string name="str_ando_file_error_info">错误信息</string>
+    <string name="str_ando_file_select_result">选择结果</string>
+    <string name="str_ando_file_original_image">原图</string>
+    <string name="str_ando_file_before_compression">压缩前</string>
+    <string name="str_ando_file_after_compression">压缩后</string>
+    <string name="str_ando_file_clear_cache">清除缓存</string>
+
+    <string name="str_ando_file_select_one">选择单个文件</string>
+    <string name="str_ando_file_create_document">创建文档</string>
+    <string name="str_ando_file_delete_document">删除文档</string>
+    <string name="str_ando_file_rename_document">重命名</string>
+    <string name="str_ando_file_edit_document">编辑文档</string>
+    <string name="str_ando_file_select_directory">选择目录</string>
+    <string name="str_ando_file_store_bitmap">把Bitmap存储到目录Pictures/img</string>
+    <string name="str_ando_file_query_picture">查询图片👉DisplayName</string>
+    <string name="str_ando_file_show_picture">显示该图片</string>
+    <string name="str_ando_file_load_thumbnail">loadThumbnail👉加载该图片的缩略图</string>
+    <string name="str_ando_file_modify_file">修改该文件</string>
+    <string name="str_ando_file_delete_file">删除该文件👉Uri/DisplayName</string>
+    <string name="str_ando_file_delete_file_all">删除全部文件👉Pictures/img</string>
+    <string name="str_ando_file_query_file">查询图片👉条件查询</string>
+    <string name="str_ando_file_description">⭐ 点击图片做删除,可以更直观的看出修改/删除当前应用的图片并不会触发 RecoverableSecurityException</string>
+
+
 </resources>

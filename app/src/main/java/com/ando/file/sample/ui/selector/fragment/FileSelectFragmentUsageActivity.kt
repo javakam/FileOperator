@@ -1,6 +1,5 @@
 package com.ando.file.sample.ui.selector.fragment
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -35,6 +34,13 @@ class FileSelectFragmentUsageActivity : AppCompatActivity() {
 
     }
 
+    /*
+    Note:
+
+    v1.3.5 以下版本需要把 onActivityResult 数据传给 Fragment
+
+    Versions below v1.3.5 need to pass onActivityResult data to Fragment
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         //找到相应的`Fragment`并把数据通过主动调用`Fragment.onActivityResult`传过去
@@ -42,5 +48,6 @@ class FileSelectFragmentUsageActivity : AppCompatActivity() {
         val fragment: FileSelectFragment? = supportFragmentManager.findFragmentByTag("tag") as? FileSelectFragment?
         fragment?.onActivityResult(requestCode, resultCode, data)
     }
+    */
 
 }

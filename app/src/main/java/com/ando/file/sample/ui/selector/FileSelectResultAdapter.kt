@@ -33,8 +33,8 @@ class FileSelectResultAdapter : RecyclerView.Adapter<FileSelectResultAdapter.Sel
             holder.tvCompressedResult.visibility = visibility
 
             //Event
-            ResultUtils.setItemEvent(holder.tvResult, b.originUri, "确定打开该文件?")
-            ResultUtils.setItemEvent(holder.tvCompressedResult, b.compressedUri, "确定打开压缩后的图片?")
+            ResultUtils.setItemEvent(holder.tvResult, b.originUri, "确定打开该文件?") //OK to open the file
+            ResultUtils.setItemEvent(holder.tvCompressedResult, b.compressedUri, "确定打开压缩后的图片?") //Make sure to open the compressed picture
         }
     }
 

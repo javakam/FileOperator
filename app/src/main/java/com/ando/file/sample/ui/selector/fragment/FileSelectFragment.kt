@@ -91,7 +91,7 @@ class FileSelectFragment : Fragment() {
         }
 
         mFileSelector = FileSelector
-            .with(requireContext())
+            .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setTypeMismatchTip("File type mismatch")
             .setMinCount(1, "Choose at least one file!")

@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/sel_select_strategy_change"
             android:checked="true"
-            android:text="🍎超过限制数量或大小『直接返回失败』\n OVER_LIMIT_EXCEPT_ALL"
+            android:text="@string/str_ando_file_strategy_all"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_10" />
 
@@ -25,7 +25,7 @@
             android:background="@drawable/sel_select_strategy_change"
             android:paddingTop="@dimen/dp_3"
             android:paddingBottom="@dimen/dp_3"
-            android:text="🍎超过限制数量或大小\n『单一类型』: 保留未超限制的文件并返回, 去掉后面溢出的部分; \n『多种类型』: 保留选择正确的文件, 去掉错误类型的所有文件 \n OVER_LIMIT_EXCEPT_OVERFLOW"
+            android:text="@string/str_ando_file_strategy_over"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_10" />
 

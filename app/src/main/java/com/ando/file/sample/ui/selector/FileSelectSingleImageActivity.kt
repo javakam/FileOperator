@@ -17,9 +17,9 @@ import com.ando.file.sample.utils.ResultUtils
 import java.io.File
 
 /**
- * FileSelectSingleImageActivity
+ * # FileSelectSingleImageActivity
  *
- * Description: 单选图片
+ * Description: 单选图片 (Single selection picture)
  *
  * @author javakam
  * @date 2020/5/19  16:04
@@ -43,13 +43,13 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         mIvOrigin = findViewById(R.id.iv_origin)
         mIvCompressed = findViewById(R.id.iv_compressed)
 
-        title = "单选图片"
+        title = "单选图片(Single selection picture)"
 
         mBtSelectSingle.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
                 if (it) chooseFile()
 
-                //测试分享
+                //测试分享 (Test sharing)
                 /*if (it){
                     mFileSelector = FileSelector.with(this)
                         .setMimeTypes("application/json")
@@ -85,7 +85,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     }
 
     /*
-    字节码计算器 -> https://calc.itzmx.com/
+    Bytecode calculator -> https://calc.itzmx.com/
        3M  = 3145728  Byte
        5M  = 5242880  Byte
        10M = 10485760 Byte
@@ -94,11 +94,15 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     private fun chooseFile() {
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
-            fileTypeMismatchTip = "文件类型不匹配"
+            fileTypeMismatchTip = "File type mismatch !"
             singleFileMaxSize = 5242880
-            singleFileMaxSizeTip = "图片最大不超过5M！"
+            singleFileMaxSizeTip = "The largest picture does not exceed 5M !"
             allFilesMaxSize = 10485760
-            allFilesMaxSizeTip = "总图片大小不超过10M！"//单选条件下无效,只做单个图片大小判断
+
+            //单选条件下无效,只做单个图片大小判断
+            //Invalid under single selection conditions, only single image size judgment
+            allFilesMaxSizeTip = "The total picture size does not exceed 10M !"
+
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     //筛除 gif
@@ -110,12 +114,12 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setTypeMismatchTip("文件类型不匹配")
-            .setMinCount(1, "至少选一个文件!")
-            .setMaxCount(10, "最多选十个文件!")//单选条件下无效, 只做最少数量判断
+            .setTypeMismatchTip("File type mismatch !")
+            .setMinCount(1, "Choose at least one file !")
+            .setMaxCount(10, "Choose up to ten files !")//单选条件下无效, 只做最少数量判断 Invalid under single selection condition, only judge the minimum number
             .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, 使用 FileSelectOptions.singleFileMaxSize
-            .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效, 只做单个图片大小判断 setSingleFileMaxSize
+            .setSingleFileMaxSize(1048576, "The size cannot exceed 1M !")//单选条件下无效, 使用 FileSelectOptions.singleFileMaxSize
+            .setAllFilesMaxSize(10485760, "Total size cannot exceed 10M !")//单选条件下无效, 只做单个图片大小判断 setSingleFileMaxSize
             .setMimeTypes("image/*")
             .applyOptions(optionsImage)
 
@@ -134,7 +138,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                 override fun onSuccess(results: List<FileSelectResult>?) {
                     ResultUtils.resetUI(mTvResult)
                     if (results.isNullOrEmpty()) {
-                        toastLong("没有选取文件")
+                        toastLong("No file selected")
                         return
                     }
                     showSelectResult(results)
@@ -153,15 +157,16 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         ResultUtils.setFormattedResults(tvResult = mTvResult, results = results)
 
         val uri = results[0].uri
-        //原图
+        //Original image
         ResultUtils.setImageEvent(mIvOrigin, uri)
-        //压缩
+        //Compress
         val photos = listOf(uri)
 
         //or val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
         compressImage(this, photos) { _, u ->
-            FileLogger.i("compressImage onSuccess uri=$u " +
-                    "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
+            FileLogger.i(
+                "compressImage onSuccess uri=$u " +
+                        "Total size of compressed image cache directory = ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
             )
 
             ResultUtils.formatCompressedImageInfo(u, false) {

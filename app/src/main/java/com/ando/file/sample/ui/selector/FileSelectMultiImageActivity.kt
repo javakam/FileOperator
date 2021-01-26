@@ -22,9 +22,9 @@ import com.ando.file.sample.utils.ResultUtils.asVerticalList
 import java.io.File
 
 /**
- * FileSelectImageMultiActivity
+ * # FileSelectMultiImageActivity
  *
- * Description: 多选图片
+ * Description: 多选图片 (Multiple selection pictures)
  *
  * @author javakam
  * @date 2020/5/19  16:04
@@ -32,7 +32,7 @@ import java.io.File
 @SuppressLint("SetTextI18n")
 class FileSelectMultiImageActivity : AppCompatActivity() {
 
-    private val mShowText: String = "选择多张图片并压缩"
+    private val mShowText: String by lazy { getString(R.string.str_ando_file_select_multiple_and_compress) }
     private lateinit var mTvCurrStrategy: TextView
     private lateinit var mRgStrategy: RadioGroup
     private lateinit var mBtSelect: Button
@@ -58,24 +58,25 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         mRvResults.asVerticalList()
         mRvResults.adapter = mAdapter
 
-        title = "多选图片"
+        title = "多选图片(Multiple selection pictures)"
 
-        //策略切换
+        //策略切换 (Strategy switching)
+        val prefix=getString(R.string.str_ando_file_current_strategy)
         mRgStrategy.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rb_strategy1 -> {
                     this.mOverLimitStrategy = OVER_LIMIT_EXCEPT_ALL
-                    mTvCurrStrategy.text = "当前策略: OVER_LIMIT_EXCEPT_ALL"
+                    mTvCurrStrategy.text = "$prefix OVER_LIMIT_EXCEPT_ALL"
                 }
                 R.id.rb_strategy2 -> {
                     this.mOverLimitStrategy = OVER_LIMIT_EXCEPT_OVERFLOW
-                    mTvCurrStrategy.text = "当前策略: OVER_LIMIT_EXCEPT_OVERFLOW"
+                    mTvCurrStrategy.text = "$prefix OVER_LIMIT_EXCEPT_OVERFLOW"
                 }
                 else -> {
                 }
             }
         }
-        mTvCurrStrategy.text = "当前策略: ${
+        mTvCurrStrategy.text = "$prefix ${
             if (this.mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL) "OVER_LIMIT_EXCEPT_ALL"
             else "OVER_LIMIT_EXCEPT_OVERFLOW"
         }"
@@ -98,11 +99,11 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
     private fun chooseFile() {
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
-            fileTypeMismatchTip = "文件类型不匹配"
+            fileTypeMismatchTip = "File type mismatch !"
             singleFileMaxSize = 5242880
-            singleFileMaxSizeTip = "单张图片最大不超过5M！"
+            singleFileMaxSizeTip = "A single picture does not exceed 5M !"
             allFilesMaxSize = 10485760
-            allFilesMaxSizeTip = "图片总大小不超过10M！"
+            allFilesMaxSizeTip = "The total size of the picture does not exceed 10M !"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -114,10 +115,10 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setMultiSelect()
-            .setMinCount(1, "至少选一张图片!")
-            .setMaxCount(10, "最多选十张图片!")
-            .setSingleFileMaxSize(3145728, "单张图片大小不能超过3M！")
-            .setAllFilesMaxSize(20971520, "图片总大小不能超过20M！")
+            .setMinCount(1, "Choose at least one picture!")
+            .setMaxCount(10, "Choose up to ten pictures!")
+            .setSingleFileMaxSize(3145728, "The size of a single picture cannot exceed 3M !")
+            .setAllFilesMaxSize(20971520, "The total size of the picture does not exceed 20M !")
             .setOverLimitStrategy(this.mOverLimitStrategy)
             .setMimeTypes("image/*")
             .applyOptions(optionsImage)
@@ -131,7 +132,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
                     FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
                     mAdapter.setData(null)
                     if (results.isNullOrEmpty()) {
-                        toastLong("没有选取文件")
+                        toastLong("No file selected")
                         return
                     }
                     showSelectResult(results)
@@ -167,7 +168,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         var count = 0
         compressImage(this, photos) { index, u ->
             FileLogger.i("compressImage onSuccess index=$index uri=$u " +
-                    "压缩图片缓存目录总大小=${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
+                    "Total size of compressed image cache directory = ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
             )
 
             ResultUtils.formatCompressedImageInfo(u, true) {
@@ -178,7 +179,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
                 }
             }
 
-            //建议加个加载中的弹窗
+            //建议加个加载中的弹窗 (It is recommended to add a loading dialog)
             if (count == mResultShowList?.size ?: 0) {
                 mAdapter.setData(mResultShowList)
             }

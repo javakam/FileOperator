@@ -48,10 +48,10 @@ class FileUtilsActivity : AppCompatActivity() {
     private val mTvFileInfo: TextView by lazy { findViewById(R.id.tv_file_utils_info) }
     private val mTvFileCopy: TextView by lazy { findViewById(R.id.tv_file_utils_copy_path) }
 
-    private val filePath: String by lazy { getExternalFilesDir(null)?.absolutePath?:"" }
+    private val filePath: String by lazy { getExternalFilesDir(null)?.absolutePath ?: "" }
     private val fileName: String = "temp.html"
     private val file: File by lazy { File("$filePath${File.separator}$fileName") }
-    private val destFilePath: String by lazy { externalCacheDir?.absolutePath?:"" }
+    private val destFilePath: String by lazy { externalCacheDir?.absolutePath ?: "" }
     private val destFileName: String = "tempCopy.html"
     private val destFile: File by lazy { File("$destFilePath${File.separator}$destFileName") }
 
@@ -89,26 +89,26 @@ class FileUtilsActivity : AppCompatActivity() {
                 .choose()
         }
 
-        //演示操作文件
+        //演示操作文件 (Demo operation file)
         refreshFileInfo()
         mBtFileOpen.setOnClickListener {
             if (!isFileExist()) {
                 refreshFileInfo()
                 return@setOnClickListener
             }
-            FileOpener.openFile(this, FileUri.getUriByFile(file), "选择打开程序")
+            FileOpener.openFile(this, FileUri.getUriByFile(file), "Choose to open the program")
         }
         mBtFileCreate.setOnClickListener {
             if (file.exists()) {
-                toastShort("${fileName}已存在!")
+                toastShort("$fileName existed !")
                 refreshFileInfo()
                 return@setOnClickListener
             }
-            //测试创建多个文件
+            //测试创建多个文件 (Test to create multiple files)
             for (i in 0..2) {
                 FileUtils.createFile(filePath = filePath, fileName = fileName, overwrite = false)
             }
-            toastShort("${fileName}创建成功!")
+            toastShort("$fileName created successfully !")
             refreshFileInfo()
         }
         //Write
@@ -120,7 +120,7 @@ class FileUtilsActivity : AppCompatActivity() {
             val tempText = "Hello World ! \n${Date()}"
             val inputStream: InputStream = tempText.byteInputStream(Charsets.UTF_8)
             FileUtils.write2File(inputStream, filePath, fileName)
-            toastShort("${fileName}写入数据成功!")
+            toastShort("$fileName data written successfully !")
             refreshFileInfo()
         }
         //Read
@@ -148,12 +148,12 @@ class FileUtilsActivity : AppCompatActivity() {
             val copyResult: File? = FileUtils.copyFile(file, destFilePath, destFileName)
             FileLogger.w("copyResult= $copyResult")
 
-            FileLogger.w("时间差: ${SystemClock.elapsedRealtimeNanos() - start}")
+            FileLogger.w("Time difference: ${SystemClock.elapsedRealtimeNanos() - start}")
 
             if (destFile.exists()) {
                 mTvFileCopy.visibility = View.VISIBLE
                 mTvFileCopy.text = destFile.absolutePath
-                toastShort("文件复制成功!")
+                toastShort("File copied successfully !")
             }
 
             refreshFileInfo()
@@ -162,25 +162,25 @@ class FileUtilsActivity : AppCompatActivity() {
         mBtFileCopyOpen.setOnClickListener {
             if (!destFile.exists()) {
                 refreshFileInfo()
-                toastLong("${destFileName}不存在, 需先创建再复制")
+                toastLong("$destFileName does not exist, need to create and then copy")
                 return@setOnClickListener
             }
-            FileOpener.openFile(this, FileUri.getUriByFile(destFile), "选择打开程序")
+            FileOpener.openFile(this, FileUri.getUriByFile(destFile), "Choose to open the program")
         }
         //Delete
         mBtFileDelete.setOnClickListener {
-            //直接删除文件
+            //直接删除文件 (Delete files directly)
             FileUtils.deleteFile(file)
             //FileUtils.deleteFile(destFile)
 
-            //删除指定目录下所有文件
+            //删除指定目录下所有文件 (Delete all files in the specified directory)
             //FileUtils.deleteFilesNotDir(filePath)
             //FileUtils.deleteFilesNotDir(destFilePath)
 
             if (file.exists()) {
-                toastShort("${fileName}删除失败!")
+                toastShort("$fileName failed to delete !")
             } else {
-                toastShort("${fileName}删除成功!")
+                toastShort("$fileName successfully deleted !")
             }
             refreshFileInfo()
         }
@@ -191,25 +191,25 @@ class FileUtilsActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun initData() {
         val testUrl = "http://image.uc.cn/s/wemedia/s/upload/2020/bwGSqL1efbv804k/1f941436db7fc25304cb91484d0d7c3c.jpg"
-        findViewById<TextView>(R.id.tv_file_utils_url).text = "测试Url: $testUrl"
+        findViewById<TextView>(R.id.tv_file_utils_url).text = "Test Url: $testUrl"
 
         //getExtension(String, Char, Boolean)
         mTvFileUrl1.text = """
-                方法: getExtension(String, Char, Boolean)
-                后缀: ${FileUtils.getExtension(testUrl)}
+                Method: getExtension(String, Char, Boolean)
+                Suffix: ${FileUtils.getExtension(testUrl)}
             """.trimIndent()
 
         //getExtension(String)
         mTvFileUrl2.text = """
-               方法: getExtension(String)
-               后缀: ${FileUtils.getExtension(testUrl)}
+               Method: getExtension(String)
+               Suffix: ${FileUtils.getExtension(testUrl)}
             """.trimIndent()
 
     }
 
     private fun isFileExist(): Boolean =
         if (!file.exists()) {
-            toastLong("${fileName}不存在, 请先创建")
+            toastLong("$fileName does not exist, please create first")
             false
         } else true
 
@@ -223,26 +223,26 @@ class FileUtilsActivity : AppCompatActivity() {
     private fun refreshExtensionData(uri: Uri) {
         findViewById<TextView>(R.id.tv_file_select_uri).apply {
             visibility = View.VISIBLE
-            text = "选择结果Uri: $uri"
+            text = "${getString(R.string.str_ando_file_select_result)}Uri: $uri"
         }
 
         //getExtension(Uri)
         mTvFileUrl3.visibility = View.VISIBLE
         mTvFileUrl3.text = """
-               方法: getExtension(Uri)
+               Method: getExtension(Uri)
                Uri: $uri
-               后缀: ${FileUtils.getExtension(uri)}
+               Suffix: ${FileUtils.getExtension(uri)}
             """.trimIndent()
 
         //getExtension(FilePath/FileName)
         val filePath = FileUri.getFilePathByUri(uri) ?: ""
         mTvFileUrl4.visibility = View.VISIBLE
         mTvFileUrl4.text = """
-               方法: getExtension(FilePath/FileName)
+               Method: getExtension(FilePath/FileName)
                Name:${FileUtils.getFileNameFromUri(uri)}
                Path:$filePath
                Uri: $uri
-               后缀: ${FileUtils.getExtension(filePath)}
+               Suffix: ${FileUtils.getExtension(filePath)}
             """.trimIndent()
 
     }

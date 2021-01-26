@@ -20,9 +20,9 @@ import com.ando.file.sample.utils.ResultUtils
 import com.ando.file.sample.utils.ResultUtils.asVerticalList
 
 /**
- * FileSelectCustomFileTypeActivity
+ * # FileSelectCustomFileTypeActivity
  *
- * Description: 自定义文件类型
+ * Description: 自定义文件类型 (Custom file type)
  *
  * @author javakam
  * @date 2021-01-22
@@ -30,7 +30,7 @@ import com.ando.file.sample.utils.ResultUtils.asVerticalList
 @SuppressLint("SetTextI18n")
 class FileSelectCustomFileTypeActivity : AppCompatActivity() {
 
-    private val mShowText: String = "选择多个不同类型文件"
+    private val mShowText: String by  lazy { getString(R.string.str_ando_file_select_multiple_diff) }
     private lateinit var mTvCurrStrategy: TextView
     private lateinit var mRgStrategy: RadioGroup
     private lateinit var mBtSelect: Button
@@ -39,7 +39,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
 
     private var mOverLimitStrategy: Int = OVER_LIMIT_EXCEPT_ALL
 
-    //展示结果(Show results)
+    //展示结果 (Show results)
     private var mResultShowList: MutableList<ResultUtils.ResultShowBean>? = null
     private val mAdapter: FileSelectResultAdapter by lazy { FileSelectResultAdapter() }
 
@@ -57,22 +57,23 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
         mRvResults.adapter = mAdapter
         title = "Custom File Type"
 
-        //策略切换
+        //策略切换 (Strategy switching)
+        val prefix=getString(R.string.str_ando_file_current_strategy)
         mRgStrategy.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rb_strategy1 -> {
                     this.mOverLimitStrategy = OVER_LIMIT_EXCEPT_ALL
-                    mTvCurrStrategy.text = "当前策略: OVER_LIMIT_EXCEPT_ALL"
+                    mTvCurrStrategy.text = "$prefix OVER_LIMIT_EXCEPT_ALL"
                 }
                 R.id.rb_strategy2 -> {
                     this.mOverLimitStrategy = OVER_LIMIT_EXCEPT_OVERFLOW
-                    mTvCurrStrategy.text = "当前策略: OVER_LIMIT_EXCEPT_OVERFLOW"
+                    mTvCurrStrategy.text = "$prefix OVER_LIMIT_EXCEPT_OVERFLOW"
                 }
                 else -> {
                 }
             }
         }
-        mTvCurrStrategy.text = "当前策略: ${
+        mTvCurrStrategy.text = "$prefix ${
             if (this.mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL) "OVER_LIMIT_EXCEPT_ALL"
             else "OVER_LIMIT_EXCEPT_OVERFLOW"
         }"
@@ -92,13 +93,12 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
-    //自定义 IFileType
+    //Custom IFileType
     object FileTypePhp : IFileType {
         override fun fromUri(uri: Uri?): IFileType {
             return if (parseSuffix(uri).equals("json", true)) FileTypePhp else FileType.UNKNOWN
         }
     }
-
     //or
     enum class FileTypeJson : IFileType {
         JSON;
@@ -109,24 +109,24 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
     }
 
     /*
-    字节码计算器 -> https://calc.itzmx.com/
+    Bytecode calculator -> https://calc.itzmx.com/
        3M  = 3145728  Byte
        5M  = 5242880  Byte
        10M = 10485760 Byte
        20M = 20971520 Byte
     */
     private fun chooseFile() {
-        //图片
+        //图片 Image
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
             minCount = 1
             maxCount = 2
-            minCountTip = "至少选择一张图片"
-            maxCountTip = "最多选择两张图片"
+            minCountTip = "Select at least one picture"
+            maxCountTip = "Select up to two pictures"
             singleFileMaxSize = 5242880
-            singleFileMaxSizeTip = "单张图片最大不超过5M！"
+            singleFileMaxSizeTip = "A single picture does not exceed 5M !"
             allFilesMaxSize = 10485760
-            allFilesMaxSizeTip = "图片总大小不超过10M！"
+            allFilesMaxSizeTip = "The total size of the picture does not exceed 10M !"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -134,17 +134,17 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             }
         }
 
-        //音频
+        //音频 audio
         val optionsAudio = FileSelectOptions().apply {
             fileType = FileType.AUDIO
             minCount = 2
             maxCount = 3
-            minCountTip = "至少选择两个音频文件"
-            maxCountTip = "最多选择三个音频文件"
+            minCountTip = "Select at least two audio files"
+            maxCountTip = "Select up to three audio files"
             singleFileMaxSize = 20971520
-            singleFileMaxSizeTip = "单音频最大不超过20M！"
+            singleFileMaxSizeTip = "Maximum single audio does not exceed 20M !"
             allFilesMaxSize = 31457280
-            allFilesMaxSizeTip = "音频总大小不超过30M！"
+            allFilesMaxSizeTip = "The total audio size does not exceed 30M !"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (uri != null)
@@ -157,12 +157,12 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             fileType = FileType.TXT
             minCount = 1
             maxCount = 2
-            minCountTip = "至少选择一个文本文件"
-            maxCountTip = "最多选择两个文本文件"
+            minCountTip = "Select at least one text file"
+            maxCountTip = "Select up to two text files"
             singleFileMaxSize = 5242880
-            singleFileMaxSizeTip = "单文本文件最大不超过5M！"
+            singleFileMaxSizeTip = "The maximum size of a single text file is 5 M!"
             allFilesMaxSize = 10485760
-            allFilesMaxSizeTip = "文本文件总大小不超过10M！"
+            allFilesMaxSizeTip = "The total size of the text file does not exceed 10 M!"
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return (uri != null)
@@ -178,18 +178,18 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             fileType = FileTypeJson.JSON
             minCount = 1
             maxCount = 2
-            minCountTip = "至少选择一个JSON文件"
-            maxCountTip = "最多选择两个JSON文件"
+            minCountTip = "Choose at least one JSON file"
+            maxCountTip = "Choose up to two JSON files"
         }
 
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setMultiSelect()//默认是单选false
-            .setMinCount(1, "设定类型文件至少选择一个!")
-            .setMaxCount(4, "最多选四个文件!")
-            .setSingleFileMaxSize(2097152, "单文件大小不能超过2M！")
-            .setAllFilesMaxSize(52428800, "总文件大小不能超过50M！")
+            .setMinCount(1, "Select at least one set type file!")
+            .setMaxCount(4, "Choose up to four files!")
+            .setSingleFileMaxSize(2097152, "The size of a single file cannot exceed 2M !")
+            .setAllFilesMaxSize(52428800, "The total file size cannot exceed 50M !")
             .setOverLimitStrategy(this.mOverLimitStrategy)
             .setMimeTypes("audio/*", "image/*", "text/*", "application/json")
             .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
@@ -209,7 +209,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
                     FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
                     mAdapter.setData(null)
                     if (results.isNullOrEmpty()) {
-                        toastLong("没有选取文件")
+                        toastLong("No file selected")
                         return
                     }
                     showSelectResult(results)
