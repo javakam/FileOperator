@@ -25,7 +25,7 @@ const val REQUEST_CHOOSE_FILE = 10
 var GLOBAL_DIALOG: AlertDialog? = null
 
 /**
- * 应用缓存目录 :
+ * 应用缓存目录(App cache directory) :
  *  1. 压缩图片后的缓存目录
  *
  * 注: 手机文件管理器看不到, 需要用AS自带的Device File Explorer查看
@@ -59,10 +59,10 @@ fun showAlert(context: Context, title: String, msg: String, block: (isPositive: 
     GLOBAL_DIALOG = AlertDialog.Builder(context)
         .setTitle(title)
         .setMessage(msg)
-        .setPositiveButton("打开") { _, _ ->
+        .setPositiveButton("Open") { _, _ ->
             block.invoke(true)
         }
-        .setNegativeButton("取消") { _, _ ->
+        .setNegativeButton("Cancel") { _, _ ->
             block.invoke(false)
         }
         .create()

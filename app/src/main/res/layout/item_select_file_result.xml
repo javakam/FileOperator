@@ -16,7 +16,7 @@
         android:textColorHint="@color/color_font_black"
         android:textSize="12sp"
         android:visibility="visible"
-        tools:hint="压缩前" />
+        tools:hint="@string/str_ando_file_before_compression" />
 
     <View
         android:id="@+id/line_result"
@@ -35,6 +35,6 @@
         android:textColorHint="@color/color_font_black"
         android:textSize="12sp"
         android:visibility="visible"
-        tools:hint="压缩后" />
+        tools:hint="@string/str_ando_file_after_compression" />
 
 </LinearLayout>

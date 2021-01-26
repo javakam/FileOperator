@@ -14,12 +14,14 @@
 10.增加 LICENSE
 11.修复了一些BUG
 ```
+
 ## v1.3.2
 ```
 1.修复`FileOpener.createChooseIntent`问题
 2.更新`FileUtils`并上传相应的用法示例
 3.优化了一些方法
 ```
+
 ## v1.3.5
 ```
 1.重要: 增加自定义FileType
@@ -29,4 +31,10 @@
 4.如果筛选`txt`文本文件,`MimeType`建议设置为`text/*`相较于`text/plain`在系统文件管理器页面多一个`文档`字样的筛选更好一些,
   eg: setMimeTypes("audio/*", "image/*", "text/*")
 5.修复访问`Public`目录路径异常问题
+```
+
+## v1.3.6
+```
+1.internationalization
+2.Fragment使用方式和案例 (Fragments using methods and cases) #13
 ```

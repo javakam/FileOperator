@@ -3,12 +3,10 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-<a href="https://bintray.com/javakam/FileOperator/FileOperator/v1.3.5/link"><img src="https://api.bintray.com/packages/javakam/FileOperator/FileOperator/images/download.svg?version=v1.3.5"/></a>
-
 - 🚀[GitHub](https://github.com/javakam/FileOperator)
 - 🚀更简单的处理`Android`系统文件操作
 - 🚀适用于`Android 4.4`及以上系统, 兼容`AndroidQ`新的存储策略
-- 🚀图片压缩算法参考 [Luban](https://github.com/Curzibn/Luban)
+- 🚀图片压缩算法参考 👉 [Luban](https://github.com/Curzibn/Luban)
 - 🚀`Kotlin Sample` 👉 [app](https://github.com/javakam/FileOperator/tree/master/app)
 - 🚀`Java Sample` 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
 
@@ -22,8 +20,8 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.5'       //核心库必选
-implementation 'ando.file:selector:1.3.5'   //文件选择器
+implementation 'ando.file:core:1.3.5'       //核心库必选(Core library required)
+implementation 'ando.file:selector:1.3.5'   //文件选择器(File selector)
 implementation 'ando.file:compressor:1.3.5' //图片压缩, 核心算法采用 Luban
 implementation 'ando.file:android-q:1.3.5'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
@@ -56,7 +54,7 @@ FileOperator.init(this,BuildConfig.DEBUG)
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
-    fileTypeMismatchTip = "文件类型不匹配"
+    fileTypeMismatchTip = "File type mismatch !"
     singleFileMaxSize = 5242880
     singleFileMaxSizeTip = "图片最大不超过5M！"
     allFilesMaxSize = 10485760
@@ -70,12 +68,12 @@ val optionsImage = FileSelectOptions().apply {
 mFileSelector = FileSelector
     .with(this)
     .setRequestCode(REQUEST_CHOOSE_FILE)
-    .setTypeMismatchTip("文件类型不匹配")
-    .setMinCount(1, "至少选一个文件!")
-    .setMaxCount(10, "最多选十个文件!")//单选条件下无效, 只做最少数量判断
+    .setTypeMismatchTip("File type mismatch !")
+    .setMinCount(1, "Choose at least one file !!")
+    .setMaxCount(10, "Choose up to ten files !")//单选条件下无效, 只做最少数量判断
     .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
     .setSingleFileMaxSize(1048576, "大小不能超过1M！")//单选条件下无效, FileSelectOptions.singleFileMaxSize
-    .setAllFilesMaxSize(10485760, "总大小不能超过10M！")//单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
+    .setAllFilesMaxSize(10485760, "总The size cannot exceed 10M !")//单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
     .setMimeTypes("image/*")//默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
     .applyOptions(optionsImage)
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
@@ -112,11 +110,11 @@ Multiple selection pictures (multiple selection + single type)
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
-    fileTypeMismatchTip = "文件类型不匹配"
+    fileTypeMismatchTip = "File type mismatch !"
     singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "单张图片最大不超过5M！"
+    singleFileMaxSizeTip = "A single picture does not exceed 5M !"
     allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "图片总大小不超过10M！"
+    allFilesMaxSizeTip = "The total size of the picture does not exceed 10M !"
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -127,7 +125,7 @@ mFileSelector = FileSelector
     .with(this)
     .setRequestCode(REQUEST_CHOOSE_FILE)
     .setMultiSelect()//默认是单选false
-    .setMinCount(1, "至少选一个文件!")
+    .setMinCount(1, "Choose at least one file !")
     .setMaxCount(2, "最多选两个文件!")
     //优先使用 FileSelectOptions.singleFileMaxSize , 单位 Byte
     .setSingleFileMaxSize(3145728, "单个大小不能超过3M！")
@@ -178,12 +176,12 @@ val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
     minCount = 1
     maxCount = 2
-    minCountTip = "至少选择一张图片"
-    maxCountTip = "最多选择两张图片"
+    minCountTip = "Select at least one picture"
+    maxCountTip = "Select up to two pictures"
     singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "单张图片最大不超过5M！"
+    singleFileMaxSizeTip = "A single picture does not exceed 5M !"
     allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "图片总大小不超过10M！"
+    allFilesMaxSizeTip = "The total size of the picture does not exceed 10M !"
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))

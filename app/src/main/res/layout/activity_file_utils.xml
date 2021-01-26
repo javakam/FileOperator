@@ -16,7 +16,7 @@
             android:id="@+id/bt_file_select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="选择一个文件并获取测试用的Uri"
+            android:text="@string/str_ando_file_utils_get_uri"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
@@ -102,7 +102,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FileUtils 演示操作文件\n注: SAF方式操作文件👉StorageAccessFrameworkActivity"
+            android:text="@string/str_ando_file_utils_show"
             android:textColor="@color/color_main_theme_dark"
             android:textSize="@dimen/font_13"
             android:textStyle="bold" />
@@ -113,13 +113,13 @@
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="@dimen/font_11"
-            tools:text="文件信息" />
+            tools:text="@string/str_ando_file_info" />
 
         <Button
             android:id="@+id/bt_file_utils_create"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="创建temp.html"
+            android:text="Create temp.html"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
@@ -128,7 +128,7 @@
             android:id="@+id/bt_file_utils_open"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="打开temp.html"
+            android:text="Open temp.html"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
@@ -137,7 +137,7 @@
             android:id="@+id/bt_file_utils_write"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="向temp.html写入数据"
+            android:text="@string/str_ando_file_utils_write_data"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
@@ -146,7 +146,7 @@
             android:id="@+id/bt_file_utils_read"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="从temp.html读取数据"
+            android:text="@string/str_ando_file_utils_read_data"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
@@ -164,7 +164,7 @@
             android:id="@+id/bt_file_utils_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="复制temp.html到其他路径并重命名为tempCopy.html"
+            android:text="@string/str_ando_file_utils_copy"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
@@ -183,7 +183,7 @@
             android:id="@+id/bt_file_utils_copy_open"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="打开复制后的文件tempCopy.html"
+            android:text="@string/str_ando_file_utils_copy_open"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />
@@ -192,7 +192,7 @@
             android:id="@+id/bt_file_utils_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="删除temp.html"
+            android:text="Delete temp.html"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_11" />

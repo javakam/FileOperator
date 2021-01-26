@@ -17,6 +17,8 @@ import kotlin.text.StringBuilder
 /**
  * # Android目录信息和清除缓存
  *
+ * Android directory information and clear cache
+ *
  * @author javakam
  * @date 2020/6/10  10:03
  */
@@ -37,10 +39,10 @@ class FileInfoActivity : AppCompatActivity() {
         tvCompressedImgCacheDir = findViewById(R.id.tvCompressedImageCacheDir)
 
         title = "File Directory"
-        //清除缓存
+        //clear cache
         findViewById<Button>(R.id.mBtClearCache).setOnClickListener {
             val result = clearCompressedImageCacheDir()
-            toastLong(if (result) "清理压缩图片缓存成功!" else "清理压缩图片缓存失败!")
+            toastLong(if (result) "Successfully cleaned compressed image cache !" else "Failed to clean compressed image cache !")
             refresh()
         }
 
@@ -56,7 +58,7 @@ class FileInfoActivity : AppCompatActivity() {
             FileLogger.i("databaseList item: $it")
         }
 
-        //系统会直接创建相应的目录
+        //系统会直接创建相应的目录 The system will directly create the corresponding directory
         getExternalFilesDirs(Environment.DIRECTORY_ALARMS)
         getExternalFilesDirs(Environment.DIRECTORY_DCIM)
         getExternalFilesDirs(Environment.DIRECTORY_DOCUMENTS)
@@ -111,13 +113,13 @@ class FileInfoActivity : AppCompatActivity() {
             val sizeTotal2 = FileSizeUtils.calculateFileOrDirSize(FileUri.getFilePathByUri(uri))
 
             tvCompressedImgCacheDir.text =
-                """🍎压缩图片的缓存目录: 
-                | ❎路径: ${FileUri.getFilePathByUri(uri)} 大小: $sizeTotal2
-                | ❎大小(OpenableColumns.SIZE): ${FileSizeUtils.getFileSize(uri)}
+                """🍎Cache directory for compressed pictures: 
+                | ❎Path: ${FileUri.getFilePathByUri(uri)} Size: $sizeTotal2
+                | ❎Size(OpenableColumns.SIZE): ${FileSizeUtils.getFileSize(uri)}
                 | ---
-                | ✅路径: $compressedImageCacheDir 大小: $sizeTotal
-                | 格式化: ${FileSizeUtils.formatFileSize(sizeTotal)}
-                | 🍎缓存图片列表(${fileList?.size}): $childFileSb
+                | Path: $compressedImageCacheDir Size: $sizeTotal
+                | Format: ${FileSizeUtils.formatFileSize(sizeTotal)}
+                | 🍎Cached picture list (${fileList?.size}): $childFileSb
                 | """.trimMargin()
             tvCompressedImgCacheDir.setOnClickListener {
                 //FileOpener.openFile(this, u, "file/*")
@@ -128,7 +130,7 @@ class FileInfoActivity : AppCompatActivity() {
     }
 
     /**
-     * 读取目录大小
+     * 读取目录大小 (Read directory size)
      */
     private fun getSize(file: File): Long {
         return FileSizeUtils.getFolderSize(file)

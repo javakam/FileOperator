@@ -14,7 +14,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Core Library"
+        android:text="@string/str_ando_file_title_core"
         android:textColor="@color/black"
         android:textSize="@dimen/font_12"
         android:textStyle="bold" />
@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseGetFileMimeType"
-        android:text="获取文件MimeType(FileMimeType)"
+        android:text="@string/str_ando_file_get_mime"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseGetFileSize"
-        android:text="获取文件大小(FileSizeUtils)"
+        android:text="@string/str_ando_file_get_size"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -39,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseGetFileUriOrPath"
-        android:text="获取文件Uri/Path(FileUri)"
+        android:text="@string/str_ando_file_get_uri_path"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseOpenFileByUri"
-        android:text="打开文件(FileOpener)"
+        android:text="@string/str_ando_file_open"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12"
         android:visibility="gone" />
@@ -56,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseFileUtils"
-        android:text="文件通用工具类(FileUtils)"
+        android:text="@string/str_ando_file_common_utils"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12"
         android:visibility="visible" />
@@ -71,7 +71,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="File Selector"
+        android:text="@string/str_ando_file_title_selector"
         android:textColor="@color/black"
         android:textSize="@dimen/font_12"
         android:textStyle="bold" />
@@ -80,7 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectSingleImageWithCompress"
-        android:text="选择一张图片并压缩"
+        android:text="@string/str_ando_file_select_one_and_compress"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -88,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectMultiImageWithCompress"
-        android:text="选择多张图片并压缩"
+        android:text="@string/str_ando_file_select_multiple_and_compress"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -96,7 +96,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectMultiFilesWithCompress"
-        android:text="选择多个不同类型文件"
+        android:text="@string/str_ando_file_select_multiple_diff"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -104,7 +104,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSelectCustomFileType"
-        android:text="自定义 FileTye"
+        android:text="@string/str_ando_file_select_custom_type"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -113,7 +113,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:onClick="caseFragmentSimpleUsage"
-        android:text="Fragment Usage"
+        android:text="@string/str_ando_file_title_fragment"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12"
         android:visibility="visible" />
@@ -123,7 +123,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:onClick="caseClearCache"
-        android:text="获取应用目录信息"
+        android:text="@string/str_ando_file_select_get_directory_info"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -137,7 +137,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="区别(Difference)"
+        android:text="@string/str_ando_file_select_diff"
         android:textColor="@color/black"
         android:textSize="@dimen/font_12"
         android:textStyle="bold" />
@@ -147,7 +147,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseMediaStore"
-        android:text="MediaStore"
+        android:text="@string/str_ando_file_title_media_store"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 
@@ -156,7 +156,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="caseSAF"
-        android:text="Storage Access Framework"
+        android:text="@string/str_ando_file_title_saf"
         android:textAllCaps="false"
         android:textSize="@dimen/font_12" />
 

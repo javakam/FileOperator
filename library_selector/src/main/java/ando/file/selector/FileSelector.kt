@@ -13,6 +13,7 @@ import ando.file.core.FileOpener.createChooseIntent
 import ando.file.selector.FileType.INSTANCE
 import ando.file.selector.FileType.UNKNOWN
 import android.content.ClipData
+import androidx.fragment.app.Fragment
 import kotlin.RuntimeException
 import kotlin.math.max
 import kotlin.math.min
@@ -35,9 +36,12 @@ class FileSelector private constructor(builder: Builder) {
         fun with(context: Context): Builder {
             return Builder(context)
         }
+
+        fun with(fragment: Fragment): Builder {
+            return Builder(fragment)
+        }
     }
 
-    private var mContext: Context? = null
     private var mRequestCode: Int = 0
 
     private var mMimeTypes: Array<out String>?
@@ -94,8 +98,7 @@ class FileSelector private constructor(builder: Builder) {
         mFileSelectOptions = builder.mFileSelectOptions
     }
 
-    fun choose(context: Context, mimeType: String?): FileSelector {
-        this.mContext = context
+    fun choose(context: Any, mimeType: String?): FileSelector {
         checkParams()
         startActivityForResult(context, createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect), mRequestCode)
         return this
@@ -153,9 +156,11 @@ class FileSelector private constructor(builder: Builder) {
         filterUri(intentData) { o: FileSelectOptions?, t: IFileType, tf: Boolean, s: Long, sf: Boolean ->
             val realOption: FileSelectOptions = o ?: optionUnknown
             if (!(tf || isOptionsEmpty)) {
-                mFileSelectCallBack?.onError(Throwable(
-                    if (realOption.fileTypeMismatchTip?.isNotBlank() == true) realOption.fileTypeMismatchTip else mFileTypeMismatchTip
-                ))
+                mFileSelectCallBack?.onError(
+                    Throwable(
+                        if (realOption.fileTypeMismatchTip?.isNotBlank() == true) realOption.fileTypeMismatchTip else mFileTypeMismatchTip
+                    )
+                )
                 return@filterUri
             }
             if (!sf) {
@@ -214,9 +219,11 @@ class FileSelector private constructor(builder: Builder) {
 
                 //FileType Mismatch -> onError
                 if (!(tf || isOptionsEmpty)) {
-                    mFileSelectCallBack?.onError(Throwable(
-                        if (realOption.fileTypeMismatchTip?.isNotBlank() == true) realOption.fileTypeMismatchTip else mFileTypeMismatchTip
-                    ))
+                    mFileSelectCallBack?.onError(
+                        Throwable(
+                            if (realOption.fileTypeMismatchTip?.isNotBlank() == true) realOption.fileTypeMismatchTip else mFileTypeMismatchTip
+                        )
+                    )
 
                     if (relationMap.isNotEmpty()) relationMap.clear()
                     if (resultList.isNotEmpty()) resultList.clear()
@@ -284,8 +291,10 @@ class FileSelector private constructor(builder: Builder) {
                 //控制自定义选项大小(Control Custom Option size)
                 if (isCurrentType || isOptionsEmpty) {
                     if (isDebug()) {
-                        FileLogger.i("Multi-> Count: ${realOption.fileType} currTypeCount=${mFileCountMap[realType] ?: 0} isFinally=${itemCount == (i + 1)} " +
-                                "realMinCountLimit=${realMinCountLimit(realOption)} realMaxCountLimit=${realMaxCountLimit(realOption)}")
+                        FileLogger.i(
+                            "Multi-> Count: ${realOption.fileType} currTypeCount=${mFileCountMap[realType] ?: 0} isFinally=${itemCount == (i + 1)} " +
+                                    "realMinCountLimit=${realMinCountLimit(realOption)} realMaxCountLimit=${realMaxCountLimit(realOption)}"
+                        )
                     }
 
                     //File Size
@@ -338,8 +347,10 @@ class FileSelector private constructor(builder: Builder) {
 
         //某些类型没有选(Some types are not selected)
         val isOptionsSizeMatch = (mFileSelectOptions?.size == relationMap.keys.size)
-        FileLogger.w("Multi-> isFileTypeIllegal=$isFileTypeIllegal isFileSizeIllegal=$isFileSizeIllegal " +
-                "isFileCountIllegal=$isFileCountIllegal isOptionsSizeMatch=$isOptionsSizeMatch")
+        FileLogger.w(
+            "Multi-> isFileTypeIllegal=$isFileTypeIllegal isFileSizeIllegal=$isFileSizeIllegal " +
+                    "isFileCountIllegal=$isFileCountIllegal isOptionsSizeMatch=$isOptionsSizeMatch"
+        )
 
         //filter data
         if (isFileSizeIllegal || isFileCountIllegal || !isOptionsSizeMatch) {
@@ -463,10 +474,12 @@ class FileSelector private constructor(builder: Builder) {
         }
 
     private fun realMaxCountLimit(option: FileSelectOptions?): Int {
-        return max(realMinCountLimit(option),
+        return max(
+            realMinCountLimit(option),
             if (option?.maxCount ?: Int.MAX_VALUE > 0)
                 min(option?.maxCount ?: Int.MAX_VALUE, mRealMaxCount)
-            else mRealMaxCount)
+            else mRealMaxCount
+        )
     }
 
     private val mRealMaxCount: Int by lazy {
@@ -549,7 +562,7 @@ class FileSelector private constructor(builder: Builder) {
         var checkPass: Boolean = false,
     )
 
-    class Builder internal constructor(private val context: Context) {
+    class Builder internal constructor(private val context: Any) {
         var mRequestCode: Int = 0
 
         var mMimeTypes: Array<out String>? = null
@@ -649,7 +662,6 @@ class FileSelector private constructor(builder: Builder) {
         fun choose(mimeType: String?): FileSelector {
             return build().choose(context, mimeType)
         }
-
     }
 
 }

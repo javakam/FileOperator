@@ -10,7 +10,7 @@
         android:id="@+id/safSelectSingleFile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="选择单个文件" />
+        android:text="@string/str_ando_file_select_one" />
 
     <ImageView
         android:id="@+id/showIv"
@@ -30,7 +30,7 @@
         android:id="@+id/createFileBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="创建文档" />
+        android:text="@string/str_ando_file_create_document" />
 
     <TextView
         android:id="@+id/createFileUriTv"
@@ -46,25 +46,25 @@
         android:id="@+id/deleteFileBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="删除文档" />
+        android:text="@string/str_ando_file_delete_document" />
 
     <Button
         android:id="@+id/renameFileBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="重命名" />
+        android:text="@string/str_ando_file_rename_document" />
 
     <Button
         android:id="@+id/editDocumentBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="编辑文档" />
+        android:text="@string/str_ando_file_edit_document" />
 
     <Button
         android:id="@+id/getDocumentTreeBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="选择目录" />
+        android:text="@string/str_ando_file_select_directory" />
 
     <TextView
         android:id="@+id/tvDocumentTreeFiles"

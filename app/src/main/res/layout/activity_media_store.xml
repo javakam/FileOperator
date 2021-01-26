@@ -16,20 +16,20 @@
         android:id="@+id/insertBitmapToPictures"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="存储Bitmap👉Pictures/img"
+        android:text="@string/str_ando_file_store_bitmap"
         android:textAllCaps="false" />
 
     <Button
         android:id="@+id/queryFileByDisplayName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="查询图片👉DisplayName"
+        android:text="@string/str_ando_file_query_picture"
         android:textAllCaps="false" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="显示该图片"
+        android:text="@string/str_ando_file_show_picture"
         android:textAllCaps="false" />
 
     <ImageView
@@ -40,7 +40,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="loadThumbnail👉加载该图片的缩略图"
+        android:text="@string/str_ando_file_load_thumbnail"
         android:textAllCaps="false" />
 
     <ImageView
@@ -52,7 +52,7 @@
         android:id="@+id/updateFileByMediaStoreBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="修改该文件"
+        android:text="@string/str_ando_file_modify_file"
         android:textAllCaps="false" />
 
     <ImageView
@@ -64,7 +64,7 @@
         android:id="@+id/deleteFileByUri"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="删除该文件👉Uri/DisplayName"
+        android:text="@string/str_ando_file_delete_file"
         android:textAllCaps="false" />
 
 
@@ -72,7 +72,7 @@
         android:id="@+id/deleteFileAll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="删除全部文件👉Pictures/img"
+        android:text="@string/str_ando_file_delete_file_all"
         android:textAllCaps="false" />
 
     <View
@@ -86,7 +86,7 @@
         android:id="@+id/queryFileByAll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="查询图片👉条件查询"
+        android:text="@string/str_ando_file_query_file"
         android:textAllCaps="false"
         android:textSize="12sp" />
 
@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:padding="5dp"
         android:textStyle="bold"
-        android:text="⭐ 点击图片做删除,可以更直观的看出修改/删除当前应用的图片并不会触发 RecoverableSecurityException"
+        android:text="@string/str_ando_file_description"
         android:textSize="12sp" />
 
 
@@ -105,6 +105,5 @@
         android:layout_height="wrap_content"
         android:overScrollMode="ifContentScrolls"
         android:scrollbars="vertical" />
-
 
 </LinearLayout>

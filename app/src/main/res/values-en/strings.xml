@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FileOperator</string>
+
+    <string name="str_ando_file_title_core">Core Library</string>
+    <string name="str_ando_file_title_selector">File Selector</string>
+    <string name="str_ando_file_title_fragment">Fragment Usage</string>
+    <string name="str_ando_file_title_media_store">MediaStore</string>
+    <string name="str_ando_file_title_saf">Storage Access Framework</string>
+    <string name="str_ando_file_get_mime">Get file MimeType(FileMimeType)</string>
+    <string name="str_ando_file_get_size">Get file size(FileSizeUtils)</string>
+    <string name="str_ando_file_get_uri_path">Get file Uri/Path(FileUri)</string>
+    <string name="str_ando_file_open">Open file(FileOpener)</string>
+    <string name="str_ando_file_common_utils">File general tools(FileUtils)</string>
+    <string name="str_ando_file_select_one_and_compress">Choose a picture and compress</string>
+    <string name="str_ando_file_select_multiple_and_compress">Select multiple pictures and compress</string>
+    <string name="str_ando_file_select_multiple_diff">Select multiple files of different types</string>
+    <string name="str_ando_file_select_multiple_get_info">Select multiple files and get corresponding information</string>
+    <string name="str_ando_file_select_custom_type">Custom FileType</string>
+    <string name="str_ando_file_select_get_directory_info">Get application catalog information</string>
+    <string name="str_ando_file_select_diff">Difference</string>
+
+    <string name="str_ando_file_utils_get_uri">Choose a file and get the Uri for testing</string>
+    <string name="str_ando_file_utils_show">FileUtils demo operation file\nNote: SAF operation file👉StorageAccessFrameworkActivity</string>
+    <string name="str_ando_file_utils_write_data">Write data to temp.html</string>
+    <string name="str_ando_file_utils_read_data">Read data from temp.html</string>
+    <string name="str_ando_file_utils_copy">Copy temp.html to another path and rename it to tempCopy.html</string>
+    <string name="str_ando_file_utils_copy_open">Open the copied file tempCopy.html</string>
+
+    <string name="str_ando_file_current_strategy">Current strategy:</string>
+    <string name="str_ando_file_strategy_all">🍎Exceed the limit number or size『Return directly to failure』\n OVER_LIMIT_EXCEPT_ALL</string>
+    <string name="str_ando_file_strategy_over">🍎Exceed the limit number or size\n『Single type』: Keep not ultra limit file and return to remove the back part of the overflow; \n『Multiple Types』: Keep choosing the right file, get rid of the wrong type of all documents \n OVER_LIMIT_EXCEPT_OVERFLOW</string>
+    <string name="str_ando_file_select_multiple">选择多个文件 (0)</string>
+    <string name="str_ando_file_info">File information</string>
+    <string name="str_ando_file_error_info">The error message</string>
+    <string name="str_ando_file_select_result">Select the results</string>
+    <string name="str_ando_file_original_image">The original image</string>
+    <string name="str_ando_file_before_compression">Before compression</string>
+    <string name="str_ando_file_after_compression">After compression</string>
+    <string name="str_ando_file_clear_cache">Clear cache</string>
+
+    <string name="str_ando_file_select_one">Select a single file</string>
+    <string name="str_ando_file_create_document">Create a document</string>
+    <string name="str_ando_file_delete_document">Delete the document</string>
+    <string name="str_ando_file_rename_document">Rename</string>
+    <string name="str_ando_file_edit_document">Edit the document</string>
+    <string name="str_ando_file_select_directory">Select the directory</string>
+    <string name="str_ando_file_store_bitmap">Store Bitmap in the directory Pictures/img</string>
+    <string name="str_ando_file_query_picture">Query image👉DisplayName</string>
+    <string name="str_ando_file_show_picture">Show the picture</string>
+    <string name="str_ando_file_load_thumbnail">loadThumbnail👉Load the image thumbnails</string>
+    <string name="str_ando_file_modify_file">Modify the file</string>
+    <string name="str_ando_file_delete_file">Delete the file👉Uri/DisplayName</string>
+    <string name="str_ando_file_delete_file_all">Delete all files👉Pictures/img</string>
+    <string name="str_ando_file_query_file">Query image👉Conditions of the query</string>
+    <string name="str_ando_file_description">⭐ Click delete pictures do, can see more intuitive to modify/delete pictures will not trigger RecoverableSecurityException current applications</string>
+
+
+</resources>

@@ -46,10 +46,10 @@ import java.text.SimpleDateFormat
 import java.util.concurrent.TimeUnit
 
 /**
- * MediaStoreActivity
- * <p>
- * Description: 沙盒 -> APP卸载,数据删除
- * </p>
+ * # MediaStoreActivity
+ *
+ * 沙盒 -> APP卸载,数据删除 (Sandbox -> APP uninstall, data deletion)
+ *
  * @author javakam
  * @date 2020/6/2  15:12
  */
@@ -100,24 +100,24 @@ class MediaStoreActivity : AppCompatActivity() {
                       如果需要 修改/删除 其他应用文件需要捕获 RecoverableSecurityException 进一步处理。 
                 """.trimIndent()
 
-        //1.MediaStore 创建文件
+        //1.MediaStore Create
         insertBitmapToPictures.setOnClickListener {
             insertBitmapToPictures()
         }
-        //2.MediaStore 查询文件
+        //2.MediaStore Query
         queryFileByMediaStore()
-        //3.MediaStore 修改文件
+        //3.MediaStore Modify
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             updateFileByMediaStore()
         }
-        //4.MediaStore 删除文件
+        //4.MediaStore Delete
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             deleteFileByMediaStore()
         }
     }
 
     /**
-     * 使用MediaStore创建文件
+     * 使用`MediaStore`创建文件 (Use `Media Store` to create files)
      */
     private fun createFileByMediaStore() {
         insertBitmapToPictures.setOnClickListener {
@@ -134,7 +134,7 @@ class MediaStoreActivity : AppCompatActivity() {
             RELATIVE_PATH,
             1
         )
-        //创建了一个红色的图片
+        //创建了一个红色的图片 (Created a red picture)
         val bitmap = Bitmap.createBitmap(600, 400, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         canvas.drawColor(Color.RED)
@@ -157,7 +157,7 @@ class MediaStoreActivity : AppCompatActivity() {
     }
 
     /**
-     * 通过MediaStore查询文件
+     * 通过`MediaStore`查询文件 (Query files via `Media Store`)
      */
     private fun queryFileByMediaStore() {
 
@@ -195,7 +195,7 @@ class MediaStoreActivity : AppCompatActivity() {
             }
         }
 
-        //查询全部
+        //查询全部 (Query all)
         queryFileByAll.setOnClickListener {
             //查询全部
 //            val images = queryMediaStoreImages()

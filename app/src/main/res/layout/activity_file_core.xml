@@ -14,7 +14,7 @@
             android:id="@+id/bt_select_single"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="选择多个文件并获取相应信息"
+            android:text="@string/str_ando_file_select_multiple_get_info"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_12"
@@ -25,11 +25,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="错误信息"
+            android:hint="@string/str_ando_file_error_info"
             android:padding="3dp"
             android:textColor="@android:color/holo_red_dark"
             android:textColorHint="@color/color_font_black"
-            android:textSize="12sp"
+            android:textSize="@dimen/font_12"
             android:textStyle="bold"
             android:visibility="visible"
             tools:visibility="visible" />
@@ -40,11 +40,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:hint="选择结果"
+            android:hint="@string/str_ando_file_select_result"
             android:padding="3dp"
             android:textColor="@color/color_font_black"
             android:textColorHint="@color/color_font_black"
-            android:textSize="12sp"
+            android:textSize="@dimen/font_12"
             android:visibility="visible" />
 
     </LinearLayout>

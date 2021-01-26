@@ -15,7 +15,7 @@ import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
 
 /**
- * 核心库(Core)
+ * 核心库(Core library)
  */
 class FileCoreActivity : AppCompatActivity() {
 
@@ -76,12 +76,12 @@ class FileCoreActivity : AppCompatActivity() {
             .with(this)
             .setMultiSelect()
             .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setTypeMismatchTip("文件类型不匹配")
-            .setMinCount(1, "至少选一个文件!")
-            .setMaxCount(10, "最多选十个文件!")
+            .setTypeMismatchTip("File type mismatch !")
+            .setMinCount(1, "Choose at least one file !!")
+            .setMaxCount(10, "Choose up to ten files !")
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(10485760, "大小不能超过10M！")
-            .setAllFilesMaxSize(104857600, "总大小不能超过100M！")
+            .setSingleFileMaxSize(10485760, "The size cannot exceed 10M !")
+            .setAllFilesMaxSize(104857600, "The total size cannot exceed 100M !")
             .setMimeTypes("*/*")
 
             .filter(object : FileSelectCondition {
@@ -94,7 +94,7 @@ class FileCoreActivity : AppCompatActivity() {
                     FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
                     ResultUtils.resetUI(mTvResult)
                     if (results.isNullOrEmpty()) {
-                        toastLong("没有选取文件")
+                        toastLong("No file selected")
                         return
                     }
                     ResultUtils.setErrorText(mTvError, null)

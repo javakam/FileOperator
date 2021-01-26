@@ -79,21 +79,21 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
         }
         FileLogger.i("getExternalFilesDir :${getExternalFilesDir(null)}")
 
-        //1.选择一个图片文件
+        //1.选择一个图片文件 (Choose a picture file)
         selectSingleFile()
-        //2.新建一个 txt 文件
+        //2.新建一个 txt 文件 (Create a new txt file)
         createFile("新建文本文档.txt", "text/plain")
-        //3.删除一个文件
+        //3.删除一个文件 (Delete a file)
         deleteFile()
-        //重命名
+        //Rename
         renameFile()
 
-        //3.编辑一个文件
+        //3.编辑一个文件 (Edit a file)
         editDocument()
-        //4.获取文件树
+        //4.获取文件树 (Get file tree)
         getDocumentTree()
 
-        //5.MediaStore 获取文件
+        //5.MediaStore获取文件 (MediaStore get files)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.getExternalVolumeNames(this).forEach { volumeName ->
                 FileLogger.d("volumeName：${MediaStore.Images.Media.getContentUri(volumeName)}")
@@ -104,7 +104,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
     }
 
     /**
-     * 选择一个文件，这里打开一个图片作为演示
+     * 选择一个文件，这里打开一个图片作为演示 (Choose a file, open a picture here as a demo)
      */
     private fun selectSingleFile() {
         safSelectSingleFile.setOnClickListener {

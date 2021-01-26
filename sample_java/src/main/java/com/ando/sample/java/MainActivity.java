@@ -112,10 +112,10 @@ public class MainActivity extends Activity {
 
         mFileSelector = FileSelector.Companion.with(this)
                 .setRequestCode(REQUEST_CHOOSE_FILE)
-                .setMinCount(1, "至少选一个文件!")
-                .setMaxCount(10, "最多选十个文件!")
+                .setMinCount(1, "Choose at least one file !")
+                .setMaxCount(10, "Choose up to ten files !")
                 .setSingleFileMaxSize(5242880, "大小不能超过5M！")
-                .setAllFilesMaxSize(10485760, "总大小不能超过10M！")
+                .setAllFilesMaxSize(10485760, "总The size cannot exceed 10M !")
                 //默认为 */* 可以选择任何文件类型, 不同系统提供的选择UI不一样 eg:arrayOf("video/*","audio/*","image/*")
                 .setMimeTypes(new String[]{"image/*"})
                 .applyOptions(options)
