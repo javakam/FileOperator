@@ -9,7 +9,9 @@ import ando.file.core.FileDirectory.getCacheDir
 import android.content.Context
 import android.content.DialogInterface
 import android.net.Uri
+import android.view.View
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import com.ando.file.sample.utils.ClearCacheUtils
 import java.io.File
@@ -41,6 +43,8 @@ fun getCompressedImageCacheDir(): String {
 fun clearCompressedImageCacheDir(): Boolean {
     return ClearCacheUtils.clearAllCache(getCompressedImageCacheDir())
 }
+
+fun getStr(@StringRes res: Int) = FileOperator.getContext().getString(res)
 
 fun Context.toastShort(msg: String?) {
     msg?.let {

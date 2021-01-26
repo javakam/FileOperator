@@ -166,7 +166,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         compressImage(this, photos) { _, u ->
             FileLogger.i(
                 "compressImage onSuccess uri=$u " +
-                        "Total size of compressed image cache directory = ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
+                        "${getString(R.string.str_ando_file_compress_dir_size)} = ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
             )
 
             ResultUtils.formatCompressedImageInfo(u, false) {

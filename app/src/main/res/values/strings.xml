@@ -55,5 +55,15 @@
     <string name="str_ando_file_query_file">查询图片👉条件查询</string>
     <string name="str_ando_file_description">⭐ 点击图片做删除,可以更直观的看出修改/删除当前应用的图片并不会触发 RecoverableSecurityException</string>
 
+    <string name="str_ando_file_name">文件名</string>
+    <string name="str_ando_file_path">路径</string>
+    <string name="str_ando_file_size">大小</string>
+    <string name="str_ando_file_suffix">后缀</string>
+    <string name="str_ando_file_exist">是否存在</string>
+    <string name="str_ando_file_compress_dir_size">压缩图片的缓存目录大小</string>
+    <string name="str_ando_file_format_size">格式化大小</string>
+    <string name="str_ando_file_format_size2">格式化大小(不带单位, 保留三位小数)</string>
+    <string name="str_ando_file_format_size3">格式化大小(自定义单位, 保留一位小数)</string>
+    <string name="str_ando_file_format_size4">格式化大小(默认单位, 保留两位小数)</string>
 
 </resources>
