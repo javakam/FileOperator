@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:text="@string/str_ando_file_clear_cache"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_13" />
 

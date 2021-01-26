@@ -15,9 +15,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/str_ando_file_select_one_and_compress"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:textSize="@dimen/font_13" />
+            android:textSize="@dimen/font_13"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_error"
@@ -52,8 +53,8 @@
             android:layout_height="wrap_content"
             android:padding="3dp"
             android:text="@string/str_ando_file_original_image"
-            android:textStyle="bold"
             android:textColor="@color/color_main_theme_dark"
+            android:textStyle="bold"
             android:visibility="visible"
             tools:visibility="visible" />
 
@@ -73,9 +74,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="3dp"
-            android:textStyle="bold"
             android:text="@string/str_ando_file_after_compression"
             android:textColor="@color/color_main_theme_dark"
+            android:textStyle="bold"
             android:visibility="visible"
             tools:visibility="visible" />
 

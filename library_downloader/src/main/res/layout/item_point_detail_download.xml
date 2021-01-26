@@ -157,6 +157,7 @@
         android:background="@drawable/rectangle_file_download_continue"
         android:gravity="center"
         android:text="下载"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="@dimen/font_file_11"
         app:layout_constraintBottom_toBottomOf="parent"
