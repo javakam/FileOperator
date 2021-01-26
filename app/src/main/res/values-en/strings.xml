@@ -30,7 +30,7 @@
     <string name="str_ando_file_current_strategy">Current strategy:</string>
     <string name="str_ando_file_strategy_all">🍎Exceed the limit number or size『Return directly to failure』\n OVER_LIMIT_EXCEPT_ALL</string>
     <string name="str_ando_file_strategy_over">🍎Exceed the limit number or size\n『Single type』: Keep not ultra limit file and return to remove the back part of the overflow; \n『Multiple Types』: Keep choosing the right file, get rid of the wrong type of all documents \n OVER_LIMIT_EXCEPT_OVERFLOW</string>
-    <string name="str_ando_file_select_multiple">选择多个文件 (0)</string>
+    <string name="str_ando_file_select_multiple">Select multiple files (0)</string>
     <string name="str_ando_file_info">File information</string>
     <string name="str_ando_file_error_info">The error message</string>
     <string name="str_ando_file_select_result">Select the results</string>
@@ -55,5 +55,15 @@
     <string name="str_ando_file_query_file">Query image👉Conditions of the query</string>
     <string name="str_ando_file_description">⭐ Click delete pictures do, can see more intuitive to modify/delete pictures will not trigger RecoverableSecurityException current applications</string>
 
+    <string name="str_ando_file_name">File name</string>
+    <string name="str_ando_file_path">Path</string>
+    <string name="str_ando_file_size">Size</string>
+    <string name="str_ando_file_suffix">Suffix</string>
+    <string name="str_ando_file_exist">Exist</string>
+    <string name="str_ando_file_compress_dir_size">Compressed image size of the cache directory</string>
+    <string name="str_ando_file_format_size">Format the size</string>
+    <string name="str_ando_file_format_size2">Format the size(Without the units, keep three decimal places)</string>
+    <string name="str_ando_file_format_size3">Format the size(The custom units, keep a decimal places)</string>
+    <string name="str_ando_file_format_size4">Format the size(The default units, keep two decimal places)</string>
 
 </resources>

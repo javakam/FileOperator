@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ando.file.sample.R
 import com.ando.file.sample.getCompressedImageCacheDir
+import com.ando.file.sample.getStr
 import com.ando.file.sample.showAlert
 import java.io.File
 
@@ -64,14 +65,16 @@ object ResultUtils {
             return
         }
         tvError.visibility = View.VISIBLE
-        tvError.text = tvError.text.toString().plus("错误信息: ${e.message}")
+        tvError.text = tvError.text.toString().plus("${getStr(R.string.str_ando_file_error_info)} ${e.message}")
     }
 
     fun setImageEvent(imageView: ImageView, uri: Uri?) {
         val bitmap: Bitmap? = FileOperatorQ.getBitmapFromUri(uri)
         val context = imageView.context
-        imageView.setImageBitmap(if (bitmap == null || bitmap.isRecycled)
-            BitmapFactory.decodeResource(context.resources, R.mipmap.ic_place_holder) else bitmap)
+        imageView.setImageBitmap(
+            if (bitmap == null || bitmap.isRecycled)
+                BitmapFactory.decodeResource(context.resources, R.mipmap.ic_place_holder) else bitmap
+        )
         imageView.setOnClickListener {
             FileOpener.openFile(context, uri, "image/*")
         }
@@ -88,19 +91,21 @@ object ResultUtils {
         val uri: Uri = FileUri.getUriByFile(file) ?: return
         val size: Long = FileSizeUtils.calculateFileOrDirSize(file.path)
 
-        val info = "格式化大小: ${FileSizeUtils.formatFileSize(size)}\n" +
-                " 格式化大小(不带单位, 保留三位小数): ${FileSizeUtils.formatFileSize(size, 3)}\n" +
-                " 格式化大小(自定义单位, 保留一位小数): ${FileSizeUtils.formatSizeByTypeWithUnit(size, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
+        val info = "${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatFileSize(size)}\n" +
+                " ${getStr(R.string.str_ando_file_format_size2)}: ${FileSizeUtils.formatFileSize(size, 3)}\n" +
+                " ${getStr(R.string.str_ando_file_format_size3)}: ${
+                    FileSizeUtils.formatSizeByTypeWithUnit(size, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)
+                }"
 
         dumpMetaData(uri = uri) { name: String?, _: String? ->
             val text = """
                     | ------------------
-                    | 🍎文件名: $name
-                    | 路径: ${file.path}
-                    | 后缀: ${FileUtils.getExtension(file.name)}
+                    | 🍎${getStr(R.string.str_ando_file_name)}: $name
+                    | ${getStr(R.string.str_ando_file_path)}: ${file.path}
+                    | ${getStr(R.string.str_ando_file_suffix)}: ${FileUtils.getExtension(file.name)}
                     | MimeType: ${FileMimeType.getMimeType(uri)}
                     | $info
-                    | 是否存在: ${file.exists()}
+                    | ${getStr(R.string.str_ando_file_exist)}: ${file.exists()}
                     | ------------------${"\n"}""".trimMargin()
             tvResult.text = tvResult.text.toString().plus(text)
         }
@@ -113,14 +118,16 @@ object ResultUtils {
         tvResult.text = ""
         if (results.isNullOrEmpty()) return
         results.forEachIndexed { _, fsr ->
-            val info = "${fsr}格式化大小: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
-                    " 格式化大小(不带单位, 保留三位小数): ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
-                    " 格式化大小(自定义单位, 保留一位小数): ${FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
+            val info = "${fsr}${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
+                    " ${getStr(R.string.str_ando_file_format_size2)}: ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
+                    " ${getStr(R.string.str_ando_file_format_size3)}: ${
+                        FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)
+                    }"
 
             dumpMetaData(uri = fsr.uri) { name: String?, _: String? ->
                 val text = """
                     | ------------------
-                    | 🍎文件名: $name
+                    | 🍎${getStr(R.string.str_ando_file_name)}: $name
                     | $info
                     | ------------------${"\n\n\n"}""".trimMargin()
                 tvResult.text = tvResult.text.toString().plus(text)
@@ -141,24 +148,26 @@ object ResultUtils {
         if (results.isNullOrEmpty()) return
         val infoList = mutableListOf<Pair<Uri, String>>()
         results.forEachIndexed { i, fsr ->
-            val info = "${fsr}格式化大小: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
-                    " 格式化大小(不带单位, 保留三位小数): ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
-                    " 格式化大小(自定义单位, 保留一位小数): ${FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
+            val info = "${fsr}${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
+                    " ${getStr(R.string.str_ando_file_format_size2)}: ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
+                    " ${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
             dumpMetaData(uri = fsr.uri) { name: String?, _: String? ->
-                infoList.add((fsr.uri ?: return@dumpMetaData) to if (isMulti) {
-                    """
-                    | 🍎压缩前 ($i)
-                    | 文件名: $name
+                infoList.add(
+                    (fsr.uri ?: return@dumpMetaData) to if (isMulti) {
+                        """
+                    | 🍎${getStr(R.string.str_ando_file_before_compression)} ($i)
+                    | ${getStr(R.string.str_ando_file_name)}: $name
                     | $info
                     """.trimMargin()
-                } else {
-                    """ 选择结果:
+                    } else {
+                        """ ${getStr(R.string.str_ando_file_select_result)}:
                     | ---------
-                    | 🍎压缩前
-                    | 文件名: $name
+                    | 🍎${getStr(R.string.str_ando_file_before_compression)}
+                    | ${getStr(R.string.str_ando_file_name)}: $name
                     | $info
                     | ---------${"\n\n"}""".trimMargin()
-                })
+                    }
+                )
             }
         }
         block.invoke(infoList)
@@ -170,27 +179,29 @@ object ResultUtils {
                 block.invoke("")
                 return@dumpMetaData
             }
-            block.invoke(if (isMulti) {
-                """
-                | 🍎压缩后
-                | 文件名: $name
+            block.invoke(
+                if (isMulti) {
+                    """
+                | 🍎${getStr(R.string.str_ando_file_after_compression)}
+                | ${getStr(R.string.str_ando_file_name)}: $name
                 | Uri: $uri 
-                | 路径: ${uri?.path} 
-                | 大小: $size
-                | 格式化(默认单位, 保留两位小数): ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}
-                | 压缩图片缓存目录总大小: ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}
+                | ${getStr(R.string.str_ando_file_path)}: ${uri?.path} 
+                | ${getStr(R.string.str_ando_file_size)}: $size
+                | ${getStr(R.string.str_ando_file_format_size4)}: ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}
+                | ${getStr(R.string.str_ando_file_compress_dir_size)}: ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}
                 """.trimMargin()
-            } else {
-                """${"\n\n"} ---------
-                | 🍎压缩后
-                | 文件名: $name
+                } else {
+                    """${"\n\n"} ---------
+                | 🍎${getStr(R.string.str_ando_file_after_compression)}
+                | ${getStr(R.string.str_ando_file_name)}: $name
                 | Uri: $uri 
-                | 路径: ${uri?.path} 
-                | 大小: $size
-                | 格式化(默认单位, 保留两位小数): ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}
-                | 压缩图片缓存目录总大小: ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}
+                | ${getStr(R.string.str_ando_file_path)}: ${uri?.path} 
+                | ${getStr(R.string.str_ando_file_size)}: $size
+                | ${getStr(R.string.str_ando_file_format_size4)}: ${FileSizeUtils.formatFileSize(size?.toLong() ?: 0L)}
+                | ${getStr(R.string.str_ando_file_compress_dir_size)}: ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}
                 | ---------${"\n"}""".trimMargin()
-            })
+                }
+            )
         }
     }
 

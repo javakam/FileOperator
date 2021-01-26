@@ -8,14 +8,14 @@ import com.ando.file.sample.toastLong
 import com.permissionx.guolindev.PermissionX
 
 /**
- * 权限框架
+ * 权限框架 (Permissions framework)
  *
  * com.permissionx.guolindev.PermissionX
  */
 object PermissionManager {
 
     /**
-     * 相应的清单文件中配置:
+     * 相应的清单文件中配置 (The corresponding listing file configuration):
      *
      * <!-- Apps on devices running Android 4.4 (API level 19) or higher cannot
      *      access external storage outside their own "sandboxed" directory, so

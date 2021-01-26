@@ -168,7 +168,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
         var count = 0
         compressImage(this, photos) { index, u ->
             FileLogger.i("compressImage onSuccess index=$index uri=$u " +
-                    "Total size of compressed image cache directory = ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
+                    "${getString(R.string.str_ando_file_compress_dir_size)} = ${FileSizeUtils.getFolderSize(File(getCompressedImageCacheDir()))}"
             )
 
             ResultUtils.formatCompressedImageInfo(u, true) {
