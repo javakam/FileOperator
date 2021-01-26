@@ -10,14 +10,15 @@
         android:id="@+id/safSelectSingleFile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/str_ando_file_select_one" />
+        android:text="@string/str_ando_file_select_one"
+        android:textAllCaps="false" />
 
     <ImageView
         android:id="@+id/showIv"
-        android:visibility="gone"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
     <View
         android:layout_width="match_parent"
@@ -30,7 +31,8 @@
         android:id="@+id/createFileBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/str_ando_file_create_document" />
+        android:text="@string/str_ando_file_create_document"
+        android:textAllCaps="false" />
 
     <TextView
         android:id="@+id/createFileUriTv"
@@ -46,25 +48,29 @@
         android:id="@+id/deleteFileBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/str_ando_file_delete_document" />
+        android:text="@string/str_ando_file_delete_document"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/renameFileBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/str_ando_file_rename_document" />
+        android:text="@string/str_ando_file_rename_document"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/editDocumentBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/str_ando_file_edit_document" />
+        android:text="@string/str_ando_file_edit_document"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/getDocumentTreeBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/str_ando_file_select_directory" />
+        android:text="@string/str_ando_file_select_directory"
+        android:textAllCaps="false" />
 
     <TextView
         android:id="@+id/tvDocumentTreeFiles"

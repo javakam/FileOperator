@@ -27,6 +27,7 @@
         android:layout_height="@dimen/dp_38"
         android:layout_marginTop="@dimen/dp_2"
         android:text="@string/str_ando_file_select_multiple"
+        android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="@dimen/font_11"
         android:textStyle="bold" />

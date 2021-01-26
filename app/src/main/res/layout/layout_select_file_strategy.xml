@@ -14,6 +14,7 @@
             android:background="@drawable/sel_select_strategy_change"
             android:checked="true"
             android:text="@string/str_ando_file_strategy_all"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_10" />
 
@@ -26,6 +27,7 @@
             android:paddingTop="@dimen/dp_3"
             android:paddingBottom="@dimen/dp_3"
             android:text="@string/str_ando_file_strategy_over"
+            android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_10" />
 
