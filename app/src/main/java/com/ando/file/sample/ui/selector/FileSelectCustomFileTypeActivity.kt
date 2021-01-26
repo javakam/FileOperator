@@ -116,7 +116,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
        20M = 20971520 Byte
     */
     private fun chooseFile() {
-        //Image
+        //图片 Image
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
             minCount = 1
@@ -188,8 +188,8 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             .setMultiSelect()//默认是单选false
             .setMinCount(1, "Select at least one set type file!")
             .setMaxCount(4, "Choose up to four files!")
-            .setSingleFileMaxSize(2097152, "The size of a single file cannot exceed 2 M !")
-            .setAllFilesMaxSize(52428800, "The total file size cannot exceed 50 M !")
+            .setSingleFileMaxSize(2097152, "The size of a single file cannot exceed 2M !")
+            .setAllFilesMaxSize(52428800, "The total file size cannot exceed 50M !")
             .setOverLimitStrategy(this.mOverLimitStrategy)
             .setMimeTypes("audio/*", "image/*", "text/*", "application/json")
             .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
