@@ -1,16 +1,14 @@
 package ando.file.downloader
 
 import android.view.View
-import ando.file.common.FileType
-import ando.file.downloader.file.FileTransformHelper
+import ando.file.core.FileUtils
 import ando.file.downloader.view.FileBaseViewHolder
 import ando.file.downloader.view.FileRecyclerAdapter
+import ando.file.selector.FileType
 import com.liulishuo.okdownload.DownloadTask
 
 /**
- * QueueTaskAdapter4WithSpeed
- *
- * Description:
+ * # QueueTaskAdapter4Speed
  *
  * @author javakam
  * @date 2020/1/15  16:47
@@ -28,8 +26,8 @@ class QueueTaskAdapter4Speed(private val controller: QueueController4Speed) :
             holder.getView<View>(R.id.tv_down_percent).visibility = View.GONE
 
             //下载的文件显示对应的图标
-            if (FileTransformHelper.isHttp(bean.url)) {
-                val fileType = FileType.INSTANCE.fromFileName(bean.url)
+            if (FileUtils.isLocal(bean.url)) {
+                val fileType = FileType.INSTANCE.fromName(bean.url)
                 if (fileType != FileType.UNKNOWN) {
                     holder.setImageResource(
                         R.id.iv_detail_icon,
@@ -46,7 +44,6 @@ class QueueTaskAdapter4Speed(private val controller: QueueController4Speed) :
             holder.addOnClickListener(R.id.iv_detail_icon)
         }
     }
-
 
     override fun getItemCount(): Int {
         return controller.size()

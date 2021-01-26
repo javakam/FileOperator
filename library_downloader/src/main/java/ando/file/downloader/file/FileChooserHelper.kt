@@ -1,17 +1,13 @@
 package ando.file.downloader.file
 
+import ando.file.selector.FileType
 import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.Fragment
-import ando.file.common.FileType
 import java.util.*
 
 /**
- * FileChooserHelper
- *
- *
- * Description:
- *
+ * # FileChooserHelper
  *
  * @author javakam
  * @date 2020-02-21

@@ -1,5 +1,6 @@
 package ando.file.downloader
 
+import ando.file.core.FileLogger
 import android.util.SparseArray
 import android.view.View
 import android.widget.*
@@ -15,7 +16,6 @@ import com.liulishuo.okdownload.core.breakpoint.BreakpointInfo
 import com.liulishuo.okdownload.core.cause.EndCause
 import com.liulishuo.okdownload.core.listener.DownloadListener4WithSpeed
 import com.liulishuo.okdownload.core.listener.assist.Listener4SpeedAssistExtend.Listener4SpeedModel
-import ando.file.common.FileLogger
 
 /**
  * QueueDownloadListener4WithSpeed

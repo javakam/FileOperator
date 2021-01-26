@@ -4,12 +4,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import ando.file.common.FileType
+import ando.file.selector.FileType
 
 /**
- * FileBean
- *
- * Description:
+ * # FileBean
  *
  * @author javakam
  * @date 2020/1/21  14:36
