@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -64,8 +63,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@color/color_divider_gray" />
 
     <TextView
@@ -111,7 +110,6 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:onClick="caseFragmentSimpleUsage"
         android:text="@string/str_ando_file_title_fragment"
         android:textAllCaps="false"
@@ -121,7 +119,6 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:onClick="caseClearCache"
         android:text="@string/str_ando_file_select_get_directory_info"
         android:textAllCaps="false"
@@ -130,8 +127,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@color/color_divider_gray" />
 
     <TextView
@@ -141,7 +138,6 @@
         android:textColor="@color/black"
         android:textSize="@dimen/font_12"
         android:textStyle="bold" />
-
 
     <Button
         android:layout_width="match_parent"
