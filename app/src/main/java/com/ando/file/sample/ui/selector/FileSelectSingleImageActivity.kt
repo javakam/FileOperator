@@ -84,13 +84,6 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
-    /*
-    Bytecode calculator -> https://calc.itzmx.com/
-       3M  = 3145728  Byte
-       5M  = 5242880  Byte
-       10M = 10485760 Byte
-       20M = 20971520 Byte
-    */
     private fun chooseFile() {
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
@@ -98,14 +91,13 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             singleFileMaxSize = 5242880
             singleFileMaxSizeTip = "The largest picture does not exceed 5M !"
             allFilesMaxSize = 10485760
-
             //单选条件下无效,只做单个图片大小判断
-            //Invalid under single selection conditions, only single image size judgment
+            //EN:Invalid under single selection conditions, only single image size judgment
             allFilesMaxSizeTip = "The total picture size does not exceed 10M !"
 
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-                    //筛除 gif
+                    //Filter out gif
                     return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                 }
             }
