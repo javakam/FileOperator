@@ -15,6 +15,8 @@ import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
 
 /**
+ * # FileCoreActivity
+ *
  * 核心库(Core library)
  */
 class FileCoreActivity : AppCompatActivity() {
@@ -78,10 +80,10 @@ class FileCoreActivity : AppCompatActivity() {
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setTypeMismatchTip("File type mismatch !")
             .setMinCount(1, "Choose at least one file !!")
-            .setMaxCount(10, "Choose up to ten files !")
+            .setMaxCount(1000, "Choose up to one thousand files !")
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(10485760, "The size cannot exceed 10M !")
-            .setAllFilesMaxSize(104857600, "The total size cannot exceed 100M !")
+            .setSingleFileMaxSize(524288000, "The size cannot exceed 500M !")
+            .setAllFilesMaxSize(1073741824, "The total size cannot exceed 1G !")
             .setMimeTypes("*/*")
 
             .filter(object : FileSelectCondition {

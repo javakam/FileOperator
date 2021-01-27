@@ -1,11 +1,11 @@
 package ando.file.downloader
 
+import ando.file.core.FileLogger
 import android.text.TextUtils
 import android.widget.Button
 import android.widget.FrameLayout
 import ando.file.downloader.view.FileBaseViewHolder
 import ando.file.downloader.view.FileRecyclerAdapter
-import ando.file.common.FileLogger
 import com.liulishuo.okdownload.DownloadContext
 import com.liulishuo.okdownload.DownloadContextListener
 import com.liulishuo.okdownload.DownloadTask

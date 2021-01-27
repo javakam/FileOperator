@@ -1,4 +1,4 @@
-package com.ando.file.downloader;
+package ando.file.downloader;
 
 /**
  * TaskBean

@@ -53,11 +53,11 @@ FileOperator.init(this,BuildConfig.DEBUG)
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
-    fileTypeMismatchTip = "File type mismatch !"
+    fileTypeMismatchTip = "文件类型不匹配 !" //File type mismatch
     singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "图片最大不超过5M !"
+    singleFileMaxSizeTip = "图片最大不超过5M !" //The largest picture does not exceed 5M
     allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "总图片大小不超过10M !"//单选条件下无效,只做单个图片大小判断
+    allFilesMaxSizeTip = "总图片大小不超过10M !"//The total picture size does not exceed 10M  注:单选条件下无效,只做单个图片大小判断
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -67,13 +67,13 @@ val optionsImage = FileSelectOptions().apply {
 mFileSelector = FileSelector
     .with(this)
     .setRequestCode(REQUEST_CHOOSE_FILE)
-    .setTypeMismatchTip("File type mismatch !")
-    .setMinCount(1, "Choose at least one file !!")
-    .setMaxCount(10, "Choose up to ten files !")    //单选条件下无效, 只做最少数量判断
+    .setTypeMismatchTip("文件类型不匹配 !") //File type mismatch
+    .setMinCount(1, "至少选择一个文件 !") //Choose at least one file
+    .setMaxCount(10, "最多选择十个文件 !") //Choose up to ten files  注:单选条件下无效, 只做最少数量判断
     .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-    .setSingleFileMaxSize(1048576, "大小不能超过1M !") //单选条件下无效, FileSelectOptions.singleFileMaxSize
-    .setAllFilesMaxSize(10485760, "总The size cannot exceed 10M !") //单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
-    .setMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg: arrayOf("video/*","audio/*","image/*")
+    .setSingleFileMaxSize(1048576, "大小不能超过1M !") //The size cannot exceed 1M  注:单选条件下无效, FileSelectOptions.singleFileMaxSize
+    .setAllFilesMaxSize(10485760, "总大小不能超过10M !") //The total size cannot exceed 10M 注:单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
+    .setMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg:"video/*","audio/*","image/*"
     .applyOptions(optionsImage)
     .filter(object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
@@ -89,7 +89,7 @@ mFileSelector = FileSelector
         override fun onSuccess(results: List<FileSelectResult>?) {
             ResultUtils.resetUI(mTvResult)
             if (results.isNullOrEmpty()) {
-                toastLong("没有选取文件")
+                toastLong("没有选取文件") //No file selected
                 return
             }
             showSelectResult(results)
@@ -108,11 +108,11 @@ Multiple selection pictures (multiple selection + single type)
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
     fileType = FileType.IMAGE
-    fileTypeMismatchTip = "File type mismatch !"
+    fileTypeMismatchTip = "文件类型不匹配 !" //File type mismatch
     singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "A single picture does not exceed 5M !"
+    singleFileMaxSizeTip = "单张图片大小不超过5M !" //The size of a single picture does not exceed 5M
     allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "The total size of the picture does not exceed 10M !"
+    allFilesMaxSizeTip = "图片总大小不超过10M !" //The total size of the picture does not exceed 10M
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
@@ -123,10 +123,10 @@ mFileSelector = FileSelector
     .with(this)
     .setRequestCode(REQUEST_CHOOSE_FILE)
     .setMultiSelect()
-    .setMinCount(1, "Choose at least one file !")
-    .setMaxCount(2, "最多选两个文件!")
-    .setSingleFileMaxSize(3145728, "单个大小不能超过3M !")
-    .setAllFilesMaxSize(20971520, "总文件大小不能超过20M !")
+    .setMinCount(1, "至少选择一个文件 !") //Choose at least one file
+    .setMaxCount(2, "最多选两个文件!") //Choose up to two files
+    .setSingleFileMaxSize(3145728, "单个大小不能超过3M !") //Single size cannot exceed 3M
+    .setAllFilesMaxSize(20971520, "总文件大小不能超过20M !") //The total file size cannot exceed 20M
     .setOverLimitStrategy(this.mOverLimitStrategy)
     .setMimeTypes("image/*")
     .applyOptions(optionsImage)
@@ -140,7 +140,7 @@ mFileSelector = FileSelector
             FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
             mAdapter.setData(null)
             if (results.isNullOrEmpty()) {
-                toastLong("没有选取文件")
+                toastLong("没有选取文件") //No file selected
                 return
             }
             showSelectResult(results)
@@ -249,7 +249,7 @@ mFileSelector = FileSelector
     Actual total size limit for setAllFilesMaxSize and (optionsImage allFilesMaxSize optionsAudio. AllFilesMaxSize... The highest value in);
      */
     //优先使用 `自定义FileSelectOptions` 中设置的单文件大小限制, 如果没有设置则采用该值
-    //Prefer using ` custom FileSelectOptions ` set in single file size limit, if the value is not set is used
+    //EN:Prefer using ` custom FileSelectOptions ` set in single file size limit, if the value is not set is used
     .setSingleFileMaxSize(2097152, "单文件大小不能超过2M !") //The size of a single file cannot exceed 2M !
     .setAllFilesMaxSize(52428800, "总文件大小不能超过50M !") //The total file size cannot exceed 50M !
 
@@ -262,15 +262,15 @@ mFileSelector = FileSelector
 
     //eg: ando.file.core.FileMimeType
     //默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
-    //Default do not file type constraints for "/", is not the same as the choice of different types of the system to provide the UI eg: "video/"," audio/", "image/"
+    //EN:Default do not file type constraints for "/", is not the same as the choice of different types of the system to provide the UI eg: "video/"," audio/", "image/"
     .setMimeTypes("audio/*", "image/*", "text/plain")
 
     //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
-    //If setMimeTypes and applyOptions no corresponding will appear `file type mismatch problems`
+    //EN:If setMimeTypes and applyOptions no corresponding will appear `file type mismatch problems`
     .applyOptions(optionsImage, optionsAudio, optionsTxt)
 
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
-    //Priority in use FileSelectOptions FileSelectCondition Settings
+    //EN:Priority in use FileSelectOptions FileSelectCondition Settings
     .filter(object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return when (fileType) {
@@ -309,7 +309,7 @@ Extend existing FileType
 
 ```kotlin
 eg: 
-内置(built-in): TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
+内置(built in): TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
 
 增加(increase): FileType.TXT.supplement("gradle","kt")
 结果(result): TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc","gradle","kt"))
@@ -328,13 +328,13 @@ Through ` IFileType ` custom file type
 > 🍎下面提供了两种实现的方式 (The following provides two ways):
 
 ```kotlin
-//1.
+//1.方式一
 object FileTypePhp : IFileType {
     override fun fromUri(uri: Uri?): IFileType {
         return if (parseSuffix(uri).equals("php", true)) FileTypePhp else FileType.UNKNOWN
     }
 }
-//2.推荐方式 (Recommend ways)
+//2.推荐方式 (Recommended way)
 enum class FileTypeJson : IFileType {
     JSON;
     override fun fromUri(uri: Uri?): IFileType {
@@ -342,7 +342,7 @@ enum class FileTypeJson : IFileType {
     }
 }
 ```
-Usage :
+用法(Usage) :
 ```kotlin
 val optionsJsonFile = FileSelectOptions().apply {
     fileType = FileTypeJson.JSON
@@ -368,7 +368,6 @@ FileSelector.with(this)
         }
     })
     .choose()
-
 ```
 
 > 注意: `json`文件无法用`text/*`打开, 对应的`mimeType`为`application/json`
@@ -391,7 +390,7 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
     ImageCompressor
         .with(context)
         .load(photos)
-        .ignoreBy(100)//单位 Byte
+        .ignoreBy(100)//Byte
         .setTargetDir(getCompressedImageCacheDir())
         .setFocusAlpha(false)
         .enableCache(true)
@@ -402,7 +401,7 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
             }
         })
         .setRenameListener(object : OnImageRenameListener {
-            override fun rename(uri: Uri?): String? {
+            override fun rename(uri: Uri?): String {
                 try {
                     val filePath = FileUri.getFilePathByUri(uri)
                     val md = MessageDigest.getInstance("MD5")
@@ -421,7 +420,7 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
             }
 
             override fun onError(e: Throwable?) {
-                FileLogger.e("compressImage onError ${e?.message}")
+                FileLogger.e("OnImageCompressListener onError ${e?.message}")
             }
         }).launch()
 }
@@ -675,7 +674,7 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 }
 ```
 
-### 5. 通用文件工具类👉[FileUtils.kt](https://raw.githubusercontent.com/javakam/FileOperator/master/library/src/main/java/com/ando/file/common/FileUtils.kt)
+### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core//FileUtils.kt)
 - `getExtension` 获取文件后缀`jpg`
 - `getExtensionFull` 获取文件完整后缀`.jpg`
 - `splitFilePath()` 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
@@ -743,7 +742,7 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 ## 更新日志 (Update log)
 
-<a href="https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md</a>
+**README_VERSIONS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md</a>
 
 ### Fixed Bug
 #### 1.Invalid image: ExifInterface got an unsupported image format

@@ -40,16 +40,19 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
 
-    implementation project(':library')
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.3.0-alpha04'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0-alpha1'
-    //SAF
-    implementation 'androidx.documentfile:documentfile:1.0.1'
+
     //Glide
     implementation "com.github.bumptech.glide:glide:4.11.0"
 
+    implementation project(':library')
+    implementation project(':library_selector')
+    //implementation project(':library_compressor')
+    //implementation project(':library_android_q')
+    //implementation 'androidx.documentfile:documentfile:1.0.1'
 
     //下载组件 -> ando_file/libs -> https://repo1.maven.org/maven2/com/liulishuo/okdownload/
     // core
@@ -61,4 +64,15 @@ dependencies {
 //    // provide interface for kotlin extension
 //    implementation 'com.liulishuo.okdownload:ktx:1.0.7-SNAPSHOT'
 
+}
+
+publish {
+    repoName = 'FileOperator'
+    userOrg = 'javakam'
+    groupId = 'ando.file'
+    artifactId = 'downloader'
+    publishVersion = config.versionName
+    desc = 'Android File Downloader.'
+    website = "https://github.com/javakam/${rootProject.name}"
+    //dryRun = true
 }
