@@ -11,7 +11,7 @@
         android:id="@+id/iv_detail_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_other"
+        android:src="@mipmap/ic_point_other"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@id/progressbar_down"
@@ -86,7 +86,7 @@
             android:layout_width="@dimen/dp_file_9"
             android:layout_height="@dimen/dp_file_9"
             android:layout_gravity="center"
-            android:src="@mipmap/ic_file_download_delete" />
+            android:src="@mipmap/ic_point_file_download_delete" />
     </FrameLayout>
 
     <TextView
@@ -154,7 +154,7 @@
         android:layout_width="@dimen/dp_file_45"
         android:layout_height="0dp"
         android:layout_marginLeft="@dimen/dp_file_20"
-        android:background="@drawable/rectangle_file_download_continue"
+        android:background="@drawable/rectangle_point_file_download_continue"
         android:gravity="center"
         android:text="下载"
         android:textAllCaps="false"

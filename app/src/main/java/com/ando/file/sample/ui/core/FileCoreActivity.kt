@@ -80,10 +80,10 @@ class FileCoreActivity : AppCompatActivity() {
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setTypeMismatchTip("File type mismatch !")
             .setMinCount(1, "Choose at least one file !!")
-            .setMaxCount(100, "Choose up to one hundred files !")
+            .setMaxCount(1000, "Choose up to one thousand files !")
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(104857600, "The size cannot exceed 100M !")
-            .setAllFilesMaxSize(314572800, "The total size cannot exceed 300M !")
+            .setSingleFileMaxSize(524288000, "The size cannot exceed 500M !")
+            .setAllFilesMaxSize(1073741824, "The total size cannot exceed 1G !")
             .setMimeTypes("*/*")
 
             .filter(object : FileSelectCondition {
