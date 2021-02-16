@@ -39,7 +39,7 @@
     <string name="str_ando_file_after_compression">压缩后</string>
     <string name="str_ando_file_clear_cache">清除缓存</string>
 
-    <string name="str_ando_file_select_one">选择单个文件</string>
+    <string name="str_ando_file_select_one">选择一个文件</string>
     <string name="str_ando_file_create_document">创建文档</string>
     <string name="str_ando_file_delete_document">删除文档</string>
     <string name="str_ando_file_rename_document">重命名</string>

@@ -30,7 +30,7 @@ import java.util.List;
  * <pre>
  *     Activity 中 :
  *
- *    @Override
+ *    @ Override
  *     public void onDestroy() {
  *         super.onDestroy();
  *         OkDownload.with().downloadDispatcher().cancelAll();
@@ -79,7 +79,6 @@ public class DownloadView extends FrameLayout {
         mRvTasks.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         mAdapter = new QueueTaskAdapter4Speed(controller);
         mRvTasks.setAdapter(mAdapter);
-
 
         controller.setCallBack(new QueueController4Speed.CallBack() {
             @Override
@@ -130,10 +129,7 @@ public class DownloadView extends FrameLayout {
             return false;
         }
         final TextView btDownAction = holder.getView(R.id.bt_down_action);
-        if (TextUtils.equals(btDownAction.getText().toString().trim(), QueueController4Speed.STATUS_LOOK_OVER)) {
-            return true;
-        }
-        return false;
+        return TextUtils.equals(btDownAction.getText().toString().trim(), QueueController4Speed.STATUS_LOOK_OVER);
     }
 
     public QueueController4Speed getController() {
@@ -155,7 +151,6 @@ public class DownloadView extends FrameLayout {
         if (mAdapter != null) {
             mAdapter.refresh(controller.getTaskList());
         }
-
     }
 
     final DownloadContextListener downloadContextListener = new DownloadContextListener() {
