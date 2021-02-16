@@ -32,7 +32,7 @@ class QueueTaskAdapter4Speed(private val controller: QueueController4Speed) :
                     holder.setImageResource(
                         R.id.iv_detail_icon,
                         //if (fileType.background <= 0) R.mipmap.ic_point_other else fileType.background
-                        R.mipmap.ic_point_other
+                        R.mipmap.ic_ando_file_unkown
                     )
 //                    ImageLoader.get().loadImage(
 //                        holder.getView(R.id.iv_detail_icon), fileType.background,

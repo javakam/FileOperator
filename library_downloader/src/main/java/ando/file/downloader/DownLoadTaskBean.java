@@ -1,10 +1,7 @@
 package ando.file.downloader;
 
 /**
- * TaskBean
- * <p>
- * Description:
- * </p>
+ * # DownLoadTaskBean
  *
  * @author javakam
  * @date 2020/1/16  16:10
