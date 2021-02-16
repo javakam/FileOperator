@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -37,7 +38,7 @@ class FileSelectFragment : Fragment() {
         }
     }
 
-    private lateinit var mBtSelectSingle: View
+    private lateinit var mBtSelectSingle: Button
     private lateinit var mTvError: TextView
     private lateinit var mTvResult: TextView
     private lateinit var mIvOrigin: ImageView
@@ -52,9 +53,27 @@ class FileSelectFragment : Fragment() {
         mTvResult = v.findViewById(R.id.tv_result)
         mIvOrigin = v.findViewById(R.id.iv_origin)
         mIvCompressed = v.findViewById(R.id.iv_compressed)
+        mBtSelectSingle.text = getText(R.string.str_ando_file_select_one)
         mBtSelectSingle.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
-                if (it) chooseFile()
+                //if (it) chooseFile()
+                if (it) {
+                    mFileSelector = chooseFile(1, object : FileSelectCallBack {
+                        override fun onSuccess(results: List<FileSelectResult>?) {
+                            ResultUtils.resetUI(mTvResult)
+                            if (results.isNullOrEmpty()) {
+                                activity?.toastLong("No file selected")
+                                return
+                            }
+                            showSelectResult(results)
+                        }
+
+                        override fun onError(e: Throwable?) {
+                            FileLogger.e("FileSelectCallBack onError ${e?.message}")
+                            ResultUtils.setErrorText(mTvError, e)
+                        }
+                    })
+                }
             }
         }
         return v
@@ -151,6 +170,69 @@ class FileSelectFragment : Fragment() {
             }
             ResultUtils.setImageEvent(mIvCompressed, u)
         }
+    }
+
+    fun Fragment.chooseFile(requestCode: Int, callback: FileSelectCallBack): FileSelector {
+        val optionsWord = FileSelectOptions().apply {
+            fileType = FileType.WORD
+            singleFileMaxSize = 5242880
+        }
+        val optionsExcel = FileSelectOptions().apply {
+            fileType = FileType.EXCEL
+            singleFileMaxSize = 5242880
+        }
+        val optionsPDF = FileSelectOptions().apply {
+            fileType = FileType.PDF
+            singleFileMaxSize = 5242880
+        }
+        val optionsPPT = FileSelectOptions().apply {
+            fileType = FileType.PPT
+            singleFileMaxSize = 5242880
+        }
+        val optionsTXT = FileSelectOptions().apply {
+            fileType = FileType.TXT
+            singleFileMaxSize = 5242880
+        }
+        val optionsZIP = FileSelectOptions().apply {
+            fileType = FileType.ZIP
+            singleFileMaxSize = 5242880
+        }
+        val optionsImg = FileSelectOptions().apply {
+            fileType = FileType.IMAGE
+            singleFileMaxSize = 5242880
+        }
+        return FileSelector
+            .with(this)
+            .setRequestCode(requestCode)
+            .setTypeMismatchTip("Tipe file tidak didukung")
+            .setMinCount(1, "Pilih minimal 1 file!")
+            .setMaxCount(1, "Pilih minimal 1 file!")
+            .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_ALL)
+            .setMimeTypes(
+                "image/*",
+                "text/plain",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-powerpoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/zip",
+                "application/pdf"
+            )
+            .applyOptions(optionsImg, optionsWord, optionsExcel, optionsPDF, optionsPPT, optionsTXT, optionsZIP)
+            .filter(object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    return if (uri != null && !uri.path.isNullOrBlank()) {
+                        when (fileType) {
+                            FileType.IMAGE, FileType.WORD, FileType.EXCEL, FileType.PDF, FileType.PPT, FileType.TXT, FileType.ZIP -> true
+                            else -> false
+                        }
+                    } else false
+                }
+            })
+            .callback(callback)
+            .choose()
     }
 
 }

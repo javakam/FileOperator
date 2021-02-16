@@ -39,7 +39,7 @@
     <string name="str_ando_file_after_compression">After compression</string>
     <string name="str_ando_file_clear_cache">Clear cache</string>
 
-    <string name="str_ando_file_select_one">Select a single file</string>
+    <string name="str_ando_file_select_one">Choose a file</string>
     <string name="str_ando_file_create_document">Create a document</string>
     <string name="str_ando_file_delete_document">Delete the document</string>
     <string name="str_ando_file_rename_document">Rename</string>
