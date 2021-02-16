@@ -20,6 +20,17 @@
             android:textSize="@dimen/font_13"
             android:textStyle="bold" />
 
+        <Button
+            android:id="@+id/bt_select_file"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_ando_file_select_one"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_13"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/tv_error"
             android:layout_width="match_parent"

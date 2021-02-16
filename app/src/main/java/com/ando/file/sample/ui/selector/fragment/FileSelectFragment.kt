@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -29,6 +30,9 @@ import java.io.File
 class FileSelectFragment : Fragment() {
 
     companion object {
+        private const val REQUEST_CHOOSE_IMAGE = 10
+        private const val REQUEST_CHOOSE_FILE = 11
+
         fun newInstance(): FileSelectFragment {
             val args = Bundle()
             val fragment = FileSelectFragment()
@@ -37,27 +41,70 @@ class FileSelectFragment : Fragment() {
         }
     }
 
-    private lateinit var mBtSelectSingle: View
+
+    private lateinit var mBtChoosePicture: Button
+    private lateinit var mBtChooseFile: Button
     private lateinit var mTvError: TextView
     private lateinit var mTvResult: TextView
     private lateinit var mIvOrigin: ImageView
     private lateinit var mIvCompressed: ImageView
 
     private var mFileSelector: FileSelector? = null
+    private var mFileSelectorRequest = REQUEST_CHOOSE_IMAGE
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.activity_select_single_image, container, false)
-        mBtSelectSingle = v.findViewById(R.id.bt_select_single)
+        mBtChoosePicture = v.findViewById(R.id.bt_select_single)
+        mBtChooseFile = v.findViewById(R.id.bt_select_file)
         mTvError = v.findViewById(R.id.tv_error)
         mTvResult = v.findViewById(R.id.tv_result)
         mIvOrigin = v.findViewById(R.id.iv_origin)
         mIvCompressed = v.findViewById(R.id.iv_compressed)
-        mBtSelectSingle.setOnClickListener {
+
+        //Choose a picture
+        mBtChoosePicture.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
-                if (it) chooseFile()
+                //if (it) chooseFile()
+                if (it) {
+                    mFileSelectorRequest = REQUEST_CHOOSE_IMAGE
+                    mFileSelector = chooseImage(REQUEST_CHOOSE_IMAGE, mCallBack)
+                }
             }
         }
+
+        //Choose a file (Not picture)
+        mBtChooseFile.visibility = View.VISIBLE
+        mBtChooseFile.setOnClickListener {
+            PermissionManager.requestStoragePermission(this) {
+                if (it) {
+                    mFileSelectorRequest = REQUEST_CHOOSE_FILE
+                    mFileSelector = chooseFile(REQUEST_CHOOSE_FILE, mCallBack)
+                }
+            }
+        }
+
         return v
+    }
+
+    private val mCallBack = object : FileSelectCallBack {
+        override fun onSuccess(results: List<FileSelectResult>?) {
+            ResultUtils.resetUI(mTvResult)
+            if (results.isNullOrEmpty()) {
+                activity?.toastLong("No file selected")
+                return
+            }
+            showSelectResult(results)
+
+            when (mFileSelectorRequest) {
+                REQUEST_CHOOSE_IMAGE -> activity?.toastShort("Select picture successfully !")
+                REQUEST_CHOOSE_FILE -> activity?.toastShort("Select file successfully !")
+            }
+        }
+
+        override fun onError(e: Throwable?) {
+            FileLogger.e("FileSelectCallBack onError ${e?.message}")
+            ResultUtils.setErrorText(mTvError, e)
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -74,60 +121,6 @@ class FileSelectFragment : Fragment() {
        10M = 10485760 Byte
        20M = 20971520 Byte
     */
-    private fun chooseFile() {
-        val optionsImage = FileSelectOptions().apply {
-            fileType = FileType.IMAGE
-            fileTypeMismatchTip = "File type mismatch !"
-            singleFileMaxSize = 5242880
-            singleFileMaxSizeTip = "The largest picture does not exceed 5M !"
-            allFilesMaxSize = 10485760
-            allFilesMaxSizeTip = "The total picture size does not exceed 10M !"
-            fileCondition = object : FileSelectCondition {
-                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-                    //Filter out gif
-                    return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                }
-            }
-        }
-
-        mFileSelector = FileSelector
-            .with(this)
-            .setRequestCode(REQUEST_CHOOSE_FILE)
-            .setTypeMismatchTip("File type mismatch")
-            .setMinCount(1, "Choose at least one file!")
-            .setMaxCount(10, "Choose up to ten files!")
-            .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(1048576, "The size cannot exceed 1M !")
-            .setAllFilesMaxSize(10485760, "The total size cannot exceed 10M !")
-            .setMimeTypes("image/*")
-            .applyOptions(optionsImage)
-            .filter(object : FileSelectCondition {
-                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-                    return when (fileType) {
-                        FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                        FileType.VIDEO -> false
-                        FileType.AUDIO -> false
-                        else -> false
-                    }
-                }
-            })
-            .callback(object : FileSelectCallBack {
-                override fun onSuccess(results: List<FileSelectResult>?) {
-                    ResultUtils.resetUI(mTvResult)
-                    if (results.isNullOrEmpty()) {
-                        activity?.toastLong("No file selected")
-                        return
-                    }
-                    showSelectResult(results)
-                }
-
-                override fun onError(e: Throwable?) {
-                    FileLogger.e("FileSelectCallBack onError ${e?.message}")
-                    ResultUtils.setErrorText(mTvError, e)
-                }
-            })
-            .choose()
-    }
 
     private fun showSelectResult(results: List<FileSelectResult>) {
         ResultUtils.setErrorText(mTvError, null)
@@ -151,6 +144,100 @@ class FileSelectFragment : Fragment() {
             }
             ResultUtils.setImageEvent(mIvCompressed, u)
         }
+    }
+
+
+    fun Fragment.chooseImage(requestCode: Int, callback: FileSelectCallBack): FileSelector {
+        val optionsImage = FileSelectOptions().apply {
+            fileType = FileType.IMAGE
+            fileTypeMismatchTip = "Tipe file tidak didukung"
+            minCount = 1
+            maxCount = 1
+            minCountTip = "Pilih minimal 1 gambar!"
+            maxCountTip = "Pilih minimal 1 gambar!"
+            fileCondition = object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                }
+            }
+        }
+        return FileSelector
+            .with(this)
+            .setRequestCode(requestCode)
+            .setTypeMismatchTip("Tipe file tidak didukung")
+            .setMinCount(1, "Pilih minimal 1 gambar!")
+            .setMaxCount(1, "Pilih minimal 1 gambar!")
+            .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_ALL)
+            .setMimeTypes("image/*")
+            .applyOptions(optionsImage)
+            .filter(object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    return when (fileType) {
+                        FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+                        else -> false
+                    }
+                }
+            })
+            .callback(callback)
+            .choose()
+    }
+
+    fun Fragment.chooseFile(requestCode: Int, callback: FileSelectCallBack): FileSelector {
+        val optionsWord = FileSelectOptions().apply {
+            fileType = FileType.WORD
+            singleFileMaxSize = 5242880
+        }
+        val optionsExcel = FileSelectOptions().apply {
+            fileType = FileType.EXCEL
+            singleFileMaxSize = 5242880
+        }
+        val optionsPDF = FileSelectOptions().apply {
+            fileType = FileType.PDF
+            singleFileMaxSize = 5242880
+        }
+        val optionsPPT = FileSelectOptions().apply {
+            fileType = FileType.PPT
+            singleFileMaxSize = 5242880
+        }
+        val optionsTXT = FileSelectOptions().apply {
+            fileType = FileType.TXT
+            singleFileMaxSize = 5242880
+        }
+        val optionsZIP = FileSelectOptions().apply {
+            fileType = FileType.ZIP
+            singleFileMaxSize = 5242880
+        }
+        return FileSelector
+            .with(this)
+            .setRequestCode(requestCode)
+            .setTypeMismatchTip("Tipe file tidak didukung")
+            .setMinCount(1, "Pilih minimal 1 file!")
+            .setMaxCount(1, "Pilih minimal 1 file!")
+            .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_ALL)
+            .setMimeTypes(
+                "text/plain",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.ms-powerpoint",
+                "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                "application/vnd.ms-excel",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/zip",
+                "application/pdf"
+            )
+            .applyOptions(optionsWord, optionsExcel, optionsPDF, optionsPPT, optionsTXT, optionsZIP)
+            .filter(object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    return if (uri != null && !uri.path.isNullOrBlank()) {
+                        when (fileType) {
+                            FileType.WORD, FileType.EXCEL, FileType.PDF, FileType.PPT, FileType.TXT, FileType.ZIP -> true
+                            else -> false
+                        }
+                    } else false
+                }
+            })
+            .callback(callback)
+            .choose()
     }
 
 }
