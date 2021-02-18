@@ -19,10 +19,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.6'       //核心库必选(Core library required)
-implementation 'ando.file:selector:1.3.6'   //文件选择器(File selector)
-implementation 'ando.file:compressor:1.3.6' //图片压缩, 核心算法采用 Luban
-implementation 'ando.file:android-q:1.3.6'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
+implementation 'ando.file:core:1.3.7'       //核心库必选(Core library required)
+implementation 'ando.file:selector:1.3.7'   //文件选择器(File selector)
+implementation 'ando.file:compressor:1.3.7' //图片压缩, 核心算法采用 Luban
+implementation 'ando.file:android-q:1.3.7'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)

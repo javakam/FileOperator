@@ -38,3 +38,8 @@
 1.internationalization
 2.Fragment使用方式和案例 (Fragments using methods and cases) #13
 ```
+
+## v1.3.7
+```
+1.修复 Android 11 文件类型不匹配问题 (Fix Android 11 "File type mismatch" problem)
+```
