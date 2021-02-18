@@ -73,7 +73,7 @@ dependencies {
     implementation project(':library')
     implementation project(':library_selector')
     implementation project(':library_compressor')
-    implementation project(':library_downloader')
+    //implementation project(':library_downloader')
     implementation project(':library_android_q')
     implementation 'androidx.documentfile:documentfile:1.0.1'
 

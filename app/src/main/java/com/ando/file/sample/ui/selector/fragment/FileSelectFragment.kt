@@ -20,7 +20,7 @@ import com.ando.file.sample.utils.ResultUtils
 import java.io.File
 
 /**
- * Show Usage In Fragment
+ * Usage In Fragment
  *
  * @author javakam
  * @date 2021-1-25 09:48:10
@@ -39,7 +39,6 @@ class FileSelectFragment : Fragment() {
         }
     }
 
-
     private lateinit var mBtChoosePicture: Button
     private lateinit var mBtChooseFile: Button
     private lateinit var mTvError: TextView
@@ -55,7 +54,7 @@ class FileSelectFragment : Fragment() {
 
         //Public Documents Directory
         val documents: File = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-        FileLogger.e("目录: ${requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}  ___  $documents")
+        FileLogger.e("Directory : ${requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}  ___  $documents")
 
         FileLogger.d(
             "getExternalStorageState: ${Environment.getExternalStorageState(documents)} \n " +
