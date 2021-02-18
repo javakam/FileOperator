@@ -21,7 +21,14 @@ object FileUtils {
     //File Extension
     //----------------------------------------------------------------
 
-    fun getExtension(uri: Uri?): String = if (uri != null) getExtension(getFilePathByUri(uri) ?: "") else ""
+    fun getExtension(uri: Uri?): String {
+        var name = if (uri == null) return "" else ""
+        FileOperator.getContext().contentResolver.query(uri, null, null, null, null)
+            ?.use { c: Cursor ->
+                if (c.moveToFirst()) name = getExtension(c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME)))
+            }
+        return name
+    }
 
     /**
      * Gets the extension of a file name, like ".png" or ".jpg".
@@ -39,7 +46,8 @@ object FileUtils {
         val dot = pathOrName.lastIndexOf(split)
         return if (dot != -1) pathOrName.substring(
             if (fullExtension) dot
-            else (dot + 1)).toLowerCase(Locale.getDefault())
+            else (dot + 1)
+        ).toLowerCase(Locale.getDefault())
         else "" // No extension.
     }
 

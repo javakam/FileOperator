@@ -714,11 +714,11 @@ object FileOperatorQ {
                         DocumentsContract.renameDocument(getContext().contentResolver, uri, newDisplayName ?: "")
                     }
                     //查看目录中是否已存在 newDisplayName 的文件 -> 涉及到获取当前目录临时权限,太麻烦了,交给外部做吧 getDocumentTree
-                    //          try {
-                    //              val root: DocumentFile? = getDocumentTree(activity ,uri,)
-                    //              val findFile = root?.findFile(newDisplayName ?: "")
-                    //          } catch (e: SecurityException) {
-                    //          }
+                    // try {
+                    //     val root: DocumentFile? = getDocumentTree(activity ,uri,)
+                    //     val findFile = root?.findFile(newDisplayName ?: "")
+                    // } catch (e: SecurityException) {
+                    // }
                     block.invoke(true, "重命名成功")
                     return
                 }

@@ -1,10 +1,10 @@
 package ando.file.core
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
@@ -12,18 +12,54 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.provider.Settings
 import androidx.core.content.FileProvider
 import java.io.*
 
 /**
  * # FileUri
  *
- * - File Uri/Path Tools
+ * - Uri & Path Tool
  *
  * @author javakam
  * @date 2020/8/24  11:24
  */
 object FileUri {
+
+    //Android R
+    //----------------------------------------------------------------
+
+    /**
+     * `MANAGE_EXTERNAL_STORAGE` 权限检查
+     *
+     * @return `true` Have permission
+     */
+    fun isExternalStorageManager(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) Environment.isExternalStorageManager() else false
+
+    /**
+     * 跳转到 `MANAGE_EXTERNAL_STORAGE` 权限设置页面
+     *
+     * @return `true` Has been set
+     */
+    fun jumpManageAppAllFilesPermissionSetting(
+        context: Context,
+        isNewTask: Boolean = false
+    ): Boolean {
+        if (isExternalStorageManager()) return true
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.data = Uri.parse("package:${context.packageName}")
+                if (isNewTask) intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                FileLogger.e("jumpManageAppAllFilesPermissionSetting: $e")
+            }
+        }
+        return false
+    }
 
     //从 FilePath 中获取 Uri (Get Uri from FilePath)
     //----------------------------------------------------------------
@@ -48,78 +84,43 @@ object FileUri {
     //Get the file path corresponding to Uri, Compatible with API 26
     //----------------------------------------------------------------
 
-    /**
-     * 根据uri获取文件的绝对路径，解决Android 4.4以上 根据uri获取路径的方法
-     *
-     * <p>
-     *     RequiresPermission(permission.READ_EXTERNAL_STORAGE)
-     * @param uri
-     * @return
-     */
     fun getFilePathByUri(uri: Uri?): String? = getFilePathByUri(FileOperator.getContext(), uri)
 
     /**
-     * 根据uri获取文件的绝对路径，解决Android 4.4以上 根据uri获取路径的方法
+     * #### Get the file path through Uri
      *
-     * 需要权限: RequiresPermission(permission.READ_EXTERNAL_STORAGE)
+     * - Need permission: RequiresPermission(permission.READ_EXTERNAL_STORAGE)
      *
-     * @param context
-     * @param uri
-     * @return
+     * - Modified from: https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java
+     *
+     * @return file path
      */
     fun getFilePathByUri(context: Context?, uri: Uri?): String? {
         if (context == null || uri == null) return null
-        val scheme = uri.scheme
+
+        FileLogger.i(
+            "FileUri getFilePathByUri -> Authority: " + uri.authority +
+                    ", Fragment: " + uri.fragment +
+                    ", Port: " + uri.port +
+                    ", Query: " + uri.query +
+                    ", Scheme: " + uri.scheme +
+                    ", Host: " + uri.host +
+                    ", Segments: " + uri.pathSegments.toString()
+        )
+
         // 以 file:// 开头的使用第三方应用打开 (open with third-party applications starting with file://)
-        if (ContentResolver.SCHEME_FILE.equals(scheme, ignoreCase = true)) return uri.path
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) getPath(context, uri) else getPathKitkat(context, uri)
-    }
-
-    /**
-     * Android 4.4 , API 19
-     */
-    private fun getPathKitkat(context: Context, contentUri: Uri): String? =
-        context.contentResolver.query(contentUri, null, null, null, null).use { c ->
-            @Suppress("DEPRECATION")
-            val column = MediaStore.Files.FileColumns.DATA
-            return if (null != c && c.moveToFirst()) c.getString(c.getColumnIndex(column)) else null
-        }
-
-    /**
-     * 从Uri获取文件路径。这将获取Storage Access Framework文档的路径，
-     * 以及MediaStore和其他基于文件的ContentProviders的_data字段。<br>
-     * <br>
-     * 调用者应在假定该路径代表本地文件之前检查该路径是否为本地
-     *
-     * Get a file path from a Uri. This will get the the path for Storage Access
-     * Framework Documents, as well as the _data field for the MediaStore and
-     * other file-based ContentProviders.<br>
-     * <br>
-     * Callers should check whether the path is local before assuming it
-     * represents a local file.
-     *
-     * - Changed From: https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java
-     *
-     * @param context Context
-     * @param uri     要查询的Uri(The Uri to query)
-     */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private fun getPath(context: Context, uri: Uri?): String? {
-        if (uri != null) {
-            FileLogger.i(
-                "FileUri getPath -> Authority: " + uri.authority +
-                        ", Fragment: " + uri.fragment +
-                        ", Port: " + uri.port +
-                        ", Query: " + uri.query +
-                        ", Scheme: " + uri.scheme +
-                        ", Host: " + uri.host +
-                        ", Segments: " + uri.pathSegments.toString()
-            )
-        } else return null
+        if (ContentResolver.SCHEME_FILE.equals(uri.scheme, ignoreCase = true)) return uri.path
 
         @SuppressLint("ObsoleteSdkInt")
         val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
 
+        // Before 4.4 , API 19 content:// 开头, 比如 content://media/external/images/media/123
+        if (!isKitKat && ContentResolver.SCHEME_CONTENT.equals(uri.scheme, true)) {
+            if (isGooglePhotosUri(uri)) return uri.lastPathSegment
+            return getDataColumn(context, uri, null, null)
+        }
+
+        // After 4.4 , API 19
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             // LocalStorageProvider
@@ -133,11 +134,20 @@ object FileUri {
                 val split = docId.split(":").toTypedArray()
                 val type = split[0]
                 if ("primary".equals(type, ignoreCase = true)) {
-                    @Suppress("DEPRECATION")
-                    return Environment.getExternalStorageDirectory().toString() + File.separator + split[1]
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        return context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString() + File.separator + split[1]
+                    } else {
+                        @Suppress("DEPRECATION")
+                        return Environment.getExternalStorageDirectory().toString() + File.separator + split[1]
+                    }
                 } else if ("home".equals(type, ignoreCase = true)) {
-                    @Suppress("DEPRECATION")
-                    return Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        return context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+                            .toString() + File.separator + "documents" + File.separator + split[1]
+                    } else {
+                        @Suppress("DEPRECATION")
+                        return Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
+                    }
                 }
             }
             // DownloadsProvider
@@ -178,6 +188,7 @@ object FileUri {
                 val selectionArgs = arrayOf(split[1])
                 return getDataColumn(context, contentUri, selection, selectionArgs)
             }
+
             //GoogleDriveProvider
             else if (isGoogleDriveUri(uri)) {
                 return getGoogleDriveFilePath(uri, context)

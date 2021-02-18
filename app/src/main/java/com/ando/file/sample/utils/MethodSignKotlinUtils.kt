@@ -31,7 +31,7 @@ object MethodSignKotlinUtils {
 
     fun dumpMethods(context: Context) {
         //不带弹窗
-        //dumpMethodSignInfo(context, FileOperatorQ::class)
+        dumpMethodSignInfo(context, FileOperatorQ::class)
 
         //带弹窗
         //dumpMethodSignInfoWithUi(context,FileOperatorQ::class)

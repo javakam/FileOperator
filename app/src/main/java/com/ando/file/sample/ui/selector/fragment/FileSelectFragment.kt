@@ -1,13 +1,11 @@
 package com.ando.file.sample.ui.selector.fragment
 
-import ando.file.core.FileGlobal
-import ando.file.core.FileLogger
-import ando.file.core.FileSizeUtils
-import ando.file.core.FileUtils
+import ando.file.core.*
 import ando.file.selector.*
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +20,7 @@ import com.ando.file.sample.utils.ResultUtils
 import java.io.File
 
 /**
- * Show Usage In Fragment
+ * Usage In Fragment
  *
  * @author javakam
  * @date 2021-1-25 09:48:10
@@ -41,7 +39,6 @@ class FileSelectFragment : Fragment() {
         }
     }
 
-
     private lateinit var mBtChoosePicture: Button
     private lateinit var mBtChooseFile: Button
     private lateinit var mTvError: TextView
@@ -53,6 +50,28 @@ class FileSelectFragment : Fragment() {
     private var mFileSelectorRequest = REQUEST_CHOOSE_IMAGE
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        FileLogger.e("getExternalStorageDirectory: ${Environment.getExternalStorageDirectory()}")
+
+        //Public Documents Directory
+        val documents: File = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+        FileLogger.e("Directory : ${requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)}  ___  $documents")
+
+        FileLogger.d(
+            "getExternalStorageState: ${Environment.getExternalStorageState(documents)} \n " +
+                    "isExternalStorageEmulated: ${Environment.isExternalStorageEmulated(documents)} \n " +
+                    "isExternalStorageRemovable: ${Environment.isExternalStorageRemovable(documents)}"
+        )
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            FileLogger.d("isExternalStorageLegacy: ${Environment.isExternalStorageLegacy(documents)}")
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            FileLogger.d("isExternalStorageManager: ${Environment.isExternalStorageManager(documents)}")
+        }
+
+        documents.listFiles()?.forEach {
+            FileLogger.w("${it.name}  ${it.absolutePath}")
+        }
+
         val v = inflater.inflate(R.layout.activity_select_single_image, container, false)
         mBtChoosePicture = v.findViewById(R.id.bt_select_single)
         mBtChooseFile = v.findViewById(R.id.bt_select_file)
