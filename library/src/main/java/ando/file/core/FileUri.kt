@@ -1,10 +1,7 @@
 package ando.file.core
 
 import android.annotation.SuppressLint
-import android.content.ContentResolver
-import android.content.ContentUris
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
@@ -44,7 +41,7 @@ object FileUri {
      */
     fun jumpManageAppAllFilesPermissionSetting(
         context: Context,
-        isNewTask: Boolean = false
+        isNewTask: Boolean = false,
     ): Boolean {
         if (isExternalStorageManager()) return true
 
@@ -99,7 +96,9 @@ object FileUri {
         if (context == null || uri == null) return null
 
         FileLogger.i(
-            "FileUri getFilePathByUri -> Authority: " + uri.authority +
+            "FileUri getFilePathByUri -> " +
+                    "Uri: " + uri +
+                    ", Authority: " + uri.authority +
                     ", Fragment: " + uri.fragment +
                     ", Port: " + uri.port +
                     ", Query: " + uri.query +
@@ -156,7 +155,6 @@ object FileUri {
                 if (id != null && id.startsWith("raw:")) {
                     return id.substring(4)
                 }
-
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                     val contentUriPrefixesToTry = arrayOf(
                         "content://downloads/public_downloads",
@@ -172,7 +170,7 @@ object FileUri {
                             FileLogger.e(e.toString())
                         }
                     }
-                } else return getDownloadsPathQ(context, uri)
+                } else return null
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
@@ -184,9 +182,8 @@ object FileUri {
                     "audio" -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                     else -> null
                 }
-                val selection = "_id=?"
                 val selectionArgs = arrayOf(split[1])
-                return getDataColumn(context, contentUri, selection, selectionArgs)
+                return getDataColumn(context, contentUri, "_id=?", selectionArgs)
             }
 
             //GoogleDriveProvider
@@ -220,7 +217,7 @@ object FileUri {
         else if ("file".equals(uri.scheme, true)) {
             return uri.path
         }
-        return uri.toString()
+        return null
     }
 
     /**
@@ -245,28 +242,12 @@ object FileUri {
                 if (c.moveToFirst()) {
                     val columnIndex = c.getColumnIndex(column)
                     return c.getString(columnIndex)
-                } else uri.path
+                } else null
             } catch (e: Throwable) {
                 FileLogger.e("getDataColumn -> ${e.message}")
             }
         }
-        return uri.path
-    }
-
-    private fun getDownloadsPathQ(context: Context, uri: Uri): String? {
-        // path could not be retrieved using ContentResolver, therefore copy file to accessible cache using streams
-        var destinationPath: String? = uri.path
-        val fileName: String? = FileUtils.getFileNameFromUri(uri)
-        if (fileName.isNullOrBlank()) return destinationPath
-
-        val filePath = "${context.externalCacheDir}${File.separator}documents"
-        var file: File? = File(filePath, fileName)
-        context.contentResolver.openInputStream(uri)?.use {
-            file = FileUtils.write2File(it, file, true)
-            destinationPath = file?.path
-        }
-        //FileLogger.i("getDownloadsPathQ -> $destinationPath")
-        return destinationPath
+        return null
     }
 
     //The Uri to check

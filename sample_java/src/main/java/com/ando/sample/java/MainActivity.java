@@ -114,17 +114,17 @@ public class MainActivity extends Activity {
                 .setRequestCode(REQUEST_CHOOSE_FILE)
                 .setMinCount(1, "Choose at least one file !")
                 .setMaxCount(10, "Choose up to ten files !")
-                .setSingleFileMaxSize(5242880, "大小不能超过5M！")
-                .setAllFilesMaxSize(10485760, "总The size cannot exceed 10M !")
+                .setSingleFileMaxSize(5242880, "大小不能超过 5M！")
+                .setAllFilesMaxSize(10485760, "总大小不能超过 10M !")
                 //默认为 */* 可以选择任何文件类型, 不同系统提供的选择UI不一样 eg:arrayOf("video/*","audio/*","image/*")
-                .setMimeTypes(new String[]{"image/*"})
+                .setMimeTypes("image/*")
                 .applyOptions(options)
 
                 //优先使用 FileSelectOptions 中设置的 FileSelectCondition
                 .filter(new FileSelectCondition() {
                     @Override
                     public boolean accept(@NonNull IFileType fileType, Uri uri) {
-                        switch ((FileType)fileType) {
+                        switch ((FileType) fileType) {
                             case IMAGE:
                                 return (uri != null && !TextUtils.isEmpty(uri.getPath()) && !FileUtils.INSTANCE.isGif(uri));
                             case VIDEO:
@@ -285,6 +285,7 @@ public class MainActivity extends Activity {
         String path = getCacheDir().getAbsolutePath() + "/image/";
         File file = new File(path);
         if (!file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             file.mkdirs();
         }
         return path;

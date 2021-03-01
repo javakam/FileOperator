@@ -47,40 +47,39 @@ object Base64Utils {
     }
 
     @Throws(Exception::class)
-    fun encodeFileToBase64(uri: Uri?): String {
-        if (uri == null) return ""
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    fun encodeFileToBase64(uri: Uri?): String =
+        uri?.run {
             try {
-                val sb = StringBuilder()
-                getContext().contentResolver.openInputStream(uri)?.use { inputStream ->
-                    BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                        var line: String? = reader.readLine()
-                        while (line != null) {
-                            sb.append(line)
-                            line = reader.readLine()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val sb = StringBuilder()
+                    getContext().contentResolver.openInputStream(uri)?.use { inputStream ->
+                        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                            var line: String? = reader.readLine()
+                            while (line != null) {
+                                sb.append(line)
+                                line = reader.readLine()
+                            }
                         }
                     }
+                    String(encode(sb.toString().toByteArray()))
+                } else {
+                    // Build.VERSION_CODES.O 以下
+                    val file = File(getFilePathByUri(uri) ?: return "")
+                    val inputFile = FileInputStream(file)
+                    val buffer = ByteArray(file.length().toInt())
+                    inputFile.read(buffer)
+                    inputFile.close()
+                    String(encode(buffer))
                 }
-                return String(encode(sb.toString().toByteArray()))
             } catch (e: Exception) {
                 e("encodeFileToBase64 Exception : $e")
+                ""
             }
-            return ""
-        }
-
-        // Build.VERSION_CODES.O 以下
-        val file = File(getFilePathByUri(uri) ?: return "")
-        val inputFile = FileInputStream(file)
-        val buffer = ByteArray(file.length().toInt())
-        inputFile.read(buffer)
-        inputFile.close()
-        return String(encode(buffer))
-    }
+        } ?: ""
 
     fun isContentUriExists(
         context: Context?,
-        uri: Uri?
+        uri: Uri?,
     ): Boolean {
         if (null == context) {
             return false
@@ -134,9 +133,7 @@ object Base64Utils {
      * @param data 源字符串
      * @return String
      */
-    fun encode(data: String): String {
-        return String(encode(data.toByteArray()))
-    }
+    fun encode(data: String): String = String(encode(data.toByteArray()))
 
     /**
      * 功能：解码字符串
@@ -146,9 +143,7 @@ object Base64Utils {
      * @author jiangshuai
      * @date 2016年10月03日
      */
-    fun decode(data: String): String {
-        return String(decode(data.toCharArray()))
-    }
+    fun decode(data: String): String = String(decode(data.toCharArray()))
 
     /**
      * 功能：编码byte[]

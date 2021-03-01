@@ -61,9 +61,9 @@
     <string name="str_ando_file_suffix">Suffix</string>
     <string name="str_ando_file_exist">Exist</string>
     <string name="str_ando_file_compress_dir_size">Compressed image size of the cache directory</string>
-    <string name="str_ando_file_format_size">Format the size</string>
-    <string name="str_ando_file_format_size2">Format the size(Without the units, keep three decimal places)</string>
-    <string name="str_ando_file_format_size3">Format the size(The custom units, keep a decimal places)</string>
-    <string name="str_ando_file_format_size4">Format the size(The default units, keep two decimal places)</string>
+    <string name="str_ando_file_format_size">Formatted Size</string>
+    <string name="str_ando_file_format_size2">Formatted Size(Without the units, keep three decimal places)</string>
+    <string name="str_ando_file_format_size3">Formatted Size(The custom units, keep a decimal places)</string>
+    <string name="str_ando_file_format_size4">Formatted Size(The default units, keep two decimal places)</string>
 
 </resources>
