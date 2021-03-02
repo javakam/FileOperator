@@ -5,6 +5,7 @@ plugins {
 }
 
 def config = rootProject.ext.android
+def version = rootProject.ext.version
 
 android {
     compileSdkVersion config.compileSdkVersion
@@ -82,9 +83,17 @@ dependencies {
     //图片
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
-    //自己的东西用着放心 (*^▽^*)
+    //Dialog
+    //还是自己的东西用着放心 (*^▽^*)
     //implementation 'ando.dialog:core:1.2.0'
     //implementation 'ando.dialog:usage:1.2.0'
+
+    // OkHttp + retrofit
+    implementation "com.google.code.gson:gson:2.8.6"
+    implementation "com.squareup.okhttp3:okhttp:$version.okhttp"
+    implementation "com.squareup.okhttp3:logging-interceptor:$version.okhttp"
+    implementation "com.squareup.retrofit2:retrofit:$version.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$version.retrofit"
 
 }
 

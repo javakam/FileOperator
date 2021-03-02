@@ -6,14 +6,16 @@ import android.text.TextUtils
 import ando.file.core.FileDirectory.getExternalCacheDir
 import ando.file.core.FileDirectory.getExternalFilesDir
 import ando.file.core.FileDirectory.getFilesDir
+import android.annotation.SuppressLint
 import java.io.File
 
 /**
- * FileOperator
+ * # FileOperator
  *
  * @author javakam
  * @date 2020/5/9  14:16
  */
+@SuppressLint("StaticFieldLeak")
 object FileOperator {
 
     private lateinit var context: Context
@@ -53,7 +55,9 @@ object FileOperator {
     //--------------------------------------------------------------------------
 
     /**
-     * 获取数据库存储路径(Get the database storage path) /data/data/包名/databases/
+     * 获取数据库存储路径(Get the database storage path)
+     *
+     * /data/data/包名/databases/
      */
     fun getDatabasePath(context: Context, dirName: String): String? {
         val root: File? = context.getDatabasePath(null)
@@ -71,14 +75,18 @@ object FileOperator {
     //--------------------------------------------------------------------------
 
     /**
-     * 获取外部缓存存储路径(Get external cache storage path) /SDCard/Android/data/包名/cache/
+     * 获取外部缓存存储路径(Get external cache storage path)
+     *
+     * /SDCard/Android/data/包名/cache/
      */
     fun getCacheDir(): File? = if (isDebug()) getExternalCacheDir() else context.cacheDir
 
     fun getCachePath(dirName: String): String? = getCachePath(getCacheDir(), dirName)
 
     /**
-     * 获取缓存存储路径(Get cache storage path) /SDCard/Android/data/包名/cache/
+     * 获取缓存存储路径(Get cache storage path)
+     *
+     * /SDCard/Android/data/包名/cache/
      *
      * 设置：对应清除缓存(Setting: corresponding to clear cache)
      */
@@ -102,7 +110,9 @@ object FileOperator {
     fun getFilesPath(dirName: String): String? = getFilesPath(getFileDir(), dirName)
 
     /**
-     * 获取文件存储路径(Get file storage path) /SDCard/Android/data/包名/files/
+     * 获取文件存储路径(Get file storage path)
+     *
+     * /SDCard/Android/data/包名/files/
      *
      * 设置：对应清除数据(Settings: corresponding to clear data)
      */

@@ -43,3 +43,9 @@
 ```
 1.修复 Android 11 文件类型不匹配问题 (Fix Android 11 "File type mismatch" problem)
 ```
+
+## v1.3.8
+```
+1.移除 FileUri 中的复制文件获取路径的方案
+2.app中加入上传案例
+```
