@@ -17,7 +17,7 @@ class App : Application() {
         super.onCreate()
         FileOperator.init(this, true)
         CrashHandler.init(this, "${externalCacheDir?.path}/Crash/")
-        MethodSignKotlinUtils.dumpMethods(this)
+        //MethodSignKotlinUtils.dumpMethods(this)
     }
 
 }

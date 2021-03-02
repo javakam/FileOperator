@@ -70,7 +70,7 @@ object FileSizeUtils {
      * 计算`文件/文件夹`的大小 (Calculate the size of `file folder`)
      *
      * @param path 文件/文件夹的路径
-     * @return 大小
+     * @return Size
      */
     fun calculateFileOrDirSize(path: String?): Long {
         if (path.isNullOrBlank()) return 0L
@@ -80,9 +80,9 @@ object FileSizeUtils {
         try {
             blockSize = if (file.isDirectory) getFolderSize(file) else getFileSize(file)
         } catch (e: Exception) {
-            e("获取文件大小 获取失败! $e")
+            e("Failed to get file size = $e")
         }
-        i("获取文件大小 =$blockSize")
+        i("Get file size = $blockSize")
         return blockSize
     }
 

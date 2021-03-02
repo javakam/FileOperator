@@ -4,6 +4,7 @@ import ando.file.BuildConfig;
 import ando.file.core.FileOperator;
 
 /**
+ * # App
  *
  * @author javakam
  * @date 2020/8/6  17:32
@@ -14,10 +15,7 @@ public class App extends android.app.Application {
     public void onCreate() {
         super.onCreate();
 
-        FileOperator.INSTANCE.init(
-                this,
-                BuildConfig.DEBUG
-        );
+        FileOperator.INSTANCE.init(this, BuildConfig.DEBUG);
 
     }
 }

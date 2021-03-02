@@ -19,10 +19,10 @@ repositories {
 ##### 2. 依赖(dependencies)
 
 ```
-implementation 'ando.file:core:1.3.7'       //核心库必选(Core library required)
-implementation 'ando.file:selector:1.3.7'   //文件选择器(File selector)
-implementation 'ando.file:compressor:1.3.7' //图片压缩, 核心算法采用 Luban
-implementation 'ando.file:android-q:1.3.7'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
+implementation 'ando.file:core:1.3.8'       //核心库必选(Core library required)
+implementation 'ando.file:selector:1.3.8'   //文件选择器(File selector)
+implementation 'ando.file:compressor:1.3.8' //图片压缩, 核心算法采用 Luban
+implementation 'ando.file:android-q:1.3.8'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)
@@ -675,23 +675,27 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 ```
 
 ### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core//FileUtils.kt)
-- `getExtension` 获取文件后缀`jpg`
-- `getExtensionFull` 获取文件完整后缀`.jpg`
-- `splitFilePath()` 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
-- `getFileNameFromPath(path: String?)` 通过`FilePath`获取文件名
-- `getFileNameFromUri(uri: Uri?)` 通过`Uri`获取文件名
-- `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` 创建文件, 同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
-- `createDirectory(filePath: String?): Boolean` 创建目录
-- `deleteFile` 删除文件或目录
-- `deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
-- `deleteFilesNotDir` 只删除文件，不删除文件夹
-- `readFileText(InputStream/Uri): String?` 读取文本文件中的内容(Read the contents of the text file)
-- `readFileBytes(InputStream/Uri): ByteArray?` 读取文件中的内容并返回`ByteArray`
-- `copyFile` 根据文件路径拷贝文件 `java.nio`
-- `write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
-- `write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` 向文件中写入数据
-- `isLocal` 检验是否为本地URI
-- `isGif()` 检验是否为 gif
+
+Method | Remark
+:-|:-
+
+`getExtension` | 获取文件后缀`jpg`
+`getExtensionFull` | 获取文件完整后缀`.jpg`
+`splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
+`getFileNameFromPath(path: String?)` | 通过`FilePath`获取文件名
+`getFileNameFromUri(uri: Uri?)` | 通过`Uri`获取文件名
+`createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` | 创建文件, 同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
+`createDirectory(filePath: String?): Boolean` | 创建目录
+`deleteFile` | 删除文件或目录
+`deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` | 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
+`deleteFilesNotDir` | 只删除文件，不删除文件夹
+`readFileText(InputStream/Uri): String?` | 读取文本文件中的内容(Read the contents of the text file)
+`readFileBytes(InputStream/Uri): ByteArray?` | 读取文件中的内容并返回`ByteArray`
+`copyFile` | 根据文件路径拷贝文件 `java.nio`
+`write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
+`write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` | 向文件中写入数据
+`isLocal` | 检验是否为本地URI
+`isGif()` | 检验是否为 gif
 
 > `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
 
@@ -835,21 +839,11 @@ context.startActivity(chooserIntent)
 
 [Android 10 中的隐私权](https://developer.android.google.cn/about/versions/10/privacy/changes#scoped-storage)
 
-#### GitHub
-
-[FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
-
-[FilePicker](https://github.com/chsmy/FilePicker)
-
-[AndroidFilePicker](https://github.com/rosuH/AndroidFilePicker/blob/master/README_CN.md)
-
-[Android-FilePicker](https://github.com/DroidNinja/Android-FilePicker)
-
-[MaterialFiles](https://github.com/zhanghai/MaterialFiles)
-
 #### Blog
 
 [LOGO](https://www.easyicon.net/1293281-folders_icon.html)
+
+[FileUtils](https://github.com/coltoscosmin/FileUtils/blob/master/FileUtils.java)
 
 [github/scoped_storage_sample](https://github.com/songlongGithub/scoped_storage_sample)
 
