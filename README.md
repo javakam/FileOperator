@@ -678,7 +678,6 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 
 Method | Remark
 :-|:-
-
 `getExtension` | 获取文件后缀`jpg`
 `getExtensionFull` | 获取文件完整后缀`.jpg`
 `splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
@@ -689,7 +688,7 @@ Method | Remark
 `deleteFile` | 删除文件或目录
 `deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` | 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
 `deleteFilesNotDir` | 只删除文件，不删除文件夹
-`readFileText(InputStream/Uri): String?` | 读取文本文件中的内容(Read the contents of the text file)
+`readFileText(InputStream/Uri): String?` | 读取文本文件中的内容
 `readFileBytes(InputStream/Uri): ByteArray?` | 读取文件中的内容并返回`ByteArray`
 `copyFile` | 根据文件路径拷贝文件 `java.nio`
 `write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
