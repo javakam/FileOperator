@@ -2,12 +2,9 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-- 🚀[GitHub](https://github.com/javakam/FileOperator)
-- 🚀更简单的处理`Android`系统文件操作
-- 🚀适用于`Android 4.4`及以上系统, 兼容`AndroidQ`新的存储策略
-- 🚀图片压缩算法参考 👉 [Luban](https://github.com/Curzibn/Luban)
-- 🚀`Kotlin Sample` 👉 [app](https://github.com/javakam/FileOperator/tree/master/app)
-- 🚀`Java Sample` 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
+- 🚀`Android`文件操作库
+- 🚀适用于`Android 4.4`及以上系统, 已兼容`AndroidQ`和`Android11`新的存储策略
+- 🚀`Kotlin`和`Java`案例 👉 [app](https://github.com/javakam/FileOperator/tree/master/app) & [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
 
 ## 使用(Usage)
 ##### 1. Project `build.gradle`:

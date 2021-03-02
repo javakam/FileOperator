@@ -67,7 +67,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
@@ -81,8 +81,8 @@ dependencies {
     //权限
     implementation 'com.permissionx.guolindev:permissionx:1.4.0'
     //图片
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
-    kapt 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    kapt 'com.github.bumptech.glide:compiler:4.12.0'
     //Dialog
     //还是自己的东西用着放心 (*^▽^*)
     //implementation 'ando.dialog:core:1.2.0'
