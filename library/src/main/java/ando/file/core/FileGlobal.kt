@@ -158,9 +158,9 @@ object FileGlobal {
     fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) =
         if (pfd != null) {
             //读取成功 : 87  大小:2498324B
-            FileLogger.d("读取成功: getStatSize=${pfd.statSize}B")
+            FileLogger.d("Read successfully: getStatSize=${pfd.statSize}B")
         } else {
-            FileLogger.e("读取失败!")
+            FileLogger.e("Reading failed!")
         }
 
     /**
@@ -179,7 +179,7 @@ object FileGlobal {
                     it.getString(sizeIndex)
                 } else "Unknown"
                 block?.invoke(displayName, size)
-                FileLogger.i("文件名称 ：$displayName  Size：$size B")
+                FileLogger.i("Name ：$displayName  Size：$size B")
             }
         }
     }

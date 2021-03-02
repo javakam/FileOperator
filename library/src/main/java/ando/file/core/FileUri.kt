@@ -261,7 +261,7 @@ object FileUri {
              *     * and display it.
              * */
             val nameIndex: Int = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            val sizeIndex: Int = c.getColumnIndex(OpenableColumns.SIZE)
+            //val sizeIndex: Int = c.getColumnIndex(OpenableColumns.SIZE)
             c.moveToFirst()
             val name: String = c.getString(nameIndex)
             //val size = c.getLong(sizeIndex).toString()
