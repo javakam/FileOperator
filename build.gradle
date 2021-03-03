@@ -5,15 +5,14 @@ apply from: "config.gradle"
 buildscript {
     ext.kotlin_version = '1.4.31'
     repositories {
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         google()
         jcenter()
-        maven { url "https://maven.google.com" }
         maven { url "https://jitpack.io" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url 'https://dl.bintray.com/novoda-oss/snapshots/' }
+        maven { url "https://dl.bintray.com/javakam/AndoLibrary" }
         maven { url "https://dl.bintray.com/javakam/AndoDialog" }
         maven { url 'https://dl.bintray.com/javakam/FileOperator' }
-        maven { url 'https://dl.bintray.com/novoda-oss/snapshots/' }
-
     }
     dependencies {
         //gradle-wrapper.properties 👉 https://developer.android.com/studio/releases/gradle-plugin#updating-gradle
@@ -27,15 +26,14 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         google()
         jcenter()
-        maven { url "https://maven.google.com" }
         maven { url "https://jitpack.io" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url 'https://dl.bintray.com/novoda-oss/snapshots/' }
+        maven { url "https://dl.bintray.com/javakam/AndoLibrary" }
         maven { url "https://dl.bintray.com/javakam/AndoDialog" }
         maven { url 'https://dl.bintray.com/javakam/FileOperator' }
-        maven { url 'https://dl.bintray.com/novoda-oss/snapshots/' }
-
     }
     tasks.withType(Javadoc) {
         options {
