@@ -10,9 +10,9 @@ import android.net.Uri
  *  MediaStore.Video.Media.SIZE
  */
 data class MediaStoreVideo(
-    override var id: Long,
-    override var uri: Uri?,
-    override var displayName: String?,
-    val duration: Long?,
-    override var size: Long?,
-) : BaseMediaColumnsData()
+    var id: Long,
+    var uri: Uri?,
+    var displayName: String?,
+    var duration: Long?,
+    var size: Long?,
+)

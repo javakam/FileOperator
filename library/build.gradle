@@ -1,8 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    //id 'com.novoda.bintray-release'
-    id 'com.github.panpf.bintray-publish'
+    id 'io.deepmedia.tools.publisher'
 }
 
 def config = rootProject.ext.android
@@ -38,9 +37,9 @@ android {
         jvmTarget = "1.8"
     }
     // More than one file was found with OS independent path 'META-INF/library_release.kotlin_module'
-    packagingOptions {
-        exclude 'META-INF/*.kotlin_module'
-    }
+//    packagingOptions {
+//        exclude 'META-INF/*.kotlin_module'
+//    }
 }
 
 dependencies {
@@ -48,16 +47,95 @@ dependencies {
     compileOnly 'androidx.annotation:annotation:1.1.0'
 }
 
-//https://github.com/novoda/bintray-release/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3HOME
-//https://github.com/panpf/bintray-publish
-publish {
-    repoName = 'FileOperator'
-    userOrg = 'javakam'
-    groupId = 'ando.file'
-    artifactId = 'core'
-    publishVersion = config.versionName
-    desc = 'FileOperator Core Library.'
-    website = "https://github.com/javakam/${rootProject.name}"
-    //true 上传前测试 ; false 正常上传
-    //dryRun = true
+//publish {
+//    repoName = 'FileOperator'
+//    userOrg = 'javakam'
+//    groupId = 'ando.file'
+//    artifactId = 'core'
+//    publishVersion = config.versionName
+//    desc = 'FileOperator Core Library.'
+//    website = "https://github.com/javakam/${rootProject.name}"
+//    //true 上传前测试 ; false 正常上传
+//    //dryRun = true
+//}
+
+//https://github.com/deepmedia/MavenPublisher
+publisher {
+    project.name = "FileOperator"
+    project.description = "FileOperator Core Library."
+    project.artifact = "core"
+    project.group = "ando.file"
+    project.url = "https://github.com/javakam/${rootProject.name}"
+//    project.scm = GithubScm("javakam", "FileOperator")
+//    project.addLicense(License.APACHE_2_0) //addLicense("My license", "https://mylicense.org")
+    project.packaging = "aar"
+//    project.addDeveloper("javakam", "jooybao@foxmail.com")
+//    project.addDeveloper(
+//            name = "javakam",
+//            email = "jooybao@foxmail.com",
+//            organization = "MeiYou",
+//            url = "https://javakam.github.io/"
+//    )
+
+    release.version = config.versionName
+    //release.sources = Release.SOURCES_AUTO
+    //release.docs = Release.DOCS_AUTO
+
+    // Release VCS tag. Defaults to "v${release.version}"
+    release.tag = "v${config.versionName}"
+    // Release description. Defaults to "${project.name} {release.tag}"
+    release.description = "${project.name}"
+
+    // Signing keys
+    signing.key = "3FE3D3D7"
+    signing.password = "lovekam12"
+
+    sonatype("") {
+//        auth.user = "javakam"
+//        auth.password = "Machangbao@1992"
+    }
+
+//    sonatype {
+//        // Sonatype configuration...
+//        // You can find repository constants in io.deepmedia.tools.publisher.sonatype.Sonatype.
+//        // To publish a snapshot, just use one of the Sonatype.OSSRH_SNAPSHOT_* urls.
+//        repository = Sonatype.OSSRH_1
+//
+//        auth.user = "javakam"
+//        auth.password = "Machangbao@1992"
+//
+//        // Signing is required
+//        signing.key = "3FE3D3D7"
+//        signing.password = "lovekam12"
+//    }
+
+    // If needed, you can add other named publications.
+//    sonatype("snapshot") {
+//        repository = Sonatype.OSSRH_SNAPSHOT_1
+//    }
+
+//    directory {
+//        // Override some fields or add missing ones
+//        project.description = "Project description for local directory"
+//        release.version = config.versionName
+//
+//        //directory = "build/prebuilt"
+//        //signing.key = "SIGNING_KEY"
+//        //signing.password = "SIGNING_PASSWORD"
+//    }
+
+    // Project SCM info. Defaults to simple Scm pointing to project.url
+    // Using platform specific functions ensure correct scm values
+    //project.scm = Scm("https://github.com/javakam/FileOperator.git")
+    //project.scm = GithubScm(user = "javakam", repository = "FileOperator")
+    //project.scm = BitBucketScm(user = "javakam", repository = "FileOperator")
+
+    // Release sources
+    //release.setSources(Release.SOURCES_AUTO) // creates a sources Jar
+    //release.setSources(sourcesJar.get())
+
+    // Release docs
+    //release.setDocs(Release.DOCS_AUTO) // create a docs Jar
+    //release.setDocs(dokkaJar.get())
+
 }

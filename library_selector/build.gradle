@@ -2,8 +2,7 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-parcelize'
-    //id 'com.novoda.bintray-release'
-    id 'com.github.panpf.bintray-publish'
+    id 'io.deepmedia.tools.publisher'
 }
 
 def config = rootProject.ext.android
@@ -47,13 +46,31 @@ dependencies {
     compileOnly project(':library')
 }
 
-publish {
-    repoName = 'FileOperator'
-    userOrg = 'javakam'
-    groupId = 'ando.file'
-    artifactId = 'selector'
-    publishVersion = config.versionName
-    desc = 'Android File Selector.'
-    website = "https://github.com/javakam/${rootProject.name}"
-    //dryRun = true
+//publish {
+//    repoName = 'FileOperator'
+//    userOrg = 'javakam'
+//    groupId = 'ando.file'
+//    artifactId = 'selector'
+//    publishVersion = config.versionName
+//    desc = 'Android File Selector.'
+//    website = "https://github.com/javakam/${rootProject.name}"
+//    //dryRun = true
+//}
+
+publisher {
+    project.name = "FileOperator"
+    project.description = "Android File Selector."
+    project.artifact = "selector"
+    project.group = "ando.file"
+    project.url = "https://github.com/javakam/${rootProject.name}"
+    project.packaging = "aar"
+
+    release.version = config.versionName
+    release.tag = "v${config.versionName}"
+    release.description = "${project.name}"
+    sonatype("") {
+    }
+
+//    signing.key =project.findProperty(signing.keyId)
+//    signing.password =project.findProperty(signing.password)
 }

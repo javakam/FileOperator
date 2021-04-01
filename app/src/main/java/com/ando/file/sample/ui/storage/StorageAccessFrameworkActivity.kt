@@ -14,7 +14,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import ando.file.core.*
-import ando.file.androidq.BaseMediaColumnsData
 import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_CHOOSE_DOCUMENT_DIR
 import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_CREATE_FILE
 import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_EDIT_FILE
@@ -49,7 +48,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
     private lateinit var createFileUriTv: TextView
     private lateinit var tvDocumentTreeFiles: TextView
 
-    private var mCreateFile: BaseMediaColumnsData? = null
+    private var mCreateUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,7 +139,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun renameFile() {
         renameFileBtn.setOnClickListener {
-            val uri = mCreateFile?.uri
+            val uri = mCreateUri
 
             if (uri != null) {
                 renameFileSAF(uri, "smlz.txt") { isSuccess: Boolean, msg: String ->
@@ -231,8 +230,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
                 } else {
                     createFileUriTv.text = uri.toString()
                 }
-                mCreateFile = BaseMediaColumnsData()
-                mCreateFile?.uri = uri
+                mCreateUri = uri
             }
         } else if (requestCode == REQUEST_CODE_SAF_EDIT_FILE) {
             //编辑文档

@@ -1,8 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    //id 'com.novoda.bintray-release'
-    id 'com.github.panpf.bintray-publish'
+    id 'io.deepmedia.tools.publisher'
 }
 
 def config = rootProject.ext.android
@@ -36,9 +35,6 @@ android {
     lintOptions {
         abortOnError false
     }
-    packagingOptions {
-        exclude 'META-INF/*.kotlin_module'
-    }
 }
 
 dependencies {
@@ -53,13 +49,32 @@ dependencies {
 
 }
 
-publish {
-    repoName = 'FileOperator'
-    userOrg = 'javakam'
-    groupId = 'ando.file'
-    artifactId = 'ui'
-    publishVersion = config.versionName
-    desc = 'Android File Selector UI.'
-    website = "https://github.com/javakam/${rootProject.name}"
-    //dryRun = true
+//publish {
+//    repoName = 'FileOperator'
+//    userOrg = 'javakam'
+//    groupId = 'ando.file'
+//    artifactId = 'ui'
+//    publishVersion = config.versionName
+//    desc = 'Android File Selector UI.'
+//    website = "https://github.com/javakam/${rootProject.name}"
+//    //dryRun = true
+//}
+
+publisher {
+    project.name = "FileOperator"
+    project.description = "Android File Selector UI."
+    project.artifact = "selector-ui"
+    project.group = "ando.file"
+    project.url = "https://github.com/javakam/${rootProject.name}"
+    project.packaging = "aar"
+
+    release.version = config.versionName
+    release.tag = "v${config.versionName}"
+    release.description = "${project.name}"
+
+    sonatype("") {
+    }
+
+//    signing.key =project.findProperty(signing.keyId)
+//    signing.password =project.findProperty(signing.password)
 }
