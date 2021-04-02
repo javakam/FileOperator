@@ -49,3 +49,9 @@
 1.移除 FileUri 中的复制文件获取路径的方案
 2.app中加入上传案例
 ```
+
+## v1.3.9
+```
+1.移除 bintray, jcenter, 改用 MavenCentral
+2.移除Java使用案例 sample_java
+```

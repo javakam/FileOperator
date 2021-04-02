@@ -4,7 +4,6 @@
 
 - 🚀`Android`文件操作库
 - 🚀适用于`Android 4.4`及以上系统, 已兼容`AndroidQ`和`Android11`新的存储策略
-- 🚀`Kotlin`和`Java`案例 👉 [app](https://github.com/javakam/FileOperator/tree/master/app) & [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
 
 ## 使用(Usage)
 ##### 1. Project `build.gradle`:
