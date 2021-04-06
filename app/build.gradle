@@ -71,7 +71,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation project(':library')
+    implementation project(':library_core')
     implementation project(':library_selector')
     implementation project(':library_compressor')
     //implementation project(':library_downloader')

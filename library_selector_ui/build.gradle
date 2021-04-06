@@ -43,7 +43,7 @@ dependencies {
     compileOnly 'androidx.activity:activity-ktx:1.2.0-beta02'
     compileOnly 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    compileOnly project(':library')
+    compileOnly project(':library_core')
     compileOnly project(':library_selector')
 
 }
