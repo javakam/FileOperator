@@ -46,6 +46,6 @@ dependencies {
 }
 
 ext {
-    PUBLISH_ARTIFACT_ID = 'selector'
+    PUBLISH_ARTIFACT_ID = 'file.selector'
 }
 apply from: "${rootProject.projectDir}/publish.gradle"

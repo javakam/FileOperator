@@ -49,6 +49,6 @@ dependencies {
 }
 
 ext {
-    PUBLISH_ARTIFACT_ID = 'android-q'
+    PUBLISH_ARTIFACT_ID = 'file.android-q'
 }
 apply from: "${rootProject.projectDir}/publish.gradle"
