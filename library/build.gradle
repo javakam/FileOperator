@@ -1,8 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    //id 'com.novoda.bintray-release'
-    id 'com.github.panpf.bintray-publish'
 }
 
 def config = rootProject.ext.android
@@ -38,9 +36,9 @@ android {
         jvmTarget = "1.8"
     }
     // More than one file was found with OS independent path 'META-INF/library_release.kotlin_module'
-    packagingOptions {
-        exclude 'META-INF/*.kotlin_module'
-    }
+//    packagingOptions {
+//        exclude 'META-INF/*.kotlin_module'
+//    }
 }
 
 dependencies {
@@ -48,16 +46,19 @@ dependencies {
     compileOnly 'androidx.annotation:annotation:1.1.0'
 }
 
-//https://github.com/novoda/bintray-release/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3HOME
-//https://github.com/panpf/bintray-publish
-publish {
-    repoName = 'FileOperator'
-    userOrg = 'javakam'
-    groupId = 'ando.file'
-    artifactId = 'core'
-    publishVersion = config.versionName
-    desc = 'FileOperator Core Library.'
-    website = "https://github.com/javakam/${rootProject.name}"
-    //true 上传前测试 ; false 正常上传
-    //dryRun = true
+//publish {
+//    repoName = 'FileOperator'
+//    userOrg = 'javakam'
+//    groupId = 'ando.file'
+//    artifactId = 'core'
+//    publishVersion = config.versionName
+//    desc = 'FileOperator Core Library.'
+//    website = "https://github.com/javakam/${rootProject.name}"
+//    //true 上传前测试 ; false 正常上传
+//    //dryRun = true
+//}
+
+ext {
+    PUBLISH_ARTIFACT_ID = "core"
 }
+apply from: "${rootProject.projectDir}/publish.gradle"

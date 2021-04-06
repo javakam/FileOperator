@@ -2,8 +2,6 @@ plugins {
     id 'com.android.library'
     id 'kotlin-android'
     id 'kotlin-parcelize'
-    //id 'com.novoda.bintray-release'
-    id 'com.github.panpf.bintray-publish'
 }
 
 def config = rootProject.ext.android
@@ -47,13 +45,7 @@ dependencies {
     compileOnly project(':library')
 }
 
-publish {
-    repoName = 'FileOperator'
-    userOrg = 'javakam'
-    groupId = 'ando.file'
-    artifactId = 'selector'
-    publishVersion = config.versionName
-    desc = 'Android File Selector.'
-    website = "https://github.com/javakam/${rootProject.name}"
-    //dryRun = true
+ext {
+    PUBLISH_ARTIFACT_ID = 'selector'
 }
+apply from: "${rootProject.projectDir}/publish.gradle"

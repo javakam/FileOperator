@@ -49,12 +49,6 @@ object FileLogger {
         }
     }
 
-    fun wtf(msg: String?) {
-        if (isDebug) {
-            Log.wtf(TAG, noNull(msg))
-        }
-    }
-
     fun v(tag: String?, msg: String?) {
         if (isDebug) {
             Log.v(tag, noNull(msg))
@@ -84,11 +78,4 @@ object FileLogger {
             Log.w(tag, noNull(msg))
         }
     }
-
-    fun wtf(tag: String?, msg: String?) {
-        if (isDebug) {
-            Log.wtf(tag, noNull(msg))
-        }
-    }
-
 }

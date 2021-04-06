@@ -2,27 +2,34 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-- 🚀[GitHub](https://github.com/javakam/FileOperator)
-- 🚀更简单的处理`Android`系统文件操作
-- 🚀适用于`Android 4.4`及以上系统, 兼容`AndroidQ`新的存储策略
-- 🚀图片压缩算法参考 👉 [Luban](https://github.com/Curzibn/Luban)
-- 🚀`Kotlin Sample` 👉 [app](https://github.com/javakam/FileOperator/tree/master/app)
-- 🚀`Java Sample` 👉 [sample_java](https://github.com/javakam/FileOperator/tree/master/sample_java)
+- 🚀`Android`文件操作库
+- 🚀适用于`Android 4.4`及以上系统, 已兼容`AndroidQ`和`Android11`新的存储策略
 
 ## 使用(Usage)
 ##### 1. Project `build.gradle`:
 ```
 repositories {
-    maven { url 'https://dl.bintray.com/javakam/FileOperator' }
+    //Bintray
+    //maven { url 'https://dl.bintray.com/javakam/FileOperator' }
+
+    //MavenCentral
+    maven { url "https://s01.oss.sonatype.org/content/repositories/comgithubjavakam-1000" }
 }
 ```
 ##### 2. 依赖(dependencies)
-
+`Bintray`
 ```
-implementation 'ando.file:core:1.3.8'       //核心库必选(Core library required)
-implementation 'ando.file:selector:1.3.8'   //文件选择器(File selector)
-implementation 'ando.file:compressor:1.3.8' //图片压缩, 核心算法采用 Luban
-implementation 'ando.file:android-q:1.3.8'  //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
+implementation 'ando.file:core:1.3.8'       
+implementation 'ando.file:selector:1.3.8'   
+implementation 'ando.file:compressor:1.3.8' 
+implementation 'ando.file:android-q:1.3.8'  
+```
+`MavenCentral`(From 1.4.0)
+```
+implementation 'com.github.javakam:ando.file.core:1.4.0'      //核心库必选(Core library required)
+implementation 'com.github.javakam:ando.file.selector:1.4.0'  //文件选择器(File selector)
+implementation 'com.github.javakam:ando.file.compressor:1.4.0'//图片压缩, 核心算法采用 Luban
+implementation 'com.github.javakam:ando.file.android-q:1.4.0' //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 3. `Application`中初始化(Initialization in Application)

@@ -1,8 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    //id 'com.novoda.bintray-release'
-    id 'com.github.panpf.bintray-publish'
 }
 
 def config = rootProject.ext.android
@@ -26,22 +24,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
     lintOptions {
         abortOnError false
     }
-
     kotlinOptions {
         jvmTarget = "1.8"
-    }
-
-    packagingOptions {
-        exclude 'META-INF/*.kotlin_module'
     }
 }
 
@@ -57,13 +48,7 @@ dependencies {
 
 }
 
-publish {
-    repoName = 'FileOperator'
-    userOrg = 'javakam'
-    groupId = 'ando.file'
-    artifactId = 'compressor'
-    publishVersion = config.versionName
-    desc = 'Android Image Compressor.'
-    website = "https://github.com/javakam/${rootProject.name}"
-    //dryRun = true
+ext {
+    PUBLISH_ARTIFACT_ID = 'compressor'
 }
+apply from: "${rootProject.projectDir}/publish.gradle"

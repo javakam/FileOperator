@@ -1,8 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    //id 'com.novoda.bintray-release'
-    id 'com.github.panpf.bintray-publish'
 }
 
 def config = rootProject.ext.android
@@ -38,10 +36,6 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
-    packagingOptions {
-        exclude 'META-INF/*.kotlin_module'
-    }
 }
 
 dependencies {
@@ -54,13 +48,7 @@ dependencies {
     compileOnly 'androidx.documentfile:documentfile:1.0.1'
 }
 
-publish {
-    repoName = 'FileOperator'
-    userOrg = 'javakam'
-    groupId = 'ando.file'
-    artifactId = 'android-q'
-    publishVersion = config.versionName
-    desc = 'FileOperator Compatible with Android Q.'
-    website = "https://github.com/javakam/${rootProject.name}"
-    //dryRun = false
+ext {
+    PUBLISH_ARTIFACT_ID = 'android-q'
 }
+apply from: "${rootProject.projectDir}/publish.gradle"

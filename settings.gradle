@@ -1,7 +1,6 @@
 rootProject.name = 'FileOperator'
 
 include ':app'
-include ':sample_java'
 include ':library'
 include ':library_selector'
 include ':library_selector_ui'

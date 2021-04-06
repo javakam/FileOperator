@@ -1,8 +1,6 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    //id 'com.novoda.bintray-release'
-    id 'com.github.panpf.bintray-publish'
 }
 
 def config = rootProject.ext.android
@@ -36,9 +34,6 @@ android {
     lintOptions {
         abortOnError false
     }
-    packagingOptions {
-        exclude 'META-INF/*.kotlin_module'
-    }
 }
 
 dependencies {
@@ -53,13 +48,7 @@ dependencies {
 
 }
 
-publish {
-    repoName = 'FileOperator'
-    userOrg = 'javakam'
-    groupId = 'ando.file'
-    artifactId = 'ui'
-    publishVersion = config.versionName
-    desc = 'Android File Selector UI.'
-    website = "https://github.com/javakam/${rootProject.name}"
-    //dryRun = true
+ext {
+    PUBLISH_ARTIFACT_ID = "selector-ui"
 }
+apply from: "${rootProject.projectDir}/publish.gradle"
