@@ -6,13 +6,11 @@ buildscript {
     ext.kotlin_version = '1.4.32'
     repositories {
         mavenCentral()
-        maven {url 'https://maven.aliyun.com/repository/public/'}
         google()
         jcenter()
         maven { url "https://jitpack.io" }
         maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
-        maven { url "https://dl.bintray.com/javakam/maven" }
-        maven { url 'https://dl.bintray.com/javakam/FileOperator' }
+        maven { url "https://s01.oss.sonatype.org/content/repositories/comgithubjavakam-1000" }
     }
     dependencies {
         // gradle-wrapper.properties
@@ -25,13 +23,11 @@ buildscript {
 allprojects {
     repositories {
         mavenCentral()
-        maven {url 'https://maven.aliyun.com/repository/public/'}
         google()
         jcenter()
         maven { url "https://jitpack.io" }
         maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
-        maven { url "https://dl.bintray.com/javakam/maven" }
-        maven { url 'https://dl.bintray.com/javakam/FileOperator' }
+        maven { url "https://s01.oss.sonatype.org/content/repositories/comgithubjavakam-1000" }
     }
     tasks.withType(Javadoc) {
         options {
