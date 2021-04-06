@@ -49,6 +49,6 @@ dependencies {
 }
 
 ext {
-    PUBLISH_ARTIFACT_ID = 'compressor'
+    PUBLISH_ARTIFACT_ID = 'file.compressor'
 }
 apply from: "${rootProject.projectDir}/publish.gradle"

@@ -49,6 +49,6 @@ dependencies {
 }
 
 ext {
-    PUBLISH_ARTIFACT_ID = "selector-ui"
+    PUBLISH_ARTIFACT_ID = "file.selector-ui"
 }
 apply from: "${rootProject.projectDir}/publish.gradle"

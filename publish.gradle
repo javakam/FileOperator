@@ -37,7 +37,7 @@ publishing {
             // The coordinates of the library, being set from variables that
             // we'll set up in a moment
             groupId PUBLISH_GROUP_ID
-            artifactId "ando.file.$PUBLISH_ARTIFACT_ID"
+            artifactId PUBLISH_ARTIFACT_ID
             version PUBLISH_VERSION
 
             // Two artifacts, the `aar` and the sources
