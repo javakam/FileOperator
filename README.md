@@ -7,27 +7,17 @@
 
 ## 使用(Usage)
 ##### 1. 依赖(dependencies)
-`Bintray` -> Project `build.gradle`
-```groovy
-repositories {
-    maven { url 'https://dl.bintray.com/javakam/FileOperator' }
-}
+`mavenCentral` -> Project `build.gradle`
 
-implementation 'ando.file:core:1.3.8'       
-implementation 'ando.file:selector:1.3.8'   
-implementation 'ando.file:compressor:1.3.8' 
-implementation 'ando.file:android-q:1.3.8'  
-```
-`MavenCentral`(From v1.4.0)
 ```groovy
 repositories {
    mavenCentral()
 }
 
-implementation 'com.github.javakam:file.core:1.4.1@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:1.4.1@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:1.4.1@aar'//图片压缩, 核心算法采用 Luban
-implementation 'com.github.javakam:file.android-q:1.4.1@aar' //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
+implementation 'com.github.javakam:file.core:1.4.2@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:1.4.2@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:1.4.2@aar'//图片压缩, 核心算法采用 Luban
+implementation 'com.github.javakam:file.android-q:1.4.2@aar' //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 2. `Application`中初始化(Initialization in Application)
