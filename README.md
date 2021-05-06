@@ -47,7 +47,7 @@ FileOperator.init(this,BuildConfig.DEBUG)
 
 > ☘ `FileOperator`提供了`Android`开发常用的一些文件操作工具类,使用方式大多以静态方法为主,需要的同学可以直接CV需要的文件
 
-#### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileMimeType.kt)
+#### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileMimeType.kt)
 
 ##### 根据`File Name/Path/Url`获取相应`MimeType`
 ```kotlin
@@ -59,7 +59,7 @@ fun getMimeType(uri: Uri?): String {...}
 fun getMimeTypeSupplement(fileName: String): String {...}
 ```
 
-#### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileSizeUtils.kt)
+#### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileSizeUtils.kt)
 ##### 获取指定`文件/文件夹`大小(Get the size of the specified `file folder`)
 
 ```kotlin
@@ -146,7 +146,7 @@ fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): St
 }
 ```
 
-#### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileOpener.kt)
+#### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileOpener.kt)
 ##### 打开系统分享弹窗(Open the system sharing popup)
 ```kotlin
 fun openShare(context: Context, uri: Uri, title: String = "分享文件") {
@@ -216,7 +216,7 @@ fun openFile(context: Any, uri: Uri?, mimeType: String? = null) =
     }
 ```
 
-#### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileUri.kt)
+#### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileUri.kt)
 
 ##### 从`File`路径中获取`Uri`
 Obtain `Uri` from `File` path
@@ -246,7 +246,7 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 }
 ```
 
-#### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core//FileUtils.kt)
+#### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt)
 
 Method | Remark
 :-|:-
