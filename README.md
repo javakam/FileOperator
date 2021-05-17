@@ -7,27 +7,17 @@
 
 ## 使用(Usage)
 ##### 1. 依赖(dependencies)
-`Bintray` -> Project `build.gradle`
-```groovy
-repositories {
-    maven { url 'https://dl.bintray.com/javakam/FileOperator' }
-}
+`mavenCentral` -> Project `build.gradle`
 
-implementation 'ando.file:core:1.3.8'       
-implementation 'ando.file:selector:1.3.8'   
-implementation 'ando.file:compressor:1.3.8' 
-implementation 'ando.file:android-q:1.3.8'  
-```
-`MavenCentral`(From v1.4.0)
 ```groovy
 repositories {
    mavenCentral()
 }
 
-implementation 'com.github.javakam:file.core:1.4.1@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:1.4.1@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:1.4.1@aar'//图片压缩, 核心算法采用 Luban
-implementation 'com.github.javakam:file.android-q:1.4.1@aar' //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
+implementation 'com.github.javakam:file.core:1.4.2@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:1.4.2@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:1.4.2@aar'//图片压缩, 核心算法采用 Luban
+implementation 'com.github.javakam:file.android-q:1.4.2@aar' //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 2. `Application`中初始化(Initialization in Application)
@@ -53,7 +43,246 @@ FileOperator.init(this,BuildConfig.DEBUG)
 
 ## 用法(Usage)
 
-### 1. 单选图片(Single selection picture)
+### 一、常用文件操作(Common file operations)
+
+> ☘ `FileOperator`提供了`Android`开发常用的一些文件操作工具类,使用方式大多以静态方法为主,需要的同学可以直接CV需要的文件
+
+#### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileMimeType.kt)
+
+##### 根据`File Name/Path/Url`获取相应`MimeType`
+```kotlin
+fun getMimeType(str: String?): String {...}
+
+fun getMimeType(uri: Uri?): String {...}
+
+//MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
+fun getMimeTypeSupplement(fileName: String): String {...}
+```
+
+#### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileSizeUtils.kt)
+##### 获取指定`文件/文件夹`大小(Get the size of the specified `file folder`)
+
+```kotlin
+@Throws(Exception::class)
+fun getFolderSize(file: File?): Long {
+    var size = 0L
+    if (file == null || !file.exists()) return size
+    val files = file.listFiles()
+    if (files.isNullOrEmpty()) return size
+    for (i in files.indices) {
+        size += if (files[i].isDirectory) getFolderSize(files[i]) else getFileSize(files[i])
+    }
+    return size
+}
+```
+##### 获取文件大小(Get file size)
+```kotlin
+fun getFileSize(file: File?): Long{...}
+
+fun getFileSize(uri: Uri?): Long{...}
+```
+##### 自动计算指定`文件/文件夹`大小(Automatically calculate the size of the specified `file folder`)
+自动计算指定文件或指定文件夹的大小 , 返回值带 B、KB、M、GB、TB 单位的字符串
+
+```kotlin
+fun getFileOrDirSizeFormatted(path: String?): String {}...}
+```
+##### 格式化大小(`BigDecimal`实现)
+Format size (implemented by `Big Decimal`)
+
+```kotlin
+/**
+ * @param scale 精确到小数点以后几位 (Accurate to a few decimal places)
+ */
+fun formatFileSize(size: Long, scale: Int, withUnit: Boolean = false): String {
+    val divisor = 1024L
+    //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
+    val kiloByte: BigDecimal = formatSizeByTypeWithDivisor(BigDecimal.valueOf(size), scale, SIZE_TYPE_B, divisor)
+    if (kiloByte.toDouble() < 1) {
+        return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_B.unit else ""}"
+    }
+    //KB
+    val megaByte = formatSizeByTypeWithDivisor(kiloByte, scale, SIZE_TYPE_KB, divisor)
+    if (megaByte.toDouble() < 1) {
+        return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_KB.unit else ""}"
+    }
+    //M
+    val gigaByte = formatSizeByTypeWithDivisor(megaByte, scale, SIZE_TYPE_MB, divisor)
+    if (gigaByte.toDouble() < 1) {
+        return "${megaByte.toPlainString()}${if (withUnit) SIZE_TYPE_MB.unit else ""}"
+    }
+    //GB
+    val teraBytes = formatSizeByTypeWithDivisor(gigaByte, scale, SIZE_TYPE_GB, divisor)
+    if (teraBytes.toDouble() < 1) {
+        return "${gigaByte.toPlainString()}${if (withUnit) SIZE_TYPE_GB.unit else ""}"
+    }
+    //TB
+    return "${teraBytes.toPlainString()}${if (withUnit) SIZE_TYPE_TB.unit else ""}"
+}
+```
+转换文件大小,指定转换的类型(Convert file size, specify the type of conversion):
+
+```kotlin
+//scale 精确到小数点以后几位
+fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSizeType): BigDecimal =
+    size.divide(
+        BigDecimal.valueOf(when (sizeType) {
+            SIZE_TYPE_B -> 1L
+            SIZE_TYPE_KB -> 1024L
+            SIZE_TYPE_MB -> 1024L * 1024L
+            SIZE_TYPE_GB -> 1024L * 1024L * 1024L
+            SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
+        }),
+        scale,
+        //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
+        if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
+    )
+```
+
+转换文件大小带单位(Convert file size with unit):
+```kotlin
+fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): String {
+    return "${formatSizeByTypeWithoutUnit(size.toBigDecimal(), scale, sizeType).toPlainString()}${sizeType.unit}"
+}
+```
+
+#### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileOpener.kt)
+##### 打开系统分享弹窗(Open the system sharing popup)
+```kotlin
+fun openShare(context: Context, uri: Uri, title: String = "分享文件") {
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.putExtra(Intent.EXTRA_STREAM, uri)
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+    // Put the Uri and MIME type in the result Intent
+    intent.setDataAndType(uri, getMimeType(uri))
+    context.startActivity(Intent.createChooser(intent, title))
+}
+```
+
+##### 打开浏览器(Open browser)
+```kotlin
+@SuppressLint("QueryPermissionsNeeded")
+fun openBrowser(
+    context: Context, url: String, title: String = "请选择浏览器", newTask: Boolean = false,
+    block: ((result: Boolean, msg: String?) -> Unit)? = null,
+) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        if (newTask) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        //startActivity(intent)
+        //https://developer.android.com/about/versions/11/privacy/package-visibility
+        if (intent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(Intent.createChooser(intent, title))
+            block?.invoke(true, null)
+        } else {
+            block?.invoke(true, "没有可用浏览器")
+        }
+    } catch (e: ActivityNotFoundException) {
+        e.printStackTrace()
+        block?.invoke(true, e.toString())
+    }
+}
+```
+
+##### 直接打开`Url`对应的系统应用
+Directly open the system application corresponding to `Url`
+
+eg: 如果url是视频地址, 系统会直接用内置的视频播放器打开
+
+```kotlin
+fun openUrl(activity: Activity, url: String?) {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(Uri.parse(url), getMimeType(url))
+        activity.startActivity(intent)
+    } catch (e: Exception) {
+        FileLogger.e("openUrl error : " + e.message)
+    }
+}
+```
+
+##### 根据`文件路径`和`类型(后缀判断)`显示支持该格式的程序
+According to `file path` and `type (judgment by suffix)` show programs that support the format
+
+```kotlin
+fun openFile(context: Any, uri: Uri?, mimeType: String? = null) =
+    uri?.let { u ->
+        Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
+            startActivity(context, it)
+        }
+    }
+```
+
+#### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileUri.kt)
+
+##### 从`File`路径中获取`Uri`
+Obtain `Uri` from `File` path
+
+```kotlin
+fun getUriByPath(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path))
+
+fun getUriByFile(file: File?): Uri? =
+    file?.let {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val authority = FileOperator.getContext().packageName + PATH_SUFFIX
+            FileProvider.getUriForFile(FileOperator.getContext(), authority, file)
+        } else Uri.fromFile(file)
+    }
+```
+
+##### 获取`Uri`对应的文件路径,兼容`API 26`
+Get the file path corresponding to `Uri`, compatible with `API 26`
+
+```kotlin
+fun getFilePathByUri(context: Context?, uri: Uri?): String? {
+    if (context == null || uri == null) return null
+    val scheme = uri.scheme
+    // 以 file:// 开头的使用第三方应用打开
+    if (ContentResolver.SCHEME_FILE.equals(scheme, ignoreCase = true)) return uri.path
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) getPath(context, uri) else getPathKitkat(context, uri)
+}
+```
+
+#### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt)
+
+Method | Remark
+:-|:-
+`getExtension` | 获取文件后缀`jpg`
+`getExtensionFull` | 获取文件完整后缀`.jpg`
+`splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
+`getFileNameFromPath(path: String?)` | 通过`FilePath`获取文件名
+`getFileNameFromUri(uri: Uri?)` | 通过`Uri`获取文件名
+`createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` | 创建文件, 同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
+`createDirectory(filePath: String?): Boolean` | 创建目录
+`deleteFile` | 删除文件或目录
+`deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` | 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
+`deleteFilesNotDir` | 只删除文件，不删除文件夹
+`readFileText(InputStream/Uri): String?` | 读取文本文件中的内容
+`readFileBytes(InputStream/Uri): ByteArray?` | 读取文件中的内容并返回`ByteArray`
+`copyFile` | 根据文件路径拷贝文件 `java.nio`
+`write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
+`write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` | 向文件中写入数据
+`isLocal` | 检验是否为本地URI
+`isGif()` | 检验是否为 gif
+
+> `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
+
+```kotlin
+fun File.copyTo(target: File, overwrite: Boolean = false,bufferSize: Int = DEFAULT_BUFFER_SIZE): File
+```
+Usage:
+```kotlin
+boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPath(), "test.txt");
+File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
+```
+
+### 二、选择文件(Select File)
+> implementation 'com.github.javakam:file.selector:x.x.x@aar'  //文件选择器(File selector)
+
+#### 1. 单选图片(Single selection picture)
 
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
@@ -107,7 +336,7 @@ mFileSelector = FileSelector
     .choose()
 ```
 
-### 2. 多选图片(多选+单一类型)
+#### 2. 多选图片(多选+单一类型)
 Multiple selection pictures (multiple selection + single type)
 
 ```kotlin
@@ -160,7 +389,7 @@ mFileSelector = FileSelector
     .choose()
 ```
 
-### 3. 多选文件(多选+多种类型)
+#### 3. 多选文件(多选+多种类型)
 Multiple files (multi-select multiple types)
 
 > 🌴适用于处理复杂文件选择情形, 如: 选取图片、音频文件、文本文件, 其中`图片`至少选择一张, 最多选择两张, 每张图片大小不超过5M, 全部图片大小不超过10M;
@@ -306,9 +535,9 @@ mFileSelector = FileSelector
     .choose()
 ```
 
-### 4. 自定义FileType(Custom FileType)
+#### 4. 自定义FileType(Custom FileType)
 
-#### ①扩展已有的FileType
+##### ①扩展已有的FileType
 
 Extend existing FileType
 
@@ -326,7 +555,7 @@ eg:
 调试(debugging): FileType.TXT.dump()
 ```
 
-#### ②通过`IFileType`自定义文件类型
+##### ②通过`IFileType`自定义文件类型
 
 Through ` IFileType ` custom file type
 
@@ -377,14 +606,14 @@ FileSelector.with(this)
 
 > 注意: `json`文件无法用`text/*`打开, 对应的`mimeType`为`application/json`
 
-### 5. 压缩图片 [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
+### 三、压缩图片(Compress images) [ImageCompressor.kt](https://github.com/javakam/FileOperator/blob/master/library_compressor/src/main/java/ando/file/compressor/ImageCompressor.kt)
 
-#### 方式一 直接压缩不缓存(Direct compression without caching)
+#### 1. 直接压缩不缓存(Direct compression without caching)
 ```kotlin
 val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
 ```
 
-#### 方式二 压缩图片并缓存(Compress pictures and cache)
+#### 2. 压缩图片并缓存(Compress pictures and cache)
 ```kotlin
 /**
  * 压缩图片 1.Luban算法; 2.直接压缩 -> val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
@@ -429,287 +658,6 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
             }
         }).launch()
 }
-```
-
-## 文件操作工具类(File operation tools)
-
-> ☘ `FileOperator`提供了`Android`开发常用的一些文件操作工具类,使用方式大多以静态方法为主,需要的同学可以直接CV需要的文件
-
-### 1. 获取文件MimeType类型👉[FileMimeType.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileMimeType.kt)
-
-#### 根据`File Name/Path/Url`获取相应`MimeType`
-```kotlin
-fun getMimeType(str: String?): String {...}
-
-fun getMimeType(uri: Uri?): String {...}
-
-//MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
-fun getMimeTypeSupplement(fileName: String): String {...}
-```
-
-### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileSizeUtils.kt)
-#### 获取指定`文件/文件夹`大小(Get the size of the specified `file folder`)
-
-```kotlin
-@Throws(Exception::class)
-fun getFolderSize(file: File?): Long {
-    var size = 0L
-    if (file == null || !file.exists()) return size
-    val files = file.listFiles()
-    if (files.isNullOrEmpty()) return size
-    for (i in files.indices) {
-        size += if (files[i].isDirectory) getFolderSize(files[i]) else getFileSize(files[i])
-    }
-    return size
-}
-```
-#### 获取文件大小(Get file size)
-```kotlin
-fun getFileSize(file: File?): Long{...}
-
-fun getFileSize(uri: Uri?): Long{...}
-```
-#### 自动计算指定`文件/文件夹`大小(Automatically calculate the size of the specified `file folder`)
-自动计算指定文件或指定文件夹的大小 , 返回值带 B、KB、M、GB、TB 单位的字符串
-
-```kotlin
-fun getFileOrDirSizeFormatted(path: String?): String {}...}
-```
-#### 格式化大小(`BigDecimal`实现)
-Format size (implemented by `Big Decimal`)
-
-```kotlin
-/**
- * @param scale 精确到小数点以后几位 (Accurate to a few decimal places)
- */
-fun formatFileSize(size: Long, scale: Int, withUnit: Boolean = false): String {
-    val divisor = 1024L
-    //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
-    val kiloByte: BigDecimal = formatSizeByTypeWithDivisor(BigDecimal.valueOf(size), scale, SIZE_TYPE_B, divisor)
-    if (kiloByte.toDouble() < 1) {
-        return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_B.unit else ""}"
-    }
-    //KB
-    val megaByte = formatSizeByTypeWithDivisor(kiloByte, scale, SIZE_TYPE_KB, divisor)
-    if (megaByte.toDouble() < 1) {
-        return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_KB.unit else ""}"
-    }
-    //M
-    val gigaByte = formatSizeByTypeWithDivisor(megaByte, scale, SIZE_TYPE_MB, divisor)
-    if (gigaByte.toDouble() < 1) {
-        return "${megaByte.toPlainString()}${if (withUnit) SIZE_TYPE_MB.unit else ""}"
-    }
-    //GB
-    val teraBytes = formatSizeByTypeWithDivisor(gigaByte, scale, SIZE_TYPE_GB, divisor)
-    if (teraBytes.toDouble() < 1) {
-        return "${gigaByte.toPlainString()}${if (withUnit) SIZE_TYPE_GB.unit else ""}"
-    }
-    //TB
-    return "${teraBytes.toPlainString()}${if (withUnit) SIZE_TYPE_TB.unit else ""}"
-}
-```
-转换文件大小,指定转换的类型(Convert file size, specify the type of conversion):
-
-```kotlin
-//scale 精确到小数点以后几位
-fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSizeType): BigDecimal =
-    size.divide(
-        BigDecimal.valueOf(when (sizeType) {
-            SIZE_TYPE_B -> 1L
-            SIZE_TYPE_KB -> 1024L
-            SIZE_TYPE_MB -> 1024L * 1024L
-            SIZE_TYPE_GB -> 1024L * 1024L * 1024L
-            SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
-        }),
-        scale,
-        //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
-        if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
-    )
-```
-
-转换文件大小带单位(Convert file size with unit):
-```kotlin
-fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): String {
-    return "${formatSizeByTypeWithoutUnit(size.toBigDecimal(), scale, sizeType).toPlainString()}${sizeType.unit}"
-}
-```
-
-### 3. 直接打开Url/Uri(远程or本地)👉[FileOpener.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileOpener.kt)
-#### 打开系统分享弹窗(Open the system sharing popup)
-```kotlin
-fun openShare(context: Context, uri: Uri, title: String = "分享文件") {
-    val intent = Intent(Intent.ACTION_SEND)
-    intent.putExtra(Intent.EXTRA_STREAM, uri)
-    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-    // Put the Uri and MIME type in the result Intent
-    intent.setDataAndType(uri, getMimeType(uri))
-    context.startActivity(Intent.createChooser(intent, title))
-}
-```
-
-#### 打开浏览器(Open browser)
-```kotlin
-@SuppressLint("QueryPermissionsNeeded")
-fun openBrowser(
-    context: Context, url: String, title: String = "请选择浏览器", newTask: Boolean = false,
-    block: ((result: Boolean, msg: String?) -> Unit)? = null,
-) {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(url)
-        if (newTask) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        //startActivity(intent)
-        //https://developer.android.com/about/versions/11/privacy/package-visibility
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(Intent.createChooser(intent, title))
-            block?.invoke(true, null)
-        } else {
-            block?.invoke(true, "没有可用浏览器")
-        }
-    } catch (e: ActivityNotFoundException) {
-        e.printStackTrace()
-        block?.invoke(true, e.toString())
-    }
-}
-```
-
-#### 直接打开`Url`对应的系统应用
-Directly open the system application corresponding to `Url`
-
-eg: 如果url是视频地址,则直接用系统的播放器打开
-
-```kotlin
-fun openUrl(activity: Activity, url: String?) {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(Uri.parse(url), getMimeType(url))
-        activity.startActivity(intent)
-    } catch (e: Exception) {
-        FileLogger.e("openUrl error : " + e.message)
-    }
-}
-```
-
-#### 根据`文件路径`和`类型(后缀判断)`显示支持该格式的程序
-According to `file path` and `type (judgment by suffix)` show programs that support the format
-
-```kotlin
-fun openFile(context: Any, uri: Uri?, mimeType: String? = null) =
-    uri?.let { u ->
-        Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
-            startActivity(context, it)
-        }
-    }
-```
-#### 选择文件【使用系统的文件管理】
-Select file [Use system file management]
-
-```kotlin
-/**
- * ### 选择文件【调用系统的文件管理】 (Select file [call system file management])
- *
- * 注:
- *
- * #### 1. Intent.setType 不能为空(Can not be empty) !
- * ```
- * android.content.ActivityNotFoundException: No Activity found to handle Intent { act=android.intent.action.OPEN_DOCUMENT cat=[android.intent.category.OPENABLE] (has extras) }
- * at android.app.Instrumentation.checkStartActivityResult(Instrumentation.java:2105)
- * ```
- *
- * #### 2. mimeTypes 会覆盖 mimeType (mimeTypes will override mimeType)
- * ```
- * eg:
- *      Intent.setType("image / *")
- *      Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
- * 🍎 最终可选文件类型变为音频
- * ```
- *
- * #### 3. ACTION_GET_CONTENT, ACTION_OPEN_DOCUMENT 效果相同, Android Q 上使用 `ACTION_GET_CONTENT` 会出现:
- * ```
- *      java.lang.SecurityException: UID 10483 does not have permission to content://com.android.providers.media.documents/document/image%3A16012 [user 0];
- *      you could obtain access using ACTION_OPEN_DOCUMENT or related APIs
- * ```
- *
- * #### 4. 开启多选(Open multiple selection) resultCode = -1
- *
- * #### 5. 无论是`ACTION_OPEN_DOCUMENT`还是`ACTION_GET_CONTENT`都只是负责打开和选择,
- * 具体的文件操作如查看文件内容,删除,分享,复制,重命名等操作需要在`onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)`中的`data:Intent`中提取
- *
- */
-fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<String>?, multiSelect: Boolean): Intent =
-    Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
-        type = if (mimeType.isNullOrBlank()) "*/*" else mimeType
-        if (!mimeTypes.isNullOrEmpty()) {
-            putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-        }
-        addCategory(Intent.CATEGORY_OPENABLE)
-    }
-```
-
-### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core/FileUri.kt)
-
-#### 从`File`路径中获取`Uri`
-Obtain `Uri` from `File` path
-
-```kotlin
-fun getUriByPath(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path))
-
-fun getUriByFile(file: File?): Uri? =
-    file?.let {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val authority = FileOperator.getContext().packageName + PATH_SUFFIX
-            FileProvider.getUriForFile(FileOperator.getContext(), authority, file)
-        } else Uri.fromFile(file)
-    }
-```
-
-#### 获取`Uri`对应的文件路径,兼容`API 26`
-Get the file path corresponding to `Uri`, compatible with `API 26`
-
-```kotlin
-fun getFilePathByUri(context: Context?, uri: Uri?): String? {
-    if (context == null || uri == null) return null
-    val scheme = uri.scheme
-    // 以 file:// 开头的使用第三方应用打开
-    if (ContentResolver.SCHEME_FILE.equals(scheme, ignoreCase = true)) return uri.path
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) getPath(context, uri) else getPathKitkat(context, uri)
-}
-```
-
-### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library/src/main/java/ando/file/core//FileUtils.kt)
-
-Method | Remark
-:-|:-
-`getExtension` | 获取文件后缀`jpg`
-`getExtensionFull` | 获取文件完整后缀`.jpg`
-`splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
-`getFileNameFromPath(path: String?)` | 通过`FilePath`获取文件名
-`getFileNameFromUri(uri: Uri?)` | 通过`Uri`获取文件名
-`createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` | 创建文件, 同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
-`createDirectory(filePath: String?): Boolean` | 创建目录
-`deleteFile` | 删除文件或目录
-`deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` | 删除文件或目录, `excludeDirs` 指定名称的一些`文件/文件夹`不做删除
-`deleteFilesNotDir` | 只删除文件，不删除文件夹
-`readFileText(InputStream/Uri): String?` | 读取文本文件中的内容
-`readFileBytes(InputStream/Uri): ByteArray?` | 读取文件中的内容并返回`ByteArray`
-`copyFile` | 根据文件路径拷贝文件 `java.nio`
-`write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
-`write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` | 向文件中写入数据
-`isLocal` | 检验是否为本地URI
-`isGif()` | 检验是否为 gif
-
-> `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
-
-```kotlin
-fun File.copyTo(target: File, overwrite: Boolean = false,bufferSize: Int = DEFAULT_BUFFER_SIZE): File
-```
-Usage:
-```kotlin
-boolean copyResult = FileUtils.copyFile(fileOld, getExternalFilesDir(null).getPath(), "test.txt");
-File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
 ```
 
 ## 总结(Summary)
