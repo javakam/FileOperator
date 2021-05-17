@@ -235,7 +235,7 @@ class FileUtilsActivity : AppCompatActivity() {
             """.trimIndent()
 
         //getExtension(FilePath/FileName)
-        val filePath = FileUri.getFilePathByUri(uri) ?: ""
+        val filePath = FileUri.getPathByUri(uri) ?: ""
         mTvFileUrl4.visibility = View.VISIBLE
         mTvFileUrl4.text = """
                Method: getExtension(FilePath/FileName)

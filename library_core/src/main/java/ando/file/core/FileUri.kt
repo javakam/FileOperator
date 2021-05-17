@@ -67,21 +67,38 @@ object FileUri {
      * Return a content URI for a given file.
      *
      * @param file The file.
+     * @param isOriginal Get Original Uri
      * @return a content URI for a given file
      */
-    fun getUriByFile(file: File?): Uri? =
-        file?.let {
+    fun getUriByFile(file: File?, isOriginal: Boolean = false): Uri? {
+        return if (isOriginal) Uri.fromFile(file)
+        else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 val authority = FileOperator.getContext().packageName + AUTHORITY
-                FileProvider.getUriForFile(FileOperator.getContext(), authority, file)
+                FileProvider.getUriForFile(FileOperator.getContext(), authority, file ?: return null)
             } else Uri.fromFile(file)
         }
+    }
+
+    fun getShareUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getShareUri(File(path))
+
+    /**
+     * @return content://  or file://
+     */
+    fun getShareUri(file: File?): Uri? = getUriByFile(file, isOriginal = false)
+
+    fun getOriginalUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getOriginalUri(File(path))
+
+    /**
+     * @return file://xxx
+     */
+    fun getOriginalUri(file: File?): Uri? = getUriByFile(file, isOriginal = true)
 
     //获取Uri对应的文件路径, 兼容API 26
     //Get the file path corresponding to Uri, Compatible with API 26
     //----------------------------------------------------------------
 
-    fun getFilePathByUri(uri: Uri?): String? = getFilePathByUri(FileOperator.getContext(), uri)
+    fun getPathByUri(uri: Uri?): String? = getPathByUri(FileOperator.getContext(), uri)
 
     /**
      * #### Get the file path through Uri
@@ -92,7 +109,7 @@ object FileUri {
      *
      * @return file path
      */
-    fun getFilePathByUri(context: Context?, uri: Uri?): String? {
+    fun getPathByUri(context: Context?, uri: Uri?): String? {
         if (context == null || uri == null) return null
 
         FileLogger.i(
@@ -146,6 +163,14 @@ object FileUri {
                     } else {
                         @Suppress("DEPRECATION")
                         return Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
+                    }
+                } else {
+                    @Suppress("DEPRECATION")
+                    val sdcardPath = Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
+                    return if (sdcardPath.startsWith("file://")) {
+                        sdcardPath.replace("file://", "")
+                    } else {
+                        sdcardPath
                     }
                 }
             }

@@ -117,8 +117,13 @@ object ResultUtils {
     fun setCoreResults(tvResult: TextView, results: List<FileSelectResult>?) {
         tvResult.text = ""
         if (results.isNullOrEmpty()) return
-        results.forEachIndexed { _, fsr ->
-            val info = "${fsr}${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
+        results.forEachIndexed { _, fsr: FileSelectResult ->
+            val info = "$fsr" +
+                    " 🍑 Uri  转换为 Path=${FileUri.getPathByUri(fsr.uri)}\n" +
+                    //" 🍈 Uri  转换为 Path(Uri.parse)=${tvResult.context.contentResolver.}\n" +
+                    " 🍉 Path 转换为 Uri(FileProvider)=${FileUri.getUriByPath(fsr.filePath)}\n" +
+                    " 🍍 Path 转换为 Uri(Uri.fromFile)=${Uri.fromFile(File(fsr.filePath ?: ""))}\n" +
+                    " ${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
                     " ${getStr(R.string.str_ando_file_format_size2)}: ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
                     " ${getStr(R.string.str_ando_file_format_size3)}: ${
                         FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)
@@ -150,7 +155,11 @@ object ResultUtils {
         results.forEachIndexed { i, fsr ->
             val info = "${fsr}${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
                     " ${getStr(R.string.str_ando_file_format_size2)}: ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
-                    " ${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize, 1, FileSizeUtils.FileSizeType.SIZE_TYPE_KB)}"
+                    " ${getStr(R.string.str_ando_file_format_size)}: ${
+                        FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize,
+                            1,
+                            FileSizeUtils.FileSizeType.SIZE_TYPE_KB)
+                    }"
             dumpMetaData(uri = fsr.uri) { name: String?, _: String? ->
                 infoList.add(
                     (fsr.uri ?: return@dumpMetaData) to if (isMulti) {

@@ -110,11 +110,11 @@ class FileInfoActivity : AppCompatActivity() {
             }
 
             val sizeTotal = FileSizeUtils.calculateFileOrDirSize(compressedImageCacheDir)
-            val sizeTotal2 = FileSizeUtils.calculateFileOrDirSize(FileUri.getFilePathByUri(uri))
+            val sizeTotal2 = FileSizeUtils.calculateFileOrDirSize(FileUri.getPathByUri(uri))
 
             tvCompressedImgCacheDir.text =
                 """🍎Cache directory for compressed pictures: 
-                | ❎Path: ${FileUri.getFilePathByUri(uri)} Size: $sizeTotal2
+                | ❎Path: ${FileUri.getPathByUri(uri)} Size: $sizeTotal2
                 | ❎Size(OpenableColumns.SIZE): ${FileSizeUtils.getFileSize(uri)}
                 | ---
                 | Path: $compressedImageCacheDir Size: $sizeTotal

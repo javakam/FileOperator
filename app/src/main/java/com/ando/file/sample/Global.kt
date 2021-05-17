@@ -7,9 +7,7 @@ import ando.file.compressor.OnImageRenameListener
 import ando.file.core.*
 import ando.file.core.FileDirectory.getCacheDir
 import android.content.Context
-import android.content.DialogInterface
 import android.net.Uri
-import android.view.View
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -96,7 +94,7 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
         .setRenameListener(object : OnImageRenameListener {
             override fun rename(uri: Uri?): String? {
                 try {
-                    val filePath = FileUri.getFilePathByUri(uri)
+                    val filePath = FileUri.getPathByUri(uri)
                     val md = MessageDigest.getInstance("MD5")
                     md.update(filePath?.toByteArray() ?: return "")
                     return BigInteger(1, md.digest()).toString(32)
