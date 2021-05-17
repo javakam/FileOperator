@@ -5,12 +5,12 @@ apply from: "config.gradle"
 buildscript {
     ext.kotlin_version = '1.4.32'
     repositories {
-        mavenCentral()
         google()
-        jcenter()
         maven { url "https://jitpack.io" }
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
-        maven { url "https://s01.oss.sonatype.org/content/repositories/comgithubjavakam-1000" }
+        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        mavenLocal()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
     }
     dependencies {
         // gradle-wrapper.properties
@@ -22,12 +22,12 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenCentral()
         google()
-        jcenter()
         maven { url "https://jitpack.io" }
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
-        maven { url "https://s01.oss.sonatype.org/content/repositories/comgithubjavakam-1000" }
+        maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        mavenLocal()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
     }
     tasks.withType(Javadoc) {
         options {

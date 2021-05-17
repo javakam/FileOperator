@@ -67,7 +67,7 @@ object FileUri {
      * Return a content URI for a given file.
      *
      * @param file The file.
-     * @param isOriginal Get Original Uri
+     * @param isOriginal true content://  or file:// ; false file://xxx
      * @return a content URI for a given file
      */
     fun getUriByFile(file: File?, isOriginal: Boolean = false): Uri? {
@@ -80,14 +80,14 @@ object FileUri {
         }
     }
 
-    fun getShareUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getShareUri(File(path))
+    fun getShareUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path), isOriginal = true)
 
     /**
      * @return content://  or file://
      */
     fun getShareUri(file: File?): Uri? = getUriByFile(file, isOriginal = false)
 
-    fun getOriginalUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getOriginalUri(File(path))
+    fun getOriginalUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path), isOriginal = true)
 
     /**
      * @return file://xxx

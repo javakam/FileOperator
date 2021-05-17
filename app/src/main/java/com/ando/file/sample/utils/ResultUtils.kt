@@ -11,6 +11,7 @@ import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ando.file.sample.R
@@ -119,10 +120,9 @@ object ResultUtils {
         if (results.isNullOrEmpty()) return
         results.forEachIndexed { _, fsr: FileSelectResult ->
             val info = "$fsr" +
-                    " 🍑 Uri  转换为 Path=${FileUri.getPathByUri(fsr.uri)}\n" +
-                    //" 🍈 Uri  转换为 Path(Uri.parse)=${tvResult.context.contentResolver.}\n" +
-                    " 🍉 Path 转换为 Uri(FileProvider)=${FileUri.getUriByPath(fsr.filePath)}\n" +
-                    " 🍍 Path 转换为 Uri(Uri.fromFile)=${Uri.fromFile(File(fsr.filePath ?: ""))}\n" +
+                    "🍑Uri转换为Path=${FileUri.getPathByUri(fsr.uri)}\n" +
+                    "🍈Path转换为Uri(FileProvider)=${FileUri.getUriByPath(fsr.filePath)}\n" +
+                    "🍍Path转换为Uri(Uri.fromFile)=${FileUri.getOriginalUri(fsr.filePath)}\n" +
                     " ${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
                     " ${getStr(R.string.str_ando_file_format_size2)}: ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
                     " ${getStr(R.string.str_ando_file_format_size3)}: ${
