@@ -50,8 +50,15 @@
 2.app中加入上传案例
 ```
 
-## v1.4.0
+## v1.4.+
 ```
 1.移除 bintray, jcenter, 改用 MavenCentral
 2.移除Java使用案例 sample_java
 ```
+
+## v1.5.0
+```
+1.修改FileUri.kt文件
+2.升级gradle插件
+```
+
