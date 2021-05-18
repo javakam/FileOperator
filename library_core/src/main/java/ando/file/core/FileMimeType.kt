@@ -3,7 +3,7 @@ package ando.file.core
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import ando.file.core.FileOperator.getContext
-import ando.file.core.FileUri.getFilePathByUri
+import ando.file.core.FileUri.getPathByUri
 import java.util.*
 
 /**
@@ -17,8 +17,8 @@ import java.util.*
 object FileMimeType {
 
     fun getMimeType(uri: Uri?): String =
-        if (uri != null) getContext().contentResolver.getType(uri)?.toLowerCase(Locale.getDefault()) ?: getMimeType(getFilePathByUri(uri))
-        else getMimeType(getFilePathByUri(uri))
+        if (uri != null) getContext().contentResolver.getType(uri)?.toLowerCase(Locale.getDefault()) ?: getMimeType(getPathByUri(uri))
+        else getMimeType(getPathByUri(uri))
 
     /**
      * 根据 File Name/Path/Url 获取相应的 MimeType

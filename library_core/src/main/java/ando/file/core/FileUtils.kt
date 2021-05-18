@@ -1,7 +1,7 @@
 package ando.file.core
 
 import ando.file.core.FileMimeType.getMimeType
-import ando.file.core.FileUri.getFilePathByUri
+import ando.file.core.FileUri.getPathByUri
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
@@ -100,7 +100,7 @@ object FileUtils {
         val mimeType = resolver.getType(uri)
 
         if (mimeType == null) {
-            filename = getFileNameFromPath(getFilePathByUri(uri))
+            filename = getFileNameFromPath(getPathByUri(uri))
         } else {
             resolver.query(uri, null, null, null, null)?.use { c: Cursor ->
                 val nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
@@ -367,7 +367,7 @@ object FileUtils {
     //----------------------------------------------------------------
 
     fun deleteFile(uri: Uri?): Int =
-        getFilePathByUri(uri)?.run {
+        getPathByUri(uri)?.run {
             deleteFileWithoutExcludeNames(File(this), null)
         } ?: 0
 
@@ -429,7 +429,7 @@ object FileUtils {
     }
 
     fun deleteFilesNotDir(uri: Uri?): Boolean =
-        getFilePathByUri(uri)?.run {
+        getPathByUri(uri)?.run {
             deleteFilesNotDir(File(this))
         } ?: false
 

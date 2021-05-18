@@ -531,7 +531,7 @@ class FileSelector private constructor(builder: Builder) {
         mutableListOf<FileSelectResult>().apply {
             add(FileSelectResult().apply {
                 this.uri = uri
-                this.filePath = FileUri.getFilePathByUri(uri)
+                this.filePath = FileUri.getPathByUri(uri)
                 this.mimeType = FileMimeType.getMimeType(uri)
                 this.fileType = fileType
                 this.fileSize = fileSize
@@ -543,7 +543,7 @@ class FileSelector private constructor(builder: Builder) {
             uriList?.forEach { u ->
                 add(FileSelectResult().apply {
                     this.uri = u
-                    this.filePath = FileUri.getFilePathByUri(uri)
+                    this.filePath = FileUri.getPathByUri(uri)
                     this.mimeType = FileMimeType.getMimeType(u)
                     this.fileType = findFileType(u)
                     this.fileSize = FileSizeUtils.getFileSize(u)

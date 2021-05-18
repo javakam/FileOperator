@@ -7,7 +7,7 @@ import android.net.Uri
 import android.os.Build
 import ando.file.core.FileOperator.getContext
 import ando.file.core.FileLogger.e
-import ando.file.core.FileUri.getFilePathByUri
+import ando.file.core.FileUri.getPathByUri
 import ando.file.core.FileUri.getUriByPath
 import java.io.*
 
@@ -64,7 +64,7 @@ object Base64Utils {
                     String(encode(sb.toString().toByteArray()))
                 } else {
                     // Build.VERSION_CODES.O 以下
-                    val file = File(getFilePathByUri(uri) ?: return "")
+                    val file = File(getPathByUri(uri) ?: return "")
                     val inputFile = FileInputStream(file)
                     val buffer = ByteArray(file.length().toInt())
                     inputFile.read(buffer)

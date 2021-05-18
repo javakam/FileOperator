@@ -9,7 +9,7 @@ import android.provider.OpenableColumns
 import ando.file.core.FileSizeUtils.FileSizeType.*
 import ando.file.core.FileLogger.e
 import ando.file.core.FileLogger.i
-import ando.file.core.FileUri.getFilePathByUri
+import ando.file.core.FileUri.getPathByUri
 import java.io.File
 import java.math.BigDecimal
 
@@ -119,7 +119,7 @@ object FileSizeUtils {
                     // 2.it.moveToFirst() -> Caused by: android.database.CursorIndexOutOfBoundsException: Index -1 requested, with a size of 1
                     if (c.moveToFirst() && !c.isNull(sizeIndex)) c.getLong(sizeIndex) else zero
                 }
-            } else if ("file".equals(uriScheme, true)) File(getFilePathByUri(uri) ?: return zero).length() else zero
+            } else if ("file".equals(uriScheme, true)) File(getPathByUri(uri) ?: return zero).length() else zero
         }
 
     // format size
