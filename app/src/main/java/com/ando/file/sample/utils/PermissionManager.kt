@@ -26,7 +26,6 @@ object PermissionManager {
      *
      * <uses-permission
      *      android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-     *      android:maxSdkVersion="28"
      *      tools:ignore="ScopedStorage" />
      */
     private val STORAGE_PERMISSION = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P)

@@ -1,14 +1,18 @@
 package com.ando.file.sample.ui.core
 
+import ando.file.androidq.FileOperatorQ
+import ando.file.androidq.MediaStoreImage
 import ando.file.core.*
 import ando.file.selector.FileSelectCallBack
 import ando.file.selector.FileSelectResult
 import ando.file.selector.FileSelector
 import android.annotation.SuppressLint
+import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.SystemClock
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -20,6 +24,7 @@ import com.ando.file.sample.utils.ResultUtils
 import java.io.File
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * # FileUtilsActivity
@@ -75,6 +80,12 @@ class FileUtilsActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun initListener() {
         mBtSelectFile.setOnClickListener {
+            //************************* MediaStore Uri 测试 *************************
+            //eg: 可以先到 MediaStoreActivity 中使用插入一个新图片用来测试
+            //refreshExtensionData(Uri.parse("content://media/external/images/media/43"))
+            //return@setOnClickListener
+
+            //************************* FileSelector Uri 测试 *************************
             mFileSelector = FileSelector.with(this)
                 .callback(object : FileSelectCallBack {
                     override fun onSuccess(results: List<FileSelectResult>?) {
@@ -226,11 +237,17 @@ class FileUtilsActivity : AppCompatActivity() {
             text = "${getString(R.string.str_ando_file_select_result)}Uri: $uri"
         }
 
+        //注: AndroidQ 及以上版本 Path 可能为空
+        //注: AndroidQ 及以上版本 Path 可能为空
+        //注: AndroidQ 及以上版本 Path 可能为空
+
         //getExtension(Uri)
         mTvFileUrl3.visibility = View.VISIBLE
         mTvFileUrl3.text = """
-               Method: getExtension(Uri)
+               🍎Method: getExtension(Uri)
                Uri: $uri
+               Path: ${FileUri.getPathByUri(uri)}
+               Size(uri): ${FileSizeUtils.getFileSize(uri)}
                Suffix: ${FileUtils.getExtension(uri)}
             """.trimIndent()
 
@@ -238,10 +255,11 @@ class FileUtilsActivity : AppCompatActivity() {
         val filePath = FileUri.getPathByUri(uri) ?: ""
         mTvFileUrl4.visibility = View.VISIBLE
         mTvFileUrl4.text = """
-               Method: getExtension(FilePath/FileName)
-               Name:${FileUtils.getFileNameFromUri(uri)}
-               Path:$filePath
+               🍎Method: getExtension(FilePath/FileName)
                Uri: $uri
+               Name:${FileUtils.getFileNameFromPath(filePath)}
+               Path:$filePath
+               Size(path):${FileSizeUtils.getFileSize(File(filePath))}
                Suffix: ${FileUtils.getExtension(filePath)}
             """.trimIndent()
 

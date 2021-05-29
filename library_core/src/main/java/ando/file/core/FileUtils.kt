@@ -21,13 +21,23 @@ object FileUtils {
     //File Extension
     //----------------------------------------------------------------
 
+    /**
+     * ### 通过文件 Uri 获取后缀 eg: txt, png, exe...
+     *
+     * - 先使用 ContentResolver 去查询, 如果返回""则再尝试使用Uri.toString()去查询
+     *
+     * - 参考: [storage-samples/ActionOpenDocument](https://github.com/android/storage-samples/blob/main/ActionOpenDocument)
+     */
     fun getExtension(uri: Uri?): String {
-        var name = if (uri == null) return "" else ""
-        FileOperator.getContext().contentResolver.query(uri, null, null, null, null)
-            ?.use { c: Cursor ->
-                if (c.moveToFirst()) name = getExtension(c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME)))
-            }
-        return name
+        return uri?.use {
+            var name = FileOperator.getContext().contentResolver.query(this, null, null, null, null)
+                ?.use { c: Cursor ->
+                    if (c.moveToFirst()) getExtension(c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME))) else ""
+                } ?: ""
+
+            if (name.isBlank()) name = getExtension(this.toString())
+            name
+        } ?: ""
     }
 
     /**
@@ -37,9 +47,9 @@ object FileUtils {
      *  or
      * fileName : xxx.gif
      *
-     * @return 默认返回gif, fullExtension=false ;
-     *         substring时不加1为 .gif, fullExtension=true
-     *
+     * @param fullExtension true ".png" ; false "png"
+     * @return fullExtension=false, "gif";
+     *         fullExtension=true,  ".gif" substring时不加1
      */
     fun getExtension(pathOrName: String?, split: Char, fullExtension: Boolean = false): String {
         if (pathOrName.isNullOrBlank()) return ""
@@ -51,8 +61,14 @@ object FileUtils {
         else "" // No extension.
     }
 
+    /**
+     * @return [√] "png" ; [×] ".png"
+     */
     fun getExtension(pathOrName: String): String = getExtension(pathOrName, '.', false)
 
+    /**
+     * @return [√] ".png" ; [×] "png"
+     */
     fun getExtensionFull(pathOrName: String): String = getExtension(pathOrName, '.', true)
 
     //File Name
@@ -92,27 +108,25 @@ object FileUtils {
         return path
     }
 
-    fun getFileNameFromUri(uri: Uri?): String? {
-        if (uri == null) return null
-        var filename: String? = null
+    fun getFileNameFromUri(uri: Uri?): String? =
+        uri?.use {
+            var filename: String? = null
+            val resolver = FileOperator.getContext().contentResolver
+            val mimeType = resolver.getType(uri)
 
-        val resolver = FileOperator.getContext().contentResolver
-        val mimeType = resolver.getType(uri)
-
-        if (mimeType == null) {
-            filename = getFileNameFromPath(getPathByUri(uri))
-        } else {
-            resolver.query(uri, null, null, null, null)?.use { c: Cursor ->
-                val nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                c.moveToFirst()
-                filename = c.getString(nameIndex)
+            if (mimeType == null) {
+                filename = getFileNameFromPath(getPathByUri(uri))
+            } else {
+                resolver.query(uri, null, null, null, null)?.use { c: Cursor ->
+                    val nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (c.moveToFirst()) filename = c.getString(nameIndex)
+                }
             }
+            if (FileOperator.isDebug()) {
+                FileLogger.i("getFileNameFromUri: $mimeType $filename")
+            }
+            filename
         }
-        if (FileOperator.isDebug()) {
-            FileLogger.i("getFileNameFromUri: $mimeType $filename")
-        }
-        return filename
-    }
 
     //File Read
     //----------------------------------------------------------------
@@ -142,9 +156,7 @@ object FileUtils {
     }
 
     fun readFileText(uri: Uri?): String? =
-        uri?.run {
-            readFileText(FileOperator.getContext().contentResolver.openInputStream(this))
-        }
+        uri?.use { readFileText(FileOperator.getContext().contentResolver.openInputStream(this)) }
 
     fun readFileBytes(stream: InputStream?): ByteArray? =
         stream?.use {
@@ -167,9 +179,7 @@ object FileUtils {
         }
 
     fun readFileBytes(uri: Uri?): ByteArray? =
-        uri?.run {
-            readFileBytes(FileOperator.getContext().contentResolver.openInputStream(this))
-        }
+        uri?.use { readFileBytes(FileOperator.getContext().contentResolver.openInputStream(this)) }
 
     //File Write
     //----------------------------------------------------------------
@@ -480,5 +490,4 @@ object FileUtils {
     fun isGif(mimeType: String?): Boolean = !mimeType.isNullOrBlank() && mimeType.equals("image/gif", true)
 
     fun isGif(uri: Uri?): Boolean = if (uri == null) false else isGif(getMimeType(uri))
-
 }

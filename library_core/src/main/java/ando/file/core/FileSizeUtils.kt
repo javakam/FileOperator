@@ -107,7 +107,7 @@ object FileSizeUtils {
      * @return File Size, Unit Byte
      */
     private fun getFileSize(context: Context, uri: Uri?): Long? =
-        uri?.let {
+        uri?.use {
             val zero = 0L
             val uriScheme = uri.scheme
             val cursor: Cursor? = context.contentResolver.query(uri, null, null, null, null)
@@ -121,7 +121,6 @@ object FileSizeUtils {
                 }
             } else if ("file".equals(uriScheme, true)) File(getPathByUri(uri) ?: return zero).length() else zero
         }
-
     // format size
     //-----------------------------------------------------------------------
 
@@ -180,13 +179,15 @@ object FileSizeUtils {
      */
     fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSizeType): BigDecimal =
         size.divide(
-            BigDecimal.valueOf(when (sizeType) {
-                SIZE_TYPE_B -> 1L
-                SIZE_TYPE_KB -> 1024L
-                SIZE_TYPE_MB -> 1024L * 1024L
-                SIZE_TYPE_GB -> 1024L * 1024L * 1024L
-                SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
-            }),
+            BigDecimal.valueOf(
+                when (sizeType) {
+                    SIZE_TYPE_B -> 1L
+                    SIZE_TYPE_KB -> 1024L
+                    SIZE_TYPE_MB -> 1024L * 1024L
+                    SIZE_TYPE_GB -> 1024L * 1024L * 1024L
+                    SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
+                }
+            ),
             scale,
             //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
             if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP

@@ -17,8 +17,9 @@ import java.util.*
 object FileMimeType {
 
     fun getMimeType(uri: Uri?): String =
-        if (uri != null) getContext().contentResolver.getType(uri)?.toLowerCase(Locale.getDefault()) ?: getMimeType(getPathByUri(uri))
-        else getMimeType(getPathByUri(uri))
+        uri?.use {
+            getContext().contentResolver.getType(uri)?.toLowerCase(Locale.getDefault()) ?: getMimeType(getPathByUri(uri))
+        } ?: getMimeType(getPathByUri(uri))
 
     /**
      * 根据 File Name/Path/Url 获取相应的 MimeType

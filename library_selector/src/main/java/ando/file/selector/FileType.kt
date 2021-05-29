@@ -7,7 +7,9 @@ import java.io.File
 import java.util.*
 
 /**
- * # 文件类型
+ * # FileType 文件类型
+ *
+ * 注: 每一种类型可包括的后缀有限, 如果没有你想要的类型, 可以参照Demo自定义IFileType实现
  *
  * - MimeType 👉 ando.file.core.FileMimeType
  *

@@ -16,6 +16,7 @@ import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.RecoverableSecurityException
 import android.content.*
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -318,9 +319,17 @@ object FileOperatorQ {
         uri: Uri,
         projectionArgs: Array<String>? = arrayOf(MediaStore.Video.Media._ID),
         sortOrder: String? = null,
-        querySelectionStatement: QuerySelectionStatement?,
+        querySelectionStatement: QuerySelectionStatement? = null,
     ): Cursor? {
         // Need the READ_EXTERNAL_STORAGE permission if accessing video files that your app didn't create.
+        when (getContext().checkUriPermission(uri, android.os.Process.myPid(), android.os.Process.myUid(), Intent.FLAG_GRANT_READ_URI_PERMISSION)) {
+            PackageManager.PERMISSION_GRANTED -> {
+            }
+            PackageManager.PERMISSION_DENIED -> {
+                getContext().grantUriPermission(FileOperator.getApplication().packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+        }
+
         return getContext().contentResolver.query(
             uri,
             projectionArgs,
@@ -484,8 +493,10 @@ object FileOperatorQ {
      * 查询全部图片
      */
     fun queryMediaStoreImages(): MutableList<MediaStoreImage>? {
-        val queryStatement = buildQuerySelectionStatement(MEDIA_TYPE_IMAGE,
-            null, null, null, null, null, true)
+        val queryStatement = buildQuerySelectionStatement(
+            MEDIA_TYPE_IMAGE,
+            null, null, null, null, null, true
+        )
         return queryMediaStoreImages(null, null, queryStatement)
     }
 
@@ -610,7 +621,11 @@ object FileOperatorQ {
     //todo 2020年5月28日 17:14:02 测试该方法
     fun openDirectorySAF(activity: Activity, pickerInitialUri: Uri?, requestCode: Int) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION or
+                    Intent.FLAG_GRANT_PREFIX_URI_PERMISSION
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri)
             }
@@ -684,8 +699,10 @@ object FileOperatorQ {
     @RequiresApi(Build.VERSION_CODES.N)
     fun isVirtualFile(uri: Uri): Boolean {
         if (!DocumentsContract.isDocumentUri(getContext(), uri)) return false
-        val cursor: Cursor? = getContext().contentResolver.query(uri, arrayOf(DocumentsContract.Document.COLUMN_FLAGS),
-            null, null, null)
+        val cursor: Cursor? = getContext().contentResolver.query(
+            uri, arrayOf(DocumentsContract.Document.COLUMN_FLAGS),
+            null, null, null
+        )
         val flags: Int = cursor?.use { if (cursor.moveToFirst()) cursor.getInt(0) else 0 } ?: 0
         return flags and DocumentsContract.Document.FLAG_VIRTUAL_DOCUMENT != 0
     }
@@ -905,8 +922,10 @@ object FileOperatorQ {
                     // In your code, handle IntentSender.SendIntentException.
                     val recoverableSecurityException = e1 as? RecoverableSecurityException ?: throw e1
                     val requestAccessIntentSender = recoverableSecurityException.userAction.actionIntent.intentSender
-                    activity.startIntentSenderForResult(requestAccessIntentSender, requestCode,
-                        null, 0, 0, 0, null)
+                    activity.startIntentSenderForResult(
+                        requestAccessIntentSender, requestCode,
+                        null, 0, 0, 0, null
+                    )
                 } else {
                     FileLogger.e("低于Q版本 ${e1.message} ")
                 }
