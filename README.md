@@ -14,10 +14,10 @@ repositories {
    mavenCentral()
 }
 
-implementation 'com.github.javakam:file.core:1.5.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:1.5.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:1.5.0@aar'//图片压缩, 核心算法采用 Luban
-implementation 'com.github.javakam:file.android-q:1.5.0@aar' //Q和11兼容库,需要额外的库:'androidx.documentfile:documentfile:1.0.1'
+implementation 'com.github.javakam:file.core:1.6.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:1.6.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:1.6.0@aar'//图片压缩, 核心算法为Luban
+implementation 'com.github.javakam:file.android-q:1.6.0@aar' //AndroidQ兼容库,需要: 'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 2. `Application`中初始化(Initialization in Application)
