@@ -21,13 +21,29 @@ object FileUtils {
     //File Extension
     //----------------------------------------------------------------
 
+    /**
+     * ### 通过文件 Uri 获取后缀 eg: txt, png, exe...
+     *
+     * - 先使用 ContentResolver 去查询, 如果返回""则使用Uri.toString()去查询
+     *
+     * 因为在AndroidQ和以上版本使用 ContentResolver 去查询公共目录的文件是查不到信息的,
+     * 当然如果选择文件时候使用了 takePersistableUriPermission(uri) 是可以的, 不过属于特殊的兼容
+     * 情形不考虑。
+     *
+     * - 参考: [storage-samples/ActionOpenDocument](https://github.com/android/storage-samples/blob/main/ActionOpenDocument)
+     */
     fun getExtension(uri: Uri?): String {
-        var name = if (uri == null) return "" else ""
-        FileOperator.getContext().contentResolver.query(uri, null, null, null, null)
-            ?.use { c: Cursor ->
-                if (c.moveToFirst()) name = getExtension(c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME)))
-            }
-        return name
+        return uri?.run {
+            var name = FileOperator.getContext().contentResolver.query(this, null, null, null, null)
+                ?.use { c: Cursor ->
+                    if (c.moveToFirst()) getExtension(c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME))) else ""
+                } ?: ""
+
+            //解决AndroidQ及以上版本使用ContentResolver查询信息失败的问题
+            //Solve the problem that the ContentResolver fails to query information on Android Q and above
+            if (name.isBlank()) name = getExtension(this.toString())
+            name
+        } ?: ""
     }
 
     /**

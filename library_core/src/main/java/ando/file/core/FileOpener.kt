@@ -13,9 +13,9 @@ import androidx.annotation.Nullable
 /**
  * # FileOpener
  *
- * 打开该 Uri 对应文件类型的所有软件, 通常情况下是个部弹窗
+ * 打开该 Uri 对应文件类型的所有软件, 通常情况是个底部弹窗
  *
- * Open all the software corresponding to the Uri file type, usually a pop-up window
+ * Open all the software corresponding to the file type of the Uri, usually it is a pop-up window at the bottom
  *
  * @author javakam
  * @date 2020/8/24 11:20
@@ -152,6 +152,7 @@ object FileOpener {
      * #### 5. 无论是`ACTION_OPEN_DOCUMENT`还是`ACTION_GET_CONTENT`都只是负责打开和选择,
      * 具体的文件操作如查看文件内容,删除,分享,复制,重命名等操作需要在`onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)`中的`data:Intent`中提取
      *
+     * #### 6. 不使用ACTION_GET_CONTENT的另外一个原因: https://stackoverflow.com/questions/50386916/select-specific-file-types-using-action-get-content-and-settype-or-intent-extra
      */
     fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<out String>?, multiSelect: Boolean): Intent =
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
