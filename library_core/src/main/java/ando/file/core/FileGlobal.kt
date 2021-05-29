@@ -3,6 +3,7 @@ package ando.file.core
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
@@ -54,6 +55,45 @@ internal fun startActivity(context: Any, intent: Intent) {
     }
 }
 
+//Permission
+//----------------------------------------------------------------
+
+fun giveUriPermission(uri: Uri?) {
+    uri?.apply {
+        when (FileOperator.getContext().checkUriPermission(
+            this, android.os.Process.myPid(), android.os.Process.myUid(), Intent.FLAG_GRANT_READ_URI_PERMISSION
+        )) {
+            PackageManager.PERMISSION_GRANTED -> {
+            }
+            PackageManager.PERMISSION_DENIED -> {
+                FileOperator.getContext().grantUriPermission(
+                    FileOperator.getApplication().packageName, this, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+        }
+    }
+}
+
+fun revokeUriPermission(uri: Uri?) {
+    FileOperator.getContext().revokeUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+}
+
+inline fun <R> Uri.use(block: Uri.() -> R): R {
+    try {
+        giveUriPermission(this)
+        return block()
+    } catch (t: Throwable) {
+        FileLogger.e("giveUriPermission Error ${t.message}")
+    } finally {
+        try {
+            revokeUriPermission(this)
+        } catch (t: Throwable) {
+            FileLogger.e("revokeUriPermission Error ${t.message}")
+        }
+    }
+    return block()
+}
+
 object FileGlobal {
 
     const val MODE_READ_ONLY = "r"
@@ -61,6 +101,7 @@ object FileGlobal {
     const val MODE_WRITE_ONLY_APPEND = "wa"
     const val MODE_READ_WRITE_DATA = "rw"
     const val MODE_READ_WRITE_FILE = "rwt"
+
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MODE_READ_ONLY, MODE_WRITE_ONLY_ERASING, MODE_WRITE_ONLY_APPEND, MODE_READ_WRITE_DATA, MODE_READ_WRITE_FILE])
     annotation class FileOpenMode
@@ -69,6 +110,7 @@ object FileGlobal {
     const val MEDIA_TYPE_IMAGE = "image"
     const val MEDIA_TYPE_AUDIO = "audio"
     const val MEDIA_TYPE_VIDEO = "video"
+
     @Retention(AnnotationRetention.SOURCE)
     @StringDef(value = [MEDIA_TYPE_IMAGE, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO])
     annotation class FileMediaType
@@ -82,6 +124,7 @@ object FileGlobal {
      * - Callback onError
      */
     const val OVER_LIMIT_EXCEPT_ALL: Int = 1
+
     /**
      * 1. 文件超过数量限制或大小限制
      * 2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
@@ -93,6 +136,7 @@ object FileGlobal {
      * - Call back onSuccess
      */
     const val OVER_LIMIT_EXCEPT_OVERFLOW: Int = 2
+
     @Retention(AnnotationRetention.SOURCE)
     @IntDef(value = [OVER_LIMIT_EXCEPT_ALL, OVER_LIMIT_EXCEPT_OVERFLOW])
     annotation class FileOverLimitStrategy

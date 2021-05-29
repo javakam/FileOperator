@@ -46,8 +46,10 @@ object FileOperator {
 
     private fun checkContext() {
         if (!FileOperator::context.isInitialized) {
-            throw java.lang.RuntimeException("Must be initialized in Application : " +
-                    "FileOperator.init(this,BuildConfig.DEBUG)")
+            throw java.lang.RuntimeException(
+                "Must be initialized in Application : " +
+                        "FileOperator.init(this,BuildConfig.DEBUG)"
+            )
         }
     }
 

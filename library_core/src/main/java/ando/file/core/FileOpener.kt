@@ -153,9 +153,12 @@ object FileOpener {
      * 具体的文件操作如查看文件内容,删除,分享,复制,重命名等操作需要在`onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)`中的`data:Intent`中提取
      *
      * #### 6. 不使用ACTION_GET_CONTENT的另外一个原因: https://stackoverflow.com/questions/50386916/select-specific-file-types-using-action-get-content-and-settype-or-intent-extra
+     *
+     * #### 7. 可以使用返回的Intent设置临时权限 Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
      */
     fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<out String>?, multiSelect: Boolean): Intent =
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
             type = if (mimeType.isNullOrBlank()) "*/*" else mimeType
             if (!mimeTypes.isNullOrEmpty()) {

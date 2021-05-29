@@ -94,11 +94,8 @@ object FileUri {
      */
     fun getOriginalUri(file: File?): Uri? = getUriByFile(file, isOriginal = true)
 
-    //获取Uri对应的文件路径, 兼容API 26
-    //Get the file path corresponding to Uri, Compatible with API 26
+    //获取Uri对应的文件路径, Compatible with API 26
     //----------------------------------------------------------------
-
-    fun getPathByUri(uri: Uri?): String? = getPathByUri(FileOperator.getContext(), uri)
 
     /**
      * #### Get the file path through Uri
@@ -109,140 +106,143 @@ object FileUri {
      *
      * @return file path
      */
-    fun getPathByUri(context: Context?, uri: Uri?): String? {
-        if (context == null || uri == null) return null
+    fun getPathByUri(uri: Uri?): String? {
+        return uri?.use {
+            FileLogger.i(
+                "FileUri getFilePathByUri -> " +
+                        "Uri: " + uri +
+                        ", Authority: " + uri.authority +
+                        ", Fragment: " + uri.fragment +
+                        ", Port: " + uri.port +
+                        ", Query: " + uri.query +
+                        ", Scheme: " + uri.scheme +
+                        ", Host: " + uri.host +
+                        ", Segments: " + uri.pathSegments.toString()
+            )
 
-        FileLogger.i(
-            "FileUri getFilePathByUri -> " +
-                    "Uri: " + uri +
-                    ", Authority: " + uri.authority +
-                    ", Fragment: " + uri.fragment +
-                    ", Port: " + uri.port +
-                    ", Query: " + uri.query +
-                    ", Scheme: " + uri.scheme +
-                    ", Host: " + uri.host +
-                    ", Segments: " + uri.pathSegments.toString()
-        )
+            // 以 file:// 开头的使用第三方应用打开 (open with third-party applications starting with file://)
+            if (ContentResolver.SCHEME_FILE.equals(uri.scheme, ignoreCase = true)) return getDataColumn(uri)
 
-        // 以 file:// 开头的使用第三方应用打开 (open with third-party applications starting with file://)
-        if (ContentResolver.SCHEME_FILE.equals(uri.scheme, ignoreCase = true)) return uri.path
+            @SuppressLint("ObsoleteSdkInt")
+            val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
 
-        @SuppressLint("ObsoleteSdkInt")
-        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-
-        // Before 4.4 , API 19 content:// 开头, 比如 content://media/external/images/media/123
-        if (!isKitKat && ContentResolver.SCHEME_CONTENT.equals(uri.scheme, true)) {
-            if (isGooglePhotosUri(uri)) return uri.lastPathSegment
-            return getDataColumn(context, uri, null, null)
-        }
-
-        // After 4.4 , API 19
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            // LocalStorageProvider
-            if (isLocalStorageDocument(uri)) {
-                // The path is the id
-                return DocumentsContract.getDocumentId(uri);
+            // Before 4.4 , API 19 content:// 开头, 比如 content://media/external/images/media/123
+            if (!isKitKat && ContentResolver.SCHEME_CONTENT.equals(uri.scheme, true)) {
+                if (isGooglePhotosUri(uri)) return uri.lastPathSegment
+                return getDataColumn(uri)
             }
-            // ExternalStorageProvider
-            if (isExternalStorageDocument(uri)) {
-                val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":").toTypedArray()
-                val type = split[0]
-                if ("primary".equals(type, ignoreCase = true)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        return context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString() + File.separator + split[1]
+
+            val context = FileOperator.getContext()
+            // After 4.4 , API 19
+            // DocumentProvider
+            if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+                // LocalStorageProvider
+                if (isLocalStorageDocument(uri)) {
+                    // The path is the id
+                    return DocumentsContract.getDocumentId(uri);
+                }
+                // ExternalStorageProvider
+                if (isExternalStorageDocument(uri)) {
+                    val docId = DocumentsContract.getDocumentId(uri)
+                    val split = docId.split(":").toTypedArray()
+                    val type = split[0]
+                    if ("primary".equals(type, ignoreCase = true)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            return context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).toString() + File.separator + split[1]
+                        } else {
+                            @Suppress("DEPRECATION")
+                            return Environment.getExternalStorageDirectory().toString() + File.separator + split[1]
+                        }
+                    } else if ("home".equals(type, ignoreCase = true)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            return context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+                                .toString() + File.separator + "documents" + File.separator + split[1]
+                        } else {
+                            @Suppress("DEPRECATION")
+                            return Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
+                        }
                     } else {
                         @Suppress("DEPRECATION")
-                        return Environment.getExternalStorageDirectory().toString() + File.separator + split[1]
-                    }
-                } else if ("home".equals(type, ignoreCase = true)) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        return context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
-                            .toString() + File.separator + "documents" + File.separator + split[1]
-                    } else {
-                        @Suppress("DEPRECATION")
-                        return Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
-                    }
-                } else {
-                    @Suppress("DEPRECATION")
-                    val sdcardPath = Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
-                    return if (sdcardPath.startsWith("file://")) {
-                        sdcardPath.replace("file://", "")
-                    } else {
-                        sdcardPath
-                    }
-                }
-            }
-            // DownloadsProvider
-            else if (isDownloadsDocument(uri)) {
-                val id = DocumentsContract.getDocumentId(uri)
-                if (id != null && id.startsWith("raw:")) {
-                    return id.substring(4)
-                }
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                    val contentUriPrefixesToTry = arrayOf(
-                        "content://downloads/public_downloads",
-                        "content://downloads/my_downloads",
-                        "content://downloads/all_downloads"
-                    )
-                    for (contentUriPrefix in contentUriPrefixesToTry) {
-                        val contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), id.toLong())
-                        try {
-                            val path = getDataColumn(context, contentUri, null, null)
-                            if (!path.isNullOrBlank()) return path
-                        } catch (e: Exception) {
-                            FileLogger.e(e.toString())
+                        val sdcardPath =
+                            Environment.getExternalStorageDirectory().toString() + File.separator + "documents" + File.separator + split[1]
+                        return if (sdcardPath.startsWith("file://")) {
+                            sdcardPath.replace("file://", "")
+                        } else {
+                            sdcardPath
                         }
                     }
-                } else return null
-            }
-            // MediaProvider
-            else if (isMediaDocument(uri)) {
-                val docId = DocumentsContract.getDocumentId(uri)
-                val split = docId.split(":").toTypedArray()
-                val contentUri: Uri? = when (split[0]) {
-                    "image" -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                    "video" -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-                    "audio" -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-                    else -> null
                 }
-                val selectionArgs = arrayOf(split[1])
-                return getDataColumn(context, contentUri, "_id=?", selectionArgs)
-            }
+                // DownloadsProvider
+                else if (isDownloadsDocument(uri)) {
+                    val id = DocumentsContract.getDocumentId(uri)
+                    if (id != null && id.startsWith("raw:")) {
+                        return id.substring(4)
+                    }
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                        val contentUriPrefixesToTry = arrayOf(
+                            "content://downloads/public_downloads",
+                            "content://downloads/my_downloads",
+                            "content://downloads/all_downloads"
+                        )
+                        for (contentUriPrefix in contentUriPrefixesToTry) {
+                            val contentUri = ContentUris.withAppendedId(Uri.parse(contentUriPrefix), id.toLong())
+                            try {
+                                val path = getDataColumn(contentUri)
+                                if (!path.isNullOrBlank()) return path
+                            } catch (e: Exception) {
+                                FileLogger.e(e.toString())
+                            }
+                        }
+                    } else return getDataColumn(uri)
+                }
+                // MediaProvider
+                else if (isMediaDocument(uri)) {
+                    val docId = DocumentsContract.getDocumentId(uri)
+                    val split = docId.split(":").toTypedArray()
+                    val contentUri: Uri? = when (split[0]) {
+                        "image" -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                        "video" -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                        "audio" -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+                        "download" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            MediaStore.Downloads.EXTERNAL_CONTENT_URI
+                        } else null
+                        else -> null
+                    }
+                    val selectionArgs = arrayOf(split[1])
+                    return getDataColumn(contentUri, "_id=?", selectionArgs)
+                }
 
-            //GoogleDriveProvider
-            else if (isGoogleDriveUri(uri)) {
-                return getGoogleDriveFilePath(uri, context)
-            }
-        }
-        // MediaStore (and general)
-        else if ("content".equals(uri.scheme, ignoreCase = true)) {
-            // Return the remote address
-            if (isGooglePhotosUri(uri)) {
-                return uri.lastPathSegment
-            }
-            // Google drive legacy provider
-            else if (isGoogleDriveUri(uri)) {
-                return getGoogleDriveFilePath(uri, context)
-            }
-            // Huawei
-            else if (isHuaWeiUri(uri)) {
-                val uriPath = uri.path ?: uri.toString()
-                //content://com.huawei.hidisk.fileprovider/root/storage/emulated/0/Android/data/com.xxx.xxx/
-                if (uriPath.startsWith("/root")) {
-                    return uriPath.replace("/root".toRegex(), "")
+                //GoogleDriveProvider
+                else if (isGoogleDriveUri(uri)) {
+                    return getGoogleDriveFilePath(uri, context)
                 }
             }
-            //For AndroidQ: getDataColumn is same as uri.path
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) uri.path
-            else getDataColumn(context, uri, null, null)
+            // MediaStore (and general)
+            else if ("content".equals(uri.scheme, ignoreCase = true)) {
+                // Return the remote address
+                if (isGooglePhotosUri(uri)) {
+                    return uri.lastPathSegment
+                }
+                // Google drive legacy provider
+                else if (isGoogleDriveUri(uri)) {
+                    return getGoogleDriveFilePath(uri, context)
+                }
+                // Huawei
+                else if (isHuaWeiUri(uri)) {
+                    val uriPath = getDataColumn(uri) ?: uri.toString()
+                    //content://com.huawei.hidisk.fileprovider/root/storage/emulated/0/Android/data/com.xxx.xxx/
+                    if (uriPath.startsWith("/root")) {
+                        return uriPath.replace("/root".toRegex(), "")
+                    }
+                }
+                return getDataColumn(uri)
+            }
+            // File
+            else if ("file".equals(uri.scheme, true)) {
+                return getDataColumn(uri)
+            }
+            return getDataColumn(uri)
         }
-        // File
-        else if ("file".equals(uri.scheme, true)) {
-            return uri.path
-        }
-        return null
     }
 
     /**
@@ -253,21 +253,17 @@ object FileUri {
      *      https://stackoverflow.com/questions/42508383/illegalargumentexception-column-data-does-not-exist
      *
      */
-    private fun getDataColumn(
-        context: Context,
-        uri: Uri?,
-        selection: String?,
-        selectionArgs: Array<String>?,
-    ): String? {
+    private fun getDataColumn(uri: Uri?, selection: String? = null, selectionArgs: Array<String>? = null): String? {
         @Suppress("DEPRECATION")
         val column = MediaStore.Files.FileColumns.DATA
         val projection = arrayOf(column)
-        context.contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use { c: Cursor ->
+
+        FileOperator.getContext().contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use { c: Cursor ->
             try {
                 if (c.moveToFirst()) {
                     val columnIndex = c.getColumnIndex(column)
                     return c.getString(columnIndex)
-                } else null
+                }
             } catch (e: Throwable) {
                 FileLogger.e("getDataColumn -> ${e.message}")
             }
@@ -287,7 +283,9 @@ object FileUri {
              * */
             val nameIndex: Int = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
             //val sizeIndex: Int = c.getColumnIndex(OpenableColumns.SIZE)
-            c.moveToFirst()
+            if (!c.moveToFirst()) {
+                return uri.toString()
+            }
             val name: String = c.getString(nameIndex)
             //val size = c.getLong(sizeIndex).toString()
             val file = File(context.cacheDir, name)
@@ -310,7 +308,6 @@ object FileUri {
             } finally {
                 inputStream?.close()
                 outputStream?.close()
-                c.close()
             }
             return file.path
         }
