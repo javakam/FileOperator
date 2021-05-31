@@ -3,6 +3,7 @@ package ando.file.compressor
 import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.openFileDescriptor
 import ando.file.core.FileLogger
+import ando.file.core.FileOperator
 import ando.file.core.FileSizeUtils
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -17,12 +18,18 @@ object ImageChecker {
     private const val JPG = ".jpg"
     private val JPEG_SIGNATURE = byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte())
 
-    fun isImage(uri: Uri?): Boolean {
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFileDescriptor(openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor, null, options)
-        return options.outWidth != -1
-    }
+    /**
+     * Use BitmapFactory.decodeStream instead of BitmapFactory.decodeFileDescriptor
+     *
+     * https://stackoverflow.com/questions/61340166/android-10-bitmapfactory-decodefiledescriptor-returns-null
+     */
+    fun isImage(uri: Uri?): Boolean =
+        uri?.run {
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            BitmapFactory.decodeStream(FileOperator.getContext().contentResolver.openInputStream(uri))
+            options.outWidth != -1
+        } ?: false
 
     /**
      * Determine if it is JPG.
@@ -186,7 +193,7 @@ object ImageChecker {
         bytes: ByteArray,
         off: Int,
         len: Int,
-        littleEndian: Boolean
+        littleEndian: Boolean,
     ): Int {
         var offset = off
         var length = len

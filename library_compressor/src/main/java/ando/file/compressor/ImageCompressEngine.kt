@@ -14,10 +14,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * ImageCompressEngine
- * <p>
- * Description: 图片压缩
- * </p>
+ * # 图片压缩
+ *
  * @author javakam
  * @date 2020/5/21  10:52
  */
@@ -152,25 +150,24 @@ object ImageCompressEngine {
     /**
      * 图片尺寸压缩 + 质量压缩
      */
-    fun compressPure(uri: Uri?): Bitmap? {
-        if (!ImageChecker.isImage(uri)) return null
-        val fd: FileDescriptor = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
+    fun compressPure(uri: Uri?, maxSize: Long = 300L): Bitmap? {
+        if (uri == null || !ImageChecker.isImage(uri)) return null
 
         val bitmap: Bitmap = BitmapFactory.Options().run {
             inJustDecodeBounds = true
-            BitmapFactory.decodeFileDescriptor(fd, null, this)
+            BitmapFactory.decodeStream(getContext().contentResolver.openInputStream(uri))
             inSampleSize = calculateInSampleSize(outWidth, outHeight)
 
             inJustDecodeBounds = false
             FileLogger.w("compressPure inSampleSize= $inSampleSize")
-            BitmapFactory.decodeFileDescriptor(fd, null, this)
+            BitmapFactory.decodeStream(getContext().contentResolver.openInputStream(uri))
         }
 
         val byteArrOps = ByteArrayOutputStream()
-        var quality = 70
+        var quality = 60
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrOps)
         // 大小限制
-        while (byteArrOps.toByteArray().size / 1024 > 512L) {
+        while (byteArrOps.toByteArray().size / 1024 > maxSize) {
             byteArrOps.reset()
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrOps)
             if (quality == 50) {

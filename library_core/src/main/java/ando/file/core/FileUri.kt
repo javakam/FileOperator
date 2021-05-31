@@ -76,11 +76,13 @@ object FileUri {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 val authority = FileOperator.getContext().packageName + AUTHORITY
                 FileProvider.getUriForFile(FileOperator.getContext(), authority, file ?: return null)
-            } else Uri.fromFile(file)
+            } else {
+                Uri.fromFile(file)
+            }
         }
     }
 
-    fun getShareUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path), isOriginal = true)
+    fun getShareUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path), isOriginal = false)
 
     /**
      * @return content://  or file://
