@@ -2,8 +2,7 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-- 🚀`Android`文件操作库
-- 🚀适用于`Android 4.4`及以上系统, 已兼容`AndroidQ`和`Android11`新的存储策略
+> `Android`文件操作库。适用于`Android 4.4`及以上系统, 已兼容`AndroidQ`和`Android11`新的存储策略。包括处理`Android`端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
 
 ## 使用(Usage)
 ##### 1. 依赖(dependencies)
