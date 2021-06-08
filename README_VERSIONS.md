@@ -62,8 +62,13 @@
 2.升级gradle插件
 ```
 
-## v1.6.
+## v1.6.0
 ```
 1.修复Android Q上路径获取问题
 2.修改并增加注释
+```
+
+## v1.6.2
+```
+Modify FileGlobal.giveUriPermission & use
 ```
