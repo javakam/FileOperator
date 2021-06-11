@@ -58,20 +58,24 @@ internal fun startActivity(context: Any, intent: Intent) {
 //Permission
 //----------------------------------------------------------------
 
-fun giveUriPermission(uri: Uri?) {
-    uri?.apply {
+/**
+ * @return 传入的Uri是否已具备访问权限 (Whether the incoming Uri has access permission)
+ */
+fun giveUriPermission(uri: Uri?): Boolean {
+    return uri?.run {
         when (FileOperator.getContext().checkUriPermission(
             this, android.os.Process.myPid(), android.os.Process.myUid(), Intent.FLAG_GRANT_READ_URI_PERMISSION
         )) {
-            PackageManager.PERMISSION_GRANTED -> {
-            }
+            PackageManager.PERMISSION_GRANTED -> true
             PackageManager.PERMISSION_DENIED -> {
                 FileOperator.getContext().grantUriPermission(
                     FileOperator.getApplication().packageName, this, Intent.FLAG_GRANT_READ_URI_PERMISSION
                 )
+                false
             }
+            else -> false
         }
-    }
+    } ?: false
 }
 
 fun revokeUriPermission(uri: Uri?) {
@@ -79,16 +83,19 @@ fun revokeUriPermission(uri: Uri?) {
 }
 
 inline fun <R> Uri.use(block: Uri.() -> R): R {
+    var isAlreadyHavePermission = false
     try {
-        giveUriPermission(this)
+        isAlreadyHavePermission = giveUriPermission(this)
         return block()
     } catch (t: Throwable) {
         FileLogger.e("giveUriPermission Error ${t.message}")
     } finally {
-        try {
-            revokeUriPermission(this)
-        } catch (t: Throwable) {
-            FileLogger.e("revokeUriPermission Error ${t.message}")
+        if (!isAlreadyHavePermission) {
+            try {
+                revokeUriPermission(this)
+            } catch (t: Throwable) {
+                FileLogger.e("revokeUriPermission Error ${t.message}")
+            }
         }
     }
     return block()

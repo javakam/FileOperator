@@ -152,19 +152,20 @@ object ImageCompressEngine {
      */
     fun compressPure(uri: Uri?, maxSize: Long = 300L): Bitmap? {
         if (uri == null || !ImageChecker.isImage(uri)) return null
+        val fd: FileDescriptor = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
 
         val bitmap: Bitmap = BitmapFactory.Options().run {
             inJustDecodeBounds = true
-            BitmapFactory.decodeStream(getContext().contentResolver.openInputStream(uri))
+            BitmapFactory.decodeFileDescriptor(fd, null, this)
             inSampleSize = calculateInSampleSize(outWidth, outHeight)
 
             inJustDecodeBounds = false
             FileLogger.w("compressPure inSampleSize= $inSampleSize")
-            BitmapFactory.decodeStream(getContext().contentResolver.openInputStream(uri))
+            BitmapFactory.decodeFileDescriptor(fd, null, this)
         }
 
         val byteArrOps = ByteArrayOutputStream()
-        var quality = 60
+        var quality = 70
         bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrOps)
         // 大小限制
         while (byteArrOps.toByteArray().size / 1024 > maxSize) {

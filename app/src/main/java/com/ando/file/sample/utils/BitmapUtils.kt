@@ -3,8 +3,8 @@ package com.ando.file.sample.utils
 import ando.file.compressor.ImageChecker
 import ando.file.compressor.ImageChecker.needCompress
 import ando.file.compressor.ImageCompressEngine.compressPure
+import ando.file.core.FileGlobal
 import ando.file.core.FileLogger
-import ando.file.core.FileOperator
 import ando.file.core.FileSizeUtils.getFileSize
 import android.app.Activity
 import android.graphics.Bitmap.CompressFormat
@@ -39,9 +39,8 @@ object BitmapUtils {
         val needCompress = needCompress(maxSize.toInt(), uri)
         if (!needCompress) {
             return try {
-                val bitmap = BitmapFactory.decodeStream(
-                    FileOperator.getContext().contentResolver.openInputStream(uri)
-                )
+                val bitmap = BitmapFactory.decodeFileDescriptor(FileGlobal.openFileDescriptor(uri)?.fileDescriptor ?: return null)
+
                 arrayOf(bitmap, getFileSize(uri))
             } catch (e: Exception) {
                 FileLogger.e(e.message)
