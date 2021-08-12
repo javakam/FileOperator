@@ -7,6 +7,7 @@
     <string name="str_ando_file_title_fragment">Fragment Usage</string>
     <string name="str_ando_file_title_media_store">MediaStore</string>
     <string name="str_ando_file_title_saf">Storage Access Framework</string>
+    <string name="str_ando_file_title_harmony">鸿蒙读取文件时出现问题 👉 read failed: ENOTCONN (Transport endpoint is not connected)</string>
     <string name="str_ando_file_get_mime">获取文件MimeType(FileMimeType)</string>
     <string name="str_ando_file_get_size">获取文件大小(FileSizeUtils)</string>
     <string name="str_ando_file_get_uri_path">获取文件Uri/Path(FileUri)</string>
@@ -19,6 +20,7 @@
     <string name="str_ando_file_select_custom_type">自定义 FileTye</string>
     <string name="str_ando_file_select_get_directory_info">获取应用目录信息</string>
     <string name="str_ando_file_select_diff">区别(Difference)</string>
+    <string name="str_ando_file_select_harmony">鸿蒙系统(HarmonyOS)</string>
 
     <string name="str_ando_file_utils_get_uri">选择一个文件并获取测试用的Uri</string>
     <string name="str_ando_file_utils_show">FileUtils 演示操作文件\n注: SAF方式操作文件👉StorageAccessFrameworkActivity</string>

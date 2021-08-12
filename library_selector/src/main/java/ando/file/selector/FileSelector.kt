@@ -50,8 +50,8 @@ class FileSelector private constructor(builder: Builder) {
     private var mMaxCount: Int = Int.MAX_VALUE                  //可选文件最大数量(Maximum number of optional files)
     private var mMinCountTip: String = TIP_COUNT_MIN
     private var mMaxCountTip: String = TIP_COUNT_MAX
-    private var mSingleFileMaxSize: Long = -1                   //单文件大小控制(Single file size) Byte
-    private var mAllFilesMaxSize: Long = -1                     //总文件大小控制(Total file size control) Byte
+    private var mSingleFileMaxSize: Long = -1                   //单文件大小控制(Single file size) byte (B)
+    private var mAllFilesMaxSize: Long = -1                     //总文件大小控制(Total file size control) byte (B)
     private var mOverLimitStrategy = OVER_LIMIT_EXCEPT_ALL
 
     private var mFileTypeMismatchTip: String = TIP_SINGLE_FILE_TYPE_MISMATCH
@@ -572,8 +572,8 @@ class FileSelector private constructor(builder: Builder) {
         var mMinCountTip: String = TIP_COUNT_MIN
         var mMaxCountTip: String = TIP_COUNT_MAX
 
-        var mSingleFileMaxSize: Long = -1                   //单文件大小控制 B (Single file size control)
-        var mAllFilesMaxSize: Long = -1                     //总文件大小控制 B (Total file size control)
+        var mSingleFileMaxSize: Long = -1                   //单文件大小控制 byte (B) (Single file size control)
+        var mAllFilesMaxSize: Long = -1                     //总文件大小控制 byte (B) (Total file size control)
         var mFileTypeMismatchTip: String = TIP_SINGLE_FILE_TYPE_MISMATCH
         var mSingleFileMaxSizeTip: String = TIP_SINGLE_FILE_SIZE
         var mAllFilesMaxSizeTip: String = TIP_ALL_FILE_SIZE
@@ -619,12 +619,20 @@ class FileSelector private constructor(builder: Builder) {
             return this
         }
 
+        /**
+         * 字节码计算器(Bytecode calculator) 👉 https://calc.itzmx.com/
+         *
+         * @param sizeThreshold byte (B)
+         */
         fun setSingleFileMaxSize(sizeThreshold: Long, sizeThresholdTip: String): Builder {
             this.mSingleFileMaxSize = sizeThreshold
             this.mSingleFileMaxSizeTip = sizeThresholdTip
             return this
         }
 
+        /**
+         * @param sizeThreshold byte (B)
+         */
         fun setAllFilesMaxSize(sizeThreshold: Long, sizeThresholdTip: String): Builder {
             this.mAllFilesMaxSize = sizeThreshold
             this.mAllFilesMaxSizeTip = sizeThresholdTip

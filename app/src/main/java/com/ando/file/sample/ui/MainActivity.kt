@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.ando.file.sample.R
+import com.ando.file.sample.harmony.FileHarmonyActivity
 import com.ando.file.sample.ui.core.FileCoreActivity
 import com.ando.file.sample.ui.core.FileUtilsActivity
 import com.ando.file.sample.ui.selector.FileSelectCustomFileTypeActivity
@@ -78,6 +79,11 @@ class MainActivity : AppCompatActivity() {
     fun caseSAF(view: View) {
         val intent = Intent(this, StorageAccessFrameworkActivity::class.java)
         startActivity(intent)
+    }
+
+    //HarmonyOS
+    fun caseHarmony(view: View) {
+        startActivity(Intent(this, FileHarmonyActivity::class.java))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

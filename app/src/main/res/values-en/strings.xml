@@ -7,6 +7,7 @@
     <string name="str_ando_file_title_fragment">Fragment Usage</string>
     <string name="str_ando_file_title_media_store">MediaStore</string>
     <string name="str_ando_file_title_saf">Storage Access Framework</string>
+    <string name="str_ando_file_title_harmony">There was a problem reading the file in HarmonyOS 👉 read failed: ENOTCONN (Transport endpoint is not connected)</string>
     <string name="str_ando_file_get_mime">Get file MimeType(FileMimeType)</string>
     <string name="str_ando_file_get_size">Get file size(FileSizeUtils)</string>
     <string name="str_ando_file_get_uri_path">Get file Uri/Path(FileUri)</string>
@@ -19,6 +20,7 @@
     <string name="str_ando_file_select_custom_type">Custom FileType</string>
     <string name="str_ando_file_select_get_directory_info">Get application catalog information</string>
     <string name="str_ando_file_select_diff">Difference</string>
+    <string name="str_ando_file_select_harmony">HarmonyOS</string>
 
     <string name="str_ando_file_utils_get_uri">Choose a file and get the Uri for testing</string>
     <string name="str_ando_file_utils_show">FileUtils demo operation file\nNote: SAF operation file👉StorageAccessFrameworkActivity</string>

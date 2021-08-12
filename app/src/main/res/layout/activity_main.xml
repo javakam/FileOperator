@@ -155,5 +155,29 @@
             android:textAllCaps="false"
             android:textSize="@dimen/font_12" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/color_divider_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/str_ando_file_select_harmony"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_12"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_harmony"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="caseHarmony"
+            android:text="@string/str_ando_file_title_harmony"
+            android:textAllCaps="false"
+            android:textSize="@dimen/font_12" />
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
