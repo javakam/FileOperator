@@ -25,8 +25,9 @@ import java.io.InputStream
 import android.text.Spannable
 
 import android.text.style.ForegroundColorSpan
+import android.view.View
+import android.widget.ScrollView
 import kotlin.math.ceil
-
 
 /**
  * Android BufferedInputStream.read 导致的问题...没解决...
@@ -38,6 +39,7 @@ import kotlin.math.ceil
  */
 class FileHarmonyActivity : AppCompatActivity() {
 
+    private val mScrollView: ScrollView by lazy { findViewById(R.id.scrollView) }
     private val mBtSelectSingle: Button by lazy { findViewById(R.id.bt_select_single) }
     private val mTvError: TextView by lazy { findViewById(R.id.tv_error) }
     private val mTvResult: TextView by lazy { findViewById(R.id.tv_result) }
@@ -108,9 +110,15 @@ class FileHarmonyActivity : AppCompatActivity() {
                             sb.setSpan(ForegroundColorSpan(Color.RED), mTvResult.text.length, sb.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
                             runOnUiThread {
                                 mTvResult.text = sb
+
+                                //https://stackoverflow.com/questions/3080402/android-scrollview-force-to-bottom
+//                                mScrollView.postDelayed({
+//                                    //Bug: 直接黑屏并退出 Activity
+//                                    //mScrollView.fullScroll(ScrollView.FOCUS_DOWN)
+//                                    //mScrollView.scrollToBottom()
+//                                }, 100)
                             }
                         }
-
                     }.start()
                 }
 
@@ -120,6 +128,13 @@ class FileHarmonyActivity : AppCompatActivity() {
                 }
             })
             .choose()
+    }
+
+    fun ScrollView.scrollToBottom() {
+        val lastChild = getChildAt(childCount - 1)
+        val bottom = lastChild.bottom + paddingBottom
+        val delta = bottom - (scrollY + height)
+        smoothScrollBy(0, delta)
     }
 
     /**

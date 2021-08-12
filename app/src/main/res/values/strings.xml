@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">FileOperator</string>
 
-    <string name="str_ando_file_title_core">Core Library</string>
-    <string name="str_ando_file_title_selector">File Selector</string>
+    <string name="str_ando_file_title_core">核心库(Core Library)</string>
+    <string name="str_ando_file_title_selector">文件选择(File Selector)</string>
     <string name="str_ando_file_title_fragment">Fragment Usage</string>
     <string name="str_ando_file_title_media_store">MediaStore</string>
     <string name="str_ando_file_title_saf">Storage Access Framework</string>
