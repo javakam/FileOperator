@@ -55,6 +55,9 @@
             android:name=".ui.storage.StorageAccessFrameworkActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".harmony.FileHarmonyActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.selector.FileSelectSingleImageActivity"
             android:screenOrientation="portrait" />
         <activity

@@ -21,9 +21,9 @@ import com.ando.file.sample.utils.ResultUtils
  */
 class FileCoreActivity : AppCompatActivity() {
 
-    private lateinit var mBtSelectSingle: Button
-    private lateinit var mTvError: TextView
-    private lateinit var mTvResult: TextView
+    private val mBtSelectSingle: Button by lazy { findViewById(R.id.bt_select_single) }
+    private val mTvError: TextView by lazy { findViewById(R.id.tv_error) }
+    private val mTvResult: TextView by lazy { findViewById(R.id.tv_result) }
 
     private var mFileSelector: FileSelector? = null
 
@@ -46,9 +46,6 @@ class FileCoreActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_core)
-        mBtSelectSingle = findViewById(R.id.bt_select_single)
-        mTvError = findViewById(R.id.tv_error)
-        mTvResult = findViewById(R.id.tv_result)
 
         val action = intent.getStringExtra("action")
         title = action
@@ -82,8 +79,8 @@ class FileCoreActivity : AppCompatActivity() {
             .setMinCount(1, "Choose at least one file !!")
             .setMaxCount(1000, "Choose up to one thousand files !")
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(524288000, "The size cannot exceed 500M !")
-            .setAllFilesMaxSize(1073741824, "The total size cannot exceed 1G !")
+            .setSingleFileMaxSize(10737418240, "The size cannot exceed 10G !") //byte (B)
+            .setAllFilesMaxSize(53687091200, "The total size cannot exceed 50G !")
             .setMimeTypes("*/*")
 
             .filter(object : FileSelectCondition {

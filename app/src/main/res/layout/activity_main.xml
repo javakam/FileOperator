@@ -2,22 +2,26 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/dp_10">
+    android:paddingLeft="@dimen/dp_15"
+    android:paddingRight="@dimen/dp_15">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp_30"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_3"
             android:text="@string/str_ando_file_title_core"
             android:textColor="@color/black"
             android:textSize="@dimen/font_12"
             android:textStyle="bold" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseGetFileMimeType"
@@ -26,6 +30,7 @@
             android:textSize="@dimen/font_12" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseGetFileSize"
@@ -34,6 +39,7 @@
             android:textSize="@dimen/font_12" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseGetFileUriOrPath"
@@ -42,6 +48,7 @@
             android:textSize="@dimen/font_12" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseOpenFileByUri"
@@ -51,6 +58,7 @@
             android:visibility="gone" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseFileUtils"
@@ -59,22 +67,17 @@
             android:textSize="@dimen/font_12"
             android:visibility="visible" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@color/color_divider_gray" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_3"
             android:text="@string/str_ando_file_title_selector"
             android:textColor="@color/black"
             android:textSize="@dimen/font_12"
             android:textStyle="bold" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseSelectSingleImageWithCompress"
@@ -83,6 +86,7 @@
             android:textSize="@dimen/font_12" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseSelectMultiImageWithCompress"
@@ -91,6 +95,7 @@
             android:textSize="@dimen/font_12" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseSelectMultiFilesWithCompress"
@@ -99,6 +104,7 @@
             android:textSize="@dimen/font_12" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseSelectCustomFileType"
@@ -107,6 +113,7 @@
             android:textSize="@dimen/font_12" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseFragmentSimpleUsage"
@@ -116,6 +123,7 @@
             android:visibility="visible" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseClearCache"
@@ -123,22 +131,17 @@
             android:textAllCaps="false"
             android:textSize="@dimen/font_12" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@color/color_divider_gray" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_3"
             android:text="@string/str_ando_file_select_diff"
             android:textColor="@color/black"
             android:textSize="@dimen/font_12"
             android:textStyle="bold" />
 
         <Button
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseMediaStore"
@@ -148,10 +151,30 @@
 
         <Button
             android:id="@+id/SAF_Btn"
+            style="@style/FileButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="caseSAF"
             android:text="@string/str_ando_file_title_saf"
+            android:textAllCaps="false"
+            android:textSize="@dimen/font_12" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/dp_3"
+            android:text="@string/str_ando_file_select_harmony"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_12"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_harmony"
+            style="@style/FileButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="caseHarmony"
+            android:text="@string/str_ando_file_title_harmony"
             android:textAllCaps="false"
             android:textSize="@dimen/font_12" />
 

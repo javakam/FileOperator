@@ -30,7 +30,7 @@ import com.ando.file.sample.utils.ResultUtils.asVerticalList
 @SuppressLint("SetTextI18n")
 class FileSelectCustomFileTypeActivity : AppCompatActivity() {
 
-    private val mShowText: String by  lazy { getString(R.string.str_ando_file_select_multiple_diff) }
+    private val mShowText: String by lazy { getString(R.string.str_ando_file_select_multiple_diff) }
     private lateinit var mTvCurrStrategy: TextView
     private lateinit var mRgStrategy: RadioGroup
     private lateinit var mBtSelect: Button
@@ -58,7 +58,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
         title = "Custom File Type"
 
         //策略切换 (Strategy switching)
-        val prefix=getString(R.string.str_ando_file_current_strategy)
+        val prefix = getString(R.string.str_ando_file_current_strategy)
         mRgStrategy.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.rb_strategy1 -> {
@@ -99,6 +99,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             return if (parseSuffix(uri).equals("json", true)) FileTypePhp else FileType.UNKNOWN
         }
     }
+
     //or
     enum class FileTypeJson : IFileType {
         JSON;
@@ -188,8 +189,8 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             .setMultiSelect()//默认是单选false
             .setMinCount(1, "Select at least one set type file!")
             .setMaxCount(4, "Choose up to four files!")
-            .setSingleFileMaxSize(2097152, "The size of a single file cannot exceed 2M !")
-            .setAllFilesMaxSize(52428800, "The total file size cannot exceed 50M !")
+            .setSingleFileMaxSize(209715200, "The size of a single file cannot exceed 200M !")
+            .setAllFilesMaxSize(524288000, "The total file size cannot exceed 500M !")
             .setOverLimitStrategy(this.mOverLimitStrategy)
             .setMimeTypes("audio/*", "image/*", "text/*", "application/json")
             .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
