@@ -3,7 +3,6 @@ package com.ando.file.sample
 import android.app.Application
 import ando.file.core.FileOperator
 import com.ando.file.sample.utils.CrashHandler
-import com.ando.file.sample.utils.MethodSignKotlinUtils
 
 /**
  * # App

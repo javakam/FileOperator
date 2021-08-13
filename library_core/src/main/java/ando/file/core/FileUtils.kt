@@ -57,7 +57,7 @@ object FileUtils {
         return if (dot != -1) pathOrName.substring(
             if (fullExtension) dot
             else (dot + 1)
-        ).toLowerCase(Locale.getDefault())
+        ).lowercase(Locale.getDefault())
         else "" // No extension.
     }
 
@@ -75,10 +75,17 @@ object FileUtils {
     //----------------------------------------------------------------
 
     /**
-     * /xxx/xxx/note.txt -> path: /xxx/xxx   name: note   suffix: txt
-     * ///note.txt       -> path: ///        name: note   suffix: txt
-     * /note.txt         -> path: ""         name: note   suffix: txt
-     * note.txt          -> path: ""         name: note   suffix: txt
+     * ### 路径分割
+     *
+     * ```
+     * eg: srcPath=/storage/emulated/0/Movies/myVideo.mp4  path=/storage/emulated/0/Movies
+     * name=myVideo  suffix=mp4  nameSuffix=myVideo.mp4
+     *
+     * /xxx/xxx/note.txt ->  path: /xxx/xxx   name: note   suffix: txt
+     * ///note.txt       ->  path: ///        name: note   suffix: txt
+     * /note.txt         ->  path: ""         name: note   suffix: txt
+     * note.txt          ->  path: ""         name: note   suffix: txt
+     * ```
      */
     fun splitFilePath(
         srcPath: String?,
@@ -94,13 +101,27 @@ object FileUtils {
 
         val dot = nameSuffix.lastIndexOf(suffixSplit)
         if (dot != -1) {
-            val suffix = nameSuffix.substring((dot + 1)).toLowerCase(Locale.getDefault())
+            val suffix = nameSuffix.substring((dot + 1)).lowercase(Locale.getDefault())
             val name = nameSuffix.substring(0, dot)
-            FileLogger.d("srcPath=$srcPath path=$path  name=$name  suffix=$suffix nameSuffix=$nameSuffix")
+            FileLogger.d("splitFilePath srcPath=$srcPath path=$path  name=$name  suffix=$suffix nameSuffix=$nameSuffix")
             block?.invoke(path, name, suffix, nameSuffix)
         }
     }
 
+    /**
+     * /storage/emulated/0/Movies/myVideo.mp4  ->  /storage/emulated/0/Movies
+     */
+    fun getFilePathFromFullPath(path: String?, split: Char = '/'): String? {
+        if (path.isNullOrBlank()) return null
+        val cut = path.lastIndexOf(split)
+        // (cut+1): /storage/emulated/0/Movies/
+        if (cut != -1) return path.substring(0, cut)
+        return path
+    }
+
+    /**
+     * /storage/emulated/0/Movies/myVideo.mp4  ->  myVideo.mp4
+     */
     fun getFileNameFromPath(path: String?, split: Char = '/'): String? {
         if (path.isNullOrBlank()) return null
         val cut = path.lastIndexOf(split)
@@ -108,6 +129,9 @@ object FileUtils {
         return path
     }
 
+    /**
+     * /storage/emulated/0/Movies/myVideo.mp4  ->  myVideo.mp4
+     */
     fun getFileNameFromUri(uri: Uri?): String? =
         uri?.use {
             var filename: String? = null

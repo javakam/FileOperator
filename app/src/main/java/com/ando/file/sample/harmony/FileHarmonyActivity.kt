@@ -4,7 +4,6 @@ import ando.file.core.FileGlobal
 import ando.file.core.FileLogger
 import ando.file.selector.*
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
@@ -19,14 +18,13 @@ import com.ando.file.sample.REQUEST_CHOOSE_FILE
 import com.ando.file.sample.toastLong
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
-import java.io.BufferedInputStream
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
 import android.text.Spannable
 
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.ScrollView
+import androidx.annotation.NonNull
+import java.io.*
 import kotlin.math.ceil
 
 /**
@@ -41,19 +39,30 @@ class FileHarmonyActivity : AppCompatActivity() {
 
     private val mScrollView: ScrollView by lazy { findViewById(R.id.scrollView) }
     private val mBtSelectSingle: Button by lazy { findViewById(R.id.bt_select_single) }
+    private val mBtSelectSingle2: Button by lazy { findViewById(R.id.bt_select_single2) }
     private val mTvError: TextView by lazy { findViewById(R.id.tv_error) }
     private val mTvResult: TextView by lazy { findViewById(R.id.tv_result) }
 
     private var mFileSelector: FileSelector? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_file_core)
         title = "HarmonyOS"
 
+        mBtSelectSingle.text = "Uri"
         mBtSelectSingle.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
-                if (it) chooseFile()
+                if (it) chooseFile(1)
+            }
+        }
+
+        mBtSelectSingle2.visibility = View.VISIBLE
+        mBtSelectSingle2.text = "Path"
+        mBtSelectSingle2.setOnClickListener {
+            PermissionManager.requestStoragePermission(this) {
+                if (it) chooseFile(2)
             }
         }
     }
@@ -65,7 +74,7 @@ class FileHarmonyActivity : AppCompatActivity() {
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
-    private fun chooseFile() {
+    private fun chooseFile(action: Int) {
         mFileSelector = FileSelector
             .with(this)
             .setMultiSelect()
@@ -101,22 +110,27 @@ class FileHarmonyActivity : AppCompatActivity() {
                         val newText: CharSequence = mTvResult.text
                         //用于显示上传数据
                         val sb = SpannableStringBuilder(newText)
-                        uploadFile(this@FileHarmonyActivity, r.uri ?: return@Thread, r.fileSize) {
-                            if (it == null) {
-                                Thread.interrupted()
-                                return@uploadFile
+                        if (action == 1) {
+                            //Use Uri
+                            val ins: InputStream = contentResolver.openInputStream(r.uri ?: return@Thread) ?: return@Thread
+                            uploadFile(ins, r.fileSize) {
+                                handleUploadResult(sb, it)
                             }
-                            sb.append(it).appendLine()
-                            sb.setSpan(ForegroundColorSpan(Color.RED), mTvResult.text.length, sb.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-                            runOnUiThread {
-                                mTvResult.text = sb
-
-                                //https://stackoverflow.com/questions/3080402/android-scrollview-force-to-bottom
-//                                mScrollView.postDelayed({
-//                                    //Bug: 直接黑屏并退出 Activity
-//                                    //mScrollView.fullScroll(ScrollView.FOCUS_DOWN)
-//                                    //mScrollView.scrollToBottom()
-//                                }, 100)
+                        } else {
+                            //Use Path
+                            val ins: InputStream
+                            try {
+                                ins = FileInputStream(r.filePath ?: return@Thread)
+                            } catch (e: Exception) {
+                                /*
+                                /storage/emulated/0/DCIM/Camera/video_20210716_153403.mp4: open failed: EACCES (Permission denied)
+                                 */
+                                Log.e("123", "Use Path: ${e.message}")
+                                runOnUiThread { ResultUtils.setErrorText(mTvError, e) }
+                                return@Thread
+                            }
+                            uploadFile(ins, r.fileSize) {
+                                handleUploadResult(sb, it)
                             }
                         }
                     }.start()
@@ -130,6 +144,25 @@ class FileHarmonyActivity : AppCompatActivity() {
             .choose()
     }
 
+    private fun handleUploadResult(sb: SpannableStringBuilder, result: String?) {
+        if (result == null) {
+            Thread.interrupted()
+            return
+        }
+        sb.append(result).appendLine()
+        sb.setSpan(ForegroundColorSpan(Color.RED), mTvResult.text.length, sb.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        runOnUiThread {
+            mTvResult.text = sb
+
+            //https://stackoverflow.com/questions/3080402/android-scrollview-force-to-bottom
+//          mScrollView.postDelayed({
+//              //Bug: 直接黑屏并退出 Activity
+//              //mScrollView.fullScroll(ScrollView.FOCUS_DOWN)
+//              //mScrollView.scrollToBottom()
+//          }, 100)
+        }
+    }
+
     fun ScrollView.scrollToBottom() {
         val lastChild = getChildAt(childCount - 1)
         val bottom = lastChild.bottom + paddingBottom
@@ -137,12 +170,8 @@ class FileHarmonyActivity : AppCompatActivity() {
         smoothScrollBy(0, delta)
     }
 
-    /**
-     * 模拟文件上传 (Simulate file upload)
-     */
-    fun uploadFile(context: Context, uri: Uri, fileTotalSize: Long, callBack: (String?) -> Unit) {
-        //1.通过Uri获取文件的InputStream
-        val ins: InputStream = context.contentResolver.openInputStream(uri) ?: return
+    private fun uploadFile(@NonNull ins: InputStream, fileTotalSize: Long, callBack: (String?) -> Unit) {
+        //1.获取 InputStream
         //2.每次读取8192个字节,速度
         val buffered: BufferedInputStream = ins.buffered(8192)
         //3.临时存储缓冲输出的字节流
