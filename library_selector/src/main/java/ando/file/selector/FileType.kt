@@ -102,7 +102,7 @@ enum class FileType : IFileType {
      * 依据文件扩展名的类型确定相应的MimeType
      */
     private fun fromSuffix(suffix: String): IFileType {
-        val end = suffix.toLowerCase(Locale.getDefault())
+        val end = suffix.lowercase(Locale.getDefault())
         values().forEach { t: FileType ->
             if (t.mimeArray.isNullOrEmpty()) {
                 if (t.mimeType?.equals(end, true) == true) return t

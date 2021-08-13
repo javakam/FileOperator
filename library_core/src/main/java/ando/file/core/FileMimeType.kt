@@ -18,7 +18,7 @@ object FileMimeType {
 
     fun getMimeType(uri: Uri?): String =
         uri?.use {
-            getContext().contentResolver.getType(uri)?.toLowerCase(Locale.getDefault()) ?: getMimeType(getPathByUri(uri))
+            getContext().contentResolver.getType(uri)?.lowercase(Locale.getDefault()) ?: getMimeType(getPathByUri(uri))
         } ?: getMimeType(getPathByUri(uri))
 
     /**
@@ -34,7 +34,7 @@ object FileMimeType {
         else MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: type
 
         FileLogger.i("FileMimeType：extension=$extension  mimeType=$mimeType")
-        return mimeType.toLowerCase(Locale.getDefault())
+        return mimeType.lowercase(Locale.getDefault())
     }
 
     /**
@@ -44,7 +44,7 @@ object FileMimeType {
         var type = "application/octet-stream"
         val dotIndex = fileName.lastIndexOf(".")
         if (dotIndex < 0) return type
-        val end = fileName.substring(dotIndex).toLowerCase(Locale.getDefault())
+        val end = fileName.substring(dotIndex).lowercase(Locale.getDefault())
         if (end.isBlank()) return type
         FileLogger.i("getMimeTypeSupplement：end=$end")
         for (mimeTypes in MIME_TABLES) {
@@ -53,7 +53,7 @@ object FileMimeType {
                 break
             }
         }
-        return type.toLowerCase(Locale.getDefault())
+        return type.lowercase(Locale.getDefault())
     }
 
     /**

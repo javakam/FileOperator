@@ -18,7 +18,7 @@ interface IFileType {
     fun fromPath(filePath: String?): IFileType = FileType.UNKNOWN
     fun fromFile(file: File): IFileType = FileType.UNKNOWN
     fun fromUri(uri: Uri?): IFileType = FileType.UNKNOWN
-    fun parseSuffix(uri: Uri?): String = FileUtils.getExtension(uri).toLowerCase(Locale.getDefault())
+    fun parseSuffix(uri: Uri?): String = FileUtils.getExtension(uri).lowercase(Locale.getDefault())
 
     /**
      * 自定义`IFileType`实现类, 需要把返回的`Uri`对应上, 否则会判定为 FileType.UNKNOWN
