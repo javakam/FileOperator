@@ -19,6 +19,7 @@
     <string name="str_ando_file_select_multiple_get_info">选择多个文件并获取相应信息</string>
     <string name="str_ando_file_select_custom_type">自定义 FileTye</string>
     <string name="str_ando_file_select_get_directory_info">获取应用目录信息</string>
+    <string name="str_ando_file_select_media_info">获取媒体文件信息(图片,音频,视频)\n(获取准确的拍摄时间)</string>
     <string name="str_ando_file_select_diff">区别(Difference)</string>
     <string name="str_ando_file_select_harmony">鸿蒙系统(HarmonyOS)</string>
 

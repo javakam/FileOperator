@@ -131,6 +131,15 @@
             android:textAllCaps="false"
             android:textSize="@dimen/font_12" />
 
+        <Button
+            style="@style/FileButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="caseMediaInfo"
+            android:text="@string/str_ando_file_select_media_info"
+            android:textAllCaps="false"
+            android:textSize="@dimen/font_12" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

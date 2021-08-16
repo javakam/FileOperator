@@ -1,6 +1,7 @@
 # 更新日志(Update log)
 
 ## v1.1.0
+
 ```
 1.增加文件类型不匹配判断;
 2.开启多选: FileSelector.setSelectMode(true) 改为 setMultiSelect() , 默认为单选模式
@@ -16,6 +17,7 @@
 ```
 
 ## v1.3.2
+
 ```
 1.修复`FileOpener.createChooseIntent`问题
 2.更新`FileUtils`并上传相应的用法示例
@@ -23,6 +25,7 @@
 ```
 
 ## v1.3.5
+
 ```
 1.重要: 增加自定义FileType
 2.移除AppSpecific(沙盒)演示Demo AppSpecificActivity,因为沙盒目录(AppSpecific)操作直接沿用旧的 File API操作,
@@ -34,41 +37,57 @@
 ```
 
 ## v1.3.6
+
 ```
 1.internationalization
 2.Fragment使用方式和案例 (Fragments using methods and cases) #13
 ```
 
 ## v1.3.7
+
 ```
 1.修复 Android 11 文件类型不匹配问题 (Fix Android 11 "File type mismatch" problem)
 ```
 
 ## v1.3.8
+
 ```
 1.移除 FileUri 中的复制文件获取路径的方案
 2.app中加入上传案例
 ```
 
 ## v1.4.+
+
 ```
 1.移除 bintray, jcenter, 改用 MavenCentral
 2.移除Java使用案例 sample_java
 ```
 
 ## v1.5.0
+
 ```
 1.修改FileUri.kt文件
 2.升级gradle插件
 ```
 
 ## v1.6.0
+
 ```
 1.修复Android Q上路径获取问题
 2.修改并增加注释
 ```
 
 ## v1.6.2
+
 ```
 Modify FileGlobal.giveUriPermission & use
+```
+
+## v1.7.0
+
+```
+1.FileUtils 加入获取拍摄时间,打印媒体信息,检查Uri,ByteArray写入文件方法以及用例
+2.Android 文件系统会显示一些不存在的文件, 但是仍对应有Uri并且可以选取, 不过大小为0, 当我们把这个Uri当做正常文件处理时候, 会报错:
+Caused by: java.io.FileNotFoundException: open failed: ENOENT (No such file or directory)
+解决方式是使用 try..catch 进行异常捕获, 保证程序正常运行
 ```

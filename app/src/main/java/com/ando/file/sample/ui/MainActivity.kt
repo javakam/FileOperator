@@ -64,6 +64,10 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, FileInfoActivity::class.java))
     }
 
+    fun caseMediaInfo(view: View) {
+        startActivity(Intent(this, MediaInfoActivity::class.java))
+    }
+
     /////////////////////////////// 区别(The difference) ///////////////////////////////////////
 
     //AppSpecific(沙盒)

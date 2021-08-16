@@ -84,7 +84,7 @@ object ImageCompressEngine {
     @Throws(IOException::class, FileNotFoundException::class)
     fun compressCompat(uri: Uri?, targetFile: File, cache: Boolean, focusAlpha: Boolean): Uri? =
         BitmapFactory.Options().run {
-            if (uri == null || !ImageChecker.isImage(uri)) return null
+            if (uri == null || !FileUtils.checkImage(uri)) return null
             val fd: FileDescriptor = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
 
             var tagBitmap: Bitmap? = BitmapFactory.Options().run {
@@ -151,7 +151,7 @@ object ImageCompressEngine {
      * 图片尺寸压缩 + 质量压缩
      */
     fun compressPure(uri: Uri?, maxSize: Long = 300L): Bitmap? {
-        if (uri == null || !ImageChecker.isImage(uri)) return null
+        if (uri == null || !FileUtils.checkImage(uri)) return null
         val fd: FileDescriptor = openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor ?: return null
 
         val bitmap: Bitmap = BitmapFactory.Options().run {

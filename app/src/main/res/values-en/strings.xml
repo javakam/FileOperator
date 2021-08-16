@@ -19,6 +19,7 @@
     <string name="str_ando_file_select_multiple_get_info">Select multiple files and get corresponding information</string>
     <string name="str_ando_file_select_custom_type">Custom FileType</string>
     <string name="str_ando_file_select_get_directory_info">Get application catalog information</string>
+    <string name="str_ando_file_select_media_info">Get media file information (picture, audio, video)\n(Get accurate shooting time)</string>
     <string name="str_ando_file_select_diff">Difference</string>
     <string name="str_ando_file_select_harmony">HarmonyOS</string>
 
