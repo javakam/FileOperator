@@ -308,6 +308,7 @@ object FileUtils {
      * 1. 检查 Uri 是否正确
      * 2. Uri 对应的文件是否存在 (可能是已删除, 也肯是系统 db 存有 Uri 相关记录, 但是文件失效或者损坏)
      *
+     * EN
      * 1. Check if Uri is correct
      * 2. Whether the file corresponding to Uri exists (may be deleted, or the system db has Uri related records, but the file is invalid or damaged)
      *
