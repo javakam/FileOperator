@@ -11,7 +11,6 @@ import android.os.Build
 import android.provider.OpenableColumns
 import androidx.exifinterface.media.ExifInterface
 import java.io.*
-import java.net.URI
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.text.SimpleDateFormat
@@ -60,7 +59,7 @@ object FileUtils {
                 val dateTime: String? = exifInterface.getAttribute(ExifInterface.TAG_DATETIME)
                 val modifiedTime: Long
 
-                //图片(Image)
+                // 图片(Image)
                 // longitude = 0/1,0/1,0/1
                 // latitude=0/1,0/1,0/1
                 // device_type=NEX 3 5G
@@ -307,23 +306,52 @@ object FileUtils {
 
     /**
      * 1. 检查 Uri 是否正确
-     * 2. Uri 指向的文件是否存在
+     * 2. Uri 对应的文件是否存在 (可能是已删除, 也肯是系统 db 存有 Uri 相关记录, 但是文件失效或者损坏)
+     *
+     * 1. Check if Uri is correct
+     * 2. Whether the file corresponding to Uri exists (may be deleted, or the system db has Uri related records, but the file is invalid or damaged)
      *
      * https://stackoverflow.com/questions/7645951/how-to-check-if-resource-pointed-by-uri-is-available
-     *
-     * todo 2021年8月16日 17:02:24
      */
     fun checkRight(uri: Uri?): Boolean {
+        if (uri == null) return false
+        val resolver = FileOperator.getContext().contentResolver
+
+        //1. Check Uri
         var cursor: Cursor? = null
-        try {
-            cursor = FileOperator.getContext().contentResolver.query(uri ?: return false, null, null, null, null)
-            return cursor != null && cursor.moveToFirst()
-        } catch (e: Throwable) {
-            FileLogger.e("删除失败 -> 1.没有找到 Uri 对应的文件 ; 2.目录为空 ")
-            return false
+        val isUriExist: Boolean = try {
+            cursor = resolver.query(uri, null, null, null, null)
+            //cursor null: content Uri was invalid or some other error occurred
+            //cursor.moveToFirst() false: Uri was ok but no entry found.
+            (cursor != null && cursor.moveToFirst())
+        } catch (t: Throwable) {
+            FileLogger.e("1.Check Uri Error: ${t.message}")
+            false
         } finally {
-            cursor?.close()
+            try {
+                cursor?.close()
+            } catch (t: Throwable) {
+            }
         }
+
+        //2. Check File Exist
+        //如果系统 db 存有 Uri 相关记录, 但是文件失效或者损坏 (If the system db has Uri related records, but the file is invalid or damaged)
+        var ins: InputStream? = null
+        val isFileExist: Boolean = try {
+            ins = resolver.openInputStream(uri)
+            // file exists
+            true
+        } catch (t: Throwable) {
+            // File was not found eg: open failed: ENOENT (No such file or directory)
+            FileLogger.e("2. Check File Exist Error: ${t.message}")
+            false
+        } finally {
+            try {
+                ins?.close()
+            } catch (t: Throwable) {
+            }
+        }
+        return isUriExist && isFileExist
     }
 
     // File Extension

@@ -67,6 +67,13 @@ class MediaInfoActivity : AppCompatActivity() {
 
     @SuppressLint("SimpleDateFormat")
     private fun handleResult(uri: Uri) {
+        //Check Uri Right
+        if (!FileUtils.checkRight(uri)) {
+            tvShotTime.setTextColor(Color.RED)
+            tvShotTime.text = "Uri 无效!"
+            return
+        }
+
         //打印媒体信息(print media info)
         FileUtils.dumpMediaInfoByMediaMetadataRetriever(uri)
         FileUtils.dumpMediaInfoByExifInterface(uri)

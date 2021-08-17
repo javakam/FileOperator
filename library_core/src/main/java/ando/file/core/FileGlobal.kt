@@ -187,12 +187,7 @@ object FileGlobal {
         cancellationSignal: CancellationSignal? = null,
     ): ParcelFileDescriptor? {
         if (!FileUtils.checkRight(uri)) return null
-        return try {
-            FileOperator.getContext().contentResolver.openFileDescriptor(uri ?: return null, mode, cancellationSignal)
-        } catch (t: Throwable) {
-            //Fixed: java.io.FileNotFoundException: open failed: ENOENT (No such file or directory)
-            null
-        }
+        return FileOperator.getContext().contentResolver.openFileDescriptor(uri ?: return null, mode, cancellationSignal)
     }
 
     //dump

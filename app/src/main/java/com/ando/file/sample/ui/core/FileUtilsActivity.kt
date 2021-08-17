@@ -254,6 +254,7 @@ class FileUtilsActivity : AppCompatActivity() {
                Path: $path
                Size(uri): ${FileSizeUtils.getFileSize(uri)}
                Suffix: ${FileUtils.getExtension(uri)}
+               Uri对应的文件是否存在(Whether the file corresponding to Uri exists): $checkRight
             """.trimIndent()
 
         //getExtension(FilePath/FileName)
@@ -266,6 +267,7 @@ class FileUtilsActivity : AppCompatActivity() {
                Path:$filePath
                Size(path):${FileSizeUtils.getFileSize(File(filePath))}
                Suffix: ${FileUtils.getExtension(filePath)}
+               Uri对应的文件是否存在(Whether the file corresponding to Uri exists): $checkRight
             """.trimIndent()
 
     }
