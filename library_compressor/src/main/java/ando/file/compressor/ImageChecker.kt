@@ -17,13 +17,6 @@ object ImageChecker {
     private const val JPG = ".jpg"
     private val JPEG_SIGNATURE = byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte())
 
-    fun isImage(uri: Uri?): Boolean {
-        val options = BitmapFactory.Options()
-        options.inJustDecodeBounds = true
-        BitmapFactory.decodeFileDescriptor(openFileDescriptor(uri, MODE_READ_ONLY)?.fileDescriptor, null, options)
-        return options.outWidth != -1
-    }
-
     /**
      * Determine if it is JPG.
      *

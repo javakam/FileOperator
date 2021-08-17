@@ -100,7 +100,7 @@ object FileUri {
     //----------------------------------------------------------------
 
     /**
-     * #### Get the file path through Uri
+     * ### Get the file path through Uri
      *
      * - Need permission: RequiresPermission(permission.READ_EXTERNAL_STORAGE)
      *
@@ -111,7 +111,7 @@ object FileUri {
     fun getPathByUri(uri: Uri?): String? {
         return uri?.use {
             FileLogger.i(
-                "FileUri getFilePathByUri -> " +
+                "FileUri getPathByUri -> " +
                         "Uri: " + uri +
                         ", Authority: " + uri.authority +
                         ", Fragment: " + uri.fragment +

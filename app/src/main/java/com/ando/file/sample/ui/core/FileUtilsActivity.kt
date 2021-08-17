@@ -55,7 +55,6 @@ class FileUtilsActivity : AppCompatActivity() {
     private val destFileName: String = "tempCopy.html"
     private val destFile: File by lazy { File("$destFilePath${File.separator}$destFileName") }
 
-    //
     private var mFileSelector: FileSelector? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -232,6 +231,17 @@ class FileUtilsActivity : AppCompatActivity() {
             text = "${getString(R.string.str_ando_file_select_result)}Uri: $uri"
         }
 
+        //2021年8月16日 15:35:20  v1.7.0 新增API
+        val path = FileUri.getPathByUri(uri)
+        val checkRight = FileUtils.checkRight(uri)
+        FileLogger.e("""
+           path: $path
+           Uri checkRight: $checkRight
+           Uri checkImage: ${if (checkRight) FileUtils.checkImage(uri) else ""}
+           changeFileExtension: ${FileUtils.changeFileExtension("$path", '.', "mp3456789")}
+        """.trimIndent())
+        /////////////////////////////////////
+
         //注: AndroidQ 及以上版本 Path 可能为空
         //注: AndroidQ 及以上版本 Path 可能为空
         //注: AndroidQ 及以上版本 Path 可能为空
@@ -241,9 +251,10 @@ class FileUtilsActivity : AppCompatActivity() {
         mTvFileUrl3.text = """
                🍎Method: getExtension(Uri)
                Uri: $uri
-               Path: ${FileUri.getPathByUri(uri)}
+               Path: $path
                Size(uri): ${FileSizeUtils.getFileSize(uri)}
                Suffix: ${FileUtils.getExtension(uri)}
+               Uri对应的文件是否存在(Whether the file corresponding to Uri exists): $checkRight
             """.trimIndent()
 
         //getExtension(FilePath/FileName)
@@ -256,6 +267,7 @@ class FileUtilsActivity : AppCompatActivity() {
                Path:$filePath
                Size(path):${FileSizeUtils.getFileSize(File(filePath))}
                Suffix: ${FileUtils.getExtension(filePath)}
+               Uri对应的文件是否存在(Whether the file corresponding to Uri exists): $checkRight
             """.trimIndent()
 
     }

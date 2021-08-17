@@ -13,10 +13,10 @@ repositories {
    mavenCentral()
 }
 
-implementation 'com.github.javakam:file.core:1.6.2@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:1.6.2@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:1.6.2@aar'//图片压缩, 核心算法为Luban
-implementation 'com.github.javakam:file.android-q:1.6.2@aar' //AndroidQ兼容库,需要: 'androidx.documentfile:documentfile:1.0.1'
+implementation 'com.github.javakam:file.core:1.7.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:1.7.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:1.7.0@aar'//图片压缩, 核心算法为Luban
+implementation 'com.github.javakam:file.android-q:1.7.0@aar' //AndroidQ兼容库,需要: 'androidx.documentfile:documentfile:1.0.1'
 ```
 
 ##### 2. `Application`中初始化(Initialization in Application)
@@ -249,6 +249,12 @@ fun getFilePathByUri(context: Context?, uri: Uri?): String? {
 
 Method | Remark
 :-|:-
+`getMediaShotTime(uri: Uri?, block: (Long))` | 获取媒体文件拍摄时间
+`formatMediaMetadataKeyDate(date: String?): Date?` | 转换`MediaMetadataRetriever.METADATA_KEY_DATE`特殊的时间格式
+`dumpMediaInfoByMediaMetadataRetriever(uri)` | 打印`音频或视频`的详细信息 `(Use MediaMetadataRetriever)`
+`dumpMediaInfoByExifInterface(uri)` | 打印`图片`的详细信息 `(Use ExifInterface)`
+`checkImage(uri)` | 检查`Uri`对应的文件是否为`图片`
+`checkRight(uri)` | 检查`Uri`是否正确; `Uri`指向的文件是否存在
 `getExtension` | 获取文件后缀`jpg`
 `getExtensionFull` | 获取文件完整后缀`.jpg`
 `splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`: note `suffix`: txt
@@ -262,6 +268,7 @@ Method | Remark
 `readFileText(InputStream/Uri): String?` | 读取文本文件中的内容
 `readFileBytes(InputStream/Uri): ByteArray?` | 读取文件中的内容并返回`ByteArray`
 `copyFile` | 根据文件路径拷贝文件 `java.nio`
+`writeBytes2File(bytes: ByteArray, target: File)` | 把`ByteArray`写到目标文件`target(File)`中
 `write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
 `write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` | 向文件中写入数据
 `isLocal` | 检验是否为本地URI

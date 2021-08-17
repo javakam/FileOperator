@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:text="@string/str_ando_file_utils_show"
             android:textColor="@color/color_main_theme_dark"
-            android:textSize="@dimen/font_13"
+            android:textSize="@dimen/font_12"
             android:textStyle="bold" />
 
         <TextView

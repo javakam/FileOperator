@@ -8,7 +8,6 @@ import ando.file.core.FileGlobal.MEDIA_TYPE_VIDEO
 import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.MODE_WRITE_ONLY_ERASING
 import ando.file.core.FileGlobal.QuerySelectionStatement
-import ando.file.core.FileGlobal.checkUriFileExit
 import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileGlobal.openFileDescriptor
 import android.Manifest.permission.ACCESS_MEDIA_LOCATION
@@ -908,7 +907,7 @@ object FileOperatorQ {
         var delete = 0
         try {
             //删除失败 -> 重复删除同一 Uri 对应的文件!
-            if (!checkUriFileExit(uri)) return false
+            if (!FileUtils.checkRight(uri)) return false
 
             delete = getContext().contentResolver.delete(uri ?: return false, where, selectionArgs)
             FileLogger.d("删除结果 $uri $delete")

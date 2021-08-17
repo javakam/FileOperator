@@ -186,21 +186,8 @@ object FileGlobal {
         @FileOpenMode mode: String = MODE_READ_ONLY,
         cancellationSignal: CancellationSignal? = null,
     ): ParcelFileDescriptor? {
-        if (!checkUriFileExit(uri)) return null
+        if (!FileUtils.checkRight(uri)) return null
         return FileOperator.getContext().contentResolver.openFileDescriptor(uri ?: return null, mode, cancellationSignal)
-    }
-
-    /**
-     * 检查 uri 对应的文件是否存在(Check if the file corresponding to uri exists)
-     */
-    fun checkUriFileExit(uri: Uri?): Boolean {
-        val cursor = FileOperator.getContext().contentResolver.query(uri ?: return false, null, null, null, null)
-        if (cursor == null || !cursor.moveToFirst()) {
-            FileLogger.e("删除失败 -> 1.没有找到 Uri 对应的文件 ; 2.目录为空 ")
-            return false
-        }
-        cursor.close()
-        return true
     }
 
     //dump

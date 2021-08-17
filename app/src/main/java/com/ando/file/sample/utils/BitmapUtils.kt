@@ -1,11 +1,11 @@
 package com.ando.file.sample.utils
 
-import ando.file.compressor.ImageChecker
 import ando.file.compressor.ImageChecker.needCompress
 import ando.file.compressor.ImageCompressEngine.compressPure
 import ando.file.core.FileGlobal
 import ando.file.core.FileLogger
 import ando.file.core.FileSizeUtils.getFileSize
+import ando.file.core.FileUtils
 import android.app.Activity
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
@@ -31,7 +31,7 @@ object BitmapUtils {
      * 一般对图片没有透明度要求的话，可以改成 RGB_565，相比ARGB_8888将节省一半的内存开销
      */
     fun compressBitmap(uri: Uri?, maxSize: Long = 300L): Array<Any>? {
-        if (uri == null || !ImageChecker.isImage(uri)) {
+        if (uri == null || !FileUtils.checkImage(uri)) {
             return null
         }
 
