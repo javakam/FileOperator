@@ -17,7 +17,7 @@
             android:paddingTop="@dimen/dp_3"
             android:text="@string/str_ando_file_title_core"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_13"
             android:textStyle="bold" />
 
         <Button
@@ -27,7 +27,7 @@
             android:onClick="caseGetFileMimeType"
             android:text="@string/str_ando_file_get_mime"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             style="@style/FileButtonStyle"
@@ -36,7 +36,7 @@
             android:onClick="caseGetFileSize"
             android:text="@string/str_ando_file_get_size"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             style="@style/FileButtonStyle"
@@ -45,7 +45,7 @@
             android:onClick="caseGetFileUriOrPath"
             android:text="@string/str_ando_file_get_uri_path"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             style="@style/FileButtonStyle"
@@ -54,7 +54,7 @@
             android:onClick="caseOpenFileByUri"
             android:text="@string/str_ando_file_open"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_13"
             android:visibility="gone" />
 
         <Button
@@ -64,7 +64,7 @@
             android:onClick="caseFileUtils"
             android:text="@string/str_ando_file_common_utils"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_13"
             android:visibility="visible" />
 
         <TextView
@@ -73,7 +73,7 @@
             android:paddingTop="@dimen/dp_3"
             android:text="@string/str_ando_file_title_selector"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_13"
             android:textStyle="bold" />
 
         <Button
@@ -83,7 +83,7 @@
             android:onClick="caseSelectSingleImageWithCompress"
             android:text="@string/str_ando_file_select_one_and_compress"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             style="@style/FileButtonStyle"
@@ -92,7 +92,7 @@
             android:onClick="caseSelectMultiImageWithCompress"
             android:text="@string/str_ando_file_select_multiple_and_compress"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             style="@style/FileButtonStyle"
@@ -101,7 +101,7 @@
             android:onClick="caseSelectMultiFilesWithCompress"
             android:text="@string/str_ando_file_select_multiple_diff"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             style="@style/FileButtonStyle"
@@ -110,7 +110,7 @@
             android:onClick="caseSelectCustomFileType"
             android:text="@string/str_ando_file_select_custom_type"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             style="@style/FileButtonStyle"
@@ -119,7 +119,7 @@
             android:onClick="caseFragmentSimpleUsage"
             android:text="@string/str_ando_file_title_fragment"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_13"
             android:visibility="visible" />
 
         <Button
@@ -129,7 +129,7 @@
             android:onClick="caseClearCache"
             android:text="@string/str_ando_file_select_get_directory_info"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             style="@style/FileButtonStyle"
@@ -146,7 +146,7 @@
             android:paddingTop="@dimen/dp_3"
             android:text="@string/str_ando_file_select_diff"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_13"
             android:textStyle="bold" />
 
         <Button
@@ -156,7 +156,7 @@
             android:onClick="caseMediaStore"
             android:text="@string/str_ando_file_title_media_store"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <Button
             android:id="@+id/SAF_Btn"
@@ -166,7 +166,7 @@
             android:onClick="caseSAF"
             android:text="@string/str_ando_file_title_saf"
             android:textAllCaps="false"
-            android:textSize="@dimen/font_12" />
+            android:textSize="@dimen/font_13" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -174,7 +174,7 @@
             android:paddingTop="@dimen/dp_3"
             android:text="@string/str_ando_file_select_harmony"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_13"
             android:textStyle="bold" />
 
         <Button
