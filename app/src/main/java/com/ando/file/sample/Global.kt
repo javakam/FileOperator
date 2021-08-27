@@ -81,7 +81,7 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
     ImageCompressor
         .with(context)
         .load(photos)
-        .ignoreBy(100)//单位 Byte
+        .ignoreBy(50)//单位 Byte
         .setTargetDir(getCompressedImageCacheDir())
         .setFocusAlpha(false)
         .enableCache(true)
@@ -94,12 +94,12 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
         .setRenameListener(object : OnImageRenameListener {
             override fun rename(uri: Uri?): String? {
                 try {
-                    val filePath = FileUri.getPathByUri(uri)
+                    val fileName = FileUtils.getFileNameFromUri(uri)
                     val md = MessageDigest.getInstance("MD5")
-                    md.update(filePath?.toByteArray() ?: return "")
+                    md.update(fileName?.toByteArray() ?: return "")
                     return BigInteger(1, md.digest()).toString(32)
                 } catch (e: NoSuchAlgorithmException) {
-                    e.printStackTrace()
+                    FileLogger.e("rename onError ${e.message}")
                 }
                 return ""
             }

@@ -8,7 +8,10 @@ import android.util.Log
 import ando.file.core.FileLogger
 import ando.file.core.FileUri.getUriByFile
 import ando.file.core.FileUri.getUriByPath
+import ando.file.core.FileUtils
 import java.io.*
+import java.math.BigInteger
+import java.security.MessageDigest
 import java.util.*
 
 class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
@@ -112,7 +115,13 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
     private fun compressReal(context: Context, uri: Uri): Uri? {
         var targetFile = getImageCacheFile(context, ImageChecker.extSuffix(uri))
         if (mImageRenameListener != null) {
-            val filename = mImageRenameListener.rename(uri)
+            var filename = mImageRenameListener.rename(uri)
+            if (filename.isNullOrBlank()) {
+                val originName: String = FileUtils.getFileNameFromUri(uri) ?: UUID.randomUUID().toString().replace("-", "")
+                val md = MessageDigest.getInstance("MD5")
+                md.update(originName.toByteArray())
+                filename = BigInteger(1, md.digest()).toString(32)
+            }
             targetFile = getImageCustomFile(context, filename ?: return uri)
         }
         return if (mImageCompressPredicate != null) {
