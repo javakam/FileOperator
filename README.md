@@ -15,10 +15,10 @@ repositories {
     mavenCentral()
 }
 
-implementation 'com.github.javakam:file.core:1.7.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:1.7.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:1.7.0@aar'//图片压缩, 核心算法为Luban
-implementation 'com.github.javakam:file.android-q:1.7.0@aar' //AndroidQ兼容库,需要: 'androidx.documentfile:documentfile:1.0.1'
+implementation 'com.github.javakam:file.core:1.8.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:1.8.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:1.8.0@aar'//图片压缩, 核心算法为Luban
+implementation 'com.github.javakam:file.android-q:1.8.0@aar' //AndroidQ兼容库,需要: 'androidx.documentfile:documentfile:1.0.1'
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
@@ -645,9 +645,9 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
         .setRenameListener(object : OnImageRenameListener {
             override fun rename(uri: Uri?): String {
                 try {
-                    val filePath = FileUri.getFilePathByUri(uri)
+                    val fileName = FileUtils.getFileNameFromUri(uri)
                     val md = MessageDigest.getInstance("MD5")
-                    md.update(filePath?.toByteArray() ?: return "")
+                    md.update(fileName?.toByteArray() ?: return "")
                     return BigInteger(1, md.digest()).toString(32)
                 } catch (e: NoSuchAlgorithmException) {
                     e.printStackTrace()
