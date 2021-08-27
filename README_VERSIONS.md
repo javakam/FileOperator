@@ -91,3 +91,8 @@ Modify FileGlobal.giveUriPermission & use
 Caused by: java.io.FileNotFoundException: open failed: ENOENT (No such file or directory)
 解决方式是使用 try..catch 进行异常捕获, 保证程序正常运行
 ```
+
+## v1.8.0
+```
+修复API30压缩图片失败的问题
+```
