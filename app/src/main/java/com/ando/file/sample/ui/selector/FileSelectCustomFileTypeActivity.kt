@@ -243,7 +243,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
                     return when (fileType) {
                         FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
                         FileType.AUDIO -> true
-                        FileType.TXT -> true
+                        FileType.TXT -> !FileType.INSTANCE.parseSuffix(uri).equals("md", true)
                         FileTypeJson.JSON -> true
                         else -> false
                     }
