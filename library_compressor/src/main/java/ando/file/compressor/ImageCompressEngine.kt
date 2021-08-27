@@ -105,7 +105,7 @@ object ImageCompressEngine {
             } else -1
             if (angle != -1) tagBitmap = rotatingImage(tagBitmap, angle)
 
-            FileLogger.w("inSampleSize= $inSampleSize  angle=$angle")
+            FileLogger.w("inSampleSize=$inSampleSize ; angle=$angle")
 
             var quality = 70
             val byteArrOps = ByteArrayOutputStream(1024)

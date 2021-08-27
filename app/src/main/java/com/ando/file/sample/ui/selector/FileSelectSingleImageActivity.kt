@@ -90,10 +90,10 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             fileTypeMismatchTip = "File type mismatch !"
             singleFileMaxSize = 5242880
             singleFileMaxSizeTip = "The largest picture does not exceed 5M !"
-            allFilesMaxSize = 10485760
+            allFilesMaxSize = 104857600
             //单选条件下无效,只做单个图片大小判断
             //EN:Invalid under single selection conditions, only single image size judgment
-            allFilesMaxSizeTip = "The total picture size does not exceed 10M !"
+            allFilesMaxSizeTip = "The total picture size does not exceed 100M !"
 
             fileCondition = object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
@@ -110,8 +110,8 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .setMinCount(1, "Choose at least one file !")
             .setMaxCount(10, "Choose up to ten files !")//单选条件下无效, 只做最少数量判断 Invalid under single selection condition, only judge the minimum number
             .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setSingleFileMaxSize(1048576, "The size cannot exceed 1M !")//单选条件下无效, 使用 FileSelectOptions.singleFileMaxSize
-            .setAllFilesMaxSize(10485760, "Total size cannot exceed 10M !")//单选条件下无效, 只做单个图片大小判断 setSingleFileMaxSize
+            .setSingleFileMaxSize(10485760, "The size cannot exceed 10M !")//单选条件下无效, 使用 FileSelectOptions.singleFileMaxSize
+            .setAllFilesMaxSize(104857600, "Total size cannot exceed 100M !")//单选条件下无效, 只做单个图片大小判断 setSingleFileMaxSize
             .setMimeTypes("image/*")
             .applyOptions(optionsImage)
 
@@ -153,6 +153,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         ResultUtils.setImageEvent(mIvOrigin, uri)
         //Compress
         val photos = listOf(uri)
+        FileLogger.e("uri=$uri")
 
         //or val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
         compressImage(this, photos) { _, u ->
