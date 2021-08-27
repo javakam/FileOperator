@@ -82,8 +82,52 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
         mBtSelect.setOnClickListener {
             PermissionManager.requestStoragePermission(this) {
                 if (it) chooseFile()
+//                if (it) chooseFile2()
             }
         }
+    }
+
+    private fun chooseFile2() {
+        val optionsTest = FileSelectOptions().apply {
+            /*
+            FileType
+            TEST(mutableListOf("mp3", "txt", "json")),
+             */
+
+//            fileType = FileType.TEST
+//            fileCondition = object : FileSelectCondition {
+//                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+//                    FileLogger.w("FileSelectCondition optionsTest fileType=$fileType ; uri=$uri")
+//                    return true
+//                }
+//            }
+        }
+
+        mFileSelector = FileSelector
+            .with(this)
+            .setRequestCode(REQUEST_CHOOSE_FILE)
+            .setMultiSelect()//默认是单选false
+            .setSingleFileMaxSize(209715200, "The size of a single file cannot exceed 200M !")
+            .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
+            .setMimeTypes("audio/*", "text/plain", "application/*") //, "application/*"
+            //.applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
+            .applyOptions(optionsTest)
+            .filter(object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    FileLogger.w("FileSelectCondition FileSelector fileType=$fileType ; uri=$uri")
+                    return true
+                }
+            })
+            .callback(object : FileSelectCallBack {
+                override fun onSuccess(results: List<FileSelectResult>?) {
+                    FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
+                }
+
+                override fun onError(e: Throwable?) {
+                    FileLogger.e("FileSelectCallBack onError ${e?.message}")
+                }
+            })
+            .choose()
     }
 
     @Suppress("DEPRECATION")

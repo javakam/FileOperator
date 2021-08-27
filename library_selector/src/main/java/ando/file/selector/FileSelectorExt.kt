@@ -13,6 +13,8 @@ import java.util.*
  * 用于自定义文件类型 (Used for custom file types)
  */
 interface IFileType {
+    fun getMimeType(): String? = null
+    fun getMimeTypeArray(): MutableList<String>? = mutableListOf()
     fun fromName(fileName: String?): IFileType = FileType.UNKNOWN
     fun fromName(fileName: String?, split: Char): IFileType = FileType.UNKNOWN
     fun fromPath(filePath: String?): IFileType = FileType.UNKNOWN
