@@ -411,12 +411,18 @@ class FileSelector private constructor(builder: Builder) {
         mFileTypeComposite.apply {
             if (isEmpty()) return@apply
             forEach {
-                fileType = it.fromUri(uri)
+                if (it.getMimeTypeArray().isNullOrEmpty()) {
+                    if (it.getMimeType()?.equals(fileType.getMimeType(), true) == true) fileType = it
+                } else {
+                    if (it.getMimeTypeArray()?.contains(UNKNOWN.parseSuffix(uri)) == true) fileType = it
+                }
+
+                if (fileType == UNKNOWN) fileType = it.fromUri(uri)
                 if (fileType != UNKNOWN) return@apply
             }
         }
         if (isDebug()) {
-            FileLogger.d("findFileType: $fileType")
+            FileLogger.d("findFileType: $fileType ; mFileTypeComposite=${mFileTypeComposite.size}")
         }
         return fileType
     }
@@ -435,12 +441,13 @@ class FileSelector private constructor(builder: Builder) {
         }
 
         if (currentOption.isNullOrEmpty()) {
+            if (mFileSelectCondition != null) mFileSelectCondition?.accept(fileType, uri)
             block.invoke(null, fileType, false, fileSize, limitFileSize(fileSize, realSizeLimit(null)))
             return
         }
 
         if (isOptionsNullOrEmpty) {
-            val isAccept = (mFileSelectCondition == null) || (mFileSelectCondition?.accept(fileType, uri) == true)
+            val isAccept = (mFileSelectCondition != null) && (mFileSelectCondition?.accept(fileType, uri) == true)
             if (!isAccept) return
             block.invoke(null, fileType, true, fileSize, limitFileSize(fileSize, realSizeLimit(null)))
         } else {

@@ -96,3 +96,9 @@ Caused by: java.io.FileNotFoundException: open failed: ENOENT (No such file or d
 ```
 修复API30压缩图片失败的问题
 ```
+
+## v1.9.0
+```
+1.当处于"多选"+"不设置 applyOptions"情况下 FileSelectCondition.accept 不回调问题
+2.优化了类型匹配算法, 会优先匹配`自定义类型`,  避免文件类型不匹配的问题
+```

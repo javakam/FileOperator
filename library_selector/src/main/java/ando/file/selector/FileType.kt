@@ -71,6 +71,14 @@ enum class FileType : IFileType {
         }
     }
 
+    override fun getMimeType(): String? {
+        return mimeType
+    }
+
+    override fun getMimeTypeArray(): MutableList<String>? {
+        return mimeArray
+    }
+
     /**
      * url:  https://app-xxx-oss/xxx.gif
      *  or
