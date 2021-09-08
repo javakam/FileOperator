@@ -6,12 +6,11 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.provider.OpenableColumns
-import android.provider.Settings
+import android.provider.*
+import android.webkit.MimeTypeMap
 import androidx.core.content.FileProvider
 import java.io.*
+
 
 /**
  * # FileUri
@@ -195,7 +194,55 @@ object FileUri {
                                 FileLogger.e(e.toString())
                             }
                         }
-                    } else return getDataColumn(uri)
+                    } else {
+                        /*
+                        todo 2021年9月7日 17:00:11
+                        getDataColumn -> Volume content://com.android.providers.downloads.documents/document/msf%3A51 not found
+                        https://developer.android.com/reference/android/provider/MediaStore.Downloads
+
+                        content://com.android.providers.downloads.documents/document/msf%3A51
+                        转换为
+                        content://media/content%3A%2F%2Fcom.android.providers.downloads.documents%2Fdocument%2Fmsf%253A51/downloads
+                         */
+                        var path = getDataColumn(uri)
+                        if (path.isNullOrBlank()) {
+                            getAllPdf()
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                /*
+                                侧边栏->Download :
+                                    __________________
+                                    content://com.android.providers.downloads.documents/document/msf:51
+                                    content://media/external/downloads
+                                    msf:51
+                                    content://media/external/downloads/document/msf:51
+                                    content://media/document/msf:51
+                                    __________________
+                                    com.ando.file.sample E/ActivityThread: Failed to find provider info for media/external/downloads
+
+                                侧边栏->手机图标进入:
+                                    Uri:       content://com.android.externalstorage.documents/document/primary:Download/AAA/[高清 720P] 川普优选又来了？.flv
+                                    Authority: com.android.externalstorage.documents
+                                    Segments:  [document, primary:Download/AAA/[高清 720P] 川普优选又来了？.flv]
+                                 */
+                                FileLogger.e("""
+                                    __________________
+                                    $uri                                   
+                                    ${MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL)}
+                                    ${DocumentsContract.getDocumentId(uri)}
+                                    ${
+                                    DocumentsContract.buildDocumentUri("com.andoFileProvider" + "/document/primary:Download",
+                                        DocumentsContract.getDocumentId(uri))
+                                }
+                                    __________________
+                                """.trimIndent())
+                                path =
+                                    getDataColumn(DocumentsContract.buildDocumentUri("com.android.externalstorage.documents" + "/document/primary:Download",
+                                        DocumentsContract.getDocumentId(uri)))
+                            }
+                        }
+                        return path
+                    }
                 }
                 // MediaProvider
                 else if (isMediaDocument(uri)) {
@@ -247,6 +294,24 @@ object FileUri {
         }
     }
 
+    private fun getAllPdf() { //查询sd卡所有pdf文件
+        val cr: ContentResolver = FileOperator.getContext().contentResolver
+        val uri = MediaStore.Files.getContentUri(MediaStore.VOLUME_INTERNAL)
+        val projection: Array<String>? = null
+        val sortOrder: String? = null // unordered
+        // only pdf
+        val selectionMimeType = MediaStore.Files.FileColumns.MIME_TYPE + "=?"
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension("pdf")
+        val selectionArgsPdf = arrayOf(mimeType)
+        val cursor = cr.query(uri, projection, selectionMimeType, selectionArgsPdf, sortOrder)
+        while (cursor != null && cursor.moveToNext()) {
+            val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            val filePath = cursor.getString(column_index) //所有pdf文件路径
+            FileLogger.d("getAllPdf() filePath=$filePath")
+        }
+        cursor?.close()
+    }
+
     /**
      * BUG : 部分机型进入"文件管理器" 执行到  cursor.getColumnIndexOrThrow(column);出现
      *       Caused by: java.lang.IllegalArgumentException: column '_data' does not exist. Available columns: []
@@ -259,16 +324,15 @@ object FileUri {
         @Suppress("DEPRECATION")
         val column = MediaStore.Files.FileColumns.DATA
         val projection = arrayOf(column)
-
-        FileOperator.getContext().contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use { c: Cursor ->
-            try {
+        try {
+            FileOperator.getContext().contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use { c: Cursor ->
                 if (c.moveToFirst()) {
                     val columnIndex = c.getColumnIndex(column)
                     return c.getString(columnIndex)
                 }
-            } catch (e: Throwable) {
-                FileLogger.e("getDataColumn -> ${e.message}")
             }
+        } catch (e: Throwable) {
+            FileLogger.e("getDataColumn -> ${e.message}")
         }
         return null
     }
