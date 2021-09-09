@@ -12,7 +12,6 @@ buildscript {
         versionCode = 11
         versionName = "2.0.0"
     }
-
     repositories {
         google()
         maven { url "https://jitpack.io" }

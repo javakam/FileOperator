@@ -34,8 +34,7 @@ if (secretPropsFile.exists()) {
 publishing {
     publications {
         release(MavenPublication) {
-            // The coordinates of the library, being set from variables that
-            // we'll set up in a moment
+            // The coordinates of the library, being set from variables that we'll set up in a moment
             groupId PUBLISH_GROUP_ID
             artifactId PUBLISH_ARTIFACT_ID
             version PUBLISH_VERSION
