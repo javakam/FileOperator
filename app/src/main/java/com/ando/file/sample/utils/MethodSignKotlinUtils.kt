@@ -1,6 +1,5 @@
 package com.ando.file.sample.utils
 
-import ando.file.androidq.FileOperatorQ
 import ando.file.core.FileOpener
 import ando.file.core.FileUri
 import ando.file.core.FileUtils
@@ -14,6 +13,7 @@ import android.os.Message
 import android.os.SystemClock
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.ando.file.sample.App
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.full.*
@@ -31,10 +31,10 @@ object MethodSignKotlinUtils {
 
     fun dumpMethods(context: Context) {
         //不带弹窗
-        dumpMethodSignInfo(context, FileOperatorQ::class)
+        dumpMethodSignInfo(context, App::class)
 
         //带弹窗
-        //dumpMethodSignInfoWithUi(context,FileOperatorQ::class)
+        //dumpMethodSignInfoWithUi(context, App::class)
     }
 
     private fun dumpMethodSignInfo(context: Context, clazz: KClass<*>) {

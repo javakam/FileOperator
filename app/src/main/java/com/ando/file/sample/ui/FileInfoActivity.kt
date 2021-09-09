@@ -122,7 +122,7 @@ class FileInfoActivity : AppCompatActivity() {
                 | 🍎Cached picture list (${fileList?.size}): $childFileSb
                 | """.trimMargin()
             tvCompressedImgCacheDir.setOnClickListener {
-                //FileOpener.openFile(this, u, "file/*")
+                //FileOpener.openChooser(this, u, "file/*")
             }
         }
         ///////////////////////

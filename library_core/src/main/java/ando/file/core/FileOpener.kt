@@ -111,7 +111,7 @@ object FileOpener {
      * @param mimeType 指定打开文件的 MimeType 类型 (Specify the MimeType of the opened file)
      *
      */
-    fun openFile(context: Any, uri: Uri?, mimeType: String? = null, title: String? = "选择程序") =
+    fun openChooser(context: Any, uri: Uri?, mimeType: String? = null, title: String? = "选择程序") =
         uri?.let { u ->
             Intent.createChooser(createOpenFileIntent(u, mimeType), title)?.let {
                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -119,8 +119,8 @@ object FileOpener {
             }
         }
 
-    fun openFile(context: Any, uri: Uri?, title: String? = "选择程序") =
-        openFile(context, uri, getMimeType(uri), title)
+    fun openChooser(context: Any, uri: Uri?, title: String? = "选择程序") =
+        openChooser(context, uri, getMimeType(uri), title)
 
     /**
      * ### 选择文件【调用系统的文件管理】 (Select file [call system file management])

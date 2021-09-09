@@ -1,14 +1,5 @@
 package com.ando.file.sample.ui.storage
 
-import ando.file.androidq.*
-import ando.file.androidq.FileOperatorQ.buildQuerySelectionStatement
-import ando.file.androidq.FileOperatorQ.createContentValues
-import ando.file.androidq.FileOperatorQ.deleteUri
-import ando.file.androidq.FileOperatorQ.deleteUriDirectory
-import ando.file.androidq.FileOperatorQ.deleteUriMediaStoreImage
-import ando.file.androidq.FileOperatorQ.insertBitmap
-import ando.file.androidq.FileOperatorQ.loadThumbnail
-import ando.file.androidq.FileOperatorQ.queryMediaStoreImages
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.RecoverableSecurityException
@@ -34,6 +25,14 @@ import ando.file.core.FileGlobal.MEDIA_TYPE_IMAGE
 import ando.file.core.FileGlobal.MODE_READ_ONLY
 import ando.file.core.FileGlobal.dumpParcelFileDescriptor
 import ando.file.core.FileGlobal.openFileDescriptor
+import ando.file.core.MediaStoreUtils.buildQuerySelectionStatement
+import ando.file.core.MediaStoreUtils.createContentValues
+import ando.file.core.MediaStoreUtils.deleteUri
+import ando.file.core.MediaStoreUtils.deleteUriDirectory
+import ando.file.core.MediaStoreUtils.deleteUriMediaStoreImage
+import ando.file.core.MediaStoreUtils.insertBitmap
+import ando.file.core.MediaStoreUtils.loadThumbnail
+import ando.file.core.MediaStoreUtils.queryMediaStoreImages
 import android.widget.Button
 import android.widget.TextView
 import com.ando.file.sample.R
@@ -240,16 +239,16 @@ class MediaStoreActivity : AppCompatActivity() {
             TimeUnit.MICROSECONDS.toSeconds(formatter.parse("$day.$month.$year")?.time ?: 0)
         }
 
-    val mDiffCallback = object : DiffUtil.ItemCallback<MediaStoreImage>() {
-        override fun areItemsTheSame(oldItem: MediaStoreImage, newItem: MediaStoreImage) =
+    val mDiffCallback = object : DiffUtil.ItemCallback<MediaStoreUtils.MediaStoreImage>() {
+        override fun areItemsTheSame(oldItem: MediaStoreUtils.MediaStoreImage, newItem: MediaStoreUtils.MediaStoreImage) =
             oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: MediaStoreImage, newItem: MediaStoreImage) =
+        override fun areContentsTheSame(oldItem: MediaStoreUtils.MediaStoreImage, newItem: MediaStoreUtils.MediaStoreImage) =
             oldItem == newItem
     }
 
-    private inner class GalleryAdapter(val onClick: (MediaStoreImage) -> Unit) :
-        ListAdapter<MediaStoreImage, ImageViewHolder>(mDiffCallback) {
+    private inner class GalleryAdapter(val onClick: (MediaStoreUtils.MediaStoreImage) -> Unit) :
+        ListAdapter<MediaStoreUtils.MediaStoreImage, ImageViewHolder>(mDiffCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
             val layoutInflater = LayoutInflater.from(parent.context)
@@ -270,14 +269,14 @@ class MediaStoreActivity : AppCompatActivity() {
         }
     }
 
-    private class ImageViewHolder(view: View, onClick: (MediaStoreImage) -> Unit) :
+    private class ImageViewHolder(view: View, onClick: (MediaStoreUtils.MediaStoreImage) -> Unit) :
         RecyclerView.ViewHolder(view) {
         val rootView = view
         val imageView: ImageView = view.findViewById(R.id.image)
 
         init {
             imageView.setOnClickListener {
-                val image = rootView.tag as? MediaStoreImage ?: return@setOnClickListener
+                val image = rootView.tag as? MediaStoreUtils.MediaStoreImage ?: return@setOnClickListener
                 onClick(image)
             }
         }

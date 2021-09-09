@@ -101,7 +101,7 @@ class FileUtilsActivity : AppCompatActivity() {
                 refreshFileInfo()
                 return@setOnClickListener
             }
-            FileOpener.openFile(this, FileUri.getUriByFile(file), "Choose to open the program")
+            FileOpener.openChooser(this, FileUri.getUriByFile(file), "Choose to open the program")
         }
         mBtFileCreate.setOnClickListener {
             if (file.exists()) {
@@ -170,7 +170,7 @@ class FileUtilsActivity : AppCompatActivity() {
                 toastLong("$destFileName does not exist, need to create and then copy")
                 return@setOnClickListener
             }
-            FileOpener.openFile(this, FileUri.getUriByFile(destFile), "Choose to open the program")
+            FileOpener.openChooser(this, FileUri.getUriByFile(destFile), "Choose to open the program")
         }
         //Delete
         mBtFileDelete.setOnClickListener {
@@ -233,11 +233,11 @@ class FileUtilsActivity : AppCompatActivity() {
 
         //2021年8月16日 15:35:20  v1.7.0 新增API
         val path = FileUri.getPathByUri(uri)
-        val checkRight = FileUtils.checkRight(uri)
+        val checkUri = FileUtils.checkUri(uri)
         FileLogger.e("""
            path: $path
-           Uri checkRight: $checkRight
-           Uri checkImage: ${if (checkRight) FileUtils.checkImage(uri) else ""}
+           Uri checkUri: $checkUri
+           Uri checkImage: ${if (checkUri) FileUtils.checkImage(uri) else ""}
            changeFileExtension: ${FileUtils.changeFileExtension("$path", '.', "mp3456789")}
         """.trimIndent())
         /////////////////////////////////////
@@ -254,7 +254,7 @@ class FileUtilsActivity : AppCompatActivity() {
                Path: $path
                Size(uri): ${FileSizeUtils.getFileSize(uri)}
                Suffix: ${FileUtils.getExtension(uri)}
-               Uri对应的文件是否存在(Whether the file corresponding to Uri exists): $checkRight
+               Uri对应的文件是否存在(Whether the file corresponding to Uri exists): $checkUri
             """.trimIndent()
 
         //getExtension(FilePath/FileName)
@@ -267,7 +267,7 @@ class FileUtilsActivity : AppCompatActivity() {
                Path:$filePath
                Size(path):${FileSizeUtils.getFileSize(File(filePath))}
                Suffix: ${FileUtils.getExtension(filePath)}
-               Uri对应的文件是否存在(Whether the file corresponding to Uri exists): $checkRight
+               Uri对应的文件是否存在(Whether the file corresponding to Uri exists): $checkUri
             """.trimIndent()
 
     }

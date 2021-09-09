@@ -6,10 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.provider.OpenableColumns
-import android.provider.Settings
+import android.provider.*
 import androidx.core.content.FileProvider
 import java.io.*
 
@@ -85,7 +82,7 @@ object FileUri {
     fun getShareUri(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path), isOriginal = false)
 
     /**
-     * @return content://  or file://
+     * @return content://  or  file://
      */
     fun getShareUri(file: File?): Uri? = getUriByFile(file, isOriginal = false)
 
@@ -195,7 +192,10 @@ object FileUri {
                                 FileLogger.e(e.toString())
                             }
                         }
-                    } else return getDataColumn(uri)
+                    } else {
+                        //testPath(uri)
+                        return getDataColumn(uri)
+                    }
                 }
                 // MediaProvider
                 else if (isMediaDocument(uri)) {
@@ -259,16 +259,15 @@ object FileUri {
         @Suppress("DEPRECATION")
         val column = MediaStore.Files.FileColumns.DATA
         val projection = arrayOf(column)
-
-        FileOperator.getContext().contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use { c: Cursor ->
-            try {
+        try {
+            FileOperator.getContext().contentResolver.query(uri ?: return null, projection, selection, selectionArgs, null)?.use { c: Cursor ->
                 if (c.moveToFirst()) {
                     val columnIndex = c.getColumnIndex(column)
                     return c.getString(columnIndex)
                 }
-            } catch (e: Throwable) {
-                FileLogger.e("getDataColumn -> ${e.message}")
             }
+        } catch (e: Throwable) {
+            FileLogger.e("getDataColumn -> ${e.message}")
         }
         return null
     }
@@ -279,10 +278,9 @@ object FileUri {
     private fun getGoogleDriveFilePath(uri: Uri, context: Context): String? {
         context.contentResolver.query(uri, null, null, null, null)?.use { c: Cursor ->
             /*
-             * Get the column indexes of the data in the Cursor,
-             *     * move to the first row in the Cursor, get the data,
-             *     * and display it.
-             * */
+             Get the column indexes of the data in the Cursor,
+             move to the first row in the Cursor, get the data, and display it.
+             */
             val nameIndex: Int = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
             //val sizeIndex: Int = c.getColumnIndex(OpenableColumns.SIZE)
             if (!c.moveToFirst()) {
