@@ -1,8 +1,8 @@
 package com.ando.file.sample.utils
 
-import ando.file.androidq.FileOperatorQ
 import ando.file.core.*
 import ando.file.core.FileGlobal.dumpMetaData
+import ando.file.core.MediaStoreUtils.getBitmapFromUri
 import ando.file.selector.FileSelectResult
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -54,7 +54,7 @@ object ResultUtils {
     fun setItemEvent(v: View?, uri: Uri?, title: String) {
         v?.setOnClickListener {
             showAlert(v.context, title, uri?.toString() ?: "") {
-                if (it) FileOpener.openFile(v.context, uri, FileMimeType.getMimeType(uri))
+                if (it) FileOpener.openChooser(v.context, uri, FileMimeType.getMimeType(uri))
             }
         }
     }
@@ -69,14 +69,14 @@ object ResultUtils {
     }
 
     fun setImageEvent(imageView: ImageView, uri: Uri?) {
-        val bitmap: Bitmap? = FileOperatorQ.getBitmapFromUri(uri)
+        val bitmap: Bitmap? = getBitmapFromUri(uri)
         val context = imageView.context
         imageView.setImageBitmap(
             if (bitmap == null || bitmap.isRecycled)
                 BitmapFactory.decodeResource(context.resources, R.mipmap.ic_place_holder) else bitmap
         )
         imageView.setOnClickListener {
-            FileOpener.openFile(context, uri, "image/*")
+            FileOpener.openChooser(context, uri, "image/*")
         }
     }
 

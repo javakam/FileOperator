@@ -12,7 +12,7 @@ task androidSourcesJar(type: Jar) {
 //查看Sonatype信息 https://issues.sonatype.org/issues/?filter=-2
 ext {
     PUBLISH_GROUP_ID = "com.github.javakam"
-    PUBLISH_VERSION = rootProject.ext.android.versionName
+    PUBLISH_VERSION = rootProject.ext.versionName
 }
 ext["signing.keyId"] = ''
 ext["signing.password"] = ''

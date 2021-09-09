@@ -7,6 +7,8 @@ import java.io.*
 
 object FileDirectory {
 
+    private const val HIDDEN_PREFIX = "."
+
     /**
      * File (not directories) filter.
      */

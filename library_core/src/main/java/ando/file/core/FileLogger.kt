@@ -23,8 +23,10 @@ object FileLogger {
     }
 
     private fun String?.codec(): String {
-        return if (enableUrlEncode) noNull(this)
-        else URLDecoder.decode(noNull(this), "utf-8")
+        (if (this.isNullOrBlank()) return "" else this).also { s: String ->
+            return if (enableUrlEncode) s
+            else URLDecoder.decode(s, "utf-8")
+        }
     }
 
     fun v(msg: String?) {

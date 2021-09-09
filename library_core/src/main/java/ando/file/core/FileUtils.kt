@@ -314,7 +314,7 @@ object FileUtils {
      *
      * https://stackoverflow.com/questions/7645951/how-to-check-if-resource-pointed-by-uri-is-available
      */
-    fun checkRight(uri: Uri?): Boolean {
+    fun checkUri(uri: Uri?): Boolean {
         if (uri == null) return false
         val resolver = FileOperator.getContext().contentResolver
 
@@ -768,10 +768,7 @@ object FileUtils {
     //File Delete
     //----------------------------------------------------------------
 
-    fun deleteFile(uri: Uri?): Int =
-        getPathByUri(uri)?.run {
-            deleteFileWithoutExcludeNames(File(this), null)
-        } ?: 0
+    fun deleteFile(uri: Uri?): Int = getPathByUri(uri)?.run { deleteFileWithoutExcludeNames(File(this), null) } ?: 0
 
     fun deleteFile(pathAndName: String?): Int =
         if (pathAndName.isNullOrBlank()) 0
@@ -831,9 +828,7 @@ object FileUtils {
     }
 
     fun deleteFilesNotDir(uri: Uri?): Boolean =
-        getPathByUri(uri)?.run {
-            deleteFilesNotDir(File(this))
-        } ?: false
+        getPathByUri(uri)?.run { deleteFilesNotDir(File(this)) } ?: false
 
     /**
      * 只删除文件，不删除文件夹 (Only delete files, not folders)

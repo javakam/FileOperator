@@ -240,7 +240,7 @@ fun openUrl(activity: Activity, url: String?) {
 According to `file path` and `type (judgment by suffix)` show programs that support the format
 
 ```kotlin
-fun openFile(context: Any, uri: Uri?, mimeType: String? = null) =
+fun openChooser(context: Any, uri: Uri?, mimeType: String? = null) =
     uri?.let { u ->
         Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
             startActivity(context, it)
@@ -290,7 +290,7 @@ Method | Remark
 `dumpMediaInfoByMediaMetadataRetriever(uri)` | 打印`音频或视频`的详细信息 `(Use MediaMetadataRetriever)`
 `dumpMediaInfoByExifInterface(uri)` | 打印`图片`的详细信息 `(Use ExifInterface)`
 `checkImage(uri)` | 检查`Uri`对应的文件是否为`图片`
-`checkRight(uri)` | 检查`Uri`是否正确; `Uri`指向的文件是否存在
+`checkUri(uri)` | 检查`Uri`是否正确; `Uri`指向的文件是否存在
 `getExtension` | 获取文件后缀`jpg`
 `getExtensionFull` | 获取文件完整后缀`.jpg`
 `splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`:note `suffix`: txt
@@ -699,8 +699,6 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 6. `Uri.fromFile(file)`生成的`file:///...`是不能分享的,所以需要使用`FileProvider`将`App Specific`目录下的文件分享给其他APP读写,
    需要通过`FileProvider`解析出的可用于分享的路径: `ando.file.core.FileUri.getUriByFile(file)`
-
-7. FileOperatorQ Usage: <https://github.com/javakam/FileOperator/blob/master/README_FOR_Q.md>
 
 ---
 

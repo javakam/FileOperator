@@ -32,22 +32,15 @@ import androidx.fragment.app.Fragment
  *  [https://www.man7.org/linux/man-pages/man2/open.2.html](https://www.man7.org/linux/man-pages/man2/open.2.html)
  */
 internal const val AUTHORITY = ".andoFileProvider"
-internal const val HIDDEN_PREFIX = "."
-
-internal fun noNull(s: String?): String = if (s.isNullOrBlank()) "" else s
-
-internal fun isActivityLive(activity: Activity?): Boolean {
-    return activity != null && !activity.isFinishing && !activity.isDestroyed
-}
 
 internal fun startActivity(context: Any, intent: Intent) {
     if (context is Activity) {
-        if (isActivityLive(context)) {
+        if (!context.isFinishing && !context.isDestroyed) {
             context.startActivity(intent)
         }
     } else if (context is Fragment) {
         val activity = context.activity
-        if (isActivityLive(activity)) {
+        if (activity != null && !activity.isFinishing && !activity.isDestroyed) {
             context.startActivity(intent)
         }
     } else if (context is Context) {
@@ -161,11 +154,7 @@ object FileGlobal {
      *      )
      * ```
      */
-    data class QuerySelectionStatement(
-        val selection: StringBuilder,
-        val selectionArgs: MutableList<String>,
-        val needAddPre: Boolean,
-    ) {
+    data class QuerySelectionStatement(val selection: StringBuilder, val selectionArgs: MutableList<String>, val needAddPre: Boolean) {
         fun append(selectionNew: String, selectionArgsNew: String) {
             selection.append("${if (needAddPre) " and " else " "} $selectionNew ")
             selectionArgs.add(selectionArgsNew)
@@ -182,11 +171,9 @@ object FileGlobal {
      * Select the corresponding opening method according to the file descriptor. "r" means read, "w" means write
      */
     fun openFileDescriptor(
-        uri: Uri?,
-        @FileOpenMode mode: String = MODE_READ_ONLY,
-        cancellationSignal: CancellationSignal? = null,
+        uri: Uri?, @FileOpenMode mode: String = MODE_READ_ONLY, cancellationSignal: CancellationSignal? = null,
     ): ParcelFileDescriptor? {
-        if (!FileUtils.checkRight(uri)) return null
+        if (!FileUtils.checkUri(uri)) return null
         return FileOperator.getContext().contentResolver.openFileDescriptor(uri ?: return null, mode, cancellationSignal)
     }
 

@@ -1,8 +1,6 @@
 package com.ando.file.sample.ui.storage
 
-import ando.file.androidq.*
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -14,29 +12,28 @@ import android.view.View
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import ando.file.core.*
-import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_CHOOSE_DOCUMENT_DIR
-import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_CREATE_FILE
-import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_EDIT_FILE
-import ando.file.androidq.FileOperatorQ.REQUEST_CODE_SAF_SELECT_SINGLE_IMAGE
-import ando.file.androidq.FileOperatorQ.createFileSAF
-import ando.file.androidq.FileOperatorQ.deleteFileSAF
-import ando.file.androidq.FileOperatorQ.dumpDocumentFileTree
-import ando.file.androidq.FileOperatorQ.getBitmapFromUri
-import ando.file.androidq.FileOperatorQ.getDocumentTreeSAF
-import ando.file.androidq.FileOperatorQ.readTextFromUri
-import ando.file.androidq.FileOperatorQ.renameFileSAF
-import ando.file.androidq.FileOperatorQ.saveDocTreePersistablePermissionSAF
-import ando.file.androidq.FileOperatorQ.selectSingleImage
 import ando.file.core.FileGlobal.MODE_WRITE_ONLY_ERASING
 import ando.file.core.FileGlobal.dumpMetaData
 import ando.file.core.FileGlobal.openFileDescriptor
+import ando.file.core.MediaStoreUtils.getBitmapFromUri
+import ando.file.core.MediaStoreUtils.readTextFromUri
+import ando.file.core.MediaStoreUtils.selectFile
+import ando.file.core.MediaStoreUtils.selectImage
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.ando.file.sample.R
+import com.ando.file.sample.utils.DocumentFileUtils
+import com.ando.file.sample.utils.DocumentFileUtils.dumpDocumentFileTree
+import com.ando.file.sample.utils.DocumentFileUtils.saveDocTreePersistablePermission
 import java.io.*
 
 class StorageAccessFrameworkActivity : AppCompatActivity() {
+
+    private val REQUEST_CREATE_FILE: Int = 1
+    private val REQUEST_EDIT_FILE: Int = 2
+    private val REQUEST_CHOOSE_DOCUMENT_DIR: Int = 3
+    private val REQUEST_SELECT_SINGLE_IMAGE: Int = 4
 
     private lateinit var safSelectSingleFile: Button
     private lateinit var createFileBtn: Button
@@ -50,6 +47,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
 
     private var mCreateUri: Uri? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_storage_access_framework)
@@ -79,18 +77,74 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
         FileLogger.i("getExternalFilesDir :${getExternalFilesDir(null)}")
 
         //1.选择一个图片文件 (Choose a picture file)
-        selectSingleFile()
+        safSelectSingleFile.setOnClickListener {
+            selectImage(this@StorageAccessFrameworkActivity, REQUEST_SELECT_SINGLE_IMAGE)
+        }
         //2.新建一个 txt 文件 (Create a new txt file)
-        createFile("新建文本文档.txt", "text/plain")
+        //选择一个文件，这里打开一个图片作为演示 (Choose a file, open a picture here as a demo)
+        createFileBtn.setOnClickListener {
+            MediaStoreUtils.createFile(this@StorageAccessFrameworkActivity, null,
+                "新建文本文档.txt", "text/plain", REQUEST_CREATE_FILE)
+        }
         //3.删除一个文件 (Delete a file)
-        deleteFile()
+        //如果您获得了文档的 URI，并且文档的 Document.COLUMN_FLAGS 包含 FLAG_SUPPORTS_DELETE，则便可删除该文档
+        deleteFileBtn.setOnClickListener {
+            val string = createFileUriTv.text.toString()
+            if (string.isNotEmpty()) {
+                val uri = Uri.parse(string)
+                val deleted = MediaStoreUtils.deleteFile(uri)
+                if (deleted) {
+                    @SuppressLint("SetTextI18n")
+                    createFileUriTv.text = "已删除文件 $uri"
+                }
+            }
+        }
         //Rename
-        renameFile()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            renameFileBtn.setOnClickListener {
+                val uri = mCreateUri
+
+                if (uri != null) {
+                    MediaStoreUtils.renameFile(uri, "smlz.txt") { isSuccess: Boolean, msg: String ->
+                        if (isSuccess) {
+                            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                dumpMetaData(uri) { displayName: String?, size: String? ->
+                                    runOnUiThread {
+                                        createFileUriTv.text =
+                                            "👉$msg \n👉 Uri : $uri \n 文件名称 ：$displayName \n Size：$size B"
+                                    }
+                                }
+                            }
+                        } else
+                            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Uri 为空!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         //3.编辑一个文件 (Edit a file)
-        editDocument()
+        editDocumentBtn.setOnClickListener {
+            selectFile(this, "text/plain", requestCode = REQUEST_EDIT_FILE)
+        }
         //4.获取文件树 (Get file tree)
-        getDocumentTree()
+        //使用 SAF 选择目录 -> 获取该目录的读取权限
+        getDocumentTreeBtn.setOnClickListener {
+            val root = DocumentFileUtils.getDocumentTree(this, requestCode = REQUEST_CHOOSE_DOCUMENT_DIR)
+            dumpDocumentFileTree(root)
+
+            val sb = StringBuilder("${root?.listFiles()?.size} \n")
+            root?.listFiles()?.forEach loop@{
+                //FileLogger.d( "目录下文件名称：${it.name}")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    sb.append("${it.uri}  ${it.name}  ${it.length()}  \n\n ")
+                }
+            }
+            tvDocumentTreeFiles.text = sb.toString()
+        }
 
         //5.MediaStore获取文件 (MediaStore get files)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -102,96 +156,6 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 选择一个文件，这里打开一个图片作为演示 (Choose a file, open a picture here as a demo)
-     */
-    private fun selectSingleFile() {
-        safSelectSingleFile.setOnClickListener {
-            selectSingleImage(this@StorageAccessFrameworkActivity)
-        }
-    }
-
-    private fun createFile(fileName: String, mimeType: String) {
-        createFileBtn.setOnClickListener {
-            createFileSAF(this@StorageAccessFrameworkActivity, null, fileName, mimeType)
-        }
-    }
-
-    /**
-     * 如果您获得了文档的 URI，并且文档的 Document.COLUMN_FLAGS 包含 FLAG_SUPPORTS_DELETE，则便可删除该文档
-     */
-    @SuppressLint("SetTextI18n")
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private fun deleteFile() {
-        deleteFileBtn.setOnClickListener {
-            val string = createFileUriTv.text.toString()
-            if (string.isNotEmpty()) {
-                val uri = Uri.parse(string)
-                val deleted = deleteFileSAF(uri)
-                if (deleted) {
-                    createFileUriTv.text = "已删除文件 $uri"
-                }
-            }
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun renameFile() {
-        renameFileBtn.setOnClickListener {
-            val uri = mCreateUri
-
-            if (uri != null) {
-                renameFileSAF(uri, "smlz.txt") { isSuccess: Boolean, msg: String ->
-                    if (isSuccess) {
-                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                            dumpMetaData(uri) { displayName: String?, size: String? ->
-                                runOnUiThread {
-                                    createFileUriTv.text =
-                                        "👉$msg \n👉 Uri : $uri \n 文件名称 ：$displayName \n Size：$size B"
-                                }
-                            }
-                        }
-                    } else
-                        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "Uri 为空!", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun editDocument() {
-        editDocumentBtn.setOnClickListener {
-            FileOperatorQ.selectSingleFile(this, "text/plain", REQUEST_CODE_SAF_EDIT_FILE)
-        }
-    }
-
-    /**
-     * 使用saf选择目录 -> 获取该目录的读取权限
-     */
-    @TargetApi(Build.VERSION_CODES.Q)
-    private fun getDocumentTree() {
-        getDocumentTreeBtn.setOnClickListener {
-            val root =
-                getDocumentTreeSAF(this, REQUEST_CODE_SAF_CHOOSE_DOCUMENT_DIR)
-            dumpDocumentFileTree(root)
-
-            val sb = StringBuilder("${root?.listFiles()?.size} \n")
-            root?.listFiles()?.forEach loop@{
-                //FileLogger.d( "目录下文件名称：${it.name}")
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sb.append("${it.uri}  ${it.name}  ${it.length()}  \n\n ")
-                }
-            }
-
-            tvDocumentTreeFiles.text = sb.toString()
-
-        }
-    }
-
     @Suppress("DEPRECATION")
     @SuppressLint("SetTextI18n")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -199,7 +163,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
         if (resultCode != Activity.RESULT_OK) {
             return
         }
-        if (requestCode == REQUEST_CODE_SAF_SELECT_SINGLE_IMAGE) {
+        if (requestCode == REQUEST_SELECT_SINGLE_IMAGE) {
             //获取文档
             val uri = data?.data
             if (uri != null) {
@@ -211,7 +175,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
 
                 FileLogger.d("图片的line :$uri  ${readTextFromUri(uri)}")
             }
-        } else if (requestCode == REQUEST_CODE_SAF_CREATE_FILE) {
+        } else if (requestCode == REQUEST_CREATE_FILE) {
             //创建文档
             val uri = data?.data
             if (uri != null) {
@@ -232,36 +196,19 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
                 }
                 mCreateUri = uri
             }
-        } else if (requestCode == REQUEST_CODE_SAF_EDIT_FILE) {
+        } else if (requestCode == REQUEST_EDIT_FILE) {
             //编辑文档
             createFileUriTv.visibility = View.VISIBLE
 
             alterDocument(data?.data)
-        } else if (requestCode == REQUEST_CODE_SAF_CHOOSE_DOCUMENT_DIR) {
+        } else if (requestCode == REQUEST_CHOOSE_DOCUMENT_DIR) {
             //选择目录
             val treeUri = data?.data
             if (treeUri != null) {
-                saveDocTreePersistablePermissionSAF(this, treeUri)
+                saveDocTreePersistablePermission(this, treeUri)
                 //Log
                 dumpDocumentFileTree(DocumentFile.fromTreeUri(this, treeUri))
             }
-        }
-    }
-
-    /**
-     * 通过Uri获取Bitmap
-     */
-    @Suppress("DEPRECATION")
-    internal inner class GetBitmapFromUriAsyncTask : AsyncTask<Uri, Void, Bitmap>() {
-        override fun doInBackground(vararg params: Uri): Bitmap? {
-            val uri = params[0]
-            return getBitmapFromUri(uri)
-        }
-
-        override fun onPostExecute(bitmap: Bitmap?) {
-            super.onPostExecute(bitmap)
-            showIv.visibility = View.VISIBLE
-            showIv.setImageBitmap(bitmap)
         }
     }
 
@@ -272,7 +219,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
                 // use{} lets the document provider know you're done by automatically closing the stream
                 FileOutputStream(it.fileDescriptor).use { fos ->
                     fos.write(
-                        ("Overwritten by MyCloud at ${System.currentTimeMillis()}\n").toByteArray()
+                        ("(*^▽^*) ${System.currentTimeMillis()}\n").toByteArray()
                     )
                     fos.flush()
 
@@ -297,5 +244,22 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 通过 Uri 获取 Bitmap
+     */
+    @SuppressLint("StaticFieldLeak")
+    @Suppress("DEPRECATION")
+    internal inner class GetBitmapFromUriAsyncTask : AsyncTask<Uri, Void, Bitmap>() {
+        override fun doInBackground(vararg params: Uri): Bitmap? {
+            val uri = params[0]
+            return getBitmapFromUri(uri)
+        }
+
+        override fun onPostExecute(bitmap: Bitmap?) {
+            super.onPostExecute(bitmap)
+            showIv.visibility = View.VISIBLE
+            showIv.setImageBitmap(bitmap)
+        }
+    }
 
 }

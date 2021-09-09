@@ -4,18 +4,16 @@ plugins {
     id 'kotlin-kapt'
 }
 
-def config = rootProject.ext.android
-
 android {
-    compileSdkVersion config.compileSdkVersion
-    buildToolsVersion config.buildToolsVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-        versionCode config.versionCode
-        versionName config.versionName
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
 
-        applicationId config.applicationId
+        applicationId rootProject.ext.applicationId
 
         vectorDrawables.useSupportLibrary = true
 
@@ -74,7 +72,6 @@ dependencies {
     implementation project(':library_core')
     implementation project(':library_selector')
     implementation project(':library_compressor')
-    implementation project(':library_android_q')
     implementation 'androidx.documentfile:documentfile:1.0.1'
     //
     implementation 'com.permissionx.guolindev:permissionx:1.4.0'
