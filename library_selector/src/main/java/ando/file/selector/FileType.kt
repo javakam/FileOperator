@@ -9,13 +9,10 @@ import java.util.*
 /**
  * # FileType 文件类型
  *
- * 注: 每一种类型可包括的后缀有限, 如果没有你想要的类型, 可以参照Demo自定义IFileType实现
+ * 注:
  *
- * - MimeType 👉 ando.file.core.FileMimeType
- *
- * - HashSet vs. List performance 👉 https://stackoverflow.com/questions/150750/hashset-vs-list-performance
- *
- * - HashSet vs ArrayList contains performance 👉 https://stackoverflow.com/questions/32552307/hashset-vs-arraylist-contains-performance
+ * - 每一种类型包括的后缀数量有限, 如果下面没有你需要的类型, 可以使用`supplement`动态添加或者直接通过IFileType自定义实现, 详细步骤见Demo
+ * - ando.file.core.FileMimeType 中包括大部分的`MimeType`, 可以参照
  *
  * @author javakam
  */
