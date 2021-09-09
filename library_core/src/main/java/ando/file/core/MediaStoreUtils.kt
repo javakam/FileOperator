@@ -207,7 +207,7 @@ object MediaStoreUtils {
             if (bitmap?.isRecycled == false) bitmap.recycle()
             try {
                 os?.close()
-            } catch (e: IOException) {
+            } catch (t: Throwable) {
             }
             return insertUri
         }

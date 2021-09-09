@@ -38,9 +38,7 @@ class ImageCompressor private constructor(builder: Builder) : Handler.Callback {
         if (TextUtils.isEmpty(mCacheDir)) {
             mCacheDir = getImageCacheDir(context)?.absolutePath
         }
-        val cacheBuilder = mCacheDir + "/" +
-                System.currentTimeMillis() +
-                (Math.random() * 1000).toInt() +
+        val cacheBuilder = mCacheDir + "/" + System.currentTimeMillis() + (Math.random() * 1000).toInt() +
                 if (TextUtils.isEmpty(suffix)) ".jpg" else suffix
         return File(cacheBuilder)
     }
