@@ -108,3 +108,8 @@ Caused by: java.io.FileNotFoundException: open failed: ENOENT (No such file or d
 1.移除 `library_android_q`, 改用`MediaStoreUtils`, 最后一个版本为: implementation 'com.github.javakam:file.android-q:1.9.0@aar'
 2.调整部分代码结构
 ```
+
+## v2.1.0
+```
+优化 `FileSelector`
+```

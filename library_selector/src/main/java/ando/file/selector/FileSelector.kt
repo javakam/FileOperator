@@ -68,10 +68,6 @@ class FileSelector private constructor(builder: Builder) {
      */
     private var mFileSelectOptions: MutableList<FileSelectOptions>? = null
     private val mFileTypeComposite: MutableList<IFileType> by lazy { mutableListOf() }
-
-    private val mFileCountMap = ArrayMap<IFileType, Int>()
-    private val mFileSizeMap = ArrayMap<IFileType, Long>()
-
     private var isOptionsEmpty: Boolean = false
     private val optionUnknown: FileSelectOptions by lazy { FileSelectOptions().apply { fileType = UNKNOWN } }
 
@@ -114,6 +110,7 @@ class FileSelector private constructor(builder: Builder) {
     fun obtainResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         this.requestCode = requestCode
         this.resultCode = resultCode
+        this.mFileTypeComposite.clear()
 
         if (requestCode == -1 || requestCode != mRequestCode) return
 
@@ -191,6 +188,8 @@ class FileSelector private constructor(builder: Builder) {
             return this
         }
 
+        val fileCountMap = ArrayMap<IFileType, Int>()
+        val fileSizeMap = ArrayMap<IFileType, Long>()
         //不同文件类型的结果集合(Result collection of different file types)
         val relationMap = ArrayMap<FileSelectOptions, SelectResult>()
         //不同文件类型的结果集合的并集(Union of result sets of different file types)
@@ -199,8 +198,8 @@ class FileSelector private constructor(builder: Builder) {
         var totalSize = 0L
         var isNeedBreak = false
         var isFileTypeIllegal = false
-        var isFileCountIllegal = false  //File Count: true 数量超限(Quantity exceeded)
-        var isFileSizeIllegal = false   //File Size: true 大小超限(Oversize)
+        var isFileCountIllegal = false //File Count: true 数量超限(Quantity exceeded)
+        var isFileSizeIllegal = false  //File Size:  true 大小超限(Oversize)
 
         (0 until itemCount).forEach { i ->
             if (isNeedBreak) return this
@@ -209,7 +208,7 @@ class FileSelector private constructor(builder: Builder) {
             filterUri(uri) { o: FileSelectOptions?, t: IFileType, tf: Boolean, s: Long, sf: Boolean ->
                 val isCurrentType = (t == o?.fileType)
                 if (isDebug()) {
-                    FileLogger.w("Multi-> filterUri: ${o?.fileType} t=$t tf=$tf isCurrentType=$isCurrentType sf=$sf")
+                    FileLogger.w("Multi-> filterUri=${o?.fileType} fileType=$t typeFit=$tf isCurrentType=$isCurrentType size=$s sizeFit=$sf")
                 }
 
                 val realOption: FileSelectOptions = o ?: optionUnknown
@@ -251,12 +250,12 @@ class FileSelector private constructor(builder: Builder) {
 
                 //File Count
                 val realType = realOption.fileType
-                if (!mFileCountMap.contains(realType)) {
-                    mFileCountMap[realType] = 0
+                if (!fileCountMap.contains(realType)) {
+                    fileCountMap[realType] = 0
                 }
-                mFileCountMap[realType] = mFileCountMap[realType]?.plus(1)
+                fileCountMap[realType] = fileCountMap[realType]?.plus(1)
                 mFileSelectOptions?.forEach { os: FileSelectOptions ->
-                    val count: Int = mFileCountMap[os.fileType] ?: 0
+                    val count: Int = fileCountMap[os.fileType] ?: 0
                     //min
                     //最后再判断最少数量(Finally determine the minimum number)
                     if (itemCount == (i + 1)) {
@@ -292,19 +291,21 @@ class FileSelector private constructor(builder: Builder) {
                 if (isCurrentType || isOptionsEmpty) {
                     if (isDebug()) {
                         FileLogger.i(
-                            "Multi-> Count: ${realOption.fileType} currTypeCount=${mFileCountMap[realType] ?: 0} isFinally=${itemCount == (i + 1)} " +
+                            "Multi-> Count: ${realOption.fileType} currTypeCount=${fileCountMap[realType] ?: 0} isFinally=${itemCount == (i + 1)} " +
                                     "realMinCountLimit=${realMinCountLimit(realOption)} realMaxCountLimit=${realMaxCountLimit(realOption)}"
                         )
                     }
 
                     //File Size
                     val mAllMaxSize = realSizeLimitAll(realOption)
-                    if (!mFileSizeMap.contains(realOption.fileType)) {
-                        mFileSizeMap[realOption.fileType] = 0L
+                    if (!fileSizeMap.contains(realOption.fileType)) {
+                        fileSizeMap[realOption.fileType] = 0L
                     }
-                    val currTypeTotalSize: Long = mFileSizeMap[realOption.fileType] ?: 0L + s
-                    mFileSizeMap[realOption.fileType] = currTypeTotalSize
-                    FileLogger.i("Multi-> currTypeTotalSize=$currTypeTotalSize  mAllMaxSize=$mAllMaxSize")
+                    val currTypeTotalSize: Long = (fileSizeMap[realOption.fileType] ?: 0L).plus(s)
+                    fileSizeMap[realOption.fileType] = currTypeTotalSize
+                    if (isDebug()) {
+                        FileLogger.e("Multi-> currTypeTotalSize=$currTypeTotalSize mAllMaxSize=$mAllMaxSize")
+                    }
 
                     if (currTypeTotalSize > mAllMaxSize) {//byte (B)
                         isFileSizeIllegal = true
@@ -316,7 +317,7 @@ class FileSelector private constructor(builder: Builder) {
                 //控制总大小(Control Total Size)
                 totalSize += s
                 if (isDebug()) {
-                    FileLogger.i("Multi-> totalSize: $totalSize checkPass=${selectResult.checkPass} ")
+                    FileLogger.i("Multi-> totalSize=$totalSize checkPass=${selectResult.checkPass}")
                 }
 
                 //not mRealAllFilesMaxSize
@@ -330,7 +331,7 @@ class FileSelector private constructor(builder: Builder) {
                         }
                         OVER_LIMIT_EXCEPT_OVERFLOW -> {
                             if (resultList.isNotEmpty()) resultList.clear()
-                            relationMap.values.forEach { sr -> resultList.addAll(sr.uriList) }
+                            relationMap.values.forEach { sr: SelectResult -> resultList.addAll(sr.uriList) }
                             mFileSelectCallBack?.onSuccess(createResult(resultList))
                         }
                     }
@@ -343,14 +344,16 @@ class FileSelector private constructor(builder: Builder) {
                     resultList.add(uri)
                 }
             }
-        }
+        }//END FOR
 
         //某些类型没有选(Some types are not selected)
         val isOptionsSizeMatch = (mFileSelectOptions?.size == relationMap.keys.size)
-        FileLogger.w(
-            "Multi-> isFileTypeIllegal=$isFileTypeIllegal isFileSizeIllegal=$isFileSizeIllegal " +
-                    "isFileCountIllegal=$isFileCountIllegal isOptionsSizeMatch=$isOptionsSizeMatch"
-        )
+        if (isDebug()) {
+            FileLogger.w(
+                "Multi-> isFileTypeIllegal=$isFileTypeIllegal isFileSizeIllegal=$isFileSizeIllegal " +
+                        "isFileCountIllegal=$isFileCountIllegal isOptionsSizeMatch=$isOptionsSizeMatch"
+            )
+        }
 
         //filter data
         if (isFileSizeIllegal || isFileCountIllegal || !isOptionsSizeMatch) {
@@ -395,7 +398,9 @@ class FileSelector private constructor(builder: Builder) {
                         }
                     }
 
-                    FileLogger.e("Multi filter data -> uriListAll=${resultList.size}")
+                    if (isDebug()) {
+                        FileLogger.e("Multi filter data -> uriListAll=${resultList.size}")
+                    }
                     mFileSelectCallBack?.onSuccess(createResult(resultList))
                     return this
                 }
@@ -422,7 +427,7 @@ class FileSelector private constructor(builder: Builder) {
             }
         }
         if (isDebug()) {
-            FileLogger.d("findFileType: $fileType ; mFileTypeComposite=${mFileTypeComposite.size}")
+            FileLogger.d("findFileType=$fileType ; mFileTypeComposite=${mFileTypeComposite.size}")
         }
         return fileType
     }
@@ -525,7 +530,7 @@ class FileSelector private constructor(builder: Builder) {
 
     private fun limitFileSize(fileSize: Long, sizeThreshold: Long): Boolean {
         if (isDebug()) {
-            FileLogger.i("limitFileSize  : $fileSize ${fileSize <= sizeThreshold}")
+            FileLogger.e("limitFileSize: $fileSize ${fileSize <= sizeThreshold}")
         }
         return fileSize <= sizeThreshold
     }
