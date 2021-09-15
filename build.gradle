@@ -9,8 +9,8 @@ buildscript {
         buildToolsVersion = '30.0.3'
         minSdkVersion = 21
         targetSdkVersion = 30
-        versionCode = 11
-        versionName = "2.0.0"
+        versionCode = 12
+        versionName = "2.1.0"
     }
     repositories {
         google()
@@ -23,7 +23,7 @@ buildscript {
     dependencies {
         // gradle-wrapper.properties
         // https://developer.android.com/studio/releases/gradle-plugin#updating-gradle
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'com.android.tools.build:gradle:4.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
