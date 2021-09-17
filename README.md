@@ -15,9 +15,9 @@ repositories {
     mavenCentral()
 }
 
-implementation 'com.github.javakam:file.core:2.1.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:2.1.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:2.1.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.core:2.2.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:2.2.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:2.2.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)

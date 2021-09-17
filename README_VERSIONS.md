@@ -109,7 +109,7 @@ Caused by: java.io.FileNotFoundException: open failed: ENOENT (No such file or d
 2.调整部分代码结构
 ```
 
-## v2.1.0
+## v2.1.0 & v2.2.0
 ```
 优化 `FileSelector`
 ```
