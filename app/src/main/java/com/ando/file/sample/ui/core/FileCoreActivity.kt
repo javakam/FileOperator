@@ -91,6 +91,13 @@ class FileCoreActivity : AppCompatActivity() {
             .callback(object : FileSelectCallBack {
                 override fun onSuccess(results: List<FileSelectResult>?) {
                     FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
+                    //FileAnalysis
+                    FileLogger.w("FileAnalysis Path: ${results?.get(0)?.filePath}")
+                    FileAnalysis.proceedFileDir(
+                        "/storage/emulated/0/Android/data/com.ando.file.sample/files/Documents/aaaaa/",
+                        "jpg"
+                    )
+
                     ResultUtils.resetUI(mTvResult)
                     if (results.isNullOrEmpty()) {
                         toastLong("No file selected")
