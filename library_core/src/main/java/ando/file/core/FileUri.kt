@@ -231,7 +231,7 @@ object FileUri {
                 }
                 // Huawei
                 else if (isHuaWeiUri(uri)) {
-                    val uriPath = getDataColumn(uri) ?: uri.toString()
+                    val uriPath = uri?.path
                     //content://com.huawei.hidisk.fileprovider/root/storage/emulated/0/Android/data/com.xxx.xxx/
                     if (uriPath.startsWith("/root")) {
                         return uriPath.replace("/root".toRegex(), "")
