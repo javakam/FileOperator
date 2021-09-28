@@ -68,3 +68,19 @@ private fun getAllPdf() { //查询sd卡所有pdf文件
     cursor?.close()
 }
 ```
+
+2021年9月27日 14:35:11  拼接路径的方式...
+
+```kotlin
+val displayName: String = FileUtils.getFileNameFromUri(uri) ?: return null
+val pathAndName = "${context.getExternalFilesDir(null)?.absolutePath}/Documents/Download/$displayName"
+FileLogger.e("Append ___ $displayName; $pathAndName; ${File(pathAndName).isFile} ; ${File(pathAndName).isDirectory}")
+return pathAndName
+/*
+/storage/emulated/0/Download/AAA/[高清 720P] 川普优选又来了？.flv
+/storage/emulated/0/Download/[高清 720P] 川普优选又来了？.flv
+
+/storage/emulated/0/Android/data/com.ando.file.sample/files/Documents/Download/AAA/[高清 720P] 川普优选又来了？.flv
+ */
+//return getDataColumn(uri)
+```
