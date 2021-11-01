@@ -239,10 +239,6 @@ object FileUri {
                 }
                 return getDataColumn(uri)
             }
-            // File
-            else if ("file".equals(uri.scheme, true)) {
-                return getDataColumn(uri)
-            }
             return getDataColumn(uri)
         }
     }
