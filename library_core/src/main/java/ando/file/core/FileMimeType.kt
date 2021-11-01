@@ -24,6 +24,7 @@ object FileMimeType {
     /**
      * 根据 File Name/Path/Url 获取相应的 MimeType
      *
+     * @param str eg: xxx.jpg ; xxx/xxx.jpg ; http://xxx.jpg
      * @return mineType  "application/x-flac" , "video/3gpp" ...
      */
     fun getMimeType(str: String?): String {
