@@ -15,9 +15,9 @@ repositories {
     mavenCentral()
 }
 
-implementation 'com.github.javakam:file.core:2.2.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:2.2.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:2.2.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.core:2.3.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:2.3.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:2.3.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
@@ -53,18 +53,12 @@ FileOperator.init(this, BuildConfig.DEBUG)
 根据`File Name/Path/Url`获取相应`MimeType`
 
 ```kotlin
-fun getMimeType(str: String?): String {
-    ...
-}
+fun getMimeType(str: String?): String {...}
 
-fun getMimeType(uri: Uri?): String {
-    ...
-}
+fun getMimeType(uri: Uri?): String {...}
 
 //MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
-fun getMimeTypeSupplement(fileName: String): String {
-    ...
-}
+fun getMimeTypeSupplement(fileName: String): String {...}
 ```
 
 #### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileSizeUtils.kt)
@@ -88,13 +82,9 @@ fun getFolderSize(file: File?): Long {
 ##### ②获取文件大小(Get file size)
 
 ```kotlin
-fun getFileSize(file: File?): Long {
-    ...
-}
+fun getFileSize(file: File?): Long {...}
 
-fun getFileSize(uri: Uri?): Long {
-    ...
-}
+fun getFileSize(uri: Uri?): Long {...}
 ```
 
 ##### ③自动计算指定`文件/文件夹`大小(Automatically calculate the size of the specified `file folder`)
@@ -102,7 +92,7 @@ fun getFileSize(uri: Uri?): Long {
 自动计算指定文件或指定文件夹的大小 , 返回值带 B、KB、M、GB、TB 单位的字符串
 
 ```kotlin
-fun getFileOrDirSizeFormatted(path: String?): String {}...}
+fun getFileOrDirSizeFormatted(path: String?): String {...}
 ```
 
 ##### ④格式化大小(`BigDecimal`实现)
@@ -164,11 +154,7 @@ fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSize
 
 ```kotlin
 fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): String {
-    return "${
-        formatSizeByTypeWithoutUnit(size.toBigDecimal(),
-            scale,
-            sizeType).toPlainString()
-    }${sizeType.unit}"
+    return "${formatSizeByTypeWithoutUnit(size.toBigDecimal(),scale,sizeType).toPlainString()}${sizeType.unit}"
 }
 ```
 
@@ -216,7 +202,7 @@ fun openBrowser(
 }
 ```
 
-##### ③直接打开`Url`对应的系统应用
+##### ③直接打开`Url`对应的系统应用(通常为系统内置的音视频播放器或浏览器)
 
 Directly open the system application corresponding to `Url`
 
@@ -229,7 +215,7 @@ fun openUrl(activity: Activity, url: String?) {
         intent.setDataAndType(Uri.parse(url), getMimeType(url))
         activity.startActivity(intent)
     } catch (e: Exception) {
-        FileLogger.e("openUrl error : " + e.message)
+        FileLogger.e("OpenUrl Error : " + e.message)
     }
 }
 ```
@@ -256,13 +242,17 @@ Obtain `Uri` from `File` path
 ```kotlin
 fun getUriByPath(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path))
 
-fun getUriByFile(file: File?): Uri? =
-    file?.let {
+fun getUriByFile(file: File?, isOriginal: Boolean = false): Uri? {
+    return if (isOriginal) Uri.fromFile(file)
+    else {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val authority = FileOperator.getContext().packageName + PATH_SUFFIX
-            FileProvider.getUriForFile(FileOperator.getContext(), authority, file)
-        } else Uri.fromFile(file)
+            val authority = FileOperator.getContext().packageName + AUTHORITY
+            FileProvider.getUriForFile(FileOperator.getContext(), authority, file ?: return null)
+        } else {
+            Uri.fromFile(file)
+        }
     }
+}
 ```
 
 ##### ②获取`Uri`对应的文件路径,兼容`API 26`
@@ -270,13 +260,29 @@ fun getUriByFile(file: File?): Uri? =
 Get the file path corresponding to `Uri`, compatible with `API 26`
 
 ```kotlin
-fun getFilePathByUri(context: Context?, uri: Uri?): String? {
-    if (context == null || uri == null) return null
-    val scheme = uri.scheme
-    // 以 file:// 开头的使用第三方应用打开
-    if (ContentResolver.SCHEME_FILE.equals(scheme, ignoreCase = true)) return uri.path
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) getPath(context,
-        uri) else getPathKitkat(context, uri)
+fun getPathByUri(uri: Uri?): String? {
+    return uri?.use {
+        FileLogger.i(
+            "FileUri getPathByUri -> " +"Uri: " + uri +", Authority: " + uri.authority +", Fragment: " + uri.fragment +
+                    ", Port: " + uri.port +", Query: " + uri.query +", Scheme: " + uri.scheme +
+                    ", Host: " + uri.host +", Segments: " + uri.pathSegments.toString()
+        )
+        // 以 file:// 开头的使用第三方应用打开 (open with third-party applications starting with file://)
+        if (ContentResolver.SCHEME_FILE.equals(uri.scheme, ignoreCase = true)) return getDataColumn(
+        @SuppressLint("ObsoleteSdkInt")
+        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+        // Before 4.4 , API 19 content:// 开头, 比如 content://media/external/images/media/123
+        if (!isKitKat && ContentResolver.SCHEME_CONTENT.equals(uri.scheme, true)) {
+            if (isGooglePhotosUri(uri)) return uri.lastPathSegment
+            return getDataColumn(uri)
+        }
+        val context = FileOperator.getContext()
+        // After 4.4 , API 19
+        // DocumentProvider
+        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+            ...
+        }
+        ...
 }
 ```
 
@@ -312,11 +318,7 @@ Method | Remark
 > `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
 
 ```kotlin
-fun File.copyTo(
-    target: File,
-    overwrite: Boolean = false,
-    bufferSize: Int = DEFAULT_BUFFER_SIZE
-): File
+fun File.copyTo(target: File,overwrite: Boolean = false,bufferSize: Int = DEFAULT_BUFFER_SIZE): File
 ```
 
 Usage:

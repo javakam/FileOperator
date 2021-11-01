@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.TextView
 import com.ando.file.sample.*
 import com.ando.file.sample.R
+import com.ando.file.sample.utils.FileAnalysis
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
 
@@ -92,11 +93,11 @@ class FileCoreActivity : AppCompatActivity() {
                 override fun onSuccess(results: List<FileSelectResult>?) {
                     FileLogger.w("FileSelectCallBack onSuccess ${results?.size}")
                     //FileAnalysis
-                    FileLogger.w("FileAnalysis Path: ${results?.get(0)?.filePath}")
-                    FileAnalysis.proceedFileDir(
-                        "/storage/emulated/0/Android/data/com.ando.file.sample/files/Documents/aaaaa/",
-                        "jpg"
-                    )
+//                    FileLogger.w("FileAnalysis Path: ${results?.get(0)?.filePath}")
+//                    FileAnalysis.proceedFileDir(
+//                        "/storage/emulated/0/Android/data/com.ando.file.sample/files/Documents/aaaaa/",
+//                        "jpg"
+//                    )
 
                     ResultUtils.resetUI(mTvResult)
                     if (results.isNullOrEmpty()) {

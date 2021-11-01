@@ -1,4 +1,4 @@
-package ando.file.selector
+package com.ando.file.sample.utils
 
 import ando.file.core.FileSizeUtils
 import ando.file.core.FileUtils
@@ -6,6 +6,8 @@ import android.util.ArrayMap
 import java.io.File
 
 /**
+ * todo 2021年11月1日 10:37:55
+ *
  * @author javakam
  * @date 2021-09-24  15:53
  */

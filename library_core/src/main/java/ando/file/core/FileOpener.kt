@@ -36,7 +36,7 @@ object FileOpener {
             intent.setDataAndType(Uri.parse(url), getMimeType(url))
             activity.startActivity(intent)
         } catch (e: Exception) {
-            FileLogger.e("openUrl error : " + e.message)
+            FileLogger.e("OpenUrl Error : " + e.message)
         }
     }
 
@@ -82,7 +82,7 @@ object FileOpener {
                 context.startActivity(chooserIntent)
                 block?.invoke(true, null)
             } else {
-                block?.invoke(true, "没有可用浏览器")
+                block?.invoke(true, "没有可用的浏览器")
             }
         } catch (e: ActivityNotFoundException) {
             e.printStackTrace()
