@@ -1,5 +1,10 @@
 # 更新日志(Update log)
 
+## v2.4.0
+```
+Fixed #62 👉 https://github.com/javakam/FileOperator/issues/62
+```
+
 ## v2.3.0
 ```
 1.移除`FileUri`中多于代码;
