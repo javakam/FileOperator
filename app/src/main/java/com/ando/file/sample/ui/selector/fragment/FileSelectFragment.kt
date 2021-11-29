@@ -2,6 +2,7 @@ package com.ando.file.sample.ui.selector.fragment
 
 import ando.file.core.*
 import ando.file.selector.*
+import ando.file.selector.FileType.Companion.supplement
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -98,6 +99,11 @@ class FileSelectFragment : Fragment() {
                 if (it) {
                     mFileSelectorRequest = REQUEST_CHOOSE_FILE
                     mFileSelector = chooseFile(REQUEST_CHOOSE_FILE, mCallBack)
+
+                    //Fixed At 2021年11月29日 星期一
+                    //#62 https://github.com/javakam/FileOperator/issues/62
+                    //testIssue62(REQUEST_CHOOSE_FILE)
+
                 }
             }
         }
@@ -204,7 +210,7 @@ class FileSelectFragment : Fragment() {
     fun Fragment.chooseFile(requestCode: Int, callback: FileSelectCallBack): FileSelector {
         val optionsWord = FileSelectOptions().apply {
             fileType = FileType.WORD
-            singleFileMaxSize = 5242880
+            singleFileMaxSize = 5242880 //5M
         }
         val optionsExcel = FileSelectOptions().apply {
             fileType = FileType.EXCEL
@@ -257,6 +263,48 @@ class FileSelectFragment : Fragment() {
             })
             .callback(callback)
             .choose()
+    }
+
+    fun testIssue62(requestCode: Int) {
+        val optionsType = FileSelectOptions().apply {
+            fileType = FileType.TXT.supplement("jar", "apk", "doc")
+            singleFileMaxSize = 5242880 //5M
+            fileCondition = object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    return (fileType == this@apply.fileType && uri != null && !uri.path.isNullOrBlank())
+                }
+            }
+        }
+
+        val mimeTypes = arrayOf("text/*", "application/*")
+        mFileSelector = FileSelector
+            .with(this)
+            .setRequestCode(requestCode)
+            .setSingleFileMaxSize(5242880, "上传文件大小不能超过5M!")
+            .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_ALL)
+            .setTypeMismatchTip("暂不支持上传此格式!")
+            .setMimeTypes(*mimeTypes)
+            .applyOptions(optionsType)
+            .filter(object : FileSelectCondition {
+                override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+                    FileLogger.w("${optionsType.fileType}")
+                    FileType.TXT.getMimeTypeArray()?.forEach {
+                        FileLogger.w(it)
+                    }
+                    return (fileType == optionsType.fileType && uri != null && !uri.path.isNullOrBlank())
+
+                }
+            }).callback(object : FileSelectCallBack {
+                override fun onSuccess(results: List<FileSelectResult>?) {
+                    FileLogger.e("成功: ${results?.size}")
+                }
+
+                override fun onError(e: Throwable?) {
+                    FileLogger.e("失败: ${e?.message}")
+                }
+            })
+            .choose()
+
     }
 
 }

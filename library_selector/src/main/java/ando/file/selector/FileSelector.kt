@@ -69,7 +69,6 @@ class FileSelector private constructor(builder: Builder) {
     private var mFileSelectOptions: MutableList<FileSelectOptions>? = null
     private val mFileTypeComposite: MutableList<IFileType> by lazy { mutableListOf() }
     private var isOptionsEmpty: Boolean = false
-    private val optionUnknown: FileSelectOptions by lazy { FileSelectOptions().apply { fileType = UNKNOWN } }
 
     //onActivityResult
     var requestCode: Int? = -1
@@ -118,7 +117,7 @@ class FileSelector private constructor(builder: Builder) {
         isOptionsEmpty = mFileSelectOptions.isNullOrEmpty()
         if (mFileSelectOptions == null) mFileSelectOptions = mutableListOf()
         if (isOptionsEmpty) {
-            mFileSelectOptions?.add(optionUnknown)
+            mFileSelectOptions?.add(FileSelectOptions().apply { fileType = UNKNOWN })
             mFileTypeComposite.add(UNKNOWN)
         } else {
             if (mFileTypeComposite.isNotEmpty()) mFileTypeComposite.clear()
@@ -151,11 +150,23 @@ class FileSelector private constructor(builder: Builder) {
         }
 
         filterUri(intentData) { o: FileSelectOptions?, t: IFileType, tf: Boolean, s: Long, sf: Boolean ->
-            val realOption: FileSelectOptions = o ?: optionUnknown
+            val realOption: FileSelectOptions = o ?: FileSelectOptions().apply {
+                fileType = UNKNOWN
+                fileTypeMismatchTip = mFileTypeMismatchTip
+                minCount = mMinCount
+                maxCount = mMaxCount
+                minCountTip = mMinCountTip
+                maxCountTip = mMaxCountTip
+                singleFileMaxSize = mSingleFileMaxSize
+                singleFileMaxSizeTip = mSingleFileMaxSizeTip
+                allFilesMaxSize = mAllFilesMaxSize
+                allFilesMaxSizeTip = mAllFilesMaxSizeTip
+                fileCondition = mFileSelectCondition
+            }
             if (!(tf || isOptionsEmpty)) {
                 mFileSelectCallBack?.onError(
                     Throwable(
-                        if (realOption.fileTypeMismatchTip?.isNotBlank() == true) realOption.fileTypeMismatchTip else mFileTypeMismatchTip
+                        if (realOption.fileTypeMismatchTip.isNullOrBlank()) mFileTypeMismatchTip else realOption.fileTypeMismatchTip
                     )
                 )
                 return@filterUri
@@ -211,7 +222,19 @@ class FileSelector private constructor(builder: Builder) {
                     FileLogger.w("Multi-> filterUri=${o?.fileType} fileType=$t typeFit=$tf isCurrentType=$isCurrentType size=$s sizeFit=$sf")
                 }
 
-                val realOption: FileSelectOptions = o ?: optionUnknown
+                val realOption: FileSelectOptions = o ?: FileSelectOptions().apply {
+                    fileType = UNKNOWN
+                    fileTypeMismatchTip = mFileTypeMismatchTip
+                    minCount = mMinCount
+                    maxCount = mMaxCount
+                    minCountTip = mMinCountTip
+                    maxCountTip = mMaxCountTip
+                    singleFileMaxSize = mSingleFileMaxSize
+                    singleFileMaxSizeTip = mSingleFileMaxSizeTip
+                    allFilesMaxSize = mAllFilesMaxSize
+                    allFilesMaxSizeTip = mAllFilesMaxSizeTip
+                    fileCondition = mFileSelectCondition
+                }
 
                 if (relationMap[realOption] == null) relationMap[realOption] = SelectResult(checkPass = true)
                 val selectResult: SelectResult = relationMap[realOption] ?: SelectResult(checkPass = true)
@@ -220,7 +243,7 @@ class FileSelector private constructor(builder: Builder) {
                 if (!(tf || isOptionsEmpty)) {
                     mFileSelectCallBack?.onError(
                         Throwable(
-                            if (realOption.fileTypeMismatchTip?.isNotBlank() == true) realOption.fileTypeMismatchTip else mFileTypeMismatchTip
+                            if (realOption.fileTypeMismatchTip.isNullOrBlank()) mFileTypeMismatchTip else realOption.fileTypeMismatchTip
                         )
                     )
 
@@ -530,7 +553,7 @@ class FileSelector private constructor(builder: Builder) {
 
     private fun limitFileSize(fileSize: Long, sizeThreshold: Long): Boolean {
         if (isDebug()) {
-            FileLogger.e("limitFileSize: $fileSize ${fileSize <= sizeThreshold}")
+            FileLogger.e("limitFileSize: $fileSize ; (fileSize <= sizeThreshold): ${fileSize <= sizeThreshold}")
         }
         return fileSize <= sizeThreshold
     }
