@@ -21,10 +21,40 @@ android {
         consumerProguardFiles 'consumer-rules.pro'
     }
 
-    buildTypes {
+    signingConfigs {
+        debug {
+            storeFile file('../keystore.jks')
+            storePassword '123456'
+            keyAlias 'foo'
+            keyPassword '123456'
+        }
         release {
+            storeFile file('../keystore.jks')
+            storePassword '123456'
+            keyAlias 'foo'
+            keyPassword '123456'
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        debug {
             minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            def buildType = variant.getBuildType().getName()
+            outputFileName = "app_v${defaultConfig.versionName}_${buildType}.apk"
         }
     }
 
