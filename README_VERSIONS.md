@@ -1,5 +1,10 @@
 # 更新日志(Update log)
 
+## v3.0.0
+```
+支持 ActivityResultLauncher 跳转页面, 同时兼容旧的 startActivityForResult + onActivityResult 方式
+```
+
 ## v2.4.0
 ```
 Fixed #62 👉 https://github.com/javakam/FileOperator/issues/62

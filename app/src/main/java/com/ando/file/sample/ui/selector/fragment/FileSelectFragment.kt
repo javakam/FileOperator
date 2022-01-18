@@ -13,6 +13,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.ando.file.sample.*
 import com.ando.file.sample.R
@@ -132,10 +135,31 @@ class FileSelectFragment : Fragment() {
         }
     }
 
+    /*
+    注: 使用 ActivityResultLauncher 启动页面, 会先后回调 onActivityResult 和 ActivityResultCallback.onActivityResult,
+        建议在 ActivityResultCallback.onActivityResult 中处理结果
+     */
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        //同下
+    }
+
+    //v3.0.0 开始使用 ActivityResultLauncher 跳转页面
+    private val mStartForResult: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            FileLogger.w("Back ok -> ActivityResultCallback")
+            handleResult(com.ando.file.sample.REQUEST_CHOOSE_FILE, result.resultCode, result.data)
+        }
+
+    override fun onDestroy() {
+        mStartForResult.unregister()
+        super.onDestroy()
+    }
+
+    private fun handleResult(requestCode: Int, resultCode: Int, data: Intent?) {
         ResultUtils.resetUI(mTvError, mTvResult, mIvOrigin, mIvCompressed)
+        //选择结果交给 FileSelector 处理, 可通过`requestCode -> REQUEST_CHOOSE_FILE`进行区分
         mFileSelector?.obtainResult(requestCode, resultCode, data)
     }
 
@@ -172,7 +196,7 @@ class FileSelectFragment : Fragment() {
     }
 
 
-    fun Fragment.chooseImage(requestCode: Int, callback: FileSelectCallBack): FileSelector {
+    private fun Fragment.chooseImage(requestCode: Int, callback: FileSelectCallBack): FileSelector {
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
             fileTypeMismatchTip = "Tipe file tidak didukung"
@@ -187,7 +211,7 @@ class FileSelectFragment : Fragment() {
             }
         }
         return FileSelector
-            .with(this)
+            .with(this, launcher = mStartForResult)
             .setRequestCode(requestCode)
             .setTypeMismatchTip("Tipe file tidak didukung")
             .setMinCount(1, "Pilih minimal 1 gambar!")
@@ -207,7 +231,7 @@ class FileSelectFragment : Fragment() {
             .choose()
     }
 
-    fun Fragment.chooseFile(requestCode: Int, callback: FileSelectCallBack): FileSelector {
+    private fun Fragment.chooseFile(requestCode: Int, callback: FileSelectCallBack): FileSelector {
         val optionsWord = FileSelectOptions().apply {
             fileType = FileType.WORD
             singleFileMaxSize = 5242880 //5M
@@ -265,6 +289,7 @@ class FileSelectFragment : Fragment() {
             .choose()
     }
 
+    //#62 https://github.com/javakam/FileOperator/issues/62
     fun testIssue62(requestCode: Int) {
         val optionsType = FileSelectOptions().apply {
             fileType = FileType.TXT.supplement("jar", "apk", "doc")
