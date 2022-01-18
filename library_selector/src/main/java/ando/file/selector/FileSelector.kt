@@ -1,22 +1,24 @@
 package ando.file.selector
 
-import ando.file.core.FileOperator.getContext
-import ando.file.core.FileOperator.isDebug
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import androidx.collection.ArrayMap
 import ando.file.core.*
 import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_ALL
 import ando.file.core.FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW
 import ando.file.core.FileOpener.createChooseIntent
+import ando.file.core.FileOperator.getContext
+import ando.file.core.FileOperator.isDebug
 import ando.file.selector.FileType.INSTANCE
 import ando.file.selector.FileType.UNKNOWN
 import android.content.ClipData
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.collection.ArrayMap
 import androidx.fragment.app.Fragment
-import kotlin.RuntimeException
 import kotlin.math.max
 import kotlin.math.min
+
 
 /**
  * # FileSelector
@@ -33,15 +35,16 @@ class FileSelector private constructor(builder: Builder) {
         val TIP_COUNT_MIN: String by lazy { getContext().getString(R.string.ando_str_count_min) }
         val TIP_COUNT_MAX: String by lazy { getContext().getString(R.string.ando_str_count_max) }
 
-        fun with(context: Context): Builder {
-            return Builder(context)
+        fun with(context: Context, launcher: ActivityResultLauncher<Intent>? = null): Builder {
+            return Builder(context, launcher)
         }
 
-        fun with(fragment: Fragment): Builder {
-            return Builder(fragment)
+        fun with(fragment: Fragment, launcher: ActivityResultLauncher<Intent>? = null): Builder {
+            return Builder(fragment, launcher)
         }
     }
 
+    private var mStartForResult: ActivityResultLauncher<Intent>? = null
     private var mRequestCode: Int = 0
 
     private var mMimeTypes: Array<out String>?
@@ -75,6 +78,7 @@ class FileSelector private constructor(builder: Builder) {
     var resultCode: Int? = 0
 
     init {
+        mStartForResult = builder.mStartForResult
         mRequestCode = builder.mRequestCode
         mMimeTypes = builder.mMimeTypes
         mIsMultiSelect = builder.mIsMultiSelect
@@ -95,14 +99,28 @@ class FileSelector private constructor(builder: Builder) {
 
     fun choose(context: Any, mimeType: String?): FileSelector {
         checkParams()
-        startActivityForResult(context, createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect), mRequestCode)
+        if (mStartForResult == null) {
+            startActivityForResult(context, createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect), mRequestCode)
+            return this
+        }
+        when (context) {
+            is ComponentActivity -> {// androidx.activity.ComponentActivity
+                mStartForResult?.launch(createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect))
+            }
+            is Fragment -> {
+                mStartForResult?.launch(createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect))
+            }
+            else -> {
+                startActivityForResult(context, createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect), mRequestCode)
+            }
+        }
         return this
     }
 
     private fun checkParams() {
         //FileSelectOptions Check
         mFileSelectOptions?.firstOrNull { it.fileType == null || it.fileType == INSTANCE }?.apply {
-            throw RuntimeException("$this fileType must not be FileType.INSTANCE")
+            throw RuntimeException("$this fileType must not be null or FileType.INSTANCE")
         }
     }
 
@@ -130,9 +148,11 @@ class FileSelector private constructor(builder: Builder) {
         if (mIsMultiSelect) {
             if (intent?.clipData == null) {
                 //Single type and Multiple types
-                if ((mFileSelectOptions?.size ?: 0 >= 2) && (mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL))
+                if ((mFileSelectOptions?.size ?: 0 >= 2) && (mOverLimitStrategy == OVER_LIMIT_EXCEPT_ALL)) {
                     mFileSelectCallBack?.onError(Throwable(mMinCountTip))
-                else handleSingleSelectCase(intent)
+                } else {
+                    handleSingleSelectCase(intent)
+                }
             } else handleMultiSelectCase(intent)
         } else handleSingleSelectCase(intent)
     }
@@ -165,9 +185,7 @@ class FileSelector private constructor(builder: Builder) {
             }
             if (!(tf || isOptionsEmpty)) {
                 mFileSelectCallBack?.onError(
-                    Throwable(
-                        if (realOption.fileTypeMismatchTip.isNullOrBlank()) mFileTypeMismatchTip else realOption.fileTypeMismatchTip
-                    )
+                    Throwable(if (realOption.fileTypeMismatchTip.isNullOrBlank()) mFileTypeMismatchTip else realOption.fileTypeMismatchTip)
                 )
                 return@filterUri
             }
@@ -208,7 +226,7 @@ class FileSelector private constructor(builder: Builder) {
 
         var totalSize = 0L
         var isNeedBreak = false
-        var isFileTypeIllegal = false
+        var isFileTypeIllegal = false  //File Type:  true 文件类型错误(File type error)
         var isFileCountIllegal = false //File Count: true 数量超限(Quantity exceeded)
         var isFileSizeIllegal = false  //File Size:  true 大小超限(Oversize)
 
@@ -237,14 +255,13 @@ class FileSelector private constructor(builder: Builder) {
                 }
 
                 if (relationMap[realOption] == null) relationMap[realOption] = SelectResult(checkPass = true)
-                val selectResult: SelectResult = relationMap[realOption] ?: SelectResult(checkPass = true)
+                val selectResult: SelectResult = relationMap[realOption]
+                    ?: SelectResult(checkPass = true)
 
                 //FileType Mismatch -> onError
                 if (!(tf || isOptionsEmpty)) {
                     mFileSelectCallBack?.onError(
-                        Throwable(
-                            if (realOption.fileTypeMismatchTip.isNullOrBlank()) mFileTypeMismatchTip else realOption.fileTypeMismatchTip
-                        )
+                        Throwable(if (realOption.fileTypeMismatchTip.isNullOrBlank()) mFileTypeMismatchTip else realOption.fileTypeMismatchTip)
                     )
 
                     if (relationMap.isNotEmpty()) relationMap.clear()
@@ -262,7 +279,12 @@ class FileSelector private constructor(builder: Builder) {
                     isFileSizeIllegal = true
 
                     if (isStrictStrategy) {
-                        mFileSelectCallBack?.onError(Throwable(realOption.singleFileMaxSizeTip ?: mSingleFileMaxSizeTip))
+                        mFileSelectCallBack?.onError(
+                            Throwable(
+                                realOption.singleFileMaxSizeTip
+                                    ?: mSingleFileMaxSizeTip
+                            )
+                        )
                         isNeedBreak = true
                         return@filterUri
                     } else {
@@ -497,9 +519,11 @@ class FileSelector private constructor(builder: Builder) {
         }
     }
 
-    private fun realMinCountTip(option: FileSelectOptions?): String = option?.minCountTip ?: mMinCountTip
+    private fun realMinCountTip(option: FileSelectOptions?): String = option?.minCountTip
+        ?: mMinCountTip
 
-    private fun realMaxCountTip(option: FileSelectOptions?): String = option?.maxCountTip ?: mMaxCountTip
+    private fun realMaxCountTip(option: FileSelectOptions?): String = option?.maxCountTip
+        ?: mMaxCountTip
 
     private fun realMinCountLimit(option: FileSelectOptions?): Int =
         if (option == null) {
@@ -597,7 +621,8 @@ class FileSelector private constructor(builder: Builder) {
         var checkPass: Boolean = false,
     )
 
-    class Builder internal constructor(private val context: Any) {
+    class Builder internal constructor(private val context: Any, launcher: ActivityResultLauncher<Intent>?) {
+        var mStartForResult: ActivityResultLauncher<Intent>? = launcher
         var mRequestCode: Int = 0
 
         var mMimeTypes: Array<out String>? = null

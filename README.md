@@ -4,6 +4,9 @@
 
 > `Android`文件操作库。适用于`Android 4.4`及以上系统, 已兼容`AndroidQ`和`Android11`新的存储策略。包括处理`Android`端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
 
+## 安装包(apk)
+<https://github.com/javakam/FileOperator/blob/master/app_v3.0.0_release.apk>
+
 ## 使用(Usage)
 
 #### 1. 依赖(dependencies)
@@ -15,9 +18,9 @@ repositories {
     mavenCentral()
 }
 
-implementation 'com.github.javakam:file.core:2.4.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:2.4.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:2.4.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.core:3.0.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:3.0.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:3.0.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
