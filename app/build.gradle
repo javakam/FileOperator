@@ -99,6 +99,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 
     //
+//    implementation 'com.github.javakam:file.core:3.0.0@aar'
+//    implementation 'com.github.javakam:file.selector:3.0.0@aar'
+//    implementation 'com.github.javakam:file.compressor:3.0.0@aar'
+
     implementation project(':library_core')
     implementation project(':library_selector')
     implementation project(':library_compressor')
