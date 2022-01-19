@@ -16,6 +16,7 @@
 ```groovy
 repositories {
     mavenCentral()
+    maven { url "https://s01.oss.sonatype.org/content/groups/public" }
 }
 
 implementation 'com.github.javakam:file.core:3.0.0@aar'      //核心库必选(Core library required)
