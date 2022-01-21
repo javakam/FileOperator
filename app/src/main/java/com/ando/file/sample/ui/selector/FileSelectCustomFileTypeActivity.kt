@@ -109,7 +109,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             .setMultiSelect()//默认是单选false
             .setSingleFileMaxSize(209715200, "The size of a single file cannot exceed 200M !")
             .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-            .setMimeTypes("audio/*", "text/plain", "application/*") //, "application/*"
+            .setExtraMimeTypes("audio/*", "text/plain", "application/*") //, "application/*"
             //.applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
             .applyOptions(optionsTest)
             .filter(object : FileSelectCondition {
@@ -236,7 +236,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             .setSingleFileMaxSize(209715200, "The size of a single file cannot exceed 200M !")
             .setAllFilesMaxSize(524288000, "The total file size cannot exceed 500M !")
             .setOverLimitStrategy(this.mOverLimitStrategy)
-            .setMimeTypes("audio/*", "image/*", "text/*", "application/json")
+            .setExtraMimeTypes("audio/*", "image/*", "text/*", "application/json")
             .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {

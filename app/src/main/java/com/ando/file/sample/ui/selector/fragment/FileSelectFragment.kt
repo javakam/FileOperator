@@ -217,7 +217,7 @@ class FileSelectFragment : Fragment() {
             .setMinCount(1, "Pilih minimal 1 gambar!")
             .setMaxCount(1, "Pilih minimal 1 gambar!")
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_ALL)
-            .setMimeTypes("image/*")
+            .setExtraMimeTypes("image/*")
             .applyOptions(optionsImage)
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
@@ -263,7 +263,7 @@ class FileSelectFragment : Fragment() {
             .setMinCount(1, "Pilih minimal 1 file!")
             .setMaxCount(1, "Pilih minimal 1 file!")
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_ALL)
-            .setMimeTypes(
+            .setExtraMimeTypes(
                 "text/plain",
                 "application/msword",
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -301,14 +301,14 @@ class FileSelectFragment : Fragment() {
             }
         }
 
-        val mimeTypes = arrayOf("text/*", "application/*")
+        val extraMimeTypes = arrayOf("text/*", "application/*")
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(requestCode)
             .setSingleFileMaxSize(5242880, "上传文件大小不能超过5M!")
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_ALL)
             .setTypeMismatchTip("暂不支持上传此格式!")
-            .setMimeTypes(*mimeTypes)
+            .setExtraMimeTypes(*extraMimeTypes)
             .applyOptions(optionsType)
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {

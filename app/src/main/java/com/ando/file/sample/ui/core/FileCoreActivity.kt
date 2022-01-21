@@ -82,7 +82,7 @@ class FileCoreActivity : AppCompatActivity() {
             .setOverLimitStrategy(FileGlobal.OVER_LIMIT_EXCEPT_OVERFLOW)
             .setSingleFileMaxSize(10737418240, "The size cannot exceed 10G !") //byte (B)
             .setAllFilesMaxSize(53687091200, "The total size cannot exceed 50G !")
-            .setMimeTypes("*/*")
+            .setExtraMimeTypes("*/*")
 
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {

@@ -120,7 +120,7 @@ class FileSelectMultiImageActivity : AppCompatActivity() {
             .setSingleFileMaxSize(3145728, "The size of a single picture cannot exceed 3M !")
             .setAllFilesMaxSize(20971520, "The total size of the picture does not exceed 20M !")
             .setOverLimitStrategy(this.mOverLimitStrategy)
-            .setMimeTypes("image/*")
+            .setExtraMimeTypes("image/*")
             .applyOptions(optionsImage)
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {

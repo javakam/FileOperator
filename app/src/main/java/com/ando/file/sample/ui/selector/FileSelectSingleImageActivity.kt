@@ -17,6 +17,7 @@ import com.ando.file.sample.*
 import com.ando.file.sample.R
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
+import com.ando.file.sample.utils.noShake
 import java.io.File
 
 /**
@@ -30,17 +31,20 @@ import java.io.File
 class FileSelectSingleImageActivity : AppCompatActivity() {
 
     private lateinit var mBtSelectSingle: View
+    private lateinit var mBtDelete: View
     private lateinit var mTvError: TextView
     private lateinit var mTvResult: TextView
     private lateinit var mIvOrigin: ImageView
     private lateinit var mIvCompressed: ImageView
 
     private var mFileSelector: FileSelector? = null
+    private var currUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_single_image)
         mBtSelectSingle = findViewById(R.id.bt_select_single)
+        mBtDelete = findViewById(R.id.bt_delete)
         mTvError = findViewById(R.id.tv_error)
         mTvResult = findViewById(R.id.tv_result)
         mIvOrigin = findViewById(R.id.iv_origin)
@@ -48,14 +52,14 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
 
         title = "单选图片(Single selection picture)"
 
-        mBtSelectSingle.setOnClickListener {
+        mBtSelectSingle.noShake {
             PermissionManager.requestStoragePermission(this) {
                 if (it) chooseFile()
 
                 //测试分享 (Test sharing)
                 /*if (it){
                     mFileSelector = FileSelector.with(this)
-                        .setMimeTypes("application/json")
+                        .setExtraMimeTypes("application/json")
                         .callback(object : FileSelectCallBack {
                             override fun onError(e: Throwable?) {
                                 Log.e("123", e?.toString())
@@ -75,6 +79,27 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
                         .choose()
                 }*/
 
+            }
+        }
+
+        //todo 2022年1月21日 17:43:34  批量删除
+        //删除该文件
+        //用于测试 👉 https://github.com/javakam/FileOperator/issues/70
+        mBtDelete.visibility = View.VISIBLE
+        mBtDelete.noShake {
+            FileLogger.w("删除..... $currUri")
+
+            currUri?.apply {
+                //val result: Int = FileUtils.deleteFile(this)
+                //FileLogger.w("删除结果..... $result")
+
+                val result2: Boolean = MediaStoreUtils.deleteFile(this)
+                if (result2) {
+                    toastLong("删除成功!")
+                    recreate()
+                } else {
+                    toastLong("删除失败!")
+                }
             }
         }
     }
@@ -109,6 +134,21 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     }
 
     private fun chooseFile() {
+        //测试Android11文件管理页面样式 2022年1月21日 17:36:05
+//        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+//            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+//            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
+//            //1
+//            //setTypeAndNormalize("*/*")
+//            //putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
+//
+//            //2 效果同1完全一致!!!
+//            setTypeAndNormalize("image/*")
+//            addCategory(Intent.CATEGORY_OPENABLE)
+//        }
+//        startActivity(intent)
+//        return
+
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
             fileTypeMismatchTip = "File type mismatch !"
@@ -136,7 +176,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
             .setSingleFileMaxSize(10485760, "The size cannot exceed 10M !")//单选条件下无效, 使用 FileSelectOptions.singleFileMaxSize
             .setAllFilesMaxSize(104857600, "Total size cannot exceed 100M !")//单选条件下无效, 只做单个图片大小判断 setSingleFileMaxSize
-            .setMimeTypes("image/*")
+            .setExtraMimeTypes("image/*")
             .applyOptions(optionsImage)
 
             //优先使用 FileSelectOptions 中设置的 FileSelectCondition
@@ -169,15 +209,16 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     }
 
     private fun showSelectResult(results: List<FileSelectResult>) {
+        currUri = null
         ResultUtils.setErrorText(mTvError, null)
         ResultUtils.setFormattedResults(tvResult = mTvResult, results = results)
 
-        val uri = results[0].uri
+        currUri = results[0].uri
         //Original image
-        ResultUtils.setImageEvent(mIvOrigin, uri)
+        ResultUtils.setImageEvent(mIvOrigin, currUri)
         //Compress
-        val photos = listOf(uri)
-        FileLogger.e("uri=$uri")
+        val photos = listOf(currUri)
+        FileLogger.e("uri=$currUri")
 
         //or val bitmap:Bitmap=ImageCompressEngine.compressPure(uri)
         compressImage(this, photos) { _, u ->

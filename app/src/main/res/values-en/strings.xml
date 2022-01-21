@@ -12,6 +12,7 @@
     <string name="str_ando_file_get_size">Get file size(FileSizeUtils)</string>
     <string name="str_ando_file_get_uri_path">Get file Uri/Path(FileUri)</string>
     <string name="str_ando_file_open">Open file(FileOpener)</string>
+    <string name="str_ando_file_delete">Delete the file</string>
     <string name="str_ando_file_common_utils">File general tools(FileUtils)</string>
     <string name="str_ando_file_select_one_and_compress">Choose a picture and compress</string>
     <string name="str_ando_file_select_multiple_and_compress">Select multiple pictures and compress</string>

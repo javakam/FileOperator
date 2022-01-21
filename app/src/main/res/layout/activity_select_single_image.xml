@@ -26,10 +26,56 @@
             android:layout_height="wrap_content"
             android:text="@string/str_ando_file_select_one"
             android:textAllCaps="false"
-            android:visibility="gone"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_13"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/bt_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/color_container_bg"
+            android:text="@string/str_ando_file_delete"
+            android:textAllCaps="false"
+            android:textColor="@android:color/holo_red_light"
+            android:textSize="@dimen/font_13"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_origin"
+            android:layout_width="200dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_place_holder"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/iv_compressed"
+            android:layout_width="200dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_place_holder"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tv_origin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="@string/str_ando_file_original_image"
+            android:textColor="@color/color_main_theme_dark"
+            android:textStyle="bold"
+            android:visibility="visible"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/tv_error"
@@ -46,6 +92,17 @@
             tools:visibility="visible" />
 
         <TextView
+            android:id="@+id/tv_compressed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text="@string/str_ando_file_after_compression"
+            android:textColor="@color/color_main_theme_dark"
+            android:textStyle="bold"
+            android:visibility="visible"
+            tools:visibility="visible" />
+
+        <TextView
             android:id="@+id/tv_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,50 +114,6 @@
             android:textColorHint="@color/color_font_black"
             android:textSize="12sp"
             android:visibility="visible" />
-
-        <TextView
-            android:id="@+id/tv_origin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="3dp"
-            android:text="@string/str_ando_file_original_image"
-            android:textColor="@color/color_main_theme_dark"
-            android:textStyle="bold"
-            android:visibility="visible"
-            tools:visibility="visible" />
-
-        <ImageView
-            android:id="@+id/iv_origin"
-            android:layout_width="200dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_place_holder"
-            android:visibility="visible"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/tv_compressed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="3dp"
-            android:text="@string/str_ando_file_after_compression"
-            android:textColor="@color/color_main_theme_dark"
-            android:textStyle="bold"
-            android:visibility="visible"
-            tools:visibility="visible" />
-
-        <ImageView
-            android:id="@+id/iv_compressed"
-            android:layout_width="200dp"
-            android:layout_height="150dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            android:scaleType="centerCrop"
-            android:src="@mipmap/ic_place_holder"
-            android:visibility="visible"
-            tools:visibility="visible" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
