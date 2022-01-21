@@ -194,7 +194,8 @@ object FileUtils {
                 //这个选项用于getFrameAtTime，以检索与在给定时间之前或在给定时间内的数据源相关联的同步(或键)框架。
                 val PREVIOUS_SYNC = mmr.extractMetadata(MediaMetadataRetriever.OPTION_PREVIOUS_SYNC)
 
-                FileLogger.i("""
+                FileLogger.i(
+                    """
                         ============================== MediaMetadataRetriever Info Begin ==============================
                         METADATA_KEY_ALBUM: $albumString
                         METADATA_KEY_ARTIST: $artistString
@@ -224,7 +225,8 @@ object FileUtils {
                         OPTION_CLOSEST: $CLOSEST
                         OPTION_PREVIOUS_SYNC: $PREVIOUS_SYNC
                         ============================== MediaMetadataRetriever Info END ==============================
-                    """.trimIndent())
+                    """.trimIndent()
+                )
             } catch (e: Exception) {
                 FileLogger.e("dumpMediaInfoByMediaMetadataRetriever: ${e.message}")
             } finally {
@@ -266,7 +268,8 @@ object FileUtils {
                     // dateTime=2021:07:12 14:36:30
                     // dateTimeOriginal=2021:07:12 14:36:30
                     // dateTimeDigitized=2021:07:12 14:36:30
-                    FileLogger.i("""
+                    FileLogger.i(
+                        """
                         ============================== ExifInterface Info END ==============================
                         TAG_GPS_LONGITUDE: $longitude
                         TAG_GPS_LATITUDE: $latitude
@@ -283,7 +286,8 @@ object FileUtils {
                         TAG_DATETIME_ORIGINAL: $dateTimeOriginal
                         TAG_DATETIME_DIGITIZED: $dateTimeDigitized
                         ============================== ExifInterface Info END ==============================
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 }
             } catch (t: Throwable) {
                 FileLogger.e("dumpMediaInfoByExifInterface: ${t.message}")
@@ -768,6 +772,9 @@ object FileUtils {
     //File Delete
     //----------------------------------------------------------------
 
+    /**
+     * @return 返回0表示删除失败 (EN: Returns 0 to indicate that the deletion failed)
+     */
     fun deleteFile(uri: Uri?): Int = getPathByUri(uri)?.run { deleteFileWithoutExcludeNames(File(this), null) } ?: 0
 
     fun deleteFile(pathAndName: String?): Int =

@@ -365,7 +365,7 @@ mFileSelector = FileSelector
         "大小不能超过1M !") //The size cannot exceed 1M  注:单选条件下无效, FileSelectOptions.singleFileMaxSize
     .setAllFilesMaxSize(10485760,
         "总大小不能超过10M !") //The total size cannot exceed 10M 注:单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
-    .setMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg:"video/*","audio/*","image/*"
+    .setExtraMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg:"video/*","audio/*","image/*"
     .applyOptions(optionsImage)
     .filter(object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
@@ -513,10 +513,10 @@ mFileSelector = FileSelector
     //eg: ando.file.core.FileMimeType
     //默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
     //EN:Default do not file type constraints for "/", is not the same as the choice of different types of the system to provide the UI eg: "video/"," audio/", "image/"
-    .setMimeTypes("audio/*", "image/*", "text/plain")
+    .setExtraMimeTypes("audio/*", "image/*", "text/plain")
 
-    //如果setMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
-    //EN:If setMimeTypes and applyOptions no corresponding will appear `file type mismatch problems`
+    //如果setExtraMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
+    //EN:If setExtraMimeTypes and applyOptions no corresponding will appear `file type mismatch problems`
     .applyOptions(optionsImage, optionsAudio, optionsTxt)
 
     //优先使用 FileSelectOptions 中设置的 FileSelectCondition
@@ -599,7 +599,7 @@ val optionsJsonFile = FileSelectOptions().apply {
 
 FileSelector.with(this)
 ...
-.setMimeTypes("audio/*", "image/*", "text/*", "application/json")
+.setExtraMimeTypes("audio/*", "image/*", "text/*", "application/json")
     .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
     .filter(object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {

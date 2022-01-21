@@ -1,5 +1,12 @@
 # 更新日志(Update log)
 
+## v3.5.0
+```
+1.setMimeTypes 更名为 setExtraMimeTypes , 更符合 Intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes) 的语义
+2.Intent.setType 改用为 Intent.setTypeAndNormalize, 后者会将 "IMAGE/*" 转为 "image/*", 因为Android系统仅支持小写的MimeType, 并非正式的 RFC MIME
+3.完善 FileOpener.createChooseIntent 注释
+```
+
 ## v3.0.0
 ```
 支持 ActivityResultLauncher 跳转页面, 同时兼容旧的 startActivityForResult + onActivityResult 方式
@@ -102,7 +109,7 @@ Modify FileGlobal.giveUriPermission & use
     所以直接可以用 ando.file.core.FileUtils 替代,详见: FileUtilsActivity
 3.FileOpener.openFileBySystemChooser 改名为 FileOpener.openFile, 语义更明确
 4.如果筛选`txt`文本文件,`MimeType`建议设置为`text/*`相较于`text/plain`在系统文件管理器页面多一个`文档`字样的筛选更好一些,
-  eg: setMimeTypes("audio/*", "image/*", "text/*")
+  eg: setExtraMimeTypes("audio/*", "image/*", "text/*")
 5.修复访问`Public`目录路径异常问题
 ```
 

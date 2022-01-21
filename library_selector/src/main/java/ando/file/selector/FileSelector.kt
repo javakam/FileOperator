@@ -47,7 +47,7 @@ class FileSelector private constructor(builder: Builder) {
     private var mStartForResult: ActivityResultLauncher<Intent>? = null
     private var mRequestCode: Int = 0
 
-    private var mMimeTypes: Array<out String>?
+    private var mExtraMimeTypes: Array<out String>?
     private var mIsMultiSelect: Boolean = false
     private var mMinCount: Int = 0                              //可选文件最小数量(Minimum number of optional files)
     private var mMaxCount: Int = Int.MAX_VALUE                  //可选文件最大数量(Maximum number of optional files)
@@ -80,7 +80,7 @@ class FileSelector private constructor(builder: Builder) {
     init {
         mStartForResult = builder.mStartForResult
         mRequestCode = builder.mRequestCode
-        mMimeTypes = builder.mMimeTypes
+        mExtraMimeTypes = builder.mExtraMimeTypes
         mIsMultiSelect = builder.mIsMultiSelect
         mMinCount = builder.mMinCount
         mMaxCount = builder.mMaxCount
@@ -100,18 +100,18 @@ class FileSelector private constructor(builder: Builder) {
     fun choose(context: Any, mimeType: String?): FileSelector {
         checkParams()
         if (mStartForResult == null) {
-            startActivityForResult(context, createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect), mRequestCode)
+            startActivityForResult(context, createChooseIntent(mimeType, mExtraMimeTypes, mIsMultiSelect), mRequestCode)
             return this
         }
         when (context) {
             is ComponentActivity -> {// androidx.activity.ComponentActivity
-                mStartForResult?.launch(createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect))
+                mStartForResult?.launch(createChooseIntent(mimeType, mExtraMimeTypes, mIsMultiSelect))
             }
             is Fragment -> {
-                mStartForResult?.launch(createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect))
+                mStartForResult?.launch(createChooseIntent(mimeType, mExtraMimeTypes, mIsMultiSelect))
             }
             else -> {
-                startActivityForResult(context, createChooseIntent(mimeType, mMimeTypes, mIsMultiSelect), mRequestCode)
+                startActivityForResult(context, createChooseIntent(mimeType, mExtraMimeTypes, mIsMultiSelect), mRequestCode)
             }
         }
         return this
@@ -625,7 +625,7 @@ class FileSelector private constructor(builder: Builder) {
         var mStartForResult: ActivityResultLauncher<Intent>? = launcher
         var mRequestCode: Int = 0
 
-        var mMimeTypes: Array<out String>? = null
+        var mExtraMimeTypes: Array<out String>? = null      //eg: Intent.putExtra(Intent.EXTRA_MIME_TYPES, mExtraMimeTypes)
         var mIsMultiSelect: Boolean = false
         var mMinCount: Int = 0                              //可选文件最小数量(Minimum number of optional files)
         var mMaxCount: Int = 0                              //可选文件最大数量(Maximum number of optional files)
@@ -652,8 +652,8 @@ class FileSelector private constructor(builder: Builder) {
             return this
         }
 
-        fun setMimeTypes(vararg mimeTypes: String): Builder {
-            this.mMimeTypes = if (mimeTypes.size == 1) arrayOf(mimeTypes[0]) else mimeTypes
+        fun setExtraMimeTypes(vararg extraMimeTypes: String): Builder {
+            this.mExtraMimeTypes = if (extraMimeTypes.size == 1) arrayOf(extraMimeTypes[0]) else extraMimeTypes
             return this
         }
 

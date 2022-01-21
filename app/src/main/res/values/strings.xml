@@ -12,6 +12,7 @@
     <string name="str_ando_file_get_size">获取文件大小(FileSizeUtils)</string>
     <string name="str_ando_file_get_uri_path">获取文件Uri/Path(FileUri)</string>
     <string name="str_ando_file_open">打开文件(FileOpener)</string>
+    <string name="str_ando_file_delete">删除该文件</string>
     <string name="str_ando_file_common_utils">文件通用工具类(FileUtils)</string>
     <string name="str_ando_file_select_one_and_compress">选择一张图片并压缩</string>
     <string name="str_ando_file_select_multiple_and_compress">选择多张图片并压缩</string>

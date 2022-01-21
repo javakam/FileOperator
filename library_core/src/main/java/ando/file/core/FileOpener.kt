@@ -155,14 +155,16 @@ object FileOpener {
      * #### 6. 不使用ACTION_GET_CONTENT的另外一个原因: https://stackoverflow.com/questions/50386916/select-specific-file-types-using-action-get-content-and-settype-or-intent-extra
      *
      * #### 7. 可以使用返回的Intent设置临时权限 Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+     *
+     * #### 8. extraMimeTypes 必须要用 Array 类型的, 否则打开的文件管理器后只显示"最近"一个页面 !
      */
-    fun createChooseIntent(@NonNull mimeType: String?, @Nullable mimeTypes: Array<out String>?, multiSelect: Boolean): Intent =
+    fun createChooseIntent(@NonNull mimeType: String?, @Nullable extraMimeTypes: Array<out String>?, multiSelect: Boolean): Intent =
         Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
             putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiSelect)
-            type = if (mimeType.isNullOrBlank()) "*/*" else mimeType
-            if (!mimeTypes.isNullOrEmpty()) {
-                putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            setTypeAndNormalize(if (mimeType.isNullOrBlank()) "*/*" else mimeType)
+            if (!extraMimeTypes.isNullOrEmpty()) {
+                putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes)
             }
             addCategory(Intent.CATEGORY_OPENABLE)
         }
