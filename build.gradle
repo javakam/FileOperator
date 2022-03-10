@@ -3,14 +3,14 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.5.31'
+        kotlin_version = '1.6.10'
         applicationId = "com.ando.file.sample"
         compileSdkVersion = 30
         buildToolsVersion = '30.0.3'
         minSdkVersion = 21
         targetSdkVersion = 30
-        versionCode = 13
-        versionName = "3.0.0"
+        versionCode = 15
+        versionName = "3.5.0"
     }
     repositories {
         google()
