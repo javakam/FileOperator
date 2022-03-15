@@ -5,6 +5,7 @@
 1.setMimeTypes 更名为 setExtraMimeTypes , 更符合 Intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes) 的语义
 2.Intent.setType 改用为 Intent.setTypeAndNormalize, 后者会将 "IMAGE/*" 转为 "image/*", 因为Android系统仅支持小写的MimeType, 并非正式的 RFC MIME
 3.完善 FileOpener.createChooseIntent 注释
+4.修改 FileMimeType.kt 中 MimeType 获取方式, Fixed #73 👉 https://github.com/javakam/FileOperator/issues/73
 ```
 
 ## v3.0.0
