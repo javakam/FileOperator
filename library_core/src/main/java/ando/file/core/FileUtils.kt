@@ -839,7 +839,7 @@ object FileUtils {
     }
 
     /**
-     * 重命名
+     * 重命名, 会覆盖原文件
      *
      * @param newFileDirectory 新文件路径, 默认不变
      * @param newFileName 新文件名称

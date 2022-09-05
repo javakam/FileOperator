@@ -5,7 +5,18 @@
 > `Android`文件操作库。适用于`Android 4.4`及以上系统, 已兼容`AndroidQ`和`Android11`新的存储策略。包括处理`Android`端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
 
 ## 安装包(apk)
-<https://github.com/javakam/FileOperator/blob/master/app_v3.0.0_release.apk>
+
+<https://github.com/javakam/FileOperator/blob/master/app_v3.6.0_release.apk>
+
+## 最新版说明v3.6.0
+
+```
+增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
+1. 获取文件add,modify,expires时间, getMediaShotTime(targetBucketId: Long? = null, block: (Long, Long, Long) -> Unit),返回值为 dateAdded, dateModified, dateExpires;
+2. renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {};
+3. deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L) 移除超过指定期限(Long)的文件
+4. 后续会加入相应的使用案例 2022年9月5日 10:57:51
+```
 
 ## 使用(Usage)
 
@@ -19,9 +30,9 @@ repositories {
     maven { url "https://s01.oss.sonatype.org/content/groups/public" }
 }
 
-implementation 'com.github.javakam:file.core:3.5.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:3.5.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:3.5.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.core:3.6.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:3.6.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:3.6.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
@@ -57,12 +68,18 @@ FileOperator.init(this, BuildConfig.DEBUG)
 根据`File Name/Path/Url`获取相应`MimeType`
 
 ```kotlin
-fun getMimeType(str: String?): String {...}
+fun getMimeType(str: String?): String {
+    ...
+}
 
-fun getMimeType(uri: Uri?): String {...}
+fun getMimeType(uri: Uri?): String {
+    ...
+}
 
 //MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
-fun getMimeTypeSupplement(fileName: String): String {...}
+fun getMimeTypeSupplement(fileName: String): String {
+    ...
+}
 ```
 
 #### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileSizeUtils.kt)
@@ -86,9 +103,13 @@ fun getFolderSize(file: File?): Long {
 ##### ②获取文件大小(Get file size)
 
 ```kotlin
-fun getFileSize(file: File?): Long {...}
+fun getFileSize(file: File?): Long {
+    ...
+}
 
-fun getFileSize(uri: Uri?): Long {...}
+fun getFileSize(uri: Uri?): Long {
+    ...
+}
 ```
 
 ##### ③自动计算指定`文件/文件夹`大小(Automatically calculate the size of the specified `file folder`)
@@ -96,7 +117,9 @@ fun getFileSize(uri: Uri?): Long {...}
 自动计算指定文件或指定文件夹的大小 , 返回值带 B、KB、M、GB、TB 单位的字符串
 
 ```kotlin
-fun getFileOrDirSizeFormatted(path: String?): String {...}
+fun getFileOrDirSizeFormatted(path: String?): String {
+    ...
+}
 ```
 
 ##### ④格式化大小(`BigDecimal`实现)
@@ -141,13 +164,15 @@ fun formatFileSize(size: Long, scale: Int, withUnit: Boolean = false): String {
 //scale 精确到小数点以后几位
 fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSizeType): BigDecimal =
     size.divide(
-        BigDecimal.valueOf(when (sizeType) {
-            SIZE_TYPE_B -> 1L
-            SIZE_TYPE_KB -> 1024L
-            SIZE_TYPE_MB -> 1024L * 1024L
-            SIZE_TYPE_GB -> 1024L * 1024L * 1024L
-            SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
-        }),
+        BigDecimal.valueOf(
+            when (sizeType) {
+                SIZE_TYPE_B -> 1L
+                SIZE_TYPE_KB -> 1024L
+                SIZE_TYPE_MB -> 1024L * 1024L
+                SIZE_TYPE_GB -> 1024L * 1024L * 1024L
+                SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
+            }
+        ),
         scale,
         //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
         if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
@@ -158,7 +183,13 @@ fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSize
 
 ```kotlin
 fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): String {
-    return "${formatSizeByTypeWithoutUnit(size.toBigDecimal(),scale,sizeType).toPlainString()}${sizeType.unit}"
+    return "${
+        formatSizeByTypeWithoutUnit(
+            size.toBigDecimal(),
+            scale,
+            sizeType
+        ).toPlainString()
+    }${sizeType.unit}"
 }
 ```
 
@@ -267,27 +298,27 @@ Get the file path corresponding to `Uri`, compatible with `API 26`
 fun getPathByUri(uri: Uri?): String? {
     return uri?.use {
         FileLogger.i(
-            "FileUri getPathByUri -> " +"Uri: " + uri +", Authority: " + uri.authority +", Fragment: " + uri.fragment +
-                    ", Port: " + uri.port +", Query: " + uri.query +", Scheme: " + uri.scheme +
-                    ", Host: " + uri.host +", Segments: " + uri.pathSegments.toString()
+            "FileUri getPathByUri -> " + "Uri: " + uri + ", Authority: " + uri.authority + ", Fragment: " + uri.fragment +
+                    ", Port: " + uri.port + ", Query: " + uri.query + ", Scheme: " + uri.scheme +
+                    ", Host: " + uri.host + ", Segments: " + uri.pathSegments.toString()
         )
         // 以 file:// 开头的使用第三方应用打开 (open with third-party applications starting with file://)
         if (ContentResolver.SCHEME_FILE.equals(uri.scheme, ignoreCase = true)) return getDataColumn(
-        @SuppressLint("ObsoleteSdkInt")
-        val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-        // Before 4.4 , API 19 content:// 开头, 比如 content://media/external/images/media/123
-        if (!isKitKat && ContentResolver.SCHEME_CONTENT.equals(uri.scheme, true)) {
-            if (isGooglePhotosUri(uri)) return uri.lastPathSegment
-            return getDataColumn(uri)
-        }
-        val context = FileOperator.getContext()
+            @SuppressLint("ObsoleteSdkInt")
+            val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+            // Before 4.4 , API 19 content:// 开头, 比如 content://media/external/images/media/123
+            if (!isKitKat && ContentResolver.SCHEME_CONTENT.equals(uri.scheme, true)) {
+                if (isGooglePhotosUri(uri)) return uri.lastPathSegment
+                return getDataColumn(uri)
+            }
+            val context = FileOperator . getContext ()
         // After 4.4 , API 19
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             ...
         }
         ...
-}
+    }
 ```
 
 #### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt)
@@ -295,26 +326,31 @@ fun getPathByUri(uri: Uri?): String? {
 Method | Remark
 :-|:-
 `getMediaShotTime(uri: Uri?, block: (Long))` | 获取媒体文件拍摄时间
-`formatMediaMetadataKeyDate(date: String?): Date?` | 转换`MediaMetadataRetriever.METADATA_KEY_DATE`特殊的时间格式
+`formatMediaMetadataKeyDate(date: String?): Date?` | 转换`MediaMetadataRetriever.METADATA_KEY_DATE`
+特殊的时间格式
 `dumpMediaInfoByMediaMetadataRetriever(uri)` | 打印`音频或视频`的详细信息 `(Use MediaMetadataRetriever)`
 `dumpMediaInfoByExifInterface(uri)` | 打印`图片`的详细信息 `(Use ExifInterface)`
 `checkImage(uri)` | 检查`Uri`对应的文件是否为`图片`
 `checkUri(uri)` | 检查`Uri`是否正确; `Uri`指向的文件是否存在
 `getExtension` | 获取文件后缀`jpg`
 `getExtensionFull` | 获取文件完整后缀`.jpg`
-`splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`:note `suffix`: txt
+`splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`:
+note `suffix`: txt
 `getFileNameFromPath(path: String?)` | 通过`FilePath`获取文件名
 `getFileNameFromUri(uri: Uri?)` | 通过`Uri`获取文件名
-`createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` | 创建文件, 同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
+`createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` | 创建文件,
+同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
 `createDirectory(filePath: String?): Boolean` | 创建目录
 `deleteFile` | 删除文件或目录
-`deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` | 删除文件或目录, `excludeDirs`指定名称的一些`文件/文件夹`不做删除
+`deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` | 删除文件或目录, `excludeDirs`
+指定名称的一些`文件/文件夹`不做删除
 `deleteFilesNotDir` | 只删除文件，不删除文件夹
 `readFileText(InputStream/Uri): String?` | 读取文本文件中的内容
 `readFileBytes(InputStream/Uri): ByteArray?` | 读取文件中的内容并返回`ByteArray`
 `copyFile` | 根据文件路径拷贝文件 `java.nio`
 `writeBytes2File(bytes: ByteArray, target: File)` | 把`ByteArray`写到目标文件`target(File)`中
-`write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
+`write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`
+写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
 `write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` | 向文件中写入数据
 `isLocal` | 检验是否为本地URI
 `isGif()` | 检验是否为 gif
@@ -322,7 +358,11 @@ Method | Remark
 > `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
 
 ```kotlin
-fun File.copyTo(target: File,overwrite: Boolean = false,bufferSize: Int = DEFAULT_BUFFER_SIZE): File
+fun File.copyTo(
+    target: File,
+    overwrite: Boolean = false,
+    bufferSize: Int = DEFAULT_BUFFER_SIZE
+): File
 ```
 
 Usage:
@@ -350,7 +390,8 @@ val optionsImage = FileSelectOptions().apply {
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
-                uri))
+                uri
+            ))
         }
     }
 }
@@ -361,10 +402,14 @@ mFileSelector = FileSelector
     .setMinCount(1, "至少选择一个文件 !") //Choose at least one file
     .setMaxCount(10, "最多选择十个文件 !") //Choose up to ten files  注:单选条件下无效, 只做最少数量判断
     .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-    .setSingleFileMaxSize(1048576,
-        "大小不能超过1M !") //The size cannot exceed 1M  注:单选条件下无效, FileSelectOptions.singleFileMaxSize
-    .setAllFilesMaxSize(10485760,
-        "总大小不能超过10M !") //The total size cannot exceed 10M 注:单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
+    .setSingleFileMaxSize(
+        1048576,
+        "大小不能超过1M !"
+    ) //The size cannot exceed 1M  注:单选条件下无效, FileSelectOptions.singleFileMaxSize
+    .setAllFilesMaxSize(
+        10485760,
+        "总大小不能超过10M !"
+    ) //The total size cannot exceed 10M 注:单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
     .setExtraMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg:"video/*","audio/*","image/*"
     .applyOptions(optionsImage)
     .filter(object : FileSelectCondition {
@@ -428,7 +473,8 @@ val optionsImage = FileSelectOptions().apply {
     fileCondition = object : FileSelectCondition {
         override fun accept(fileType: IFileType, uri: Uri?): Boolean {
             return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
-                uri))
+                uri
+            ))
         }
     }
 }
@@ -556,10 +602,12 @@ eg:
 结果(result): TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "gradle", "kt"))
 
 移除(remove): FileType.TXT.remove("txt", "ini")
-结果(result): TXT(mutableListOf("conf", "iml", log", " prop ", " rc "))
+结果(result): TXT(
+    mutableListOf(
+        "conf", "iml", log", " prop ", " rc "))
 
-        替换 (replace): FileType. XML . replace ("xxx")
-        调试 (debugging): FileType. TXT . dump ()
+                替换 (replace): FileType. XML . replace ("xxx")
+            调试 (debugging): FileType. TXT . dump ()
 ```
 
 ##### ②通过`IFileType`自定义文件类型
@@ -708,13 +756,19 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 ---
 
 ## Q&A
-**README_QA.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_QA.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_QA.md</a>
+
+**
+README_QA.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_QA.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_QA.md</a>
 
 ## 更新日志 (Update log)
-**README_VERSIONS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md</a>
+
+**
+README_VERSIONS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md</a>
 
 ## 感谢 (Thanks)
-**README_THANKS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_THANKS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_THANKS.md</a>
+
+**
+README_THANKS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_THANKS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_THANKS.md</a>
 
 ## 许可(LICENSE)
 

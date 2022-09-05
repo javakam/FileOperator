@@ -1,5 +1,13 @@
 # 更新日志(Update log)
 
+## v3.6.0
+```
+增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
+1. 获取文件add,modify,expires时间, getMediaShotTime(targetBucketId: Long? = null, block: (Long, Long, Long) -> Unit),返回值为 dateAdded, dateModified, dateExpires;
+2. renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {};
+3. deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L) 移除超过指定期限(Long)的文件
+```
+
 ## v3.5.0
 ```
 1.setMimeTypes 更名为 setExtraMimeTypes , 更符合 Intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTypes) 的语义
