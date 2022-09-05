@@ -2,13 +2,16 @@ package ando.file.core
 
 import ando.file.core.FileMimeType.getMimeType
 import ando.file.core.FileUri.getPathByUri
+import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.util.Log
 import androidx.exifinterface.media.ExifInterface
 import java.io.*
 import java.nio.ByteBuffer
@@ -28,6 +31,77 @@ object FileUtils {
     //----------------------------------------------------------------
 
     /**
+     * 查找 bucketId 对应的媒体文件的时间信息(Find the time information of the media file corresponding to bucketId)
+     *
+     * @param targetBucketId Media File bucketId
+     * @return dateAdded, dateModified, dateExpires
+     */
+    fun getMediaShotTime(targetBucketId: Long? = null, block: (Long, Long, Long) -> Unit) {
+        //MediaStoreUtils 中  val dateModifiedColumn = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+        //改为 val dateCreatedColumn
+
+        //https://blog.csdn.net/ifmylove2011/article/details/51425921
+        //https://stackoverflow.com/questions/64933336/android-mediastore-files-getcontenturi-how-to-get-a-folder-internal-to-the-app
+        val projection = arrayOf(
+            MediaStore.Files.FileColumns._ID,
+            "bucket_id",
+            MediaStore.Files.FileColumns.DATE_ADDED,
+            MediaStore.Files.FileColumns.DATE_MODIFIED,
+            "date_expires",
+            MediaStore.Images.Media.DATE_TAKEN,
+            MediaStore.Files.FileColumns.DATA,
+            MediaStore.Files.FileColumns.MEDIA_TYPE
+        )
+        val selection = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
+
+//        val selection = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+//                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+//                + " OR "
+//                + MediaStore.Files.FileColumns.MEDIA_TYPE + " = "
+//                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
+
+        val cursor: Cursor? = FileOperator.getContext().contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            projection,
+            selection,
+            null,
+            MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
+        )
+
+        cursor?.use {
+            val bucketIdColumn: Int = it.getColumnIndex("bucket_id")
+            val dateAddedColumn = it.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)
+            val dateModifiedColumn = it.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
+            val dateExpiresColumn = it.getColumnIndex("date_expires")
+            val dateTakenColumn = it.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)
+
+            while (it.moveToNext()) { //moveToFirst
+                val bucketId: Long = it.getLong(bucketIdColumn)
+                if (bucketId == targetBucketId) {
+                    val dateAdded = it.getLong(dateAddedColumn)
+                    val dateModified = it.getLong(dateModifiedColumn)
+                    val dateExpires = it.getLong(dateExpiresColumn)
+                    val dateTaken = it.getLong(dateTakenColumn)
+
+                    /*
+                    注: dateModified 才是照片的真正拍摄时间, 而 dateAdded 是把文件重命名后的或者其他操作修改后的时间... 感觉Android把这俩时间搞反了
+                    dateModified DATE_MODIFIED 1657785037 2022-07-14 15:50:37
+                    dateAdded    DATE_ADDED    1657786785 2022-07-14 16:19:45
+                     */
+                    //bucketId=-1739773001 ; dateAdded=1657786785 ; dateModified=1657785037 ; dateExpires=0 ; dateTaken=1657785037173
+                    FileLogger.i(
+                        "123", "bucketId=$bucketId ; dateAdded=$dateAdded ; dateModified=$dateModified " +
+                                "; dateExpires=$dateExpires ; dateTaken=$dateTaken"
+                    )
+                    block.invoke(dateAdded, dateModified, dateExpires)
+                    return@use
+                }
+            }
+        }
+    }
+
+    /**
      * 获取媒体文件的"拍摄时间" (Get the "shooting time" of the media file)
      *
      * 【注】获取拍摄时间优先级: 图片(ExifInterface) ; 视频,音频(MediaMetadataRetriever) ; 最后如果前两者都没获取到时间, 则使用文件最后修改时间(lastModified)
@@ -40,6 +114,7 @@ object FileUtils {
         //直接使用 File(mediaFile.path) 获取不到信息 (No information can be obtained directly using File(mediaFile.path))
         //eg: /storage/emulated/0/Movies/VID_20210621_17180117.mp4 true false 1624267109000 ; isFile=false  isDirectory=false  lastModified=0
         val fileReal = File(getPathByUri(uri) ?: return block.invoke(-1))
+        if (!fileReal.exists() || fileReal.isDirectory) return block.invoke(-1)
 
         //如果 ExifInterface 或 MediaMetadataRetriever 没有获取到时间,使用 lastModified 时间
         //If ExifInterface or MediaMetadataRetriever does not get the time, use the lastModified time
@@ -87,16 +162,27 @@ object FileUtils {
                 block.invoke(modifiedTime)
             } ?: block.invoke(fileLastModifiedTime)
         } catch (t: Throwable) {
-            FileLogger.e("getMediaShotTime: ${t.message}")
+            FileLogger.e("getMediaShotTime by uri: ${t.message}")
+        }
+    }
+
+    fun getMediaShotTime(path: String?, block: (Long) -> Unit) {
+        if (path.isNullOrBlank()) return block.invoke(-1)
+        try {
+            val fileReal = File(path)
+            if (!fileReal.exists() || fileReal.isDirectory) return block.invoke(-1)
+            val uri = FileUri.getUriByPath(path) ?: return block.invoke(-1)
+            getMediaShotTime(uri = uri, block = block)
+        } catch (t: Throwable) {
+            FileLogger.e("getMediaShotTime by path: ${t.message}")
         }
     }
 
     /**
-     * 转换 MediaMetadataRetriever.METADATA_KEY_DATE 特殊的时间格式:
+     * "20210708T070344.000Z" 👉 Date()
      *
-     * Convert MediaMetadataRetriever.METADATA_KEY_DATE to special time format:
-     *
-     * eg: "20210708T070344.000Z" 👉 Date()
+     * 转换 MediaMetadataRetriever.METADATA_KEY_DATE 特殊的时间格式
+     * (Convert MediaMetadataRetriever.METADATA_KEY_DATE to special time format)
      *
      * > Thanks
      *
@@ -436,8 +522,8 @@ object FileUtils {
      * ### 路径分割
      *
      * ```
-     * eg: srcPath=/storage/emulated/0/Movies/myVideo.mp4  path=/storage/emulated/0/Movies
-     * name=myVideo  suffix=mp4  nameSuffix=myVideo.mp4
+     * eg:
+     * srcPath=/storage/emulated/0/Movies/myVideo.mp4  path=/storage/emulated/0/Movies name=myVideo suffix=mp4 nameSuffix=myVideo.mp4
      *
      * /xxx/xxx/note.txt ->  path: /xxx/xxx   name: note   suffix: txt
      * ///note.txt       ->  path: ///        name: note   suffix: txt
@@ -464,6 +550,28 @@ object FileUtils {
             FileLogger.d("splitFilePath srcPath=$srcPath path=$path  name=$name  suffix=$suffix nameSuffix=$nameSuffix")
             block?.invoke(path, name, suffix, nameSuffix)
         }
+    }
+
+    /**
+     * abc.jpg -> abc
+     */
+    fun getFileNameNoSuffix(path: String): String {
+        var nameNoSuffix = path
+        splitFilePath(srcPath = path) { _: String, name: String, _: String, _: String ->
+            nameNoSuffix = name
+        }
+        return nameNoSuffix
+    }
+
+    /**
+     * abc.jpg -> jpg
+     */
+    fun getFileNameSuffix(path: String): String {
+        var nameSuffix = path
+        splitFilePath(srcPath = path) { _: String, _: String, suffix: String, _: String ->
+            nameSuffix = suffix
+        }
+        return nameSuffix
     }
 
     /**
@@ -713,6 +821,40 @@ object FileUtils {
         return target ?: file
     }
 
+    //File Rename
+    //----------------------------------------------------------------
+
+    fun renameFile(oldFileUri: Uri, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {
+        return renameFile(
+            oldFile = File(FileUri.getPathByUri(oldFileUri) ?: return null), newFileDirectory = newFileDirectory,
+            newFileName = newFileName, newFileNameSuffix = newFileNameSuffix
+        )
+    }
+
+    fun renameFile(oldFilePath: String, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {
+        return renameFile(
+            oldFile = File(oldFilePath), newFileDirectory = newFileDirectory,
+            newFileName = newFileName, newFileNameSuffix = newFileNameSuffix
+        )
+    }
+
+    /**
+     * 重命名
+     *
+     * @param newFileDirectory 新文件路径, 默认不变
+     * @param newFileName 新文件名称
+     * @param newFileNameSuffix 新文件后缀, 默认不变
+     *
+     * @return 重命名成功后, 返回新的文件
+     */
+    fun renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {
+        val destDirectory = if (newFileDirectory.isNullOrBlank()) oldFile.parent else newFileDirectory
+        val destFileSuffix = if (newFileNameSuffix.isNullOrBlank()) getFileNameSuffix(oldFile.name) else newFileNameSuffix
+        val dest = File(destDirectory, "$newFileName.$destFileSuffix")
+        if (dest.exists()) dest.delete()
+        return if (oldFile.renameTo(dest)) dest else null
+    }
+
     //File Copy
     //----------------------------------------------------------------
 
@@ -875,6 +1017,34 @@ object FileUtils {
             if (i == len - 1) return true
         }
         return false
+    }
+
+    /**
+     * 移除超过指定期限的文件(Remove files older than specified age)
+     * eg: 移除超过一个月的文件(Remove files older than a month) maxFileAge=2678400000L
+     *
+     * @param directoryPath 期限
+     */
+    fun deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L) {
+        // Used to examplify deletion of files more than 1 month old
+        // Note the L that tells the compiler to interpret the number as a Long
+        val MAXFILEAGE = maxFileAge // 1 month in milliseconds
+        // Get file handle to the directory. In this case the application files dir
+        val dir: File = File(directoryPath)
+        // Obtain list of files in the directory.
+        // listFiles() returns a list of File objects to each file found.
+        val files = dir.listFiles()
+        if (files.isNullOrEmpty()) return
+        // Loop through all files
+        for (f in files) {
+            // Get the last modified date. Milliseconds since 1970
+            val lastModified = f.lastModified()
+            // Do stuff here to deal with the file..
+            // For instance delete files older than 1 month
+            if (lastModified + MAXFILEAGE < System.currentTimeMillis()) {
+                f.delete()
+            }
+        }
     }
 
     //----------------------------------------------------------------
