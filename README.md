@@ -15,7 +15,7 @@
 1. 获取文件add,modify,expires时间, getMediaShotTime(targetBucketId: Long? = null, block: (Long, Long, Long) -> Unit),返回值为 dateAdded, dateModified, dateExpires;
 2. renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {};
 3. deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L) 移除超过指定期限(Long)的文件
-4. 后续会加入相应的使用案例 2022年9月5日 10:57:51
+4. 后续会加入相应的使用案例 2022年9月5日 10:57:51；2023年2月27日 13:19:09
 ```
 
 ## 使用(Usage)
