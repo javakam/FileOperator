@@ -3,27 +3,29 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.6.10'
+        kotlin_version = '1.8.20'
         applicationId = "com.ando.file.sample"
-        compileSdkVersion = 30
-        buildToolsVersion = '30.0.3'
+        compileSdkVersion = 31
+        buildToolsVersion = '31.0.0'
         minSdkVersion = 21
-        targetSdkVersion = 30
+        targetSdkVersion = 31
         versionCode = 16
         versionName = "3.6.0"
     }
     repositories {
         google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://repo.spring.io/release" }
+        maven { url "https://repository.jboss.org/maven2" }
 //        mavenLocal()
-        mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
     }
     dependencies {
         // gradle-wrapper.properties
         // https://developer.android.com/studio/releases/gradle-plugin#updating-gradle
-        classpath 'com.android.tools.build:gradle:4.2.2'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -31,11 +33,13 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://s01.oss.sonatype.org/content/groups/public" }
         maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://repo.spring.io/release" }
+        maven { url "https://repository.jboss.org/maven2" }
 //        mavenLocal()
-        mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
     }
     tasks.withType(Javadoc) {

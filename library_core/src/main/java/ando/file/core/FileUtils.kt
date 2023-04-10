@@ -2,6 +2,7 @@ package ando.file.core
 
 import ando.file.core.FileMimeType.getMimeType
 import ando.file.core.FileUri.getPathByUri
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -52,8 +53,7 @@ object FileUtils {
             MediaStore.Files.FileColumns.DATA,
             MediaStore.Files.FileColumns.MEDIA_TYPE
         )
-        val selection = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
+        val selection = (MediaStore.Files.FileColumns.MEDIA_TYPE + "=" + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE)
 
 //        val selection = (MediaStore.Files.FileColumns.MEDIA_TYPE + "="
 //                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
@@ -62,11 +62,7 @@ object FileUtils {
 //                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
 
         val cursor: Cursor? = FileOperator.getContext().contentResolver.query(
-            MediaStore.Files.getContentUri("external"),
-            projection,
-            selection,
-            null,
-            MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
+            MediaStore.Files.getContentUri("external"), projection, selection, null, MediaStore.Files.FileColumns.DATE_ADDED + " DESC"
         )
 
         cursor?.use {
@@ -91,8 +87,8 @@ object FileUtils {
                      */
                     //bucketId=-1739773001 ; dateAdded=1657786785 ; dateModified=1657785037 ; dateExpires=0 ; dateTaken=1657785037173
                     FileLogger.i(
-                        "123", "bucketId=$bucketId ; dateAdded=$dateAdded ; dateModified=$dateModified " +
-                                "; dateExpires=$dateExpires ; dateTaken=$dateTaken"
+                        "123",
+                        "bucketId=$bucketId ; dateAdded=$dateAdded ; dateModified=$dateModified " + "; dateExpires=$dateExpires ; dateTaken=$dateTaken"
                     )
                     block.invoke(dateAdded, dateModified, dateExpires)
                     return@use
@@ -457,11 +453,12 @@ object FileUtils {
      */
     fun getExtension(uri: Uri?): String {
         return uri?.use {
-            var name = FileOperator.getContext().contentResolver.query(this, null, null, null, null)
-                ?.use { c: Cursor ->
-                    if (c.moveToFirst()) getExtension(c.getString(c.getColumnIndex(OpenableColumns.DISPLAY_NAME))) else ""
-                } ?: ""
-
+            var name = FileOperator.getContext().contentResolver.query(this, null, null, null, null)?.use { c: Cursor ->
+                if (c.moveToFirst()) {
+                    val i = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    getExtension(c.getString(if (i < 0) 0 else i))
+                } else ""
+            } ?: ""
             if (name.isBlank()) name = getExtension(this.toString())
             name
         } ?: ""
@@ -598,25 +595,24 @@ object FileUtils {
     /**
      * /storage/emulated/0/Movies/myVideo.mp4  ->  myVideo.mp4
      */
-    fun getFileNameFromUri(uri: Uri?): String? =
-        uri?.use {
-            var filename: String? = null
-            val resolver = FileOperator.getContext().contentResolver
-            val mimeType = resolver.getType(uri)
+    fun getFileNameFromUri(uri: Uri?): String? = uri?.use {
+        var filename: String? = null
+        val resolver = FileOperator.getContext().contentResolver
+        val mimeType = resolver.getType(uri)
 
-            if (mimeType == null) {
-                filename = getFileNameFromPath(getPathByUri(uri))
-            } else {
-                resolver.query(uri, null, null, null, null)?.use { c: Cursor ->
-                    val nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                    if (c.moveToFirst()) filename = c.getString(nameIndex)
-                }
+        if (mimeType == null) {
+            filename = getFileNameFromPath(getPathByUri(uri))
+        } else {
+            resolver.query(uri, null, null, null, null)?.use { c: Cursor ->
+                val nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (c.moveToFirst()) filename = c.getString(nameIndex)
             }
-            if (FileOperator.isDebug()) {
-                FileLogger.i("getFileNameFromUri: $mimeType $filename")
-            }
-            filename
         }
+        if (FileOperator.isDebug()) {
+            FileLogger.i("getFileNameFromUri: $mimeType $filename")
+        }
+        filename
+    }
 
     //File Read
     //----------------------------------------------------------------
@@ -645,31 +641,28 @@ object FileUtils {
         return content.toString()
     }
 
-    fun readFileText(uri: Uri?): String? =
-        uri?.use { readFileText(FileOperator.getContext().contentResolver.openInputStream(this)) }
+    fun readFileText(uri: Uri?): String? = uri?.use { readFileText(FileOperator.getContext().contentResolver.openInputStream(this)) }
 
-    fun readFileBytes(stream: InputStream?): ByteArray? =
-        stream?.use {
-            var byteArray: ByteArray? = null
-            try {
-                val buffer = ByteArrayOutputStream()
-                var nRead: Int
-                val data = ByteArray(1024)
-                while (stream.read(data, 0, data.size).also { nRead = it } != -1) {
-                    buffer.write(data, 0, nRead)
-                }
-
-                buffer.flush()
-                byteArray = buffer.toByteArray()
-                buffer.close()
-            } catch (e: IOException) {
-                FileLogger.e("readFileBytes: ${e.message}")
+    fun readFileBytes(stream: InputStream?): ByteArray? = stream?.use {
+        var byteArray: ByteArray? = null
+        try {
+            val buffer = ByteArrayOutputStream()
+            var nRead: Int
+            val data = ByteArray(1024)
+            while (stream.read(data, 0, data.size).also { nRead = it } != -1) {
+                buffer.write(data, 0, nRead)
             }
-            return byteArray
-        }
 
-    fun readFileBytes(uri: Uri?): ByteArray? =
-        uri?.use { readFileBytes(FileOperator.getContext().contentResolver.openInputStream(this)) }
+            buffer.flush()
+            byteArray = buffer.toByteArray()
+            buffer.close()
+        } catch (e: IOException) {
+            FileLogger.e("readFileBytes: ${e.message}")
+        }
+        return byteArray
+    }
+
+    fun readFileBytes(uri: Uri?): ByteArray? = uri?.use { readFileBytes(FileOperator.getContext().contentResolver.openInputStream(this)) }
 
     //File Write
     //----------------------------------------------------------------
@@ -826,15 +819,16 @@ object FileUtils {
 
     fun renameFile(oldFileUri: Uri, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {
         return renameFile(
-            oldFile = File(FileUri.getPathByUri(oldFileUri) ?: return null), newFileDirectory = newFileDirectory,
-            newFileName = newFileName, newFileNameSuffix = newFileNameSuffix
+            oldFile = File(FileUri.getPathByUri(oldFileUri) ?: return null),
+            newFileDirectory = newFileDirectory,
+            newFileName = newFileName,
+            newFileNameSuffix = newFileNameSuffix
         )
     }
 
     fun renameFile(oldFilePath: String, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {
         return renameFile(
-            oldFile = File(oldFilePath), newFileDirectory = newFileDirectory,
-            newFileName = newFileName, newFileNameSuffix = newFileNameSuffix
+            oldFile = File(oldFilePath), newFileDirectory = newFileDirectory, newFileName = newFileName, newFileNameSuffix = newFileNameSuffix
         )
     }
 
@@ -919,9 +913,8 @@ object FileUtils {
      */
     fun deleteFile(uri: Uri?): Int = getPathByUri(uri)?.run { deleteFileWithoutExcludeNames(File(this), null) } ?: 0
 
-    fun deleteFile(pathAndName: String?): Int =
-        if (pathAndName.isNullOrBlank()) 0
-        else deleteFileWithoutExcludeNames(File(pathAndName), null)
+    fun deleteFile(pathAndName: String?): Int = if (pathAndName.isNullOrBlank()) 0
+    else deleteFileWithoutExcludeNames(File(pathAndName), null)
 
     /**
      * 删除文件或文件夹
@@ -976,8 +969,7 @@ object FileUtils {
         return shouldDelete
     }
 
-    fun deleteFilesNotDir(uri: Uri?): Boolean =
-        getPathByUri(uri)?.run { deleteFilesNotDir(File(this)) } ?: false
+    fun deleteFilesNotDir(uri: Uri?): Boolean = getPathByUri(uri)?.run { deleteFilesNotDir(File(this)) } ?: false
 
     /**
      * 只删除文件，不删除文件夹 (Only delete files, not folders)

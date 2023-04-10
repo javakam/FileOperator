@@ -156,6 +156,7 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION")
     @SuppressLint("SetTextI18n")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -250,11 +251,13 @@ class StorageAccessFrameworkActivity : AppCompatActivity() {
     @SuppressLint("StaticFieldLeak")
     @Suppress("DEPRECATION")
     internal inner class GetBitmapFromUriAsyncTask : AsyncTask<Uri, Void, Bitmap>() {
+        @Deprecated("Deprecated in Java")
         override fun doInBackground(vararg params: Uri): Bitmap? {
             val uri = params[0]
             return getBitmapFromUri(uri)
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onPostExecute(bitmap: Bitmap?) {
             super.onPostExecute(bitmap)
             showIv.visibility = View.VISIBLE

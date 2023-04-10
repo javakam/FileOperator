@@ -47,35 +47,34 @@ object Base64Utils {
     }
 
     @Throws(Exception::class)
-    fun encodeFileToBase64(uri: Uri?): String =
-        uri?.run {
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val sb = StringBuilder()
-                    getContext().contentResolver.openInputStream(uri)?.use { inputStream ->
-                        BufferedReader(InputStreamReader(inputStream)).use { reader ->
-                            var line: String? = reader.readLine()
-                            while (line != null) {
-                                sb.append(line)
-                                line = reader.readLine()
-                            }
+    fun encodeFileToBase64(uri: Uri?): String = uri?.run {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val sb = StringBuilder()
+                getContext().contentResolver.openInputStream(uri)?.use { inputStream ->
+                    BufferedReader(InputStreamReader(inputStream)).use { reader ->
+                        var line: String? = reader.readLine()
+                        while (line != null) {
+                            sb.append(line)
+                            line = reader.readLine()
                         }
                     }
-                    String(encode(sb.toString().toByteArray()))
-                } else {
-                    // Build.VERSION_CODES.O 以下
-                    val file = File(getPathByUri(uri) ?: return "")
-                    val inputFile = FileInputStream(file)
-                    val buffer = ByteArray(file.length().toInt())
-                    inputFile.read(buffer)
-                    inputFile.close()
-                    String(encode(buffer))
                 }
-            } catch (e: Exception) {
-                e("encodeFileToBase64 Exception : $e")
-                ""
+                String(encode(sb.toString().toByteArray()))
+            } else {
+                // Build.VERSION_CODES.O 以下
+                val file = File(getPathByUri(uri) ?: return "")
+                val inputFile = FileInputStream(file)
+                val buffer = ByteArray(file.length().toInt())
+                inputFile.read(buffer)
+                inputFile.close()
+                String(encode(buffer))
             }
-        } ?: ""
+        } catch (e: Exception) {
+            e("encodeFileToBase64 Exception : $e")
+            ""
+        }
+    } ?: ""
 
     fun isContentUriExists(
         context: Context?,
@@ -191,7 +190,7 @@ object Base64Utils {
     fun decode(data: CharArray): ByteArray {
         var tempLen = data.size
         for (ix in data.indices) {
-            if (data[ix] > 255.toChar() || codes[data[ix].toInt()] < 0) {
+            if (data[ix] > 255.toChar() || codes[data[ix].code] < 0) {
                 --tempLen // ignore non-valid chars and padding
             }
         }
@@ -213,8 +212,7 @@ object Base64Utils {
 
         // we now go through the entire array (NOT using the 'tempLen' value)
         for (ix in data.indices) {
-            val value =
-                if (data[ix] > 255.toChar()) -1 else codes[data[ix].toInt()].toInt()
+            val value = if (data[ix] > 255.toChar()) -1 else codes[data[ix].code].toInt()
             if (value >= 0) { // skip over non-code
                 accum = accum shl 6 // bits shift up by 6 each time thru
                 shift += 6 // loop, with new bits being put in
@@ -230,8 +228,7 @@ object Base64Utils {
         // if there is STILL something wrong we just have to throw up now!
         if (index != out.size) {
             throw Error(
-                "Miscalculated data length (wrote " + index
-                        + " instead of " + out.size + ")"
+                "Miscalculated data length (wrote " + index + " instead of " + out.size + ")"
             )
         }
         return out
@@ -262,8 +259,7 @@ object Base64Utils {
     }
 
     // code characters for values 0..63
-    private val alphabet =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".toCharArray()
+    private val alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".toCharArray()
 
     // lookup table for converting base64 characters to value in range 0..63
     private val codes = ByteArray(256)
@@ -366,27 +362,25 @@ object Base64Utils {
             // LoggerUtil.debug(i + "&" + codes[i] + " ");
         }
         run {
-            var i = 'A'.toInt()
-            while (i <= 'Z'.toInt()) {
-                codes[i] = (i - 'A'.toInt()).toByte()
+            var i = 'A'.code
+            while (i <= 'Z'.code) {
+                codes[i] = (i - 'A'.code).toByte()
                 i++
             }
         }
         run {
-            var i = 'a'.toInt()
-            while (i <= 'z'.toInt()) {
-                codes[i] =
-                    (26 + i - 'a'.toInt()).toByte()
+            var i = 'a'.code
+            while (i <= 'z'.code) {
+                codes[i] = (26 + i - 'a'.code).toByte()
                 i++
             }
         }
-        var i = '0'.toInt()
-        while (i <= '9'.toInt()) {
-            codes[i] =
-                (52 + i - '0'.toInt()).toByte()
+        var i = '0'.code
+        while (i <= '9'.code) {
+            codes[i] = (52 + i - '0'.code).toByte()
             i++
         }
-        codes['+'.toInt()] = 62
-        codes['/'.toInt()] = 63
+        codes['+'.code] = 62
+        codes['/'.code] = 63
     }
 }

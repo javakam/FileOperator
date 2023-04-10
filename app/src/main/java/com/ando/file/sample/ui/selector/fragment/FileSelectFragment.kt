@@ -139,6 +139,7 @@ class FileSelectFragment : Fragment() {
     注: 使用 ActivityResultLauncher 启动页面, 会先后回调 onActivityResult 和 ActivityResultCallback.onActivityResult,
         建议在 ActivityResultCallback.onActivityResult 中处理结果
      */
+    @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
