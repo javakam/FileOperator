@@ -18,7 +18,6 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
     }
 
     signingConfigs {
@@ -63,10 +62,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
 
     buildFeatures {
         dataBinding true
@@ -77,8 +72,15 @@ android {
         jvmTarget = "1.8"
     }
     packagingOptions {
-        exclude 'META-INF/*.kotlin_module'
+        resources {
+            excludes += ['META-INF/*.kotlin_module']
+        }
     }
+    lint {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+    namespace 'com.ando.file.sample'
 }
 
 dependencies {

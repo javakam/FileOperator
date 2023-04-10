@@ -10,10 +10,6 @@ import java.io.InputStream
 import java.util.*
 
 /**
- * Title: $
- *
- * Description:
- *
  * @author javakam
  * @date 2021/3/2  10:06
  */
@@ -22,7 +18,7 @@ internal class Upload {
     /**
      * http://jessehu.cn/2019/01/09/okhttp3/okhttp04/
      */
-    fun uploadFile(url: String,inputStream: InputStream) {
+    fun uploadFile(url: String, inputStream: InputStream) {
         val client = OkHttpClient()
         val mediaType: MediaType? = "application/octet-stream".toMediaTypeOrNull()
 
@@ -30,7 +26,7 @@ internal class Upload {
         val file = File("File path")
         //inputStream.readBytes().toRequestBody(mediaType)
 
-        val requestBody: RequestBody = file.asProgressRequestBody2(mediaType){
+        val requestBody: RequestBody = file.asProgressRequestBody2(mediaType) {
 
         }
         val multipartBody: MultipartBody = MultipartBody.Builder()
@@ -52,7 +48,7 @@ internal class Upload {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
-                val result = Objects.requireNonNull(response.body)!!.string()
+                //val result = Objects.requireNonNull(response.body)!!.string()
             }
         })
     }

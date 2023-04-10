@@ -93,6 +93,7 @@ object BitmapUtils {
         fun onResult(@Size(value = 2) objects: Array<Any>?)
     }
 
+    @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION")
     class CompressAsyncTask(
         activity: Activity?,
