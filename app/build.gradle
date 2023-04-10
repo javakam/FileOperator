@@ -84,6 +84,19 @@ android {
 }
 
 dependencies {
+    /*
+    https://stackoverflow.com/questions/69817925/problem-duplicate-class-androidx-lifecycle-viewmodel-found-in-modules
+
+    Fix:Duplicate class androidx.lifecycle.ViewModelLazy found in modules
+    jetified-lifecycle-viewmodel-ktx-2.3.1-runtime (androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1)
+    and lifecycle-viewmodel-2.4.0-runtime (androidx.lifecycle:lifecycle-viewmodel:2.4.0)
+     */
+    configurations {
+        all {
+            exclude group: 'androidx.lifecycle', module: 'lifecycle-viewmodel-ktx'
+        }
+    }
+
 //    implementation 'com.github.javakam:file.core:3.0.0@aar'
 //    implementation 'com.github.javakam:file.selector:3.0.0@aar'
 //    implementation 'com.github.javakam:file.compressor:3.0.0@aar'
