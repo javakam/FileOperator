@@ -36,11 +36,11 @@ android {
 
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compileOnly 'androidx.core:core-ktx:1.6.0'
-    compileOnly 'androidx.appcompat:appcompat:1.3.1'
+    compileOnly 'androidx.core:core-ktx:1.7.0'
+    compileOnly 'androidx.appcompat:appcompat:1.4.1'
 
     //https://github.com/Curzibn/Luban/issues/337
-    implementation 'androidx.exifinterface:exifinterface:1.3.2'
+    implementation 'androidx.exifinterface:exifinterface:1.3.3'
 
     implementation project(':library_core')
 

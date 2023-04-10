@@ -7,8 +7,10 @@ import ando.file.core.FileLogger
 import ando.file.core.FileSizeUtils.getFileSize
 import ando.file.core.FileUtils
 import android.app.Activity
+import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.AsyncTask
 import android.widget.Toast
@@ -16,10 +18,30 @@ import androidx.annotation.Size
 import java.io.ByteArrayOutputStream
 import java.lang.ref.WeakReference
 
+
 /**
  * Created by javakam on 2016年7月30日17:21:19 .
  */
 object BitmapUtils {
+    fun stitchImages(bitmaps: List<Bitmap>): Bitmap? {
+        var width = 0
+        var height = 0
+        // 计算拼接后的图片大小
+        for (bitmap in bitmaps) {
+            width += bitmap.width
+            height = Math.max(height, bitmap.height)
+        }
+        // 创建拼接后的空白图片
+        val result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(result)
+        // 拼接图片
+        var x = 0F
+        for (bitmap in bitmaps) {
+            canvas.drawBitmap(bitmap, x, 0F, null)
+            x += bitmap.width
+        }
+        return result
+    }
 
     /**
      * 质量压缩方法 -> Object[0](Bitmap) 压缩后的 Bitmap ; Object[1](int) 大小
@@ -80,6 +102,7 @@ object BitmapUtils {
 
         private val mWeakActivity: WeakReference<Activity?> = WeakReference(activity)
 
+        @Deprecated("Deprecated in Java")
         override fun onPreExecute() {
             super.onPreExecute()
             if (mWeakActivity.get() != null) {
@@ -87,16 +110,19 @@ object BitmapUtils {
             }
         }
 
+        @Deprecated("Deprecated in Java")
         override fun doInBackground(vararg params: Int?): Array<Any>? {
             //调用onProgressUpdate方法
             //publishProgress(i);
             return compressBitmap(uri)
         }
 
+        @Deprecated("Deprecated in Java", ReplaceWith("super.onProgressUpdate(*values)", "android.os.AsyncTask"))
         override fun onProgressUpdate(vararg values: Int?) {
             super.onProgressUpdate(*values)
         }
 
+        @Deprecated("Deprecated in Java")
         override fun onPostExecute(result: Array<Any>?) {
             super.onPostExecute(result)
             if (result == null && mWeakActivity.get() != null) {

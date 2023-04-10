@@ -3,7 +3,7 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.6.10'
+        kotlin_version = '1.8.20'
         applicationId = "com.ando.file.sample"
         compileSdkVersion = 30
         buildToolsVersion = '30.0.3'
@@ -14,10 +14,12 @@ buildscript {
     }
     repositories {
         google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://repo.spring.io/release" }
+        maven { url "https://repository.jboss.org/maven2" }
 //        mavenLocal()
-        mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
     }
     dependencies {
@@ -31,11 +33,13 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://s01.oss.sonatype.org/content/groups/public" }
         maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "https://repo.spring.io/release" }
+        maven { url "https://repository.jboss.org/maven2" }
 //        mavenLocal()
-        mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
     }
     tasks.withType(Javadoc) {
