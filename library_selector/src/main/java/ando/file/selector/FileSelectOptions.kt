@@ -63,7 +63,6 @@ class FileSelectOptions {
         if (singleFileMaxSize != other.singleFileMaxSize) return false
         if (allFilesMaxSize != other.allFilesMaxSize) return false
         if (fileType != other.fileType) return false
-        if (fileCondition != other.fileCondition) return false
 
         return true
     }
@@ -74,7 +73,6 @@ class FileSelectOptions {
         result = 31 * result + singleFileMaxSize.toInt()
         result = 31 * result + allFilesMaxSize.toInt()
         result = 31 * result + (fileType?.hashCode() ?: 0)
-        result = 31 * result + (fileCondition?.hashCode() ?: 0)
         return result
     }
 
