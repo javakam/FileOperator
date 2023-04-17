@@ -19,10 +19,11 @@ https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/a
 1. 获取文件add,modify,expires时间: 
    getMediaShotTime(uri: Uri?, block: (Long) -> Unit):获取媒体文件的"拍摄时间"
    getMediaShotTime(path: String?, block: (Long) -> Unit)
-   getMediaShotTime(targetBucketId: Long? = null, block: (Long, Long, Long) -> Unit):查找`bucketId`对应的媒体文件的时间信息
+   getMediaShotTime(targetBucketId:Long,block:(Long,Long,Long)):查找`bucketId`对应的媒体文件的时间信息
    返回值: invoke(dateAdded, dateModified, dateExpires);
 2. 重命名文件: 
-   参数说明: 旧文件File；新文件所在目录路径String；新文件名String；新文件的后缀jpg、png、txt等，不传或是空值默认使用之前的后缀)
+   参数说明: 旧文件File；新文件所在目录路径String；新文件名String；
+   新文件的后缀jpg、png、txt等，不传或是空值默认使用之前的后缀)
    renameFile(oldFile: File, newFileDirectory: String? = null, 
              newFileName: String, newFileNameSuffix: String? = null): File? {};
    返回值: 新文件File对象
