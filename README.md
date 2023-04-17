@@ -37,7 +37,7 @@ newFileName: String, newFileNameSuffix: String? = null): File? {};
 
 ## 使用(Usage)
 
-#### ✨`多文件类型 + 单选/多选`
+#### ✨`多文件类型选择文件`
 
 [FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
 
