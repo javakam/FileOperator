@@ -13,7 +13,8 @@ v3.7.0
 2. FileType.HTML 并入 FileType.TXT
 
 v3.6.0
-🌴增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
+🌴增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,
+  会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
 https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt
 
 1. 获取文件add,modify,expires时间: 
@@ -65,7 +66,7 @@ repositories {
 
 implementation 'com.github.javakam:file.core:3.7.0@aar'      //核心库必选(Core library required)
 implementation 'com.github.javakam:file.selector:3.7.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:3.7.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.compressor:3.7.0@aar'//图片压缩,修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
