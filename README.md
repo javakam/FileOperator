@@ -2,20 +2,50 @@
 
 # [FileOperator](https://github.com/javakam/FileOperator)
 
-> `Android`文件操作库。适用于`Android 4.4`及以上系统, 已兼容`AndroidQ`和`Android11`新的存储策略。包括处理`Android`端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
+> `Android`文件操作库。适用于`Android 4.4`及以上系统, 已兼容新版存储策略。包括处理`Android`
+> 端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
 
-## 安装包(apk)
+## 唯一说明
 
-<https://github.com/javakam/FileOperator/blob/master/app_v3.6.0_release.apk>
-
-## 最新版说明v3.6.0
+✨ `多文件类型 + 单选/多选`
+👉 [FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
 
 ```
-增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
-1. 获取文件add,modify,expires时间, getMediaShotTime(targetBucketId: Long? = null, block: (Long, Long, Long) -> Unit),返回值为 dateAdded, dateModified, dateExpires;
-2. renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {};
-3. deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L) 移除超过指定期限(Long)的文件
-4. 后续会加入相应的使用案例 2022年9月5日 10:57:51；2023年2月27日 13:19:09
+通过applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)指定了四种类型可以选择，
+其中的每一种类型包含多种MimeType，例如：TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
+
+当在选择文件时候，分单选和多选两种情况：
+1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
+2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
+如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
+比如只选择了一个xxx.txt文件是会报错的，因为其它类型的文件也设置了最小数量限制但却没有被选择，进而被判定为选取失败抛出最小限定的异常。
+因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，因为这种策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
+```
+
+## 最新版说明
+
+```
+v3.7.0
+1. 多选模式下错误提醒具体到是哪几种类型文件选择出了问题(FileSelector.obtainResult)
+2. FileType.HTML 并入 FileType.TXT
+
+v3.6.0
+🌴增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
+https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt
+
+1. 获取文件add,modify,expires时间: 
+   getMediaShotTime(uri: Uri?, block: (Long) -> Unit):获取媒体文件的"拍摄时间"
+   getMediaShotTime(path: String?, block: (Long) -> Unit)
+   getMediaShotTime(targetBucketId: Long? = null, block: (Long, Long, Long) -> Unit):查找`bucketId`对应的媒体文件的时间信息
+   返回值: invoke(dateAdded, dateModified, dateExpires);
+2. 重命名文件: 
+   参数说明: 旧文件File；新文件所在目录路径String；新文件名String；新文件的后缀jpg、png、txt等，不传或是空值默认使用之前的后缀)
+   renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {};
+   返回值: 新文件File对象
+3. 移除超过指定期限的文件:
+   参数说明: 目录路径String；maxFileAge 指定期限Long
+   deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L)
+   默认移除超过一个月的文件：maxFileAge=2678400000L
 ```
 
 ## 使用(Usage)
@@ -456,7 +486,14 @@ Multiple files (multi-select multiple types)
 `音频文件`至少选择两个, 最多选择三个, 每个音频大小不超过20M, 全部音频大小不超过30M;
 `文本文件`至少选择一个, 最多选择两个, 每个文本文件大小不超过5M, 全部文本文件大小不超过10M
 
-> 🌴It is suitable for processing complex file selection situations, such as: select pictures, audio files, text files, among which, select at least one picture and two at most. The size of each picture does not exceed 5M, and the size of all pictures does not exceed 10M; `audio File `Choose at least two and a maximum of three, each audio size does not exceed 20M, all audio size does not exceed 30M; `text file` select at least one, select at most two, each text file size does not exceed 5M, all The text file size does not exceed 10M
+> 🌴It is suitable for processing complex file selection situations, such as: select pictures, audio
+> files, text files, among which, select at least one picture and two at most. The size of each
+> picture does not exceed 5M, and the size of all pictures does not exceed 10M; `audio File `Choose
+> at
+> least two and a maximum of three, each audio size does not exceed 20M, all audio size does not
+> exceed 30M; `text file` select at least one, select at most two, each text file size does not
+> exceed
+> 5M, all The text file size does not exceed 10M
 
 ```kotlin
 //图片 Image

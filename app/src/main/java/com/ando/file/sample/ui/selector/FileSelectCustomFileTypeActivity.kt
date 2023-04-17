@@ -165,7 +165,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
         //图片 Image
         val optionsImage = FileSelectOptions().apply {
             fileType = FileType.IMAGE
-            minCount = 1
+            minCount = 0
             maxCount = 2
             minCountTip = "Select at least one picture"
             maxCountTip = "Select up to two pictures"
@@ -222,23 +222,35 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
 
         val optionsJsonFile = FileSelectOptions().apply {
             fileType = FileTypeJson.JSON
-            minCount = 1
+            minCount = 0
             maxCount = 2
             minCountTip = "Choose at least one JSON file"
             maxCountTip = "Choose up to two JSON files"
         }
 
+        /* 2023年4月14日 11:03:26
+        说明：通过applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)指定了四种类型可以选择，
+        其中的每一种类型包含多种MimeType，例如：TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
+
+        当在选择文件时候，分单选和多选两种情况：
+        1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
+        2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
+        如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
+        比如只选择了一个xxx.txt文件是会报错的，因为其它类型的文件也设置了最小数量限制但却没有被选择，进而被判定为选取失败抛出最小限定的异常。
+        因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，因为这种策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
+         */
         mFileSelector = FileSelector
             .with(this)
             .setRequestCode(REQUEST_CHOOSE_FILE)
             .setMultiSelect()//默认是单选false
-            .setMinCount(1, "Select at least one set type file!")
+//            .setMinCount(1, "Select at least one set type file!")
             .setMaxCount(4, "Choose up to four files!")
             .setSingleFileMaxSize(209715200, "The size of a single file cannot exceed 200M !")
             .setAllFilesMaxSize(524288000, "The total file size cannot exceed 500M !")
             .setOverLimitStrategy(this.mOverLimitStrategy)
             .setExtraMimeTypes("audio/*", "image/*", "text/*", "application/json")
             .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
+            //.applyOptions(optionsImage, optionsTxt)
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return when (fileType) {
