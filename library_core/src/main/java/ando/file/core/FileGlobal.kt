@@ -180,24 +180,23 @@ object FileGlobal {
     //dump
     //---------------------------------------------------------------------------------
 
-    fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) =
-        if (pfd != null) {
-            //读取成功 : 87  大小:2498324B
-            FileLogger.d("Read successfully: getStatSize=${pfd.statSize}B")
-        } else {
-            FileLogger.e("Reading failed!")
-        }
+    fun dumpParcelFileDescriptor(pfd: ParcelFileDescriptor?) = if (pfd != null) {
+        //读取成功 : 87  大小:2498324B
+        FileLogger.d("Read successfully: getStatSize=${pfd.statSize}B")
+    } else {
+        FileLogger.e("Reading failed!")
+    }
 
     /**
      * 获取文档元数据(Get document metadata)
      */
     fun dumpMetaData(uri: Uri?, block: ((displayName: String?, size: String?) -> Unit)? = null) {
-        val cursor =
-            FileOperator.getContext().contentResolver.query(uri ?: return, null, null, null, null)
+        val cursor = FileOperator.getContext().contentResolver.query(uri ?: return, null, null, null, null)
 
         cursor?.use {
             while (it.moveToNext()) { // moveToFirst die
-                val displayName = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                val cIndex = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                val displayName = it.getString(if (cIndex < 0) 0 else cIndex)
 
                 val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)
                 val size: String = if (!it.isNull(sizeIndex)) {

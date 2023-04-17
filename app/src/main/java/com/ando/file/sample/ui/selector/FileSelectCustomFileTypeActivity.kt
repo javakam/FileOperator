@@ -222,7 +222,7 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
 
         val optionsJsonFile = FileSelectOptions().apply {
             fileType = FileTypeJson.JSON
-            minCount = 1
+            minCount = 0
             maxCount = 2
             minCountTip = "Choose at least one JSON file"
             maxCountTip = "Choose up to two JSON files"
@@ -249,8 +249,8 @@ class FileSelectCustomFileTypeActivity : AppCompatActivity() {
             .setAllFilesMaxSize(524288000, "The total file size cannot exceed 500M !")
             .setOverLimitStrategy(this.mOverLimitStrategy)
             .setExtraMimeTypes("audio/*", "image/*", "text/*", "application/json")
-            //.applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
-            .applyOptions(optionsImage, optionsTxt)
+            .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
+            //.applyOptions(optionsImage, optionsTxt)
             .filter(object : FileSelectCondition {
                 override fun accept(fileType: IFileType, uri: Uri?): Boolean {
                     return when (fileType) {

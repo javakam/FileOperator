@@ -149,7 +149,7 @@ class FileSelector private constructor(builder: Builder) {
                 //多选模式下只选择一个文件(Select only one file in multiple selection mode)
                 var sbMinCountErrorMsg: StringBuilder? = null
                 if ((mFileSelectOptions?.size ?: 0) >= 2) {
-                    val strMinCountErrorMsg = "%s类型文件至少选择%s个，"
+                    val strMinCountErrorMsg = "[%s]类型文件至少选择(%s)个，"
                     sbMinCountErrorMsg = StringBuilder()
                     val currentFileType: IFileType? = intent?.data?.let { findFileType(it) }
                     mFileSelectOptions?.apply {
