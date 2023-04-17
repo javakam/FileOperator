@@ -40,15 +40,16 @@ https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/a
 
 ```kotlin
 通过 applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile) 指定四种类型可以选择，
-其中的每一种类型包含多种 MimeType，
-例如：TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
+其中的每一种类型包含多种 MimeType，例如：
+TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
 
 当在选择文件时候，分单选和多选两种情况：
 1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
 2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
 如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
-比如只选择了一个xxx.txt文件会报错，因为其它类型文件也设置了最小数量限制却没有被选择，进而被判定为选取失败抛出最小限定的异常。
-因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，因为该策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
+比如只选择了一个xxx.txt文件会报错，因为其它类型文件也设置了最小数量限制却没有被选择，
+进而被判定为选取失败抛出最小限定的异常。因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，
+因为该策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
 ```
 
 #### 1. 依赖(dependencies)
