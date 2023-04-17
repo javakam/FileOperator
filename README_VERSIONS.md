@@ -2,6 +2,8 @@
 
 ## v3.7.0
 ```
+v3.7.0 之前不支持`minCount = 0`的限制并且在`OVER_LIMIT_EXCEPT_ALL`策略下报错返回不具体。
+
 1. 多选模式下错误提醒具体到是哪几种类型文件选择出了问题(FileSelector.obtainResult)
 2. FileType.HTML 并入 FileType.TXT
 ```

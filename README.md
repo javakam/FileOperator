@@ -5,23 +5,6 @@
 > `Android`文件操作库。适用于`Android 4.4`及以上系统, 已兼容新版存储策略。包括处理`Android`
 > 端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
 
-## 唯一说明
-
-✨ `多文件类型 + 单选/多选`
-👉 [FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
-
-```
-通过applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)指定了四种类型可以选择，
-其中的每一种类型包含多种MimeType，例如：TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
-
-当在选择文件时候，分单选和多选两种情况：
-1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
-2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
-如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
-比如只选择了一个xxx.txt文件是会报错的，因为其它类型的文件也设置了最小数量限制但却没有被选择，进而被判定为选取失败抛出最小限定的异常。
-因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，因为这种策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
-```
-
 ## 最新版说明
 
 ```
@@ -49,6 +32,21 @@ https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/a
 ```
 
 ## 使用(Usage)
+
+#### 多选多类型文件说明
+
+✨ `多文件类型 + 单选/多选`
+👉 [FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
+
+通过 applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile) 指定四种类型可以选择，
+其中的每一种类型包含多种 MimeType，例如：TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
+当在选择文件时候，分单选和多选两种情况：
+1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
+2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
+如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
+比如只选择了一个xxx.txt文件是会报错的，因为其它类型的文件也设置了最小数量限制但却没有被选择，进而被判定为选取失败抛出最小限定的异常。
+因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，因为这种策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
+
 
 #### 1. 依赖(dependencies)
 
