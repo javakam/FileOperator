@@ -6,6 +6,7 @@
 > 端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
 
 ## 最新版说明
+☀ 2023年4月17日 11:29:52 星期一
 
 ```kotlin
 v3.7.0
@@ -102,18 +103,11 @@ FileOperator.init(this, BuildConfig.DEBUG)
 根据`File Name/Path/Url`获取相应`MimeType`
 
 ```kotlin
-fun getMimeType(str: String?): String {
-   ...
-}
-
-fun getMimeType(uri: Uri?): String {
-   ...
-}
+fun getMimeType(str: String?): String
+fun getMimeType(uri: Uri?): String
 
 //MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
-fun getMimeTypeSupplement(fileName: String): String {
-   ...
-}
+fun getMimeTypeSupplement(fileName: String): String
 ```
 
 #### 2. 计算文件或文件夹的大小👉[FileSizeUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileSizeUtils.kt)
@@ -137,13 +131,8 @@ fun getFolderSize(file: File?): Long {
 ##### ②获取文件大小(Get file size)
 
 ```kotlin
-fun getFileSize(file: File?): Long {
-   ...
-}
-
-fun getFileSize(uri: Uri?): Long {
-   ...
-}
+fun getFileSize(file: File?): Long
+fun getFileSize(uri: Uri?): Long
 ```
 
 ##### ③自动计算指定`文件/文件夹`大小(Automatically calculate the size of the specified `file folder`)
@@ -151,9 +140,7 @@ fun getFileSize(uri: Uri?): Long {
 自动计算指定文件或指定文件夹的大小 , 返回值带 B、KB、M、GB、TB 单位的字符串
 
 ```kotlin
-fun getFileOrDirSizeFormatted(path: String?): String {
-   ...
-}
+fun getFileOrDirSizeFormatted(path: String?): String
 ```
 
 ##### ④格式化大小(`BigDecimal`实现)
@@ -218,11 +205,7 @@ fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSize
 ```kotlin
 fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): String {
    return "${
-      formatSizeByTypeWithoutUnit(
-         size.toBigDecimal(),
-         scale,
-         sizeType
-      ).toPlainString()
+      formatSizeByTypeWithoutUnit(size.toBigDecimal(), scale, sizeType).toPlainString()
    }${sizeType.unit}"
 }
 ```
@@ -392,11 +375,7 @@ note `suffix`: txt
 > `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
 
 ```kotlin
-fun File.copyTo(
-   target: File,
-   overwrite: Boolean = false,
-   bufferSize: Int = DEFAULT_BUFFER_SIZE
-): File
+fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File
 ```
 
 Usage:
