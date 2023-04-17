@@ -22,17 +22,15 @@
 因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，因为这种策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
 ```
 
-## 最新版说明v3.7.0
+## 最新版说明
 
 ```
 v3.7.0
-1. 多选模式下只选择一个文件时错误提醒更具体(FileSelector.obtainResult)
+1. 多选模式下错误提醒具体到是哪几种类型文件选择出了问题(FileSelector.obtainResult)
 2. FileType.HTML 并入 FileType.TXT
-3. 优化文件类型错误提示
 
 v3.6.0
 🌴增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
-
 https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt
 
 1. 获取文件add,modify,expires时间: 
