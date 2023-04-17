@@ -7,46 +7,52 @@
 
 ## 最新版说明
 
-```
+```kotlin
 v3.7.0
 1. 多选模式下错误提醒具体到是哪几种类型文件选择出了问题(FileSelector.obtainResult)
 2. FileType.HTML 并入 FileType.TXT
 
 v3.6.0
-🌴增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
+🌴增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,
+会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
 https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt
 
-1. 获取文件add,modify,expires时间: 
-   getMediaShotTime(uri: Uri?, block: (Long) -> Unit):获取媒体文件的"拍摄时间"
-   getMediaShotTime(path: String?, block: (Long) -> Unit)
-   getMediaShotTime(targetBucketId: Long? = null, block: (Long, Long, Long) -> Unit):查找`bucketId`对应的媒体文件的时间信息
-   返回值: invoke(dateAdded, dateModified, dateExpires);
-2. 重命名文件: 
-   参数说明: 旧文件File；新文件所在目录路径String；新文件名String；新文件的后缀jpg、png、txt等，不传或是空值默认使用之前的后缀)
-   renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {};
-   返回值: 新文件File对象
+1. 获取文件add,modify,expires时间:
+getMediaShotTime(uri: Uri?, block: (Long) -> Unit):获取媒体文件的"拍摄时间"
+getMediaShotTime(path: String?, block: (Long) -> Unit)
+getMediaShotTime(targetBucketId:Long,block:(Long,Long,Long)):查找`bucketId`对应的媒体文件的时间信息
+返回值: invoke(dateAdded, dateModified, dateExpires);
+2. 重命名文件:
+参数说明: 旧文件File；新文件所在目录路径String；新文件名String；
+新文件的后缀jpg、png、txt等，不传或是空值默认使用之前的后缀)
+renameFile(oldFile: File, newFileDirectory: String? = null,
+newFileName: String, newFileNameSuffix: String? = null): File? {};
+返回值: 新文件File对象
 3. 移除超过指定期限的文件:
-   参数说明: 目录路径String；maxFileAge 指定期限Long
-   deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L)
-   默认移除超过一个月的文件：maxFileAge=2678400000L
+参数说明: 目录路径String；maxFileAge 指定期限Long
+        deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L)
+默认移除超过一个月的文件：maxFileAge=2678400000L
 ```
 
 ## 使用(Usage)
 
-#### 多选多类型文件说明
+#### ✨`多文件类型 + 单选/多选`
 
-✨ `多文件类型 + 单选/多选`
-👉 [FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
+[FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
 
+```kotlin
 通过 applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile) 指定四种类型可以选择，
-其中的每一种类型包含多种 MimeType，例如：TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
+其中的每一种类型包含多种 MimeType，例如：
+TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
+
 当在选择文件时候，分单选和多选两种情况：
 1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
 2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
 如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
-比如只选择了一个xxx.txt文件是会报错的，因为其它类型的文件也设置了最小数量限制但却没有被选择，进而被判定为选取失败抛出最小限定的异常。
-因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，因为这种策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
-
+比如只选择了一个xxx.txt文件会报错，因为其它类型文件也设置了最小数量限制却没有被选择，
+进而被判定为选取失败抛出最小限定的异常。因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，
+因为该策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
+```
 
 #### 1. 依赖(dependencies)
 
@@ -54,13 +60,13 @@ https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/a
 
 ```groovy
 repositories {
-    mavenCentral()
-    maven { url "https://s01.oss.sonatype.org/content/groups/public" }
+   mavenCentral()
+   maven { url "https://s01.oss.sonatype.org/content/groups/public" }
 }
 
-implementation 'com.github.javakam:file.core:3.6.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:3.6.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:3.6.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.core:3.7.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:3.7.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:3.7.0@aar'//图片压缩,修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
@@ -97,16 +103,16 @@ FileOperator.init(this, BuildConfig.DEBUG)
 
 ```kotlin
 fun getMimeType(str: String?): String {
-    ...
+   ...
 }
 
 fun getMimeType(uri: Uri?): String {
-    ...
+   ...
 }
 
 //MimeTypeMap.getSingleton().getMimeTypeFromExtension(...) 的补充
 fun getMimeTypeSupplement(fileName: String): String {
-    ...
+   ...
 }
 ```
 
@@ -117,14 +123,14 @@ fun getMimeTypeSupplement(fileName: String): String {
 ```kotlin
 @Throws(Exception::class)
 fun getFolderSize(file: File?): Long {
-    var size = 0L
-    if (file == null || !file.exists()) return size
-    val files = file.listFiles()
-    if (files.isNullOrEmpty()) return size
-    for (i in files.indices) {
-        size += if (files[i].isDirectory) getFolderSize(files[i]) else getFileSize(files[i])
-    }
-    return size
+   var size = 0L
+   if (file == null || !file.exists()) return size
+   val files = file.listFiles()
+   if (files.isNullOrEmpty()) return size
+   for (i in files.indices) {
+      size += if (files[i].isDirectory) getFolderSize(files[i]) else getFileSize(files[i])
+   }
+   return size
 }
 ```
 
@@ -132,11 +138,11 @@ fun getFolderSize(file: File?): Long {
 
 ```kotlin
 fun getFileSize(file: File?): Long {
-    ...
+   ...
 }
 
 fun getFileSize(uri: Uri?): Long {
-    ...
+   ...
 }
 ```
 
@@ -146,7 +152,7 @@ fun getFileSize(uri: Uri?): Long {
 
 ```kotlin
 fun getFileOrDirSizeFormatted(path: String?): String {
-    ...
+   ...
 }
 ```
 
@@ -159,30 +165,30 @@ Format size (implemented by `Big Decimal`)
  * @param scale 精确到小数点以后几位 (Accurate to a few decimal places)
  */
 fun formatFileSize(size: Long, scale: Int, withUnit: Boolean = false): String {
-    val divisor = 1024L
-    //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
-    val kiloByte: BigDecimal =
-        formatSizeByTypeWithDivisor(BigDecimal.valueOf(size), scale, SIZE_TYPE_B, divisor)
-    if (kiloByte.toDouble() < 1) {
-        return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_B.unit else ""}"
-    }
-    //KB
-    val megaByte = formatSizeByTypeWithDivisor(kiloByte, scale, SIZE_TYPE_KB, divisor)
-    if (megaByte.toDouble() < 1) {
-        return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_KB.unit else ""}"
-    }
-    //M
-    val gigaByte = formatSizeByTypeWithDivisor(megaByte, scale, SIZE_TYPE_MB, divisor)
-    if (gigaByte.toDouble() < 1) {
-        return "${megaByte.toPlainString()}${if (withUnit) SIZE_TYPE_MB.unit else ""}"
-    }
-    //GB
-    val teraBytes = formatSizeByTypeWithDivisor(gigaByte, scale, SIZE_TYPE_GB, divisor)
-    if (teraBytes.toDouble() < 1) {
-        return "${gigaByte.toPlainString()}${if (withUnit) SIZE_TYPE_GB.unit else ""}"
-    }
-    //TB
-    return "${teraBytes.toPlainString()}${if (withUnit) SIZE_TYPE_TB.unit else ""}"
+   val divisor = 1024L
+   //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
+   val kiloByte: BigDecimal =
+      formatSizeByTypeWithDivisor(BigDecimal.valueOf(size), scale, SIZE_TYPE_B, divisor)
+   if (kiloByte.toDouble() < 1) {
+      return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_B.unit else ""}"
+   }
+   //KB
+   val megaByte = formatSizeByTypeWithDivisor(kiloByte, scale, SIZE_TYPE_KB, divisor)
+   if (megaByte.toDouble() < 1) {
+      return "${kiloByte.toPlainString()}${if (withUnit) SIZE_TYPE_KB.unit else ""}"
+   }
+   //M
+   val gigaByte = formatSizeByTypeWithDivisor(megaByte, scale, SIZE_TYPE_MB, divisor)
+   if (gigaByte.toDouble() < 1) {
+      return "${megaByte.toPlainString()}${if (withUnit) SIZE_TYPE_MB.unit else ""}"
+   }
+   //GB
+   val teraBytes = formatSizeByTypeWithDivisor(gigaByte, scale, SIZE_TYPE_GB, divisor)
+   if (teraBytes.toDouble() < 1) {
+      return "${gigaByte.toPlainString()}${if (withUnit) SIZE_TYPE_GB.unit else ""}"
+   }
+   //TB
+   return "${teraBytes.toPlainString()}${if (withUnit) SIZE_TYPE_TB.unit else ""}"
 }
 ```
 
@@ -191,33 +197,33 @@ fun formatFileSize(size: Long, scale: Int, withUnit: Boolean = false): String {
 ```kotlin
 //scale 精确到小数点以后几位
 fun formatSizeByTypeWithoutUnit(size: BigDecimal, scale: Int, sizeType: FileSizeType): BigDecimal =
-    size.divide(
-        BigDecimal.valueOf(
-            when (sizeType) {
-                SIZE_TYPE_B -> 1L
-                SIZE_TYPE_KB -> 1024L
-                SIZE_TYPE_MB -> 1024L * 1024L
-                SIZE_TYPE_GB -> 1024L * 1024L * 1024L
-                SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
-            }
-        ),
-        scale,
-        //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
-        if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
-    )
+   size.divide(
+      BigDecimal.valueOf(
+         when (sizeType) {
+            SIZE_TYPE_B -> 1L
+            SIZE_TYPE_KB -> 1024L
+            SIZE_TYPE_MB -> 1024L * 1024L
+            SIZE_TYPE_GB -> 1024L * 1024L * 1024L
+            SIZE_TYPE_TB -> 1024L * 1024L * 1024L * 1024L
+         }
+      ),
+      scale,
+      //ROUND_DOWN 1023 -> 1023B ; ROUND_HALF_UP  1023 -> 1KB
+      if (sizeType == SIZE_TYPE_B) BigDecimal.ROUND_DOWN else BigDecimal.ROUND_HALF_UP
+   )
 ```
 
 转换文件大小带单位(Convert file size with unit):
 
 ```kotlin
 fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): String {
-    return "${
-        formatSizeByTypeWithoutUnit(
-            size.toBigDecimal(),
-            scale,
-            sizeType
-        ).toPlainString()
-    }${sizeType.unit}"
+   return "${
+      formatSizeByTypeWithoutUnit(
+         size.toBigDecimal(),
+         scale,
+         sizeType
+      ).toPlainString()
+   }${sizeType.unit}"
 }
 ```
 
@@ -227,12 +233,12 @@ fun formatSizeByTypeWithUnit(size: Long, scale: Int, sizeType: FileSizeType): St
 
 ```kotlin
 fun openShare(context: Context, uri: Uri, title: String = "分享文件") {
-    val intent = Intent(Intent.ACTION_SEND)
-    intent.putExtra(Intent.EXTRA_STREAM, uri)
-    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-    // Put the Uri and MIME type in the result Intent
-    intent.setDataAndType(uri, getMimeType(uri))
-    context.startActivity(Intent.createChooser(intent, title))
+   val intent = Intent(Intent.ACTION_SEND)
+   intent.putExtra(Intent.EXTRA_STREAM, uri)
+   intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+   // Put the Uri and MIME type in the result Intent
+   intent.setDataAndType(uri, getMimeType(uri))
+   context.startActivity(Intent.createChooser(intent, title))
 }
 ```
 
@@ -241,27 +247,27 @@ fun openShare(context: Context, uri: Uri, title: String = "分享文件") {
 ```kotlin
 @SuppressLint("QueryPermissionsNeeded")
 fun openBrowser(
-    context: Context, url: String, title: String = "请选择浏览器", newTask: Boolean = false,
-    block: ((result: Boolean, msg: String?) -> Unit)? = null,
+   context: Context, url: String, title: String = "请选择浏览器", newTask: Boolean = false,
+   block: ((result: Boolean, msg: String?) -> Unit)? = null,
 ) {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(url)
-        if (newTask) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        //startActivity(intent)
-        //https://developer.android.com/about/versions/11/privacy/package-visibility
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(Intent.createChooser(intent, title))
-            block?.invoke(true, null)
-        } else {
-            block?.invoke(true, "没有可用浏览器")
-        }
-    } catch (e: ActivityNotFoundException) {
-        e.printStackTrace()
-        block?.invoke(true, e.toString())
-    }
+   try {
+      val intent = Intent(Intent.ACTION_VIEW)
+      intent.data = Uri.parse(url)
+      if (newTask) {
+         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+      }
+      //startActivity(intent)
+      //https://developer.android.com/about/versions/11/privacy/package-visibility
+      if (intent.resolveActivity(context.packageManager) != null) {
+         context.startActivity(Intent.createChooser(intent, title))
+         block?.invoke(true, null)
+      } else {
+         block?.invoke(true, "没有可用浏览器")
+      }
+   } catch (e: ActivityNotFoundException) {
+      e.printStackTrace()
+      block?.invoke(true, e.toString())
+   }
 }
 ```
 
@@ -273,13 +279,13 @@ eg: 如果url是视频地址, 系统会直接用内置的视频播放器打开
 
 ```kotlin
 fun openUrl(activity: Activity, url: String?) {
-    try {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(Uri.parse(url), getMimeType(url))
-        activity.startActivity(intent)
-    } catch (e: Exception) {
-        FileLogger.e("OpenUrl Error : " + e.message)
-    }
+   try {
+      val intent = Intent(Intent.ACTION_VIEW)
+      intent.setDataAndType(Uri.parse(url), getMimeType(url))
+      activity.startActivity(intent)
+   } catch (e: Exception) {
+      FileLogger.e("OpenUrl Error : " + e.message)
+   }
 }
 ```
 
@@ -289,11 +295,11 @@ According to `file path` and `type (judgment by suffix)` show programs that supp
 
 ```kotlin
 fun openChooser(context: Any, uri: Uri?, mimeType: String? = null) =
-    uri?.let { u ->
-        Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
-            startActivity(context, it)
-        }
-    }
+   uri?.let { u ->
+      Intent.createChooser(createOpenFileIntent(u, mimeType), "选择程序")?.let {
+         startActivity(context, it)
+      }
+   }
 ```
 
 #### 4. 获取文件Uri/Path👉[FileUri.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core/FileUri.kt)
@@ -306,15 +312,15 @@ Obtain `Uri` from `File` path
 fun getUriByPath(path: String?): Uri? = if (path.isNullOrBlank()) null else getUriByFile(File(path))
 
 fun getUriByFile(file: File?, isOriginal: Boolean = false): Uri? {
-    return if (isOriginal) Uri.fromFile(file)
-    else {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val authority = FileOperator.getContext().packageName + AUTHORITY
-            FileProvider.getUriForFile(FileOperator.getContext(), authority, file ?: return null)
-        } else {
-            Uri.fromFile(file)
-        }
-    }
+   return if (isOriginal) Uri.fromFile(file)
+   else {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+         val authority = FileOperator.getContext().packageName + AUTHORITY
+         FileProvider.getUriForFile(FileOperator.getContext(), authority, file ?: return null)
+      } else {
+         Uri.fromFile(file)
+      }
+   }
 }
 ```
 
@@ -324,29 +330,29 @@ Get the file path corresponding to `Uri`, compatible with `API 26`
 
 ```kotlin
 fun getPathByUri(uri: Uri?): String? {
-    return uri?.use {
-        FileLogger.i(
-            "FileUri getPathByUri -> " + "Uri: " + uri + ", Authority: " + uri.authority + ", Fragment: " + uri.fragment +
-                    ", Port: " + uri.port + ", Query: " + uri.query + ", Scheme: " + uri.scheme +
-                    ", Host: " + uri.host + ", Segments: " + uri.pathSegments.toString()
-        )
-        // 以 file:// 开头的使用第三方应用打开 (open with third-party applications starting with file://)
-        if (ContentResolver.SCHEME_FILE.equals(uri.scheme, ignoreCase = true)) return getDataColumn(
-            @SuppressLint("ObsoleteSdkInt")
-            val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-            // Before 4.4 , API 19 content:// 开头, 比如 content://media/external/images/media/123
-            if (!isKitKat && ContentResolver.SCHEME_CONTENT.equals(uri.scheme, true)) {
-                if (isGooglePhotosUri(uri)) return uri.lastPathSegment
-                return getDataColumn(uri)
-            }
-            val context = FileOperator . getContext ()
-        // After 4.4 , API 19
-        // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
-            ...
-        }
-        ...
-    }
+   return uri?.use {
+      FileLogger.i(
+         "FileUri getPathByUri -> " + "Uri: " + uri + ", Authority: " + uri.authority + ", Fragment: " + uri.fragment +
+                 ", Port: " + uri.port + ", Query: " + uri.query + ", Scheme: " + uri.scheme +
+                 ", Host: " + uri.host + ", Segments: " + uri.pathSegments.toString()
+      )
+      // 以 file:// 开头的使用第三方应用打开 (open with third-party applications starting with file://)
+      if (ContentResolver.SCHEME_FILE.equals(uri.scheme, ignoreCase = true)) return getDataColumn(
+         @SuppressLint("ObsoleteSdkInt")
+         val isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
+         // Before 4.4 , API 19 content:// 开头, 比如 content://media/external/images/media/123
+         if (!isKitKat && ContentResolver.SCHEME_CONTENT.equals(uri.scheme, true)) {
+            if (isGooglePhotosUri(uri)) return uri.lastPathSegment
+            return getDataColumn(uri)
+         }
+         val context = FileOperator . getContext ()
+      // After 4.4 , API 19
+      // DocumentProvider
+      if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+         ...
+      }
+      ...
+   }
 ```
 
 #### 5. 通用文件工具类👉[FileUtils.kt](https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt)
@@ -387,9 +393,9 @@ note `suffix`: txt
 
 ```kotlin
 fun File.copyTo(
-    target: File,
-    overwrite: Boolean = false,
-    bufferSize: Int = DEFAULT_BUFFER_SIZE
+   target: File,
+   overwrite: Boolean = false,
+   bufferSize: Int = DEFAULT_BUFFER_SIZE
 ): File
 ```
 
@@ -408,57 +414,57 @@ File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt
 
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
-    fileType = FileType.IMAGE
-    fileTypeMismatchTip = "文件类型不匹配 !" //File type mismatch
-    singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "图片最大不超过5M !" //The largest picture does not exceed 5M
-    allFilesMaxSize = 10485760
-    allFilesMaxSizeTip =
-        "总图片大小不超过10M !"//The total picture size does not exceed 10M  注:单选条件下无效,只做单个图片大小判断
-    fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-            return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
-                uri
-            ))
-        }
-    }
+   fileType = FileType.IMAGE
+   fileTypeMismatchTip = "文件类型不匹配 !" //File type mismatch
+   singleFileMaxSize = 5242880
+   singleFileMaxSizeTip = "图片最大不超过5M !" //The largest picture does not exceed 5M
+   allFilesMaxSize = 10485760
+   allFilesMaxSizeTip =
+      "总图片大小不超过10M !"//The total picture size does not exceed 10M  注:单选条件下无效,只做单个图片大小判断
+   fileCondition = object : FileSelectCondition {
+      override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+         return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
+            uri
+         ))
+      }
+   }
 }
 mFileSelector = FileSelector
-    .with(this)
-    .setRequestCode(REQUEST_CHOOSE_FILE)
-    .setTypeMismatchTip("文件类型不匹配 !") //File type mismatch
-    .setMinCount(1, "至少选择一个文件 !") //Choose at least one file
-    .setMaxCount(10, "最多选择十个文件 !") //Choose up to ten files  注:单选条件下无效, 只做最少数量判断
-    .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-    .setSingleFileMaxSize(
-        1048576,
-        "大小不能超过1M !"
-    ) //The size cannot exceed 1M  注:单选条件下无效, FileSelectOptions.singleFileMaxSize
-    .setAllFilesMaxSize(
-        10485760,
-        "总大小不能超过10M !"
-    ) //The total size cannot exceed 10M 注:单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
-    .setExtraMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg:"video/*","audio/*","image/*"
-    .applyOptions(optionsImage)
-    .filter(object : FileSelectCondition {
-        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-            return when (fileType) {
-                FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                FileType.VIDEO -> false
-                FileType.AUDIO -> false
-                else -> false
-            }
-        }
-    })
-    .callback(object : FileSelectCallBack {
-        override fun onSuccess(results: List<FileSelectResult>?) {
-            showSelectResult(results)
-        }
-        override fun onError(e: Throwable?) {
-            FileLogger.e("FileSelectCallBack onError ${e?.message}")
-        }
-    })
-    .choose()
+   .with(this)
+   .setRequestCode(REQUEST_CHOOSE_FILE)
+   .setTypeMismatchTip("文件类型不匹配 !") //File type mismatch
+   .setMinCount(1, "至少选择一个文件 !") //Choose at least one file
+   .setMaxCount(10, "最多选择十个文件 !") //Choose up to ten files  注:单选条件下无效, 只做最少数量判断
+   .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
+   .setSingleFileMaxSize(
+      1048576,
+      "大小不能超过1M !"
+   ) //The size cannot exceed 1M  注:单选条件下无效, FileSelectOptions.singleFileMaxSize
+   .setAllFilesMaxSize(
+      10485760,
+      "总大小不能超过10M !"
+   ) //The total size cannot exceed 10M 注:单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
+   .setExtraMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg:"video/*","audio/*","image/*"
+   .applyOptions(optionsImage)
+   .filter(object : FileSelectCondition {
+      override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+         return when (fileType) {
+            FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+            FileType.VIDEO -> false
+            FileType.AUDIO -> false
+            else -> false
+         }
+      }
+   })
+   .callback(object : FileSelectCallBack {
+      override fun onSuccess(results: List<FileSelectResult>?) {
+         showSelectResult(results)
+      }
+      override fun onError(e: Throwable?) {
+         FileLogger.e("FileSelectCallBack onError ${e?.message}")
+      }
+   })
+   .choose()
 ```
 
 🍎 如果是多选图片(多选+单一类型)
@@ -467,13 +473,13 @@ mFileSelector = FileSelector
 
 ```kotlin
 val optionsImage = FileSelectOptions().apply {
-    fileType = FileType.IMAGE
-    //...
+   fileType = FileType.IMAGE
+   //...
 }
 mFileSelector = FileSelector.with(this)
-    .setMultiSelect() // 开启多选(默认单选) EN: Enable multiple selection (default single selection)
-    //...
-    .choose()
+   .setMultiSelect() // 开启多选(默认单选) EN: Enable multiple selection (default single selection)
+   //...
+   .choose()
 ```
 
 #### 2. 多选文件(多选+多种类型)
@@ -496,56 +502,56 @@ Multiple files (multi-select multiple types)
 ```kotlin
 //图片 Image
 val optionsImage = FileSelectOptions().apply {
-    fileType = FileType.IMAGE
-    minCount = 1
-    maxCount = 2
-    minCountTip = "至少选择一张图片" //Select at least one picture
-    maxCountTip = "最多选择两张图片" //Select up to two pictures
-    singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "单张图片最大不超过5M !" //A single picture does not exceed 5M !
-    allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "图片总大小不超过10M !" //The total size of the picture does not exceed 10M !
-    fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-            return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
-                uri
-            ))
-        }
-    }
+   fileType = FileType.IMAGE
+   minCount = 1
+   maxCount = 2
+   minCountTip = "至少选择一张图片" //Select at least one picture
+   maxCountTip = "最多选择两张图片" //Select up to two pictures
+   singleFileMaxSize = 5242880
+   singleFileMaxSizeTip = "单张图片最大不超过5M !" //A single picture does not exceed 5M !
+   allFilesMaxSize = 10485760
+   allFilesMaxSizeTip = "图片总大小不超过10M !" //The total size of the picture does not exceed 10M !
+   fileCondition = object : FileSelectCondition {
+      override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+         return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
+            uri
+         ))
+      }
+   }
 }
 //音频 Audio
 val optionsAudio = FileSelectOptions().apply {
-    fileType = FileType.AUDIO
-    minCount = 2
-    maxCount = 3
-    minCountTip = "至少选择两个音频文件" //Select at least two audio files
-    maxCountTip = "最多选择三个音频文件" //Select up to three audio files
-    singleFileMaxSize = 20971520
-    singleFileMaxSizeTip = "单音频最大不超过20M !" //Maximum single audio does not exceed 20M !
-    allFilesMaxSize = 31457280
-    allFilesMaxSizeTip = "音频总大小不超过30M !" //The total audio size does not exceed 30M !
-    fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-            return (uri != null)
-        }
-    }
+   fileType = FileType.AUDIO
+   minCount = 2
+   maxCount = 3
+   minCountTip = "至少选择两个音频文件" //Select at least two audio files
+   maxCountTip = "最多选择三个音频文件" //Select up to three audio files
+   singleFileMaxSize = 20971520
+   singleFileMaxSizeTip = "单音频最大不超过20M !" //Maximum single audio does not exceed 20M !
+   allFilesMaxSize = 31457280
+   allFilesMaxSizeTip = "音频总大小不超过30M !" //The total audio size does not exceed 30M !
+   fileCondition = object : FileSelectCondition {
+      override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+         return (uri != null)
+      }
+   }
 }
 //文本文件 txt
 val optionsTxt = FileSelectOptions().apply {
-    fileType = FileType.TXT
-    minCount = 1
-    maxCount = 2
-    minCountTip = "至少选择一个文本文件" //Select at least one text file
-    maxCountTip = "最多选择两个文本文件" //Select at most two text files
-    singleFileMaxSize = 5242880
-    singleFileMaxSizeTip = "单文本文件最大不超过5M !" //The single biggest text file no more than 5M
-    allFilesMaxSize = 10485760
-    allFilesMaxSizeTip = "文本文件总大小不超过10M !" //Total size not more than 10M text file
-    fileCondition = object : FileSelectCondition {
-        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-            return (uri != null)
-        }
-    }
+   fileType = FileType.TXT
+   minCount = 1
+   maxCount = 2
+   minCountTip = "至少选择一个文本文件" //Select at least one text file
+   maxCountTip = "最多选择两个文本文件" //Select at most two text files
+   singleFileMaxSize = 5242880
+   singleFileMaxSizeTip = "单文本文件最大不超过5M !" //The single biggest text file no more than 5M
+   allFilesMaxSize = 10485760
+   allFilesMaxSizeTip = "文本文件总大小不超过10M !" //Total size not more than 10M text file
+   fileCondition = object : FileSelectCondition {
+      override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+         return (uri != null)
+      }
+   }
 }
 /*
  注:如果某个FileSelectOptions没通过限定条件, 则该FileSelectOptions不会返回
@@ -558,69 +564,69 @@ val optionsTxt = FileSelectOptions().apply {
     , Only pictures and text files, so return result (limited to OVER_LIMIT_EXCEPT_OVERFLOW);
  */
 mFileSelector = FileSelector
-    .with(this)
-    .setRequestCode(REQUEST_CHOOSE_FILE)
-    .setMultiSelect() //默认是单选false (The default is radio false)
+   .with(this)
+   .setRequestCode(REQUEST_CHOOSE_FILE)
+   .setMultiSelect() //默认是单选false (The default is radio false)
 
-    /*
-    实际最少数量限制为 setMinCount 和 (optionsImage.minCount + optionsAudio.minCount +...) 中的最小值
-    实际最大数量限制为 setMaxCount 和 (optionsImage.maxCount + optionsAudio.maxCount +...) 中的最大值, 所以此处的最大值限制是无效的
-    EN:
-    Actual minimum limit for setMinCount and (optionsImage minCount optionsAudio. MinCount... The lowest value of),
-    Actual maximum limit for setMaxCount and (optionsImage maxCount optionsAudio. MaxCount... ) the maximum, so the maximum limit here is invalid;
-     */
-    .setMinCount(1, "设定类型文件至少选择一个!") //Select at least one set type file
-    .setMaxCount(4, "最多选四个文件!") //Most alternative four files
+   /*
+   实际最少数量限制为 setMinCount 和 (optionsImage.minCount + optionsAudio.minCount +...) 中的最小值
+   实际最大数量限制为 setMaxCount 和 (optionsImage.maxCount + optionsAudio.maxCount +...) 中的最大值, 所以此处的最大值限制是无效的
+   EN:
+   Actual minimum limit for setMinCount and (optionsImage minCount optionsAudio. MinCount... The lowest value of),
+   Actual maximum limit for setMaxCount and (optionsImage maxCount optionsAudio. MaxCount... ) the maximum, so the maximum limit here is invalid;
+    */
+   .setMinCount(1, "设定类型文件至少选择一个!") //Select at least one set type file
+   .setMaxCount(4, "最多选四个文件!") //Most alternative four files
 
-    /*
-    实际单文件大小限制为 setSingleFileMaxSize 和 (optionsImage.singleFileMaxSize + optionsAudio.singleFileMaxSize +...) 中的最小值
-    实际总大小限制为 setAllFilesMaxSize 和 (optionsImage.allFilesMaxSize + optionsAudio.allFilesMaxSize +...) 中的最大值
-    EN:
-    Actual single file size limit for setSingleFileMaxSize and (optionsImage. SingleFileMaxSize optionsAudio. SingleFileMaxSize... The lowest value of),
-    Actual total size limit for setAllFilesMaxSize and (optionsImage allFilesMaxSize optionsAudio. AllFilesMaxSize... The highest value in);
-     */
-    //优先使用 `自定义FileSelectOptions` 中设置的单文件大小限制, 如果没有设置则采用该值
-    //EN:Prefer using ` custom FileSelectOptions ` set in single file size limit, if the value is not set is used
-    .setSingleFileMaxSize(2097152, "单文件大小不能超过2M !") //The size of a single file cannot exceed 2M !
-    .setAllFilesMaxSize(52428800, "总文件大小不能超过50M !") //The total file size cannot exceed 50M !
+   /*
+   实际单文件大小限制为 setSingleFileMaxSize 和 (optionsImage.singleFileMaxSize + optionsAudio.singleFileMaxSize +...) 中的最小值
+   实际总大小限制为 setAllFilesMaxSize 和 (optionsImage.allFilesMaxSize + optionsAudio.allFilesMaxSize +...) 中的最大值
+   EN:
+   Actual single file size limit for setSingleFileMaxSize and (optionsImage. SingleFileMaxSize optionsAudio. SingleFileMaxSize... The lowest value of),
+   Actual total size limit for setAllFilesMaxSize and (optionsImage allFilesMaxSize optionsAudio. AllFilesMaxSize... The highest value in);
+    */
+   //优先使用 `自定义FileSelectOptions` 中设置的单文件大小限制, 如果没有设置则采用该值
+   //EN:Prefer using ` custom FileSelectOptions ` set in single file size limit, if the value is not set is used
+   .setSingleFileMaxSize(2097152, "单文件大小不能超过2M !") //The size of a single file cannot exceed 2M !
+   .setAllFilesMaxSize(52428800, "总文件大小不能超过50M !") //The total file size cannot exceed 50M !
 
-    //1. 文件超过数量限制或大小限制
-    //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
-    //EN:
-    //1. Documents more than limit or size limit
-    //2. Single type: keep not ultra limit file and return, get rid of the overflow part; Multiple types: keep the right file, get rid of the wrong type of all documents
-    .setOverLimitStrategy(this.mOverLimitStrategy)
+   //1. 文件超过数量限制或大小限制
+   //2. 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件, 去掉错误类型的所有文件
+   //EN:
+   //1. Documents more than limit or size limit
+   //2. Single type: keep not ultra limit file and return, get rid of the overflow part; Multiple types: keep the right file, get rid of the wrong type of all documents
+   .setOverLimitStrategy(this.mOverLimitStrategy)
 
-    //eg: ando.file.core.FileMimeType
-    //默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
-    //EN:Default do not file type constraints for "/", is not the same as the choice of different types of the system to provide the UI eg: "video/"," audio/", "image/"
-    .setExtraMimeTypes("audio/*", "image/*", "text/plain")
+   //eg: ando.file.core.FileMimeType
+   //默认不做文件类型约束为"*/*", 不同类型系统提供的选择UI不一样 eg: "video/*","audio/*","image/*"
+   //EN:Default do not file type constraints for "/", is not the same as the choice of different types of the system to provide the UI eg: "video/"," audio/", "image/"
+   .setExtraMimeTypes("audio/*", "image/*", "text/plain")
 
-    //如果setExtraMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
-    //EN:If setExtraMimeTypes and applyOptions no corresponding will appear `file type mismatch problems`
-    .applyOptions(optionsImage, optionsAudio, optionsTxt)
+   //如果setExtraMimeTypes和applyOptions没对应上会出现`文件类型不匹配问题`
+   //EN:If setExtraMimeTypes and applyOptions no corresponding will appear `file type mismatch problems`
+   .applyOptions(optionsImage, optionsAudio, optionsTxt)
 
-    //优先使用 FileSelectOptions 中设置的 FileSelectCondition
-    //EN:Priority in use FileSelectOptions FileSelectCondition Settings
-    .filter(object : FileSelectCondition {
-        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-            return when (fileType) {
-                FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                FileType.AUDIO -> true
-                FileType.TXT -> true
-                else -> false
-            }
-        }
-    })
-    .callback(object : FileSelectCallBack {
-        override fun onSuccess(results: List<FileSelectResult>?) {
-            showSelectResult(results)
-        }
-        override fun onError(e: Throwable?) {
-            FileLogger.e("FileSelectCallBack onError ${e?.message}")
-        }
-    })
-    .choose()
+   //优先使用 FileSelectOptions 中设置的 FileSelectCondition
+   //EN:Priority in use FileSelectOptions FileSelectCondition Settings
+   .filter(object : FileSelectCondition {
+      override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+         return when (fileType) {
+            FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+            FileType.AUDIO -> true
+            FileType.TXT -> true
+            else -> false
+         }
+      }
+   })
+   .callback(object : FileSelectCallBack {
+      override fun onSuccess(results: List<FileSelectResult>?) {
+         showSelectResult(results)
+      }
+      override fun onError(e: Throwable?) {
+         FileLogger.e("FileSelectCallBack onError ${e?.message}")
+      }
+   })
+   .choose()
 ```
 
 #### 3. 自定义FileType(Custom FileType)
@@ -638,11 +644,11 @@ eg:
 
 移除(remove): FileType.TXT.remove("txt", "ini")
 结果(result): TXT(
-    mutableListOf(
-        "conf", "iml", log", " prop ", " rc "))
+   mutableListOf(
+      "conf", "iml", log", " prop ", " rc "))
 
-                替换 (replace): FileType. XML . replace ("xxx")
-            调试 (debugging): FileType. TXT . dump ()
+              替换 (replace): FileType. XML . replace ("xxx")
+           调试 (debugging): FileType. TXT . dump ()
 ```
 
 ##### ②通过`IFileType`自定义文件类型
@@ -654,18 +660,18 @@ Through ` IFileType ` custom file type
 ```kotlin
 //1.方式一
 object FileTypePhp : IFileType {
-    override fun fromUri(uri: Uri?): IFileType {
-        return if (parseSuffix(uri).equals("php", true)) FileTypePhp else FileType.UNKNOWN
-    }
+   override fun fromUri(uri: Uri?): IFileType {
+      return if (parseSuffix(uri).equals("php", true)) FileTypePhp else FileType.UNKNOWN
+   }
 }
 
 //2.推荐方式 (Recommended way)
 enum class FileTypeJson : IFileType {
-    JSON;
+   JSON;
 
-    override fun fromUri(uri: Uri?): IFileType {
-        return resolveFileMatch(uri, "json", JSON)
-    }
+   override fun fromUri(uri: Uri?): IFileType {
+      return resolveFileMatch(uri, "json", JSON)
+   }
 }
 ```
 
@@ -673,29 +679,29 @@ enum class FileTypeJson : IFileType {
 
 ```kotlin
 val optionsJsonFile = FileSelectOptions().apply {
-    fileType = FileTypeJson.JSON
-    minCount = 1
-    maxCount = 2
-    minCountTip = "至少选择一个JSON文件" //Choose at least one JSON file
-    maxCountTip = "最多选择两个JSON文件" //Choose up to two JSON files
+   fileType = FileTypeJson.JSON
+   minCount = 1
+   maxCount = 2
+   minCountTip = "至少选择一个JSON文件" //Choose at least one JSON file
+   maxCountTip = "最多选择两个JSON文件" //Choose up to two JSON files
 }
 
 FileSelector.with(this)
 ...
 .setExtraMimeTypes("audio/*", "image/*", "text/*", "application/json")
-    .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
-    .filter(object : FileSelectCondition {
-        override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-            return when (fileType) {
-                FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
-                FileType.AUDIO -> true
-                FileType.TXT -> true
-                FileTypeJson.JSON -> true
-                else -> false
-            }
-        }
-    })
-    .choose()
+   .applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile)
+   .filter(object : FileSelectCondition {
+      override fun accept(fileType: IFileType, uri: Uri?): Boolean {
+         return when (fileType) {
+            FileType.IMAGE -> (uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
+            FileType.AUDIO -> true
+            FileType.TXT -> true
+            FileTypeJson.JSON -> true
+            else -> false
+         }
+      }
+   })
+   .choose()
 ```
 
 > 注意: `json`文件无法用`text/*`打开, 对应的`mimeType`为`application/json`
@@ -717,42 +723,42 @@ val bitmap: Bitmap = ImageCompressEngine.compressPure(uri)
  * T 👉 filePath / Uri / File
  */
 fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, uri: Uri?) -> Unit) {
-    ImageCompressor
-        .with(context)
-        .load(photos)
-        .ignoreBy(100)//Byte
-        .setTargetDir(getCompressedImageCacheDir())
-        .setFocusAlpha(false)
-        .enableCache(true)
-        .filter(object : ImageCompressPredicate {
-            override fun apply(uri: Uri?): Boolean {
-                //FileLogger.i("compressImage predicate $uri  ${FileUri.getFilePathByUri(uri)}")
-                return if (uri != null) !FileUtils.getExtension(uri).endsWith("gif") else false
+   ImageCompressor
+      .with(context)
+      .load(photos)
+      .ignoreBy(100)//Byte
+      .setTargetDir(getCompressedImageCacheDir())
+      .setFocusAlpha(false)
+      .enableCache(true)
+      .filter(object : ImageCompressPredicate {
+         override fun apply(uri: Uri?): Boolean {
+            //FileLogger.i("compressImage predicate $uri  ${FileUri.getFilePathByUri(uri)}")
+            return if (uri != null) !FileUtils.getExtension(uri).endsWith("gif") else false
+         }
+      })
+      .setRenameListener(object : OnImageRenameListener {
+         override fun rename(uri: Uri?): String {
+            try {
+               val fileName = FileUtils.getFileNameFromUri(uri)
+               val md = MessageDigest.getInstance("MD5")
+               md.update(fileName?.toByteArray() ?: return "")
+               return BigInteger(1, md.digest()).toString(32)
+            } catch (e: NoSuchAlgorithmException) {
+               e.printStackTrace()
             }
-        })
-        .setRenameListener(object : OnImageRenameListener {
-            override fun rename(uri: Uri?): String {
-                try {
-                    val fileName = FileUtils.getFileNameFromUri(uri)
-                    val md = MessageDigest.getInstance("MD5")
-                    md.update(fileName?.toByteArray() ?: return "")
-                    return BigInteger(1, md.digest()).toString(32)
-                } catch (e: NoSuchAlgorithmException) {
-                    e.printStackTrace()
-                }
-                return ""
-            }
-        })
-        .setImageCompressListener(object : OnImageCompressListener {
-            override fun onStart() {}
-            override fun onSuccess(index: Int, uri: Uri?) {
-                success.invoke(index, uri)
-            }
+            return ""
+         }
+      })
+      .setImageCompressListener(object : OnImageCompressListener {
+         override fun onStart() {}
+         override fun onSuccess(index: Int, uri: Uri?) {
+            success.invoke(index, uri)
+         }
 
-            override fun onError(e: Throwable?) {
-                FileLogger.e("OnImageCompressListener onError ${e?.message}")
-            }
-        }).launch()
+         override fun onError(e: Throwable?) {
+            FileLogger.e("OnImageCompressListener onError ${e?.message}")
+         }
+      }).launch()
 }
 ```
 
@@ -762,19 +768,19 @@ fun <T> compressImage(context: Context, photos: List<T>, success: (index: Int, u
 
 ```kotlin
 override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    super.onActivityResult(requestCode, resultCode, data)
+   super.onActivityResult(requestCode, resultCode, data)
 
-    //选择结果交给 FileSelector 处理, 可通过`requestCode -> REQUEST_CHOOSE_FILE`进行区分
-    mFileSelector?.obtainResult(requestCode, resultCode, data)
+   //选择结果交给 FileSelector 处理, 可通过`requestCode -> REQUEST_CHOOSE_FILE`进行区分
+   mFileSelector?.obtainResult(requestCode, resultCode, data)
 }
 ```
 
 2. 选择文件不满足预设条件时,有两种策略 :
 
-    - OVER_LIMIT_EXCEPT_ALL 文件超过`数量或大小`限制直接返回失败, 回调 onError
+   - OVER_LIMIT_EXCEPT_ALL 文件超过`数量或大小`限制直接返回失败, 回调 onError
 
-    - OVER_LIMIT_EXCEPT_OVERFLOW ① 文件超过数量限制或大小限制; ② 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件,
-      去掉错误类型的所有文件; ③ 回调 onSuccess
+   - OVER_LIMIT_EXCEPT_OVERFLOW ① 文件超过数量限制或大小限制; ② 单一类型: 保留未超限制的文件并返回, 去掉后面溢出的部分; 多种类型: 保留正确的文件,
+     去掉错误类型的所有文件; ③ 回调 onSuccess
 
 3. 选择文件数据:单选 Intent.getData ; 多选 Intent.getClipData
 
