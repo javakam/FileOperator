@@ -62,9 +62,9 @@ repositories {
     maven { url "https://s01.oss.sonatype.org/content/groups/public" }
 }
 
-implementation 'com.github.javakam:file.core:3.6.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:3.6.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:3.6.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.core:3.7.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:3.7.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:3.7.0@aar'//图片压缩, 修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
