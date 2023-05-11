@@ -25,14 +25,13 @@ getMediaShotTime(targetBucketId:Long,block:(Long,Long,Long)):查找`bucketId`对
 返回值: invoke(dateAdded, dateModified, dateExpires);
 2. 重命名文件:
 参数说明: 旧文件File；新文件所在目录路径String；新文件名String；
-新文件的后缀jpg、png、txt等，不传或是空值默认使用之前的后缀)
+新文件的后缀jpg、png、txt等，不传或是传入空值默认沿用旧文件的后缀)
 renameFile(oldFile: File, newFileDirectory: String? = null,
 newFileName: String, newFileNameSuffix: String? = null): File? {};
 返回值: 新文件File对象
 3. 移除超过指定期限的文件:
-参数说明: 目录路径String；maxFileAge 指定期限Long
-        deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L)
-默认移除超过一个月的文件：maxFileAge=2678400000L
+参数说明: 目录路径String；maxFileAge 指定期限Long。默认移除超过一个月的文件：maxFileAge=2678400000L
+deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L)
 ```
 
 ## 使用(Usage)
