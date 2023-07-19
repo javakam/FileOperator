@@ -353,19 +353,16 @@ Method | Remark
 `splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: /xxx/xxx(注:尾部没有`/`);`name`: note;`suffix`: txt
 `getFileNameFromPath(path: String?)` | 通过`FilePath`获取文件名
 `getFileNameFromUri(uri: Uri?)` | 通过`Uri`获取文件名
-`createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` | 创建文件,
-同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
+`createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` | 创建文件,同名文件创建多次会跳过已有创建新的文件,如:note.txt已存在,则再次创建会生成note(1).txt
 `createDirectory(filePath: String?): Boolean` | 创建目录
 `deleteFile` | 删除文件或目录
-`deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` | 删除文件或目录, `excludeDirs`
-指定名称的一些`文件/文件夹`不做删除
+`deleteFileWithoutExcludeNames(file: File?, vararg excludeDirs: String?)` | 删除文件或目录, `excludeDirs`指定名称的一些`文件/文件夹`不做删除
 `deleteFilesNotDir` | 只删除文件，不删除文件夹
 `readFileText(InputStream/Uri): String?` | 读取文本文件中的内容
 `readFileBytes(InputStream/Uri): ByteArray?` | 读取文件中的内容并返回`ByteArray`
 `copyFile` | 根据文件路径拷贝文件 `java.nio`
 `writeBytes2File(bytes: ByteArray, target: File)` | 把`ByteArray`写到目标文件`target(File)`中
-`write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`
-写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
+`write2File(bitmap:Bitmap, file:File?, overwrite:Boolean=false)` | 把`Bitmap`写到文件中,可通过`BitmapFactory.decodeStream()`读取出来
 `write2File(input:InputStream?, file:File?, overwrite:Boolean=false)` | 向文件中写入数据
 `isLocal` | 检验是否为本地URI
 `isGif()` | 检验是否为 gif
