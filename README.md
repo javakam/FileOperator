@@ -26,8 +26,7 @@ getMediaShotTime(targetBucketId:Long,block:(Long,Long,Long)):查找`bucketId`对
 2. 重命名文件:
 参数说明: 旧文件File；新文件所在目录路径String；新文件名String；
 新文件的后缀jpg、png、txt等，不传或是传入空值默认沿用旧文件的后缀)
-renameFile(oldFile: File, newFileDirectory: String? = null,
-newFileName: String, newFileNameSuffix: String? = null): File? {};
+renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {};
 返回值: 新文件File对象
 3. 移除超过指定期限的文件:
 参数说明: 目录路径String；maxFileAge 指定期限Long。默认移除超过一个月的文件：maxFileAge=2678400000L
@@ -36,11 +35,12 @@ deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L)
 
 ## 使用(Usage)
 
-#### ✨`多文件类型选择文件`
+#### ✨`多文件+多类型选择文件`注意
 
 [FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
 
 ```kotlin
+FileSelector 多选文件：
 通过 applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile) 指定四种类型可以选择，
 其中的每一种类型包含多种 MimeType，例如：
 TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
@@ -327,7 +327,7 @@ fun getPathByUri(uri: Uri?): String? {
             if (isGooglePhotosUri(uri)) return uri.lastPathSegment
             return getDataColumn(uri)
          }
-         val context = FileOperator . getContext ()
+         val context = FileOperator.getContext ()
       // After 4.4 , API 19
       // DocumentProvider
       if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
@@ -350,8 +350,7 @@ Method | Remark
 `checkUri(uri)` | 检查`Uri`是否正确; `Uri`指向的文件是否存在
 `getExtension` | 获取文件后缀`jpg`
 `getExtensionFull` | 获取文件完整后缀`.jpg`
-`splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: `/xxx/xxx`(注:尾部没有`/`)  `name`:
-note `suffix`: txt
+`splitFilePath()` | 拆分文件路径 eg: `/xxx/xxx/note.txt` 👉 `path`: /xxx/xxx(注:尾部没有`/`);`name`: note;`suffix`: txt
 `getFileNameFromPath(path: String?)` | 通过`FilePath`获取文件名
 `getFileNameFromUri(uri: Uri?)` | 通过`Uri`获取文件名
 `createFile(filePath: String?, fileName: String?, overwrite: Boolean = false):File?` | 创建文件,
