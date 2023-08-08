@@ -1,6 +1,0 @@
-rootProject.name = 'FileOperator'
-
-include ':app'
-include ':library_core'
-include ':library_selector'
-include ':library_compressor'

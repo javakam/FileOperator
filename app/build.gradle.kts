@@ -1,14 +1,14 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+    id("com.android.application")
+    kotlin("android")
 }
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk = libs.versions.compile_sdk_version.get().toInt()
+
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdk = libs.versions.min_sdk_version.get().toInt()
+        targetSdk rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
 

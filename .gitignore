@@ -8,3 +8,5 @@
 .externalNativeBuild
 .cxx
 bintrayUpload.bat
+buildSrc/.gradle
+buildSrc/build

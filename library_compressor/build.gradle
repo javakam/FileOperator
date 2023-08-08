@@ -48,4 +48,5 @@ dependencies {
 ext {
     PUBLISH_ARTIFACT_ID = 'file.compressor'
 }
-apply from: "${rootProject.projectDir}/publish.gradle"
+//apply from: "${rootProject.projectDir}/publish.gradle"
+apply(from = "${rootProject.projectDir}/buildSrc/src/main/kotlin/publish.gradle.kts")
