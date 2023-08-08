@@ -1,5 +1,11 @@
 # 更新日志(Update log)
 
+## v5.0.0
+```
+1.Groovy DSL 改为 Kotlin DSL 构建
+2.更新 gradle dependencies
+```
+
 ## v3.7.0
 ```
 v3.7.0 之前不支持`minCount = 0`的限制并且在`OVER_LIMIT_EXCEPT_ALL`策略下报错返回不具体。
