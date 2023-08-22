@@ -3,8 +3,6 @@
 > `Android`文件操作库。适用于`Android 4.4`及以上系统, 已兼容新版存储策略。包括处理`Android`
 > 端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
 
-## Blog
-
 > [Android Q & Android 11存储适配(一) 基础知识点梳理](https://juejin.im/post/6854573214447140871)
 >
 >  [Android Q & Android 11存储适配(二) FileOperator文件管理框架](https://juejin.im/post/6854573214451335175)
