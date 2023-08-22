@@ -4,11 +4,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -39,10 +38,10 @@ android {
 }
 
 dependencies {
-    compileOnly 'androidx.appcompat:appcompat:1.4.1'
-    compileOnly 'androidx.annotation:annotation:1.3.0'
+    compileOnly 'androidx.appcompat:appcompat:1.6.1'
+    compileOnly 'androidx.annotation:annotation:1.6.0'
     //https://github.com/Curzibn/Luban/issues/337
-    compileOnly 'androidx.exifinterface:exifinterface:1.3.3'
+    compileOnly 'androidx.exifinterface:exifinterface:1.3.6'
 }
 
 ext {

@@ -1,17 +1,25 @@
-> **上一篇** 👉 [Android Q & Android 11存储适配(一) 基础知识点梳理](https://juejin.im/post/6854573214447140871)
-
 # [FileOperator](https://github.com/javakam/FileOperator)
 
 > `Android`文件操作库。适用于`Android 4.4`及以上系统, 已兼容新版存储策略。包括处理`Android`
 > 端文件目录及缓存、文件MimeType、文件打开方式、文件路径和Uri、文件大小、文件常用工具类以及文件选择处理等功能。
 
+## Blog
+
+> [Android Q & Android 11存储适配(一) 基础知识点梳理](https://juejin.im/post/6854573214447140871)
+>
+>  [Android Q & Android 11存储适配(二) FileOperator文件管理框架](https://juejin.im/post/6854573214451335175)
+
 ## 最新版说明
-☀ 2023年4月17日 11:29:52 星期一
+☀ 2023年8月8日 09:57:03 星期二 立秋
 
 ```kotlin
-v3.7.0
+v3.8.0 & v3.7.0
 1. 多选模式下错误提醒具体到是哪几种类型文件选择出了问题(FileSelector.obtainResult)
 2. FileType.HTML 并入 FileType.TXT
+TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
+HTML(mutableListOf("html", "htm", "htmls", "md"))
+合并后:
+TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
 
 v3.6.0
 🌴增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,
@@ -19,14 +27,13 @@ v3.6.0
 https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt
 
 1. 获取文件add,modify,expires时间:
-getMediaShotTime(uri: Uri?, block: (Long) -> Unit):获取媒体文件的"拍摄时间"
-getMediaShotTime(path: String?, block: (Long) -> Unit)
+getMediaShotTime(Uri/Path, block: (Long) -> Unit):获取媒体文件的"拍摄时间"
 getMediaShotTime(targetBucketId:Long,block:(Long,Long,Long)):查找`bucketId`对应的媒体文件的时间信息
 返回值: invoke(dateAdded, dateModified, dateExpires);
 2. 重命名文件:
 参数说明: 旧文件File；新文件所在目录路径String；新文件名String；
 新文件的后缀jpg、png、txt等，不传或是传入空值默认沿用旧文件的后缀)
-renameFile(oldFile: File, newFileDirectory: String? = null, newFileName: String, newFileNameSuffix: String? = null): File? {};
+renameFile(oldFile: File, newFileDirectory: String?, newFileName: String, newFileNameSuffix: String?): File? {};
 返回值: 新文件File对象
 3. 移除超过指定期限的文件:
 参数说明: 目录路径String；maxFileAge 指定期限Long。默认移除超过一个月的文件：maxFileAge=2678400000L
@@ -34,25 +41,6 @@ deleteFilesOutDate(directoryPath: String, maxFileAge: Long = 2678400000L)
 ```
 
 ## 使用(Usage)
-
-#### ✨`多文件+多类型选择文件`注意
-
-[FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
-
-```kotlin
-FileSelector 多选文件：
-通过 applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile) 指定四种类型可以选择，
-其中的每一种类型包含多种 MimeType，例如：
-TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
-
-当在选择文件时候，分单选和多选两种情况：
-1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
-2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
-如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
-比如只选择了一个xxx.txt文件会报错，因为其它类型文件也设置了最小数量限制却没有被选择，
-进而被判定为选取失败抛出最小限定的异常。因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，
-因为该策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
-```
 
 #### 1. 依赖(dependencies)
 
@@ -64,9 +52,9 @@ repositories {
    maven { url "https://s01.oss.sonatype.org/content/groups/public" }
 }
 
-implementation 'com.github.javakam:file.core:3.7.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:3.7.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:3.7.0@aar'//图片压缩,修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.core:3.8.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:3.8.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:3.8.0@aar'//图片压缩,修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
@@ -472,6 +460,25 @@ Multiple files (multi-select multiple types)
 > exceed 30M; `text file` select at least one, select at most two, each text file size does not
 > exceed
 > 5M, all The text file size does not exceed 10M
+
+##### ✨注意
+
+[FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
+
+```kotlin
+FileSelector 多选文件：
+通过 applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile) 指定四种类型可以选择，
+其中的每一种类型包含多种 MimeType，例如：
+TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
+
+当在选择文件时候，分单选和多选两种情况：
+1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
+2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
+如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
+比如只选择了一个xxx.txt文件会报错，因为其它类型文件也设置了最小数量限制却没有被选择，
+进而被判定为选取失败抛出最小限定的异常。因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，
+因为该策略只会对超出最大限定数量的多余文件进行剔除并正常返回数据。
+```
 
 ```kotlin
 //图片 Image

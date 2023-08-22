@@ -3,15 +3,18 @@
 
 buildscript {
     ext {
-        kotlin_version = '1.8.20'
+        kotlin_version = '1.9.0'
         applicationId = "com.ando.file.sample"
-        compileSdkVersion = 31
-        buildToolsVersion = '31.0.0'
+        compileSdkVersion = 33
+        buildToolsVersion = '33.0.2'
         minSdkVersion = 21
-        targetSdkVersion = 31
+        targetSdkVersion = 33
+        //2023年8月22日 11:26:08
+        versionCode = 18
+        versionName = "3.8.0"
         //2023年4月17日 10:32:25
-        versionCode = 17
-        versionName = "3.7.0"
+//        versionCode = 17
+//        versionName = "3.7.0"
 //        versionCode = 16
 //        versionName = "3.6.0"
     }
