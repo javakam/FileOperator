@@ -8,3 +8,4 @@
 .externalNativeBuild
 .cxx
 bintrayUpload.bat
+/buildSrc

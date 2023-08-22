@@ -74,6 +74,7 @@ Intent.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("audio / *"))
 
 <https://stackoverflow.com/questions/3918517/calling-startactivity-from-outside-of-an-activity-context>
 
+
 > Fixed: `Intent.createChooser`要添加两次`FLAG_ACTIVITY_NEW_TASK`:
 
 ```kotlin
@@ -87,7 +88,6 @@ context.startActivity(chooserIntent)
 ```
 
 ## 感谢(Thanks)
-
 ### Google
 
 [Storage Samples Repository](https://github.com/android/storage-samples)
