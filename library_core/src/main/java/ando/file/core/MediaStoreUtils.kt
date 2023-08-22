@@ -188,8 +188,8 @@ object MediaStoreUtils {
         try {
             if (insertUri != null && bitmap != null) {
                 os = resolver.openOutputStream(insertUri)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os)
-                os?.flush()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os!!)
+                os.flush()
 
                 FileLogger.d("创建Bitmap成功 insertBitmap $insertUri")
 
@@ -325,6 +325,7 @@ object MediaStoreUtils {
             .checkUriPermission(uri, android.os.Process.myPid(), android.os.Process.myUid(), Intent.FLAG_GRANT_READ_URI_PERMISSION)) {
             PackageManager.PERMISSION_GRANTED -> {
             }
+
             PackageManager.PERMISSION_DENIED -> {
                 FileOperator.getContext().grantUriPermission(FileOperator.getApplication().packageName, uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
@@ -586,10 +587,12 @@ object MediaStoreUtils {
         if (checkUriColumnFlag(sourceDocumentUri, DocumentsContract.Document.FLAG_SUPPORTS_MOVE)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 try {
-                    DocumentsContract.moveDocument(FileOperator.getContext().contentResolver,
+                    DocumentsContract.moveDocument(
+                        FileOperator.getContext().contentResolver,
                         sourceDocumentUri,
                         sourceParentDocumentUri,
-                        targetParentDocumentUri)
+                        targetParentDocumentUri
+                    )
                 } catch (e: FileNotFoundException) {
                     FileLogger.e("${e.message}")
                 }
@@ -840,8 +843,10 @@ object MediaStoreUtils {
     @RequiresApi(Build.VERSION_CODES.Q)
     @RequiresPermission(value = Manifest.permission.READ_EXTERNAL_STORAGE)
     fun testQueryMediaVideoByUri() {
-        val projectionArgs = arrayOf(MediaStore.Video.Media._ID, MediaStore.Video.Media.DISPLAY_NAME,
-            MediaStore.Video.Media.DURATION, MediaStore.Video.Media.SIZE)
+        val projectionArgs = arrayOf(
+            MediaStore.Video.Media._ID, MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media.DURATION, MediaStore.Video.Media.SIZE
+        )
 
         // Display videos in alphabetical order based on their display name.
         val sortOrder = "${MediaStore.Video.Media.DISPLAY_NAME} ASC"
