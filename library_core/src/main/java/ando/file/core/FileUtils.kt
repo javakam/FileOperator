@@ -2,8 +2,6 @@ package ando.file.core
 
 import ando.file.core.FileMimeType.getMimeType
 import ando.file.core.FileUri.getPathByUri
-import android.annotation.SuppressLint
-import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,13 +10,14 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.util.Log
 import androidx.exifinterface.media.ExifInterface
+import org.json.JSONObject
 import java.io.*
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 /**
  * # FileUtils
@@ -208,11 +207,11 @@ object FileUtils {
     }
 
     /**
-     * 打印"音频或视频"的详细信息 (Use MediaMetadataRetriever)
+     * 获取"音频或视频"文件的详细信息 (Use MediaMetadataRetriever)
      *
-     * Print "audio or video" details
+     * Get details for the Audio or Video file
      */
-    fun dumpMediaInfoByMediaMetadataRetriever(uri: Uri?) {
+    fun getMediaInfoByMediaMetadataRetriever(uri: Uri?): JSONObject? {
         uri?.apply {
             val mmr = MediaMetadataRetriever()
             try {
@@ -259,7 +258,7 @@ object FileUtils {
                 val GENRE = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_GENRE)
                 //如果这个键存在，那么媒体就包含了音频内容。
                 val HAS_AUDIO = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_AUDIO)
-                //如果这个密钥存在，那么媒体就包含了视频内容。。
+                //如果这个密钥存在，那么媒体就包含了视频内容。
                 val HAS_VIDEO = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO)
                 //如果可用，此键将检索位置信息。
                 val LOCATION = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION)
@@ -276,53 +275,63 @@ object FileUtils {
                 //这个选项用于getFrameAtTime，以检索与在给定时间之前或在给定时间内的数据源相关联的同步(或键)框架。
                 val PREVIOUS_SYNC = mmr.extractMetadata(MediaMetadataRetriever.OPTION_PREVIOUS_SYNC)
 
-                FileLogger.i(
-                    """
-                        ============================== MediaMetadataRetriever Info Begin ==============================
-                        METADATA_KEY_ALBUM: $albumString
-                        METADATA_KEY_ARTIST: $artistString
-                        METADATA_KEY_TITLE: $titleString
-                        METADATA_KEY_MIMETYPE: $mimetypeString
-                        METADATA_KEY_DURATION: $durationString
-                        METADATA_KEY_BITRATE: $bitrateString
-                        METADATA_KEY_DATE: $dateString
-                        METADATA_KEY_VIDEO_WIDTH: $video_width
-                        METADATA_KEY_VIDEO_HEIGHT: $video_height
-                        METADATA_KEY_NUM_TRACKS: $NUM_TRACKS
-                        METADATA_KEY_DISC_NUMBER: $DISC_NUMBER
-                        METADATA_KEY_ALBUMARTIST: $ALBUMARTIST
-                        METADATA_KEY_AUTHOR: $AUTHOR
-                        METADATA_KEY_CD_TRACK_NUMBER: $CD_TRACK_NUMBER
-                        METADATA_KEY_CAPTURE_FRAMERATE: $CAPTURE_FRAMERATE
-                        METADATA_KEY_COMPILATION: $COMPILATION
-                        METADATA_KEY_COMPOSER: $COMPOSER
-                        METADATA_KEY_GENRE: $GENRE
-                        METADATA_KEY_HAS_AUDIO: $HAS_AUDIO
-                        METADATA_KEY_HAS_VIDEO: $HAS_VIDEO
-                        METADATA_KEY_LOCATION: $LOCATION
-                        METADATA_KEY_VIDEO_ROTATION: $VIDEO_ROTATION
-                        METADATA_KEY_WRITER: $WRITER
-                        METADATA_KEY_YEAR: $YEAR
-                        OPTION_CLOSEST_SYNC: $CLOSEST_SYNC
-                        OPTION_CLOSEST: $CLOSEST
-                        OPTION_PREVIOUS_SYNC: $PREVIOUS_SYNC
-                        ============================== MediaMetadataRetriever Info END ==============================
-                    """.trimIndent()
+                val jsonObject = JSONObject()
+                jsonObject.put("●Uri", uri)
+                jsonObject.put("●媒体专辑的标题 METADATA_KEY_ALBUM", realValue(albumString))
+                jsonObject.put("●媒体艺术家信息 METADATA_KEY_ARTIST", realValue(artistString))
+                jsonObject.put("●媒体标题信息 METADATA_KEY_TITLE", realValue(titleString))
+                jsonObject.put("●媒体类型 METADATA_KEY_MIMETYPE", realValue(mimetypeString))
+                jsonObject.put("●媒体持续时间 METADATA_KEY_DURATION", realValue(durationString))
+                jsonObject.put("●媒体比特率，位率 METADATA_KEY_BITRATE", realValue(bitrateString))
+                jsonObject.put("●媒体的日期 METADATA_KEY_DATE", realValue(dateString))
+                jsonObject.put("●如果媒体包含视频，这个键就会检索它的宽度 METADATA_KEY_VIDEO_WIDTH", realValue(video_width))
+                jsonObject.put("●如果媒体包含视频，这个键就会检索它的高度 METADATA_KEY_VIDEO_HEIGHT", realValue(video_height))
+                jsonObject.put(
+                    "●元数据键，用于检索歌曲的数量，如音频、视频、文本，在数据源中，如mp4或3gpp文件 METADATA_KEY_NUM_TRACKS",
+                    realValue(NUM_TRACKS)
                 )
+                jsonObject.put("●检索数字字符串的元数据键，该字符串描述了音频数据源的哪个部分来自于 METADATA_KEY_DISC_NUMBER", realValue(DISC_NUMBER))
+                jsonObject.put("●表演者或艺术家的信息 METADATA_KEY_ALBUMARTIST", realValue(ALBUMARTIST))
+                jsonObject.put("●作者 METADATA_KEY_AUTHOR", realValue(AUTHOR))
+                jsonObject.put("●元数据键检索在原始记录中描述音频数据源的顺序的数字字符串 METADATA_KEY_CD_TRACK_NUMBER", realValue(CD_TRACK_NUMBER))
+                jsonObject.put("●帧速率 METADATA_KEY_CAPTURE_FRAMERATE", realValue(CAPTURE_FRAMERATE))
+                jsonObject.put("●检索音乐专辑编译状态的元数据键 METADATA_KEY_COMPILATION", realValue(COMPILATION))
+                jsonObject.put("●元数据键检索关于数据源的composer的信息 METADATA_KEY_COMPOSER", realValue(COMPOSER))
+                jsonObject.put("●获取数据源的内容类型或类型的元数据键 METADATA_KEY_GENRE", realValue(GENRE))
+                jsonObject.put("●如果这个键存在，那么媒体就包含了音频内容 METADATA_KEY_HAS_AUDIO", realValue(HAS_AUDIO))
+                jsonObject.put("●如果这个密钥存在，那么媒体就包含了视频内容 METADATA_KEY_HAS_VIDEO", realValue(HAS_VIDEO))
+                jsonObject.put("●如果可用，此键将检索位置信息 METADATA_KEY_LOCATION", realValue(LOCATION))
+                jsonObject.put("●如果有的话，这个键可以获取视频旋转角度的角度 METADATA_KEY_VIDEO_ROTATION", realValue(VIDEO_ROTATION))
+                jsonObject.put("●元数据键，用于检索数据源的写入器(如lyriwriter)的信息 METADATA_KEY_WRITER", realValue(WRITER))
+                jsonObject.put("●元数据键，用于检索数据源创建或修改时的年份 METADATA_KEY_YEAR", realValue(YEAR))
+                jsonObject.put(
+                    "●此选项用于getFrameAtTime(long、int)，以检索与最近(在时间)或给定时间最接近的数据源相关联的同步(或键)框架 OPTION_CLOSEST_SYNC",
+                    realValue(CLOSEST_SYNC)
+                )
+                jsonObject.put(
+                    "●该选项用于getFrameAtTime(long、int)，用于检索与最近或给定时间最接近的数据源相关的帧(不一定是关键帧) OPTION_CLOSEST",
+                    realValue(CLOSEST)
+                )
+                jsonObject.put(
+                    "●这个选项用于getFrameAtTime，以检索与在给定时间之前或在给定时间内的数据源相关联的同步(或键)框架 OPTION_PREVIOUS_SYNC",
+                    realValue(PREVIOUS_SYNC)
+                )
+                return jsonObject
             } catch (e: Exception) {
-                FileLogger.e("dumpMediaInfoByMediaMetadataRetriever: ${e.message}")
+                FileLogger.e("getMediaInfoByMediaMetadataRetriever: ${e.message}")
             } finally {
                 mmr.release()
             }
         }
+        return null
     }
 
     /**
-     * 打印"图片"的详细信息 (Use ExifInterface)
+     * 获取"图片"文件的详细信息 (Use ExifInterface)
      *
-     * Print the detailed information of "Image"
+     * Get details for the Picture file
      */
-    fun dumpMediaInfoByExifInterface(uri: Uri?) {
+    fun getMediaInfoByExifInterface(uri: Uri?): JSONObject? {
         uri?.use {
             try {
                 FileOperator.getContext().contentResolver.openInputStream(uri)?.use { i: InputStream ->
@@ -350,32 +359,33 @@ object FileUtils {
                     // dateTime=2021:07:12 14:36:30
                     // dateTimeOriginal=2021:07:12 14:36:30
                     // dateTimeDigitized=2021:07:12 14:36:30
-                    FileLogger.i(
-                        """
-                        ============================== ExifInterface Info END ==============================
-                        TAG_GPS_LONGITUDE: $longitude
-                        TAG_GPS_LATITUDE: $latitude
-                        TAG_IMAGE_LENGTH: $length
-                        TAG_IMAGE_WIDTH: $width
-                        TAG_APERTURE_VALUE: $aperture
-                        TAG_ISO_SPEED: $iso
-                        TAG_WHITE_BALANCE: $balance
-                        TAG_EXPOSURE_TIME: $exposure
-                        TAG_FOCAL_LENGTH: $foch_length
-                        TAG_GPS_ALTITUDE_REF: $gps_altitude_ref
-                        TAG_MODEL: $device_type
-                        TAG_DATETIME: $dateTime
-                        TAG_DATETIME_ORIGINAL: $dateTimeOriginal
-                        TAG_DATETIME_DIGITIZED: $dateTimeDigitized
-                        ============================== ExifInterface Info END ==============================
-                    """.trimIndent()
-                    )
+
+                    val jsonObject = JSONObject()
+                    jsonObject.put("●Uri", uri)
+                    jsonObject.put("●GPS经度 TAG_GPS_LONGITUDE", realValue(longitude))
+                    jsonObject.put("●GPS纬度 TAG_GPS_LATITUDE", realValue(latitude))
+                    jsonObject.put("●图像长度 TAG_IMAGE_LENGTH", realValue(length))
+                    jsonObject.put("●图像宽度 TAG_IMAGE_WIDTH", realValue(width))
+                    jsonObject.put("●光圈 TAG_APERTURE_VALUE", realValue(aperture))
+                    jsonObject.put("●ISO感光度 TAG_ISO_SPEED", realValue(iso))
+                    jsonObject.put("●白平衡 TAG_WHITE_BALANCE", realValue(balance))
+                    jsonObject.put("●曝光时间 TAG_EXPOSURE_TIME", realValue(exposure))
+                    jsonObject.put("●焦距 TAG_FOCAL_LENGTH", realValue(foch_length))
+                    jsonObject.put("●GPS海拔高度 TAG_GPS_ALTITUDE_REF", realValue(gps_altitude_ref))
+                    jsonObject.put("●设备类型 TAG_MODEL", realValue(device_type))
+                    jsonObject.put("●图像被更改的日期和时间 TAG_DATETIME", realValue(dateTime))
+                    jsonObject.put("●原始图像数据生成的日期和时间 TAG_DATETIME_ORIGINAL", realValue(dateTimeOriginal))
+                    jsonObject.put("●图像被存储为数字数据的日期和时间 TAG_DATETIME_DIGITIZED", realValue(dateTimeDigitized))
+                    return jsonObject
                 }
             } catch (t: Throwable) {
-                FileLogger.e("dumpMediaInfoByExifInterface: ${t.message}")
+                FileLogger.e("getMediaInfoByExifInterface: ${t.message}")
             }
         }
+        return null
     }
+
+    private fun realValue(any: Any?): String = "${any ?: "NULL"}"
 
     //File Check
     //----------------------------------------------------------------

@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="5dp">
 
         <Button
             android:id="@+id/btSelectMediaFile"
@@ -23,9 +23,21 @@
             android:id="@+id/tvShotTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="3dp"
+            android:padding="2dp"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14" />
+            android:textSize="@dimen/font_12"
+            android:textStyle="bold" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvAllInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_11" />
     </LinearLayout>
 </ScrollView>

@@ -22,7 +22,7 @@ class FileSelectFragmentUsageActivity : AppCompatActivity() {
         //ContentView
         val container: FrameLayout = FrameLayout(this)
         container.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        container.setBackgroundColor(resources.getColor(R.color.color_container_bg))
+        container.setBackgroundColor(resources.getColor(R.color.white))
         container.id = R.id.fl_container
         setContentView(container)
 
