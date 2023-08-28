@@ -11,7 +11,6 @@ import android.widget.Button
 import android.widget.TextView
 import com.ando.file.sample.*
 import com.ando.file.sample.R
-import com.ando.file.sample.utils.FileAnalysis
 import com.ando.file.sample.utils.PermissionManager
 import com.ando.file.sample.utils.ResultUtils
 

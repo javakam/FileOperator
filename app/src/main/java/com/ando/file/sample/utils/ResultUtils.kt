@@ -66,6 +66,7 @@ object ResultUtils {
         }
         tvError.visibility = View.VISIBLE
         tvError.text = tvError.text.toString().plus("${getStr(R.string.str_ando_file_error_info)} ${e.message}")
+        tvError.setTextIsSelectable(true)
     }
 
     fun setImageEvent(imageView: ImageView, uri: Uri?) {
@@ -82,6 +83,7 @@ object ResultUtils {
 
     fun setCoreResults(tvResult: TextView, file: File?) {
         tvResult.text = ""
+        tvResult.setTextIsSelectable(true)
         if (file == null || !file.exists()) {
             tvResult.visibility = View.GONE
             return
@@ -116,6 +118,7 @@ object ResultUtils {
      */
     fun setCoreResults(tvResult: TextView, results: List<FileSelectResult>?) {
         tvResult.text = ""
+        tvResult.setTextIsSelectable(true)
         if (results.isNullOrEmpty()) return
         results.forEachIndexed { _, fsr: FileSelectResult ->
             val info = "$fsr" +
@@ -141,6 +144,7 @@ object ResultUtils {
 
     fun setFormattedResults(tvResult: TextView, results: List<FileSelectResult>?) {
         tvResult.text = ""
+        tvResult.setTextIsSelectable(true)
         formatResults(results = results, isMulti = false) { l ->
             l.forEach {
                 tvResult.text = tvResult.text.toString().plus(it.second)
@@ -155,9 +159,11 @@ object ResultUtils {
             val info = "${fsr}${getStr(R.string.str_ando_file_format_size)}: ${FileSizeUtils.formatFileSize(fsr.fileSize)}\n" +
                     " ${getStr(R.string.str_ando_file_format_size2)}: ${FileSizeUtils.formatFileSize(fsr.fileSize, 3)}\n" +
                     " ${getStr(R.string.str_ando_file_format_size)}: ${
-                        FileSizeUtils.formatSizeByTypeWithUnit(fsr.fileSize,
+                        FileSizeUtils.formatSizeByTypeWithUnit(
+                            fsr.fileSize,
                             1,
-                            FileSizeUtils.FileSizeType.SIZE_TYPE_KB)
+                            FileSizeUtils.FileSizeType.SIZE_TYPE_KB
+                        )
                     }"
             dumpMetaData(uri = fsr.uri) { name: String?, _: String? ->
                 infoList.add(

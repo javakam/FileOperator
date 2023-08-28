@@ -146,7 +146,7 @@ class FileSelectFragment : Fragment() {
         //同下
     }
 
-    //v3.0.0 开始使用 ActivityResultLauncher 跳转页面
+    //v3.0.0 开始支持 ActivityResultLauncher 跳转页面
     private val mStartForResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             FileLogger.w("Back ok -> ActivityResultCallback")

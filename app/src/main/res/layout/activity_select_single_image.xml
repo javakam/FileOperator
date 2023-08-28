@@ -35,7 +35,7 @@
             android:id="@+id/bt_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/color_container_bg"
+            android:backgroundTint="#F1F1F7"
             android:text="@string/str_ando_file_delete"
             android:textAllCaps="false"
             android:textColor="@android:color/holo_red_light"
