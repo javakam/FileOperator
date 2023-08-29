@@ -8,19 +8,10 @@
 >  [Android Q & Android 11存储适配(二) FileOperator文件管理框架](https://juejin.im/post/6854573214451335175)
 
 ## 最新版说明
-☀ 2023年8月8日 09:57:03 星期二 立秋
+☀ 2023年8月29日 09:48:39
 
 ```kotlin
-v3.8.0 & v3.7.0
-1. 多选模式下错误提醒具体到是哪几种类型文件选择出了问题(FileSelector.obtainResult)
-2. FileType.HTML 并入 FileType.TXT
-TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc"))
-HTML(mutableListOf("html", "htm", "htmls", "md"))
-合并后:
-TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
-
-v3.6.0
-🌴增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,
+🌴最新版增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,
 会覆盖原文件/删除过期文件(具体保质期可以自定义Long)
 https://github.com/javakam/FileOperator/blob/master/library_core/src/main/java/ando/file/core//FileUtils.kt
 
@@ -50,9 +41,9 @@ repositories {
    maven { url "https://s01.oss.sonatype.org/content/groups/public" }
 }
 
-implementation 'com.github.javakam:file.core:3.8.0@aar'      //核心库必选(Core library required)
-implementation 'com.github.javakam:file.selector:3.8.0@aar'  //文件选择器(File selector)
-implementation 'com.github.javakam:file.compressor:3.8.0@aar'//图片压缩,修改自Luban(Image compression, based on Luban)
+implementation 'com.github.javakam:file.core:3.9.0@aar'      //核心库必选(Core library required)
+implementation 'com.github.javakam:file.selector:3.9.0@aar'  //文件选择器(File selector)
+implementation 'com.github.javakam:file.compressor:3.9.0@aar'//图片压缩,修改自Luban(Image compression, based on Luban)
 ```
 
 #### 2. `Application`中初始化(Initialization in Application)
