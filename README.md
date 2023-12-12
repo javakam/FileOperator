@@ -8,7 +8,6 @@
 >  [Android Q & Android 11存储适配(二) FileOperator文件管理框架](https://juejin.im/post/6854573214451335175)
 
 ## 最新版说明
-☀ 2023年8月29日 09:48:39
 
 ```kotlin
 🌴最新版增加了一些常用功能, 获取媒体文件的创建时间,修改时间等/重命名文件,
@@ -319,8 +318,7 @@ fun getPathByUri(uri: Uri?): String? {
 Method | Remark
 :-|:-
 `getMediaShotTime(uri: Uri?, block: (Long))` | 获取媒体文件拍摄时间
-`formatMediaMetadataKeyDate(date: String?): Date?` | 转换`MediaMetadataRetriever.METADATA_KEY_DATE`
-特殊的时间格式
+`formatMediaMetadataKeyDate(date: String?): Date?` | 转换`MediaMetadataRetriever.METADATA_KEY_DATE`的特殊时间格式
 `dumpMediaInfoByMediaMetadataRetriever(uri)` | 打印`音频或视频`的详细信息 `(Use MediaMetadataRetriever)`
 `dumpMediaInfoByExifInterface(uri)` | 打印`图片`的详细信息 `(Use ExifInterface)`
 `checkImage(uri)` | 检查`Uri`对应的文件是否为`图片`
@@ -344,15 +342,11 @@ Method | Remark
 `isLocal` | 检验是否为本地URI
 `isGif()` | 检验是否为 gif
 
-> `copyFile`效率和`kotlin-stdlib-1.4.21.jar`中的`kotlin.io.FilesKt__UtilsKt.copyTo`基本相当 :
+> `copyFile`用法(copyFile usage) :
 
 ```kotlin
 fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int = DEFAULT_BUFFER_SIZE): File
-```
 
-Usage:
-
-```kotlin
 boolean copyResult = FileUtils . copyFile (fileOld, getExternalFilesDir(null).getPath(), "test.txt");
 File targetFile = new File(getExternalFilesDir(null).getPath() + "/" + "test.txt");
 ```
@@ -387,14 +381,8 @@ mFileSelector = FileSelector
    .setMinCount(1, "至少选择一个文件 !") //Choose at least one file
    .setMaxCount(10, "最多选择十个文件 !") //Choose up to ten files  注:单选条件下无效, 只做最少数量判断
    .setOverLimitStrategy(OVER_LIMIT_EXCEPT_OVERFLOW)
-   .setSingleFileMaxSize(
-      1048576,
-      "大小不能超过1M !"
-   ) //The size cannot exceed 1M  注:单选条件下无效, FileSelectOptions.singleFileMaxSize
-   .setAllFilesMaxSize(
-      10485760,
-      "总大小不能超过10M !"
-   ) //The total size cannot exceed 10M 注:单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
+   .setSingleFileMaxSize(1048576,"大小不能超过1M !") //The size cannot exceed 1M  注:单选条件下无效, FileSelectOptions.singleFileMaxSize
+   .setAllFilesMaxSize(10485760,"总大小不能超过10M !") //The total size cannot exceed 10M 注:单选条件下无效,只做单个图片大小判断 setSingleFileMaxSize
    .setExtraMimeTypes("image/*") //默认不做文件类型约束为"*/*",不同类型系统提供的选择UI不一样 eg:"video/*","audio/*","image/*"
    .applyOptions(optionsImage)
    .filter(object : FileSelectCondition {
@@ -437,18 +425,14 @@ mFileSelector = FileSelector.with(this)
 
 Multiple files (multi-select multiple types)
 
-> 🌴适用于处理复杂文件选择情形, 如: 选取图片、音频文件、文本文件, 其中`图片`至少选择一张, 最多选择两张, 每张图片大小不超过5M, 全部图片大小不超过10M;
+> 🌴适用于处理复杂文件选择情形, 如: 当需要同时选取图片、音频文件、文本文件, 其中`图片`至少选择一张, 最多选择两张, 每张图片大小不超过5M, 全部图片大小不超过10M;
 `音频文件`至少选择两个, 最多选择三个, 每个音频大小不超过20M, 全部音频大小不超过30M;
 `文本文件`至少选择一个, 最多选择两个, 每个文本文件大小不超过5M, 全部文本文件大小不超过10M
 
-> 🌴It is suitable for processing complex file selection situations, such as: select pictures, audio
-> files, text files, among which, select at least one picture and two at most. The size of each
-> picture does not exceed 5M, and the size of all pictures does not exceed 10M; `audio File `Choose
-> at
-> least two and a maximum of three, each audio size does not exceed 20M, all audio size does not
+> 🌴It is suitable for processing complex file selection situations, such as: When you need to select pictures, audio files, text files at the same time, among which, select at least one picture and two at most. The size of each picture does not exceed 5M, and the size of all pictures does not exceed 10M; `audio File `Choose
+> at least two and a maximum of three, each audio size does not exceed 20M, all audio size does not
 > exceed 30M; `text file` select at least one, select at most two, each text file size does not
-> exceed
-> 5M, all The text file size does not exceed 10M
+> exceed 5M, all The text file size does not exceed 10M
 
 ##### ✨注意
 
@@ -483,9 +467,7 @@ val optionsImage = FileSelectOptions().apply {
    allFilesMaxSizeTip = "图片总大小不超过10M !" //The total size of the picture does not exceed 10M !
    fileCondition = object : FileSelectCondition {
       override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-         return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
-            uri
-         ))
+         return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
       }
    }
 }
@@ -613,12 +595,10 @@ eg:
 结果(result): TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "gradle", "kt"))
 
 移除(remove): FileType.TXT.remove("txt", "ini")
-结果(result): TXT(
-   mutableListOf(
-      "conf", "iml", log", " prop ", " rc "))
+结果(result): TXT(mutableListOf("conf", "iml", "log", "prop", "rc"))
 
-              替换 (replace): FileType. XML . replace ("xxx")
-           调试 (debugging): FileType. TXT . dump ()
+替换 (replace): FileType.XML.replace("xxx")
+调试 (debugging): FileType.TXT.dump()
 ```
 
 ##### ②通过`IFileType`自定义文件类型
@@ -768,18 +748,15 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 ## Q&A
 
-**
-README_QA.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_QA.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_QA.md</a>
+**README_QA.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_QA.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_QA.md</a>
 
 ## 更新日志 (Update log)
 
-**
-README_VERSIONS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md</a>
+**README_VERSIONS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_VERSIONS.md</a>
 
 ## 感谢 (Thanks)
 
-**
-README_THANKS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_THANKS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_THANKS.md</a>
+**README_THANKS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_THANKS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_THANKS.md</a>
 
 ## 许可(LICENSE)
 
