@@ -364,13 +364,10 @@ val optionsImage = FileSelectOptions().apply {
    singleFileMaxSize = 5242880
    singleFileMaxSizeTip = "图片最大不超过5M !" //The largest picture does not exceed 5M
    allFilesMaxSize = 10485760
-   allFilesMaxSizeTip =
-      "总图片大小不超过10M !"//The total picture size does not exceed 10M  注:单选条件下无效,只做单个图片大小判断
+   allFilesMaxSizeTip = "总图片大小不超过10M !"//The total picture size does not exceed 10M  注:单选条件下无效,只做单个图片大小判断
    fileCondition = object : FileSelectCondition {
       override fun accept(fileType: IFileType, uri: Uri?): Boolean {
-         return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(
-            uri
-         ))
+         return (fileType == FileType.IMAGE && uri != null && !uri.path.isNullOrBlank() && !FileUtils.isGif(uri))
       }
    }
 }
@@ -434,19 +431,18 @@ Multiple files (multi-select multiple types)
 > exceed 30M; `text file` select at least one, select at most two, each text file size does not
 > exceed 5M, all The text file size does not exceed 10M
 
-##### ✨注意
+##### ✨使用注意
 
 [FileSelectCustomFileTypeActivity.kt](https://github.com/javakam/FileOperator/blob/master/app/src/main/java/com/ando/file/sample/ui/selector/FileSelectCustomFileTypeActivity.kt)
 
 ```kotlin
-FileSelector 多选文件：
-通过 applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile) 指定四种类型可以选择，
+使用FileSelector多选文件时推荐使用 OVER_LIMIT_EXCEPT_OVERFLOW 策略：
+通过 applyOptions(optionsImage, optionsAudio, optionsTxt, optionsJsonFile) 方法指定四种类型可以选择，
 其中的每一种类型包含多种 MimeType，例如：
 TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html", "htm", "htmls", "md"))
 
-当在选择文件时候，分单选和多选两种情况：
-1 单选：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
-2 多选(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
+1 单选文件：选择指定类型的任意文件都可以。即OVER_LIMIT_EXCEPT_ALL和OVER_LIMIT_EXCEPT_OVERFLOW都行。
+2 多选文件(setMultiSelect())：建议使用OVER_LIMIT_EXCEPT_OVERFLOW。
 如果使用`OVER_LIMIT_EXCEPT_ALL`，每一种指定类型的文件都至少选取setMinCount(int)个，
 比如只选择了一个xxx.txt文件会报错，因为其它类型文件也设置了最小数量限制却没有被选择，
 进而被判定为选取失败抛出最小限定的异常。因此，多文件选择建议使用OVER_LIMIT_EXCEPT_OVERFLOW策略，
@@ -454,7 +450,7 @@ TXT(mutableListOf("txt", "conf", "iml", "ini", "log", "prop", "rc", "csv", "html
 ```
 
 ```kotlin
-//图片 Image
+//设定选择图片文件的规则 Set rules for selecting image files
 val optionsImage = FileSelectOptions().apply {
    fileType = FileType.IMAGE
    minCount = 1
@@ -471,7 +467,7 @@ val optionsImage = FileSelectOptions().apply {
       }
    }
 }
-//音频 Audio
+//设定选择音频文件的规则 Sets the rules for selecting audio files
 val optionsAudio = FileSelectOptions().apply {
    fileType = FileType.AUDIO
    minCount = 2
@@ -488,7 +484,7 @@ val optionsAudio = FileSelectOptions().apply {
       }
    }
 }
-//文本文件 txt
+//设定选择文本文件文件的规则 Sets the rules for selecting text file files
 val optionsTxt = FileSelectOptions().apply {
    fileType = FileType.TXT
    minCount = 1
