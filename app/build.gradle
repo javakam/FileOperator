@@ -122,7 +122,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     //权限;图片
-    implementation 'com.permissionx.guolindev:permissionx:1.4.0'
+    implementation 'com.guolindev.permissionx:permissionx:1.7.1'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     //kapt 'com.github.bumptech.glide:compiler:4.16.0'
     //网络;gson
