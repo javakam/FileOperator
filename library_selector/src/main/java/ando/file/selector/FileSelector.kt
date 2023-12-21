@@ -28,6 +28,7 @@ import kotlin.math.min
 class FileSelector private constructor(builder: Builder) {
 
     companion object {
+        val REQUEST_CODE_DEFAULT: Int = 1
         val TIP_SINGLE_FILE_TYPE_MISMATCH: String by lazy { getContext().getString(R.string.ando_str_single_file_type_mismatch) }
         val TIP_SINGLE_FILE_SIZE: String by lazy { getContext().getString(R.string.ando_str_single_file_size) }
         val TIP_ALL_FILE_SIZE: String by lazy { getContext().getString(R.string.ando_str_all_file_size) }
@@ -44,7 +45,7 @@ class FileSelector private constructor(builder: Builder) {
     }
 
     private var mStartForResult: ActivityResultLauncher<Intent>? = null
-    private var mRequestCode: Int = 0
+    private var mRequestCode: Int = REQUEST_CODE_DEFAULT
 
     private var mExtraMimeTypes: Array<out String>?
     private var mIsMultiSelect: Boolean = false
@@ -73,7 +74,7 @@ class FileSelector private constructor(builder: Builder) {
     private var isOptionsEmpty: Boolean = false
 
     //onActivityResult
-    var requestCode: Int? = -1
+    var requestCode: Int? = REQUEST_CODE_DEFAULT
     var resultCode: Int? = 0
 
     init {
@@ -98,6 +99,7 @@ class FileSelector private constructor(builder: Builder) {
 
     fun choose(context: Any, mimeType: String?): FileSelector {
         checkParams()
+        FileLogger.e("requestCode = $mRequestCode")
         if (mStartForResult == null) {
             startActivityForResult(context, createChooseIntent(mimeType, mExtraMimeTypes, mIsMultiSelect), mRequestCode)
             return this
@@ -106,9 +108,11 @@ class FileSelector private constructor(builder: Builder) {
             is ComponentActivity -> {// androidx.activity.ComponentActivity
                 mStartForResult?.launch(createChooseIntent(mimeType, mExtraMimeTypes, mIsMultiSelect))
             }
+
             is Fragment -> {
                 mStartForResult?.launch(createChooseIntent(mimeType, mExtraMimeTypes, mIsMultiSelect))
             }
+
             else -> {
                 startActivityForResult(context, createChooseIntent(mimeType, mExtraMimeTypes, mIsMultiSelect), mRequestCode)
             }
@@ -124,11 +128,14 @@ class FileSelector private constructor(builder: Builder) {
     }
 
     fun obtainResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        if (requestCode != mRequestCode) {
+            mFileSelectCallBack?.onError(Throwable("请比较 setRequestCode() 和 obtainResult() 方法中的 requestCode 值是否一致!(Please compare whether the requestCode values in setRequestCode() and obtainResult() methods are consistent!)"))
+            return
+        }
+
         this.requestCode = requestCode
         this.resultCode = resultCode
         this.mFileTypeComposite.clear()
-
-        if (requestCode == -1 || requestCode != mRequestCode) return
 
         //没有设定 FileSelectOptions 的情况(When FileSelectOptions is not set)
         isOptionsEmpty = mFileSelectOptions.isNullOrEmpty()
@@ -383,6 +390,7 @@ class FileSelector private constructor(builder: Builder) {
                         OVER_LIMIT_EXCEPT_ALL -> {
                             mFileSelectCallBack?.onError(Throwable(mAllFilesMaxSizeTip))
                         }
+
                         OVER_LIMIT_EXCEPT_OVERFLOW -> {
                             if (resultList.isNotEmpty()) resultList.clear()
                             relationMap.values.forEach { sr: SelectResult -> resultList.addAll(sr.uriList) }
@@ -431,6 +439,7 @@ class FileSelector private constructor(builder: Builder) {
                         }
                     }
                 }
+
                 OVER_LIMIT_EXCEPT_OVERFLOW -> {
                     if (resultList.isNotEmpty()) resultList.clear()
 
@@ -603,7 +612,7 @@ class FileSelector private constructor(builder: Builder) {
 
     class Builder internal constructor(private val context: Any, launcher: ActivityResultLauncher<Intent>?) {
         var mStartForResult: ActivityResultLauncher<Intent>? = launcher
-        var mRequestCode: Int = 0
+        var mRequestCode: Int = REQUEST_CODE_DEFAULT
 
         var mExtraMimeTypes: Array<out String>? = null      //eg: Intent.putExtra(Intent.EXTRA_MIME_TYPES, mExtraMimeTypes)
         var mIsMultiSelect: Boolean = false
