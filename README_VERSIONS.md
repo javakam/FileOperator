@@ -1,6 +1,6 @@
 # 更新日志(Update log)
 
-## v3.9.5
+## v3.9.8
 ```
 主要改动了 requestCode 请求机制。
 FileSelector默认requestCode值为1 👉 val REQUEST_CODE_DEFAULT: Int = 1

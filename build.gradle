@@ -10,8 +10,8 @@ buildscript {
         minSdkVersion = 21
         targetSdkVersion = 33
         //2023年12月21日
-        versionCode = 20
-        versionName = "3.9.5"
+        versionCode = 22
+        versionName = "3.9.8"
         //2023年8月29日 09:47:46
 //        versionCode = 19
 //        versionName = "3.9.0"
