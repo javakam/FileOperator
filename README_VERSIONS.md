@@ -1,5 +1,19 @@
 # 更新日志(Update log)
 
+## v3.9.8
+```
+主要改动了 requestCode 请求机制。
+FileSelector默认requestCode值为1 👉 val REQUEST_CODE_DEFAULT: Int = 1
+
+FileSelector处理传入(mRequestCode)和接收(requestCode)的比较:
+if (requestCode == -1 || requestCode != mRequestCode) return
+改为
+if (requestCode != mRequestCode) {
+    mFileSelectCallBack?.onError(Throwable("请比较 setRequestCode() 和 obtainResult() 方法中的 requestCode 值是否一致!(Please compare whether the requestCode values in setRequestCode() and obtainResult() methods are consistent!)"))
+    return
+}
+```
+
 ## v3.9.0 & v3.8.0
 ```
 优化媒体信息用例, 显示图片/音频/视频文件的全部信息

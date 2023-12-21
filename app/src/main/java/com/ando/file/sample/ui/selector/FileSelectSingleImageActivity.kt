@@ -82,7 +82,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
             }
         }
 
-        //todo 2022年1月21日 17:43:34  批量删除
+        //2022年1月21日 17:43:34  测试批量删除
         //删除该文件
         //用于测试 👉 https://github.com/javakam/FileOperator/issues/70
         mBtDelete.visibility = View.VISIBLE
@@ -113,6 +113,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        FileLogger.w("Back ok -> onActivityResult")
         //同下
     }
 
@@ -120,7 +121,7 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
     private val mStartForResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
             FileLogger.w("Back ok -> ActivityResultCallback")
-            handleResult(REQUEST_CHOOSE_FILE, result.resultCode, result.data)
+            handleResult(result.resultCode, result.data)
         }
 
     override fun onDestroy() {
@@ -128,10 +129,10 @@ class FileSelectSingleImageActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private fun handleResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        ResultUtils.resetUI(mTvError, mTvResult, mIvOrigin, mIvCompressed)
+    private fun handleResult(resultCode: Int, data: Intent?) {
+        // ResultUtils.resetUI(mTvError, mTvResult, mIvOrigin, mIvCompressed)
         //选择结果交给 FileSelector 处理, 可通过`requestCode -> REQUEST_CHOOSE_FILE`进行区分
-        mFileSelector?.obtainResult(requestCode, resultCode, data)
+        mFileSelector?.obtainResult(REQUEST_CHOOSE_FILE, resultCode, data)
     }
 
     private fun chooseFile() {
