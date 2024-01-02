@@ -754,11 +754,9 @@ override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) 
 
 **README_THANKS.md** <a href="https://github.com/javakam/FileOperator/blob/master/README_THANKS.md" target="_blank">https://github.com/javakam/FileOperator/blob/master/README_THANKS.md</a>
 
-<div hidden>
 ## 赞赏(Sponsor)
 撸码不易，如果对你有所帮助，可以点右上角"Star"支持一下，也还可以扫描下面的二维码~ 请作者喝一杯咖啡。Thanks♪(･ω･)ﾉ
 ![赞赏码](https://github.com/javakam/FileOperator/assets/15343661/54c7ff5a-af50-4353-a2b7-2af2c8d5c829)
-</div>
 
 ## 许可(LICENSE)
 
